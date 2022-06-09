@@ -57,7 +57,7 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleCarlisleRaceResultsCorrectly()
     {
-        var raceResultHtmlPage = ReadResource("results_carlisle_20220516_1320.html");
+        var raceResultHtmlPage = ResourceLoader.ReadResource("results_carlisle_20220516_1320.html");
         var parser = new RacingResultParser();
 
         var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
@@ -69,7 +69,7 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleDoncasterRaceAsVoidRace()
     {
-        var raceResultHtmlPage = ReadResource("result_doncaster_20091212_1445_void.html");
+        var raceResultHtmlPage = ResourceLoader.ReadResource("result_doncaster_20091212_1445_void.html");
         var parser = new RacingResultParser();
 
         await Assert.ThrowsAsync<VoidRaceException>(() => parser.Parse(raceResultHtmlPage));
@@ -78,26 +78,12 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleBrightonRaceWithExpectedHeadgear()
     {
-        var raceResultHtmlPage = ReadResource("results_brighton_20220607_1300_headgear.html");
+        var raceResultHtmlPage = ResourceLoader.ReadResource("results_brighton_20220607_1300_headgear.html");
         var parser = new RacingResultParser();
 
         var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
         var actualHeadgear = actualRaceParseResult.Runners.Select(r => r.Attributes.HeadGear);
 
         actualHeadgear.Should().BeEquivalentTo(new[] { "b", "b", "etb", "p", null, null, "v1", null, "v" });
-    }
-
-    private static string ReadResource(string fileName)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-
-        var resourceName = $"{typeof(RacingResultParserShould).Namespace}.Examples.{fileName}";
-
-        using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream == null)
-            throw new Exception($"Resource {fileName} not found");
-
-        using var reader = new StreamReader(stream);
-        return reader.ReadToEnd();
     }
 }
