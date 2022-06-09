@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32328.378
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RacePredictor.Core", "RacePredictor.Core\RacePredictor.Core.csproj", "{7C04BDB4-7791-4B8D-8E21-8A3F069B83EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RacePredictor.Core.Tests", "RacePredictor.Core.Tests\RacePredictor.Core.Tests.csproj", "{847D5BD0-6F4B-4B2B-B23F-9C9CAB544846}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7C04BDB4-7791-4B8D-8E21-8A3F069B83EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C04BDB4-7791-4B8D-8E21-8A3F069B83EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C04BDB4-7791-4B8D-8E21-8A3F069B83EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C04BDB4-7791-4B8D-8E21-8A3F069B83EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{847D5BD0-6F4B-4B2B-B23F-9C9CAB544846}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{847D5BD0-6F4B-4B2B-B23F-9C9CAB544846}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{847D5BD0-6F4B-4B2B-B23F-9C9CAB544846}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{847D5BD0-6F4B-4B2B-B23F-9C9CAB544846}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9581C9AB-1AAC-4F53-AF07-F5376A6080C2}
+	EndGlobalSection
+EndGlobal

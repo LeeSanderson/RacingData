@@ -1,0 +1,27 @@
+﻿namespace RacePredictor.Core;
+
+public class RaceResultRunner
+{
+    public RaceResultRunner(
+        RaceEntity horse,
+        RaceEntity jockey,
+        RaceEntity trainer,
+        RaceResultRunnerAttributes attributes,
+        RaceResultRunnerStats statistics,
+        RaceResultRunnerResults results)
+    {
+        Horse = horse;
+        Jockey = jockey;
+        Trainer = trainer;
+        Attributes = attributes;
+        Statistics = statistics;
+        Results = results;
+    }
+
+    public RaceEntity Horse { get; }
+    public RaceEntity Jockey { get; }
+    public RaceEntity Trainer { get; }
+    public RaceResultRunnerAttributes Attributes { get; }
+    public RaceResultRunnerStats Statistics { get; }
+    public RaceResultRunnerResults Results { get; }
+}
