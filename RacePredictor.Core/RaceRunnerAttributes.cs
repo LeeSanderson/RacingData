@@ -1,8 +1,8 @@
 ﻿namespace RacePredictor.Core;
 
-public class RaceResultRunnerAttributes
+public class RaceRunnerAttributes
 {
-    public RaceResultRunnerAttributes(int raceCardNumber, int? stallNumber, int age, RaceWeight weight, string? headGear)
+    public RaceRunnerAttributes(int raceCardNumber, int? stallNumber, int age, RaceWeight weight, string? headGear)
     {
         RaceCardNumber = raceCardNumber;
         StallNumber = stallNumber;

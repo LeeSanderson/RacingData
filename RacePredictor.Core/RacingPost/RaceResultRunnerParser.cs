@@ -43,7 +43,7 @@ namespace RacePredictor.Core.RacingPost
             }
         }
 
-        private IEnumerable<RaceResultRunnerAttributes> GetRaceResultRunnerAttributes()
+        private IEnumerable<RaceRunnerAttributes> GetRaceResultRunnerAttributes()
         {
             var raceCardNumbers = GetRaceCardNumbers();
             var stallNumbers = GetStallNumbers();
@@ -53,7 +53,7 @@ namespace RacePredictor.Core.RacingPost
 
             for (var i = 0; i < raceCardNumbers.Length; i++)
             {
-                yield return new RaceResultRunnerAttributes(raceCardNumbers[i], stallNumbers[i], ages[i], weights[i], headGears[i]);
+                yield return new RaceRunnerAttributes(raceCardNumbers[i], stallNumbers[i], ages[i], weights[i], headGears[i]);
             }
         }
 
@@ -125,8 +125,8 @@ namespace RacePredictor.Core.RacingPost
         private IEnumerable<RaceResultRunnerResults> GetRaceResultRunnerResults()
         {
             var positionTexts = GetPositions();
-            var positions = positionTexts.Select(s => s.ContainsAnyIgnoreCase("VOI", "F") ? 0 : s.AsInt()).ToArray(); // May be "VOI" if race is void or "F" if faller. 
-            var fallers = positionTexts.Select(s => string.Equals(s, "F", StringComparison.OrdinalIgnoreCase)).ToArray();
+            var positions = positionTexts.Select(s => RaceIsVoidOrRunnerHasFallen(s) ? 0 : s.AsInt()).ToArray();
+            var fallers = positionTexts.Select(RunnerHasFallen).ToArray();
             var (beatenDistances, overallBeatenDistances) = GetBeatenDistances();
             var raceTimes = CalculateRaceTimes(overallBeatenDistances);
 
@@ -140,6 +140,10 @@ namespace RacePredictor.Core.RacingPost
                     raceTimes[i]);
             }
         }
+
+        private static bool RaceIsVoidOrRunnerHasFallen(string racePosition) => racePosition.ContainsAnyIgnoreCase("VOI", "F");
+
+        private static bool RunnerHasFallen(string racePosition) => string.Equals(racePosition, "F", StringComparison.OrdinalIgnoreCase);
 
         private string[] GetPositions() =>
             _find.Span()
