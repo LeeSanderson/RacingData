@@ -21,6 +21,7 @@ internal class RaceCardRunnerParser : RunnerParser
         var jocks = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerJockey-name").GetNodes());
         var trainers = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerTrainer-name").GetNodes());
         var attributes = GetRaceResultRunnerAttributes().ToArray();
+        var statistics = GetRaceResultRunnerStats().ToArray();
 
         for (var i = 0; i < horses.Length; i++)
         {
@@ -30,7 +31,8 @@ internal class RaceCardRunnerParser : RunnerParser
                     horses[i],
                     jocks[i],
                     trainers[i],
-                    attributes[i]);
+                    attributes[i], 
+                    statistics[i]);
             }
         }
     }
@@ -93,4 +95,22 @@ internal class RaceCardRunnerParser : RunnerParser
             .GetTexts()
             .Select(s => s.NullIfEmpty())
             .ToArray();
+
+    private IEnumerable<RaceRunnerStats> GetRaceResultRunnerStats()
+    {
+        var officialRatings = ToRatings(_find.Span().WithSelector("RC-cardPage-runnerOr").GetTexts());
+        var topSpeedRatings = ToRatings(_find.Span().WithSelector("RC-cardPage-runnerTs").GetTexts());
+        var racingPostRatings = ToRatings(_find.Span().WithSelector("RC-cardPage-runnerRpr").GetTexts());
+
+        // Odds are set by JavaScript depending on the selected betting provider
+        // (hence they can't be read by the HTML agility pack)
+        // Set all odds to "SP" (starting price).
+        var odds = officialRatings.Select(_ => new RaceOdds("SP")).ToArray();
+
+
+        for (var i = 0; i < odds.Length; i++)
+        {
+            yield return new RaceRunnerStats(odds[i], officialRatings[i], racingPostRatings[i], topSpeedRatings[i]);
+        }
+    }
 }

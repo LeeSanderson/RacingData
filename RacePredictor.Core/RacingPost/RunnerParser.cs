@@ -10,4 +10,6 @@ internal abstract class RunnerParser
                     @"/(\d+)/".GetMatch(n.GetAttributeValue("href", string.Empty)).AsInt(),
                     n.InnerText.TrimAllWhiteSpace()))
             .ToArray();
+
+    protected int?[] ToRatings(IEnumerable<string> texts) => texts.Select(s => s.AsOptionalInt()).ToArray();
 }

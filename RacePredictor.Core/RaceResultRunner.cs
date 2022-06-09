@@ -7,7 +7,7 @@ public class RaceResultRunner
         RaceEntity jockey,
         RaceEntity trainer,
         RaceRunnerAttributes attributes,
-        RaceResultRunnerStats statistics,
+        RaceRunnerStats statistics,
         RaceResultRunnerResults results)
     {
         Horse = horse;
@@ -22,6 +22,6 @@ public class RaceResultRunner
     public RaceEntity Jockey { get; }
     public RaceEntity Trainer { get; }
     public RaceRunnerAttributes Attributes { get; }
-    public RaceResultRunnerStats Statistics { get; }
+    public RaceRunnerStats Statistics { get; }
     public RaceResultRunnerResults Results { get; }
 }

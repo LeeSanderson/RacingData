@@ -100,7 +100,7 @@ namespace RacePredictor.Core.RacingPost
                 .Select(s => s.TrimParens().AsOptionalInt())
                 .ToArray();
 
-        private IEnumerable<RaceResultRunnerStats> GetRaceResultRunnerStats()
+        private IEnumerable<RaceRunnerStats> GetRaceResultRunnerStats()
         {
             var odds = GetRaceOdds();
             var officialRatings = ToRatings(_find.TableCell().WithDataEnding("OR").GetTexts());
@@ -109,11 +109,9 @@ namespace RacePredictor.Core.RacingPost
 
             for (var i = 0; i < odds.Length; i++)
             {
-                yield return new RaceResultRunnerStats(odds[i], officialRatings[i], racingPostRatings[i], topSpeedRatings[i]);
+                yield return new RaceRunnerStats(odds[i], officialRatings[i], racingPostRatings[i], topSpeedRatings[i]);
             }
         }
-
-        private int?[] ToRatings(IEnumerable<string> texts) => texts.Select(s => s.AsOptionalInt()).ToArray();
 
         private RaceOdds[] GetRaceOdds() => 
             _find.Span()

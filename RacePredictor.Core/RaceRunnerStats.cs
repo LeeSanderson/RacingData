@@ -1,8 +1,8 @@
 ﻿namespace RacePredictor.Core;
 
-public class RaceResultRunnerStats
+public class RaceRunnerStats
 {
-    public RaceResultRunnerStats(RaceOdds odds, int? officialRating, int? racingPostRating, int? topSpeedRating)
+    public RaceRunnerStats(RaceOdds odds, int? officialRating, int? racingPostRating, int? topSpeedRating)
     {
         Odds = odds;
         OfficialRating = officialRating;
