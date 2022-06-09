@@ -16,12 +16,15 @@ internal class RaceCardRunnerParser : RunnerParser
     public IEnumerable<RaceRunner> Parse()
     {
         var horses = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerName").GetNodes());
-
+        var jocks = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerJockey-name").GetNodes());
+        var trainers = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerTrainer-name").GetNodes());
 
         for (var i = 0; i < horses.Length; i++)
         {
             yield return new RaceRunner(
-                horses[i]);
+                horses[i], 
+                jocks[i],
+                trainers[i]);
         }
 
     }
