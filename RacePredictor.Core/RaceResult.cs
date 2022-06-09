@@ -2,16 +2,16 @@
 
 public class RaceResult
 {
-    public RaceResult(RaceEntity course, RaceEntity race, RaceAttributes raceAttributes, RaceResultRunner[] runners)
+    public RaceResult(RaceEntity course, RaceEntity race, RaceAttributes attributes, RaceResultRunner[] runners)
     {
         Course = course;
         Race = race;
-        RaceAttributes = raceAttributes;
+        Attributes = attributes;
         Runners = runners;
     }
 
     public RaceEntity Course { get; }
     public RaceEntity Race { get; }
-    public RaceAttributes RaceAttributes { get; }
+    public RaceAttributes Attributes { get; }
     public RaceResultRunner[] Runners { get; }
 }

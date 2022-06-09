@@ -3,7 +3,7 @@ using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
 
-public class RacingResultParser
+public class RacingResultParser : RaceParser
 {
     private readonly HtmlDocument _document;
     private readonly HtmlNodeFinder _find;
@@ -17,9 +17,8 @@ public class RacingResultParser
     public Task<RaceResult> Parse(string raceResultHtmlPage)
     {
         _document.LoadHtml(raceResultHtmlPage);
-        CheckIfRaceIsVoid();
+        var runnerCount = GetRunnerCountAndCheckIfRaceIsVoid();
         var (course, race) = GetCourseAndRace();
-        var runnerCount = _find.TableCell().WithSelector("horse-age").GetNodes().Length;
         var classification = GetClassificationFor(race.Name);
         var raceAttributes = GetRaceAttributes(classification, runnerCount);
         var runners = GetRunners(course, raceAttributes);
@@ -27,10 +26,12 @@ public class RacingResultParser
         return Task.FromResult(new RaceResult(course, race, raceAttributes, runners));
     }
 
-    private void CheckIfRaceIsVoid()
+    private int GetRunnerCountAndCheckIfRaceIsVoid()
     {
-        if (_find.Span().WithSelector("text-horsePosition").GetTexts().Any(s => s == "VOI"))
+        var positions = _find.Span().WithSelector("text-horsePosition").GetTexts().ToArray();
+        if (positions.Any(s => s == "VOI"))
             throw new VoidRaceException();
+        return positions.Length;
     }
 
     private (RaceEntity, RaceEntity) GetCourseAndRace()
@@ -63,21 +64,10 @@ public class RacingResultParser
         return new RaceClassification(GetRaceType(raceName), raceClass, pattern, ratingBand, ageBand, GetRaceSexRestriction(raceName));
     }
 
-    private string? GetRacePattern(string raceName)
-    {
-        var pattern = @"((\(|\s)((G|g)rade|(G|g)roup) (\d|[A-Ca-c]|I*)(\)|\s))".FindMatch(raceName);
-        if (!string.IsNullOrEmpty(pattern))
-            return pattern;
-
-        return raceName.ToLowerInvariant().ContainsAnyIgnoreCase("listed race", "(listed") ? "Listed" : null;
-    }
-
-    private DateTime GetOff()
-    {
-        var raceDate = _find.Span().WithSelector("text-raceDate").GetText();
-        var raceTime = _find.Span().WithSelector("text-raceTime").GetText() + " PM";
-        return DateTime.ParseExact(raceDate + " " + raceTime, "d MMM yyyy h:mm tt", CultureInfo.InvariantCulture);
-    }
+    private DateTime GetOff() =>
+        ParseRaceDateAndTime(
+            _find.Span().WithSelector("text-raceDate").GetText(),
+            _find.Span().WithSelector("text-raceTime").GetText());
 
     private RaceDistance GetDistance() => new(_find.Span().WithSelector("block-distanceInd").GetText());
 
@@ -91,68 +81,13 @@ public class RacingResultParser
 
     private (string, string) GetAgeAndRatingBands()
     {
-        var ageBand = string.Empty;
-        var ratingBand = string.Empty;
         var bandText = _find.Optional().Span().WithCssClass("rp-raceTimeCourseName_ratingBandAndAgesAllowed").GetText();
-        if (!string.IsNullOrEmpty(bandText))
-        {
-            var bands = bandText.TrimParens().Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            foreach (var band in bands)
-            {
-                if (band.Contains("yo"))
-                    ageBand = band;
-                else if (band.Contains('-'))
-                    ratingBand = band;
-            }
-        }
-
-        return (ageBand, ratingBand);
+        return GetAgeAndRatingBands(bandText);
     }
 
     private RaceType GetRaceType(string raceName)
     {
-        if (raceName.ContainsAnyIgnoreCase("national hunt flat"))
-            return RaceType.Flat;
-
         var fences = _find.Optional().Span().WithCssClass("rp-raceTimeCourseName_hurdles").GetText();
-        if (!string.IsNullOrEmpty(fences))
-        {
-            fences = fences.ToLowerInvariant();
-            if (fences.Contains("hurdle"))
-                return RaceType.Hurdle;
-
-            if (fences.Contains("chase"))
-                return RaceType.SteepleChase;
-        }
-
-        
-        if (raceName.ContainsAnyIgnoreCase(" hurdle", "(hurdle)"))
-            return RaceType.Hurdle;
-
-        if (raceName.ContainsAnyIgnoreCase(" chase", "(chase)", "steeplechase", "steeple-chase", "steeplchase", "steepl-chase"))
-            return RaceType.SteepleChase;
-
-        return raceName.ContainsAnyIgnoreCase(" flat race", "national hunt flat") ? RaceType.Hurdle : RaceType.Other;
+        return GetRaceType(raceName, fences);
     }
-
-    private RaceSexRestriction GetRaceSexRestriction(string raceName)
-    {
-        if (raceName.ContainsAnyIgnoreCase("entire colts & fillies", "colts & fillies"))
-            return RaceSexRestriction.ColtsAndFillies;
-
-        if (raceName.ContainsAnyIgnoreCase("fillies & mares', 'filles & mares"))
-            return RaceSexRestriction.FilliesAndMares;
-
-        if (raceName.ContainsAnyIgnoreCase("fillies"))
-            return RaceSexRestriction.Fillies;
-
-        if (raceName.ContainsAnyIgnoreCase("colts & geldings", "colts/geldings", "(c & g)"))
-            return RaceSexRestriction.ColdsAndGeldings;
-
-        if (raceName.ContainsAnyIgnoreCase("mares & geldings"))
-            return RaceSexRestriction.MaresAndGeldings;
-
-        return raceName.Contains("mares") ? RaceSexRestriction.Mares : RaceSexRestriction.None;
-    }
-
 }

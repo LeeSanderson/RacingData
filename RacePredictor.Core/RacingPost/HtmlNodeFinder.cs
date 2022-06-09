@@ -27,6 +27,8 @@ public class HtmlNodeFinder : HtmlNodeFinder<HtmlNodeFinder>
 
     public string GetText() => GetNode().InnerText.TrimAllWhiteSpace();
 
+    public string GetDirectText() => GetNode().GetDirectInnerText().TrimAllWhiteSpace();
+
     public IEnumerable<string> GetTexts() => GetNodes().Select(s => s.InnerText.TrimAllWhiteSpace());
 
     public IEnumerable<string> GetDirectTexts() => GetNodes().Select(s => s.GetDirectInnerText().TrimAllWhiteSpace());
@@ -74,6 +76,8 @@ public class HtmlNodeFinder<THtmlNodeFinder>
     }
 
     public THtmlNodeFinder Span() => Element("span");
+
+    public THtmlNodeFinder Div() => Element("div");
 
     public THtmlNodeFinder Anchor() => Element("a");
 

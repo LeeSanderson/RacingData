@@ -2,7 +2,7 @@
 
 public class RaceResultRunnerAttributes
 {
-    public RaceResultRunnerAttributes(int raceCardNumber, int stallNumber, int age, RaceWeight weight, string? headGear)
+    public RaceResultRunnerAttributes(int raceCardNumber, int? stallNumber, int age, RaceWeight weight, string? headGear)
     {
         RaceCardNumber = raceCardNumber;
         StallNumber = stallNumber;
@@ -12,7 +12,7 @@ public class RaceResultRunnerAttributes
     }
 
     public int RaceCardNumber { get; }
-    public int StallNumber { get;  }
+    public int? StallNumber { get;  }
     public int Age { get; }
     public RaceWeight Weight { get; }
     public string? HeadGear { get; }

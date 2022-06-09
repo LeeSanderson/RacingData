@@ -100,11 +100,11 @@ namespace RacePredictor.Core.RacingPost
                 .Select(s => s.TrimEnd('.').AsInt())
                 .ToArray();
 
-        private int[] GetStallNumbers() =>
+        private int?[] GetStallNumbers() =>
             _find.Element("sup")
                 .WithCssClass("rp-horseTable__pos__draw")
                 .GetTexts()
-                .Select(s => s.TrimParens().AsInt())
+                .Select(s => s.TrimParens().AsOptionalInt())
                 .ToArray();
 
         private IEnumerable<RaceResultRunnerStats> GetRaceResultRunnerStats()
@@ -131,25 +131,27 @@ namespace RacePredictor.Core.RacingPost
 
         private IEnumerable<RaceResultRunnerResults> GetRaceResultRunnerResults()
         {
-            var positions = GetPositions();
+            var positionTexts = GetPositions();
+            var positions = positionTexts.Select(s => s.ContainsAnyIgnoreCase("VOI", "F") ? 0 : s.AsInt()).ToArray(); // May be "VOI" if race is void or "F" if faller. 
+            var fallers = positionTexts.Select(s => string.Equals(s, "F", StringComparison.OrdinalIgnoreCase)).ToArray();
             var (beatenDistances, overallBeatenDistances) = GetBeatenDistances();
             var raceTimes = CalculateRaceTimes(overallBeatenDistances);
 
             for (var i = 0; i < positions.Length; i++)
             {
                 yield return new RaceResultRunnerResults(
-                    positions[i], 
+                    positions[i],
+                    fallers[i],
                     beatenDistances[i], 
                     overallBeatenDistances[i], 
                     raceTimes[i]);
             }
         }
 
-        private int[] GetPositions() =>
+        private string[] GetPositions() =>
             _find.Span()
                 .WithSelector("text-horsePosition")
                 .GetDirectTexts()
-                .Select(s => s == "VOI" ? 0 : s.AsInt()) // May be "VOI" if race is void. 
                 .ToArray();
 
         private (double[], double[]) GetBeatenDistances()

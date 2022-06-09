@@ -15,7 +15,7 @@ public class RaceDistance
         var cleanDistance = Distance.Replace("¼", ".25").Replace("½", ".5").Replace("¾", ".75");
         var milesPart = (@"(\d+)m".FindMatch(cleanDistance) ?? "0").AsInt();
         var furlongPart = (@"([\.\d]+)f".FindMatch(cleanDistance) ?? "0").AsDouble();
-        var yardsPart = (@"([\.\d]+)yrds".FindMatch(cleanDistance) ?? "0").AsDouble();
+        var yardsPart = (@"([\.\d]+)y".FindMatch(cleanDistance) ?? "0").AsDouble();
 
         DistanceInFurlongs = milesPart * NumberOfFurlongsInOneMile + furlongPart;
         DistanceInYards = (int)(DistanceInFurlongs * NumberOfYardsInOneFurlong + yardsPart);

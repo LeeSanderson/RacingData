@@ -23,35 +23,35 @@ public class RacingResultParserShould
                             new RaceEntity(39124, "Charlie & Mark Johnston"),
                             new RaceResultRunnerAttributes(6, 5, 2, new RaceWeight(9, 2), null),
                             new RaceResultRunnerStats(new RaceOdds("3/1"), null, 79, 56),
-                            new RaceResultRunnerResults(1, 0, 0, new TimeSpan(0, 0, 1, 4, 650))),
+                            new RaceResultRunnerResults(1, false, 0, 0, new TimeSpan(0, 0, 1, 4, 650))),
                         new RaceResultRunner(
                             new RaceEntity(4303314, "Monte Forte"),
                             new RaceEntity(91867, "Kevin Stott"),
                             new RaceEntity(22525, "Kevin Ryan"),
                             new RaceResultRunnerAttributes(3, 6, 2, new RaceWeight(9, 7), null),
                             new RaceResultRunnerStats(new RaceOdds("7/5F"), null, 74, 50),
-                            new RaceResultRunnerResults(2, 2.75, 2.75, new TimeSpan(0, 0, 1, 5, 200))),
+                            new RaceResultRunnerResults(2, false, 2.75, 2.75, new TimeSpan(0, 0, 1, 5, 200))),
                         new RaceResultRunner(
                             new RaceEntity(4270008, "Al Hitmi"),
                             new RaceEntity(90243, "Jason Hart"),
                             new RaceEntity(5019, "K R Burke"),
                             new RaceResultRunnerAttributes(1, 1, 2, new RaceWeight(9, 7), null),
                             new RaceResultRunnerStats(new RaceOdds("5/2"), null, 62, 36),
-                            new RaceResultRunnerResults(3, 3.5, 6.25, new TimeSpan(0, 0, 1, 5, 900))),
+                            new RaceResultRunnerResults(3, false, 3.5, 6.25, new TimeSpan(0, 0, 1, 5, 900))),
                         new RaceResultRunner(
                             new RaceEntity(4274167, "Carmentis"),
                             new RaceEntity(81166, "Andrew Mullen"),
                             new RaceEntity(22367, "Ben Haslam"),
                             new RaceResultRunnerAttributes(4, 4, 2, new RaceWeight(9, 2), null),
                             new RaceResultRunnerStats(new RaceOdds("10/1"), null, 41, 14),
-                            new RaceResultRunnerResults(4, 4.25, 10.5, new TimeSpan(0, 0, 1, 6, 750))),
+                            new RaceResultRunnerResults(4, false, 4.25, 10.5, new TimeSpan(0, 0, 1, 6, 750))),
                         new RaceResultRunner(
                             new RaceEntity(4315426, "Dixiedoodledragon"),
                             new RaceEntity(87290, "Sam James"),
                             new RaceEntity(24548, "Keith Dalgleish"),
                             new RaceResultRunnerAttributes(5, 3, 2, new RaceWeight(9, 2), null),
                             new RaceResultRunnerStats(new RaceOdds("16/1"), null, 37, 9),
-                            new RaceResultRunnerResults(5, 1.25, 11.75, new TimeSpan(0, 0, 1, 7, 0))),
+                            new RaceResultRunnerResults(5, false, 1.25, 11.75, new TimeSpan(0, 0, 1, 7, 0))),
             });
 
     [Fact]
@@ -63,7 +63,7 @@ public class RacingResultParserShould
         var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
 
         actualRaceParseResult.Should().BeEquivalentTo(ExpectedCarlisleRaceParseResult);
-        actualRaceParseResult.RaceAttributes.Surface.Should().Be(RaceSurface.Turf);
+        actualRaceParseResult.Attributes.Surface.Should().Be(RaceSurface.Turf);
     }
 
     [Fact]
@@ -85,5 +85,39 @@ public class RacingResultParserShould
         var actualHeadgear = actualRaceParseResult.Runners.Select(r => r.Attributes.HeadGear);
 
         actualHeadgear.Should().BeEquivalentTo(new[] { "b", "b", "etb", "p", null, null, "v1", null, "v" });
+    }
+
+    [Fact]
+    public async Task ParseExampleSouthwellRaceWithExpectedHurdles()
+    {
+        var raceResultHtmlPage = ResourceLoader.ReadResource("results_southwell_20220606_1410_hurdles.html");
+        var parser = new RacingResultParser();
+
+        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
+
+        actualRaceParseResult.Attributes.Classification.RaceType.Should().Be(RaceType.Hurdle);
+    }
+
+    [Fact]
+    public async Task ParseExampleSouthwellRaceWithExpectedFallers()
+    {
+        var expectedFallers = new[]
+        {
+            new RaceResultRunner(
+                new RaceEntity(1900082, "Phyllis"),
+                new RaceEntity(88090, "Ben Poste"),
+                new RaceEntity(39501, "Harriet Dickin"),
+                new RaceResultRunnerAttributes(8, null, 6, new RaceWeight(10, 11), null),
+                new RaceResultRunnerStats(new RaceOdds("250/1"), null, null, null),
+                new RaceResultRunnerResults(0, true, 0, 0, new TimeSpan(0, 0, 3, 57, 800)))
+        };
+
+        var raceResultHtmlPage = ResourceLoader.ReadResource("results_southwell_20220606_1410_hurdles.html");
+        var parser = new RacingResultParser();
+
+        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
+        var actualFallers = actualRaceParseResult.Runners.Where(r => r.Results.Fell).ToArray();
+
+        actualFallers.Should().BeEquivalentTo(expectedFallers);
     }
 }
