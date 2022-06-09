@@ -2,7 +2,7 @@
 
 namespace RacePredictor.Core.RacingPost
 {
-    internal class RaceResultRunnerParser
+    internal class RaceResultRunnerParser : RunnerParser
     {
         private readonly HtmlDocument _document;
         private readonly RaceEntity _course;
@@ -42,13 +42,6 @@ namespace RacePredictor.Core.RacingPost
                     results[i]);
             }
         }
-
-        private RaceEntity[] AnchorNodesToEntities(IEnumerable<HtmlNode> htmlNodes) =>
-            htmlNodes.Select(n =>
-                    new RaceEntity(
-                        @"/(\d+)/".GetMatch(n.GetAttributeValue("href", string.Empty)).AsInt(),
-                        n.InnerText.TrimAllWhiteSpace()))
-                .ToArray();
 
         private IEnumerable<RaceResultRunnerAttributes> GetRaceResultRunnerAttributes()
         {

@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
 

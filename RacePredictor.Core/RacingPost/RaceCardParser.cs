@@ -20,9 +20,9 @@ public class RaceCardParser : RaceParser
         var (course, race) = GetCourseAndRace();
         var classification = GetClassificationFor(race.Name);
         var raceAttributes = GetRaceAttributes(classification);
+        var runners = GetRunners();
 
-
-        return Task.FromResult(new RaceCard(course, race, raceAttributes));
+        return Task.FromResult(new RaceCard(course, race, raceAttributes, runners));
     }
 
     private (RaceEntity, RaceEntity) GetCourseAndRace()
@@ -59,12 +59,18 @@ public class RaceCardParser : RaceParser
 
     private RaceDistance GetDistance() => new(_find.Span().WithSelector("RC-header__raceDistance").GetText().TrimParens());
 
-    private string? GetGoing() =>
+    private string GetGoing() =>
         @"Going:\s*(.+)"
-            .FindMatch(_find.Optional().Div().WithSelector("RC-headerBox__going").GetText());
+            .GetMatch(_find.Div().WithSelector("RC-headerBox__going").GetText());
 
     private int GetNumberOfRunners() =>
         @"Runners:\s*(\d+)"
-            .FindMatch(_find.Optional().Div().WithSelector("RC-headerBox__runners").GetText())
+            .GetMatch(_find.Div().WithSelector("RC-headerBox__runners").GetText())
             .AsInt();
+
+    private RaceRunner[] GetRunners()
+    {
+        var runnerParser = new RaceCardRunnerParser(_document);
+        return runnerParser.Parse().ToArray();
+    }
 }
