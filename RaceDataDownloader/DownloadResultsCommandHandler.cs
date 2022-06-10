@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.IO.Abstractions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RacePredictor.Core;
 using RacePredictor.Core.RacingPost;
 
@@ -42,6 +43,8 @@ public class DownloadResultsCommandHandler
                     _logger.LogInformation("Skipping void race {URL}", url);
                 }
             }
+
+            await SaveResultsAsJson(Path.Combine(outputFolder, "Results.json"), raceResults);
         }
         catch (ValidationException ve)
         {
@@ -55,6 +58,29 @@ public class DownloadResultsCommandHandler
         }
 
         return 0;
+    }
+
+    private async Task SaveResultsAsJson(string outputFileName, List<RaceResult> raceResults)
+    {
+        if (_fileSystem.File.Exists(outputFileName))
+        {
+            _fileSystem.File.Delete(outputFileName);
+            if (_fileSystem.File.Exists(outputFileName))
+            {
+                throw new ValidationException($"Unable to delete existing output file {outputFileName}");
+            }
+        }
+
+        var jsonString = JsonSerializer.Serialize(raceResults,
+            new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault, 
+                IgnoreReadOnlyProperties = false,
+                WriteIndented = true,
+                Converters = { new JsonStringEnumConverter() }
+            });
+
+        await _fileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
     }
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadResultsOptions options)

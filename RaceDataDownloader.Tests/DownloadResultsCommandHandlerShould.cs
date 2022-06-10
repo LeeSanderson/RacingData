@@ -21,7 +21,7 @@ namespace RaceDataDownloader.Tests
         {
             var mockFileSystem = Substitute.For<IFileSystem>();
             string? savedResultsJson = null;
-            mockFileSystem.File.WriteAllTextAsync(@"c:\out\Results_20220511.json", Arg.Do<string>(x => savedResultsJson = x))
+            mockFileSystem.File.WriteAllTextAsync(@"c:\out\Results.json", Arg.Do<string>(x => savedResultsJson = x))
                 .Returns(Task.CompletedTask);
             mockFileSystem.Directory.Exists(@"c:\out").Returns(true);
 

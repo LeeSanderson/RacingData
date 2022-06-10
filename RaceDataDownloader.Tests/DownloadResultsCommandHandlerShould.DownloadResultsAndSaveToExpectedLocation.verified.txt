@@ -1,0 +1,393 @@
+﻿[
+  {
+    "Course": {
+      "Id": 5,
+      "Name": "Bath"
+    },
+    "Race": {
+      "Id": 809925,
+      "Name": "Supporting Mental Health Awareness Week Handicap"
+    },
+    "Attributes": {
+      "Off": "2022-05-11T17:30:00",
+      "Distance": {
+        "Distance": "5\u00BDf",
+        "DistanceInFurlongs": 5.5,
+        "DistanceInMeters": 1105,
+        "DistanceInYards": 1210
+      },
+      "Classification": {
+        "RaceType": "Other",
+        "Class": "Class 6",
+        "RatingBand": "0-60",
+        "AgeBand": "4yo\u002B"
+      },
+      "Going": "Good",
+      "Surface": "Turf",
+      "NumberOfRunners": 9
+    },
+    "Runners": [
+      {
+        "Horse": {
+          "Id": 3116615,
+          "Name": "Amasova"
+        },
+        "Jockey": {
+          "Id": 83588,
+          "Name": "Kieran O\u0027Neill"
+        },
+        "Trainer": {
+          "Id": 38170,
+          "Name": "Alice Haynes"
+        },
+        "Attributes": {
+          "RaceCardNumber": 6,
+          "StallNumber": 3,
+          "Age": 4,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 4,
+            "TotalPounds": 148
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "13/2",
+            "DecimalOdds": 7.5
+          },
+          "OfficialRating": 55,
+          "RacingPostRating": 64,
+          "TopSpeedRating": 34
+        },
+        "Results": {
+          "FinishingPosition": 1,
+          "RaceTime": "00:01:10.9800000",
+          "RaceTimeInSeconds": 70.98
+        }
+      },
+      {
+        "Horse": {
+          "Id": 2177953,
+          "Name": "Clashaniska"
+        },
+        "Jockey": {
+          "Id": 92695,
+          "Name": "Hollie Doyle"
+        },
+        "Trainer": {
+          "Id": 6845,
+          "Name": "Adrian Wintle"
+        },
+        "Attributes": {
+          "RaceCardNumber": 8,
+          "StallNumber": 5,
+          "Age": 6,
+          "Weight": {
+            "Stones": 9,
+            "TotalPounds": 144
+          },
+          "HeadGear": "p"
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "6/4F",
+            "DecimalOdds": 2.5
+          },
+          "OfficialRating": 51,
+          "RacingPostRating": 59,
+          "TopSpeedRating": 29
+        },
+        "Results": {
+          "FinishingPosition": 2,
+          "BeatenDistance": 0.3,
+          "OverallBeatenDistance": 0.3,
+          "RaceTime": "00:01:11.0400000",
+          "RaceTimeInSeconds": 71.04
+        }
+      },
+      {
+        "Horse": {
+          "Id": 3552544,
+          "Name": "Lady Mander"
+        },
+        "Jockey": {
+          "Id": 84857,
+          "Name": "Luke Morris"
+        },
+        "Trainer": {
+          "Id": 28762,
+          "Name": "Steph Hollinshead"
+        },
+        "Attributes": {
+          "RaceCardNumber": 9,
+          "StallNumber": 2,
+          "Age": 4,
+          "Weight": {
+            "Stones": 8,
+            "Pounds": 9,
+            "TotalPounds": 137
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "20/1",
+            "DecimalOdds": 21
+          },
+          "OfficialRating": 46,
+          "RacingPostRating": 53,
+          "TopSpeedRating": 23
+        },
+        "Results": {
+          "FinishingPosition": 3,
+          "BeatenDistance": 0.3,
+          "OverallBeatenDistance": 0.5,
+          "RaceTime": "00:01:11.0800000",
+          "RaceTimeInSeconds": 71.08
+        }
+      },
+      {
+        "Horse": {
+          "Id": 3164267,
+          "Name": "Symbol Of Hope"
+        },
+        "Jockey": {
+          "Id": 86570,
+          "Name": "Trevor Whelan"
+        },
+        "Trainer": {
+          "Id": 25205,
+          "Name": "Grace Harris"
+        },
+        "Attributes": {
+          "RaceCardNumber": 1,
+          "StallNumber": 1,
+          "Age": 4,
+          "Weight": {
+            "Stones": 10,
+            "Pounds": 2,
+            "TotalPounds": 162
+          },
+          "HeadGear": "p"
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "13/2",
+            "DecimalOdds": 7.5
+          },
+          "OfficialRating": 67,
+          "RacingPostRating": 72,
+          "TopSpeedRating": 42
+        },
+        "Results": {
+          "FinishingPosition": 4,
+          "BeatenDistance": 0.5,
+          "OverallBeatenDistance": 1,
+          "RaceTime": "00:01:11.1800000",
+          "RaceTimeInSeconds": 71.18
+        }
+      },
+      {
+        "Horse": {
+          "Id": 3208569,
+          "Name": "Million Reasons"
+        },
+        "Jockey": {
+          "Id": 87589,
+          "Name": "Gina Mangan"
+        },
+        "Trainer": {
+          "Id": 3846,
+          "Name": "David Evans"
+        },
+        "Attributes": {
+          "RaceCardNumber": 4,
+          "StallNumber": 7,
+          "Age": 4,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 3,
+            "TotalPounds": 147
+          },
+          "HeadGear": "v"
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "8/1",
+            "DecimalOdds": 9
+          },
+          "OfficialRating": 59,
+          "RacingPostRating": 63,
+          "TopSpeedRating": 32
+        },
+        "Results": {
+          "FinishingPosition": 5,
+          "BeatenDistance": 0.5,
+          "OverallBeatenDistance": 1.5,
+          "RaceTime": "00:01:11.2800000",
+          "RaceTimeInSeconds": 71.28
+        }
+      },
+      {
+        "Horse": {
+          "Id": 2008470,
+          "Name": "More Than Likely"
+        },
+        "Jockey": {
+          "Id": 99724,
+          "Name": "Tyler Heard"
+        },
+        "Trainer": {
+          "Id": 158,
+          "Name": "Nikki Evans"
+        },
+        "Attributes": {
+          "RaceCardNumber": 7,
+          "StallNumber": 6,
+          "Age": 6,
+          "Weight": {
+            "Stones": 8,
+            "Pounds": 12,
+            "TotalPounds": 140
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "33/1",
+            "DecimalOdds": 34
+          },
+          "OfficialRating": 54,
+          "RacingPostRating": 51,
+          "TopSpeedRating": 19
+        },
+        "Results": {
+          "FinishingPosition": 6,
+          "BeatenDistance": 2,
+          "OverallBeatenDistance": 3.5,
+          "RaceTime": "00:01:11.6800000",
+          "RaceTimeInSeconds": 71.68
+        }
+      },
+      {
+        "Horse": {
+          "Id": 2036940,
+          "Name": "Street Parade"
+        },
+        "Jockey": {
+          "Id": 84882,
+          "Name": "William Carson"
+        },
+        "Trainer": {
+          "Id": 16406,
+          "Name": "Michael Attwater"
+        },
+        "Attributes": {
+          "RaceCardNumber": 3,
+          "StallNumber": 9,
+          "Age": 6,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 11,
+            "TotalPounds": 155
+          },
+          "HeadGear": "p"
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "15/2",
+            "DecimalOdds": 8.5
+          },
+          "OfficialRating": 62,
+          "RacingPostRating": 58,
+          "TopSpeedRating": 26
+        },
+        "Results": {
+          "FinishingPosition": 7,
+          "BeatenDistance": 0.3,
+          "OverallBeatenDistance": 4,
+          "RaceTime": "00:01:11.7800000",
+          "RaceTimeInSeconds": 71.78
+        }
+      },
+      {
+        "Horse": {
+          "Id": 863367,
+          "Name": "Equally Fast"
+        },
+        "Jockey": {
+          "Id": 86013,
+          "Name": "David Probert"
+        },
+        "Trainer": {
+          "Id": 14931,
+          "Name": "Ronald Harris"
+        },
+        "Attributes": {
+          "RaceCardNumber": 2,
+          "StallNumber": 8,
+          "Age": 10,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 11,
+            "TotalPounds": 155
+          },
+          "HeadGear": "h"
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "9/1",
+            "DecimalOdds": 10
+          },
+          "OfficialRating": 62,
+          "RacingPostRating": 53,
+          "TopSpeedRating": 20
+        },
+        "Results": {
+          "FinishingPosition": 8,
+          "BeatenDistance": 1.5,
+          "OverallBeatenDistance": 5.5,
+          "RaceTime": "00:01:12.0800000",
+          "RaceTimeInSeconds": 72.08
+        }
+      },
+      {
+        "Horse": {
+          "Id": 2821416,
+          "Name": "Hooray Henry"
+        },
+        "Jockey": {
+          "Id": 13317,
+          "Name": "Dane O\u0027Neill"
+        },
+        "Trainer": {
+          "Id": 336,
+          "Name": "Henry Candy"
+        },
+        "Attributes": {
+          "RaceCardNumber": 5,
+          "StallNumber": 4,
+          "Age": 5,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 4,
+            "TotalPounds": 148
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "12/1",
+            "DecimalOdds": 13
+          },
+          "OfficialRating": 55,
+          "RacingPostRating": 35
+        },
+        "Results": {
+          "FinishingPosition": 9,
+          "BeatenDistance": 3.25,
+          "OverallBeatenDistance": 8.75,
+          "RaceTime": "00:01:12.7300000",
+          "RaceTimeInSeconds": 72.73
+        }
+      }
+    ]
+  }
+]
