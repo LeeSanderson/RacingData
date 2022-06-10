@@ -110,9 +110,28 @@ namespace RacePredictor.Core.RacingPost
         private IEnumerable<RaceRunnerStats> GetRaceResultRunnerStats()
         {
             var odds = GetRaceOdds();
-            var officialRatings = ToRatings(_find.TableCell().WithDataEnding("OR").GetTexts());
-            var topSpeedRatings = ToRatings(_find.TableCell().WithDataEnding("TS").GetTexts());
-            var racingPostRatings = ToRatings(_find.TableCell().WithDataEnding("RPR").GetTexts());
+            var officialRatings = ToRatings(_find.Optional().TableCell().WithDataEnding("OR").GetTexts());
+            if (officialRatings.Length == 0)
+            {
+                // Check for Arabian "ARO" rating if no official rating
+                officialRatings = ToRatings(_find.Optional().TableCell().WithDataEnding("ARO").GetTexts());
+                if (officialRatings.Length == 0)
+                {
+                    throw new Exception("Unable to find official rating for race");
+                }
+            }
+
+            var topSpeedRatings = ToRatings(_find.Optional().TableCell().WithDataEnding("TS").GetTexts());
+            if (topSpeedRatings.Length == 0)
+            {
+                topSpeedRatings = Enumerable.Repeat((int?) null, officialRatings.Length).ToArray();
+            }
+
+            var racingPostRatings = ToRatings(_find.Optional().TableCell().WithDataEnding("RPR").GetTexts());
+            if (racingPostRatings.Length == 0)
+            {
+                racingPostRatings = Enumerable.Repeat((int?)null, officialRatings.Length).ToArray();
+            }
 
             for (var i = 0; i < odds.Length; i++)
             {

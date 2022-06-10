@@ -188,6 +188,15 @@ public class RacingResultParserShould
         horse.Results.ResultStatus.Should().Be(ResultStatus.Refused);
     }
 
+    [Fact]
+    public async Task ParseExampleWindsorRaceWithArabianRatings()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_windsor_20220516_1435_with_arabian_ratings.html");
+        var ratings = actualRaceParseResult.Runners.Select(r => r.Statistics.OfficialRating);
+
+        ratings.Should().BeEquivalentTo(new[] { 72, 67, 49, 69, 72, 63 });
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);

@@ -57,7 +57,7 @@ public class RaceCardParser : RaceParser
             _find.Span().WithSelector("RC-courseHeader__date").GetDirectText(),
             _find.Span().WithSelector("RC-courseHeader__time").GetText());
 
-    private RaceDistance GetDistance() => new(_find.Span().WithSelector("RC-header__raceDistance").GetText().TrimParens());
+    private RaceDistance GetDistance() => new(_find.Element("strong").WithSelector("RC-header__raceDistanceRound").GetText().TrimParens());
 
     private string GetGoing() =>
         @"Going:\s*(.+)"

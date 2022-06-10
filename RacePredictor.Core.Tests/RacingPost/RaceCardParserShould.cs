@@ -10,7 +10,7 @@ public class RaceCardParserShould
             new RaceEntity(812494, "Sky Sports Racing Sky 415 Handicap"),
             new RaceAttributes(
                 new DateTime(2022, 6, 9, 13, 50, 0), 
-                new RaceDistance("6f3y"), 
+                new RaceDistance("6f"), 
                 new RaceClassification(RaceType.Other, "Class 6", null, "0-55", "3yo", RaceSexRestriction.None),
                 "Good To Soft",
                 8),
@@ -75,21 +75,14 @@ public class RaceCardParserShould
     [Fact]
     public async Task ParseExampleYarmouthRaceCardCorrectly()
     {
-        var raceCardHtmlPage = ResourceLoader.ReadResource("racecard_yarmourth_20220609_1350.html");
-        var parser = new RaceCardParser();
-
-        var actualRaceParseResult = await parser.Parse(raceCardHtmlPage);
-
+        var actualRaceParseResult = await GetRaceCard("racecard_yarmourth_20220609_1350.html");
         actualRaceParseResult.Should().BeEquivalentTo(ExpectedYarmouthRaceCardParseResult);
     }
 
     [Fact]
     public async Task ParseExampleNottinghamRaceCardAndCorrectlyExtractHeadgear()
     {
-        var raceCardHtmlPage = ResourceLoader.ReadResource("racecard_nottingham_20220609_1600_headgear.html");
-        var parser = new RaceCardParser();
-
-        var actualRaceParseResult = await parser.Parse(raceCardHtmlPage);
+        var actualRaceParseResult = await GetRaceCard("racecard_nottingham_20220609_1600_headgear.html");
         var actualHeadgear = actualRaceParseResult.Runners.Select(r => r.Attributes.HeadGear);
 
         actualHeadgear.Should().BeEquivalentTo(new[] { null, null, "v", null, null, null, "p", null, "v", null, null });
@@ -98,11 +91,24 @@ public class RaceCardParserShould
     [Fact]
     public async Task ParseExampleUttoxeterRaceCardWithExpectedHurdles()
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource("racecard_uttoxeter_20220606_1905_hurdles.html");
-        var parser = new RaceCardParser();
-
-        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
-
+        var actualRaceParseResult = await GetRaceCard("racecard_uttoxeter_20220606_1905_hurdles.html");
         actualRaceParseResult.Attributes.Classification.RaceType.Should().Be(RaceType.Hurdle);
+    }
+
+    [Fact]
+    public async Task ParseExampleWindsorRaceCardWithArabRatings()
+    {
+        var actualRaceParseResult = await GetRaceCard("racecard_windsor_20220613_1640_arab.html");
+        var ratings = actualRaceParseResult.Runners.Select(r => r.Statistics.OfficialRating);
+
+        ratings.Should().BeEquivalentTo(new int?[] { 70, null, 69, null, 79, null, null, null });
+
+    }
+
+    private async Task<RaceCard> GetRaceCard(string resourceFileName)
+    {
+        var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
+        var parser = new RaceCardParser();
+        return await parser.Parse(raceResultHtmlPage);
     }
 }

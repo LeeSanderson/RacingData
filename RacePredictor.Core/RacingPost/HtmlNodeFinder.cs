@@ -51,6 +51,12 @@ public class HtmlOptionalNodeFinder : HtmlNodeFinder<HtmlOptionalNodeFinder>
     public string? GetAttribute(string attributeName, string? defaultValue = null) => GetNode()?.GetAttributeValue(attributeName, defaultValue) ?? defaultValue;
 
     public string? GetText() => GetNode()?.InnerText?.TrimAllWhiteSpace().NullIfEmpty();
+
+    public IEnumerable<string> GetTexts()
+    {
+        var nodes = GetNodes();
+        return nodes != null ? nodes.Select(s => s.InnerText.TrimAllWhiteSpace()) : Array.Empty<string>();
+    }
 }
 
 public class HtmlNodeFinder<THtmlNodeFinder>
