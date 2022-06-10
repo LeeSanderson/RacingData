@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using RacePredictor.Core.RacingPost;
+﻿using RacePredictor.Core.RacingPost;
 
 namespace RacePredictor.Core.Tests.RacingPost;
 
@@ -133,4 +132,15 @@ public class RacingResultParserShould
         silverSonic.Results.ResultStatus.Should().Be(ResultStatus.UnseatedRider);
     }
 
+    [Fact]
+    public async Task ParseExampleWissenbourgRaceWithExpectedSlippedUpRunner()
+    {
+        var raceResultHtmlPage = ResourceLoader.ReadResource("results_wissembourg_20220501_1430_slipped_up.html");
+        var parser = new RacingResultParser();
+
+        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
+        var silverSonic = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 6);
+
+        silverSonic.Results.ResultStatus.Should().Be(ResultStatus.SlippedUp);
+    }
 }
