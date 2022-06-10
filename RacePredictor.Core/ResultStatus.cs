@@ -9,7 +9,8 @@ public enum ResultStatus
     SlippedUp,
     RefusedToRace,
     PulledUp,
-    BroughtDown
+    BroughtDown,
+    Disqualified
 }
 
 public static class ResultStatusExtensions 
@@ -30,6 +31,7 @@ public static class ResultStatusExtensions
             "RR" => ResultStatus.RefusedToRace,
             "PU" => ResultStatus.PulledUp,
             "BD" => ResultStatus.BroughtDown,
+            "DSQ" => ResultStatus.Disqualified,
             _ => throw new ArgumentOutOfRangeException(nameof(s), $"Unexpected result status '{s}'")
         };
     }
