@@ -56,10 +56,7 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleCarlisleRaceResultsCorrectly()
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource("results_carlisle_20220516_1320.html");
-        var parser = new RacingResultParser();
-
-        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
+        var actualRaceParseResult = await GetRaceResult("results_carlisle_20220516_1320.html");
 
         actualRaceParseResult.Should().BeEquivalentTo(ExpectedCarlisleRaceParseResult);
         actualRaceParseResult.Attributes.Surface.Should().Be(RaceSurface.Turf);
@@ -77,10 +74,7 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleBrightonRaceWithExpectedHeadgear()
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource("results_brighton_20220607_1300_headgear.html");
-        var parser = new RacingResultParser();
-
-        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
+        var actualRaceParseResult = await GetRaceResult("results_brighton_20220607_1300_headgear.html");
         var actualHeadgear = actualRaceParseResult.Runners.Select(r => r.Attributes.HeadGear);
 
         actualHeadgear.Should().BeEquivalentTo(new[] { "b", "b", "etb", "p", null, null, "v1", null, "v" });
@@ -89,11 +83,7 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleSouthwellRaceWithExpectedHurdles()
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource("results_southwell_20220606_1410_hurdles.html");
-        var parser = new RacingResultParser();
-
-        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
-
+        var actualRaceParseResult = await GetRaceResult("results_southwell_20220606_1410_hurdles.html");
         actualRaceParseResult.Attributes.Classification.RaceType.Should().Be(RaceType.Hurdle);
     }
 
@@ -111,10 +101,7 @@ public class RacingResultParserShould
                 new RaceResultRunnerResults(ResultStatus.Fell, 0, 0, 0, new TimeSpan(0, 0, 3, 57, 800)))
         };
 
-        var raceResultHtmlPage = ResourceLoader.ReadResource("results_southwell_20220606_1410_hurdles.html");
-        var parser = new RacingResultParser();
-
-        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
+        var actualRaceParseResult = await GetRaceResult("results_southwell_20220606_1410_hurdles.html");
         var actualFallers = actualRaceParseResult.Runners.Where(r => r.Results.ResultStatus == ResultStatus.Fell).ToArray();
 
         actualFallers.Should().BeEquivalentTo(expectedFallers);
@@ -123,24 +110,35 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleHanshinRaceWithExpectedUnseatedRider()
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource("results_hanshin_20220501_1940_unseated_rider.html");
-        var parser = new RacingResultParser();
+        var actualRaceParseResult = await GetRaceResult("results_hanshin_20220501_1940_unseated_rider.html");
+        var horse = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 17);
 
-        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
-        var silverSonic = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 17);
-
-        silverSonic.Results.ResultStatus.Should().Be(ResultStatus.UnseatedRider);
+        horse.Results.ResultStatus.Should().Be(ResultStatus.UnseatedRider);
     }
 
     [Fact]
     public async Task ParseExampleWissenbourgRaceWithExpectedSlippedUpRunner()
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource("results_wissembourg_20220501_1430_slipped_up.html");
+        var actualRaceParseResult = await GetRaceResult("results_wissembourg_20220501_1430_slipped_up.html");
+        var horse = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 6);
+
+        horse.Results.ResultStatus.Should().Be(ResultStatus.SlippedUp);
+    }
+
+    [Fact]
+    public async Task ParseExampleBathRaceWithExpectedRefusedToRace()
+    {
+        var actualRaceParseResult =  await GetRaceResult("results_bath_20220501_1616_refused_to_race.html");
+        var horse = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 8);
+
+        horse.Results.ResultStatus.Should().Be(ResultStatus.RefusedToRace);
+    }
+
+    private static async Task<RaceResult> GetRaceResult(string resourceFileName)
+    {
+        var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
         var parser = new RacingResultParser();
 
-        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
-        var silverSonic = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 6);
-
-        silverSonic.Results.ResultStatus.Should().Be(ResultStatus.SlippedUp);
+        return await parser.Parse(raceResultHtmlPage);
     }
 }
