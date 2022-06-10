@@ -11,7 +11,8 @@ public enum ResultStatus
     PulledUp,
     BroughtDown,
     Disqualified,
-    RanOut
+    RanOut,
+    Refused
 }
 
 public static class ResultStatusExtensions 
@@ -34,6 +35,7 @@ public static class ResultStatusExtensions
             "BD" => ResultStatus.BroughtDown,
             "DSQ" => ResultStatus.Disqualified,
             "RO" => ResultStatus.RanOut,
+            "REF" => ResultStatus.Refused,
             _ => throw new ArgumentOutOfRangeException(nameof(s), $"Unexpected result status '{s}'")
         };
     }

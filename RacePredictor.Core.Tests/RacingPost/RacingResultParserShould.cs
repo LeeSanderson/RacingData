@@ -179,6 +179,15 @@ public class RacingResultParserShould
         horse.Results.ResultStatus.Should().Be(ResultStatus.RanOut);
     }
 
+    [Fact]
+    public async Task ParseExampleStratfordRaceWithRefusedRunner()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_stratford_20220518_1452_refused.html");
+        var horse = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 11);
+
+        horse.Results.ResultStatus.Should().Be(ResultStatus.Refused);
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
