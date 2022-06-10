@@ -73,7 +73,7 @@ public class RaceCardParserShould
             });
 
     [Fact]
-    public async Task ParseExampleYarmouthRaceResultsCorrectly()
+    public async Task ParseExampleYarmouthRaceCardCorrectly()
     {
         var raceCardHtmlPage = ResourceLoader.ReadResource("racecard_yarmourth_20220609_1350.html");
         var parser = new RaceCardParser();
@@ -81,5 +81,28 @@ public class RaceCardParserShould
         var actualRaceParseResult = await parser.Parse(raceCardHtmlPage);
 
         actualRaceParseResult.Should().BeEquivalentTo(ExpectedYarmouthRaceCardParseResult);
+    }
+
+    [Fact]
+    public async Task ParseExampleNottinghamRaceCardAndCorrectlyExtractHeadgear()
+    {
+        var raceCardHtmlPage = ResourceLoader.ReadResource("racecard_nottingham_20220609_1600_headgear.html");
+        var parser = new RaceCardParser();
+
+        var actualRaceParseResult = await parser.Parse(raceCardHtmlPage);
+        var actualHeadgear = actualRaceParseResult.Runners.Select(r => r.Attributes.HeadGear);
+
+        actualHeadgear.Should().BeEquivalentTo(new[] { null, null, "v", null, null, null, "p", null, "v", null, null });
+    }
+
+    [Fact]
+    public async Task ParseExampleUttoxeterRaceCardWithExpectedHurdles()
+    {
+        var raceResultHtmlPage = ResourceLoader.ReadResource("racecard_uttoxeter_20220606_1905_hurdles.html");
+        var parser = new RaceCardParser();
+
+        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
+
+        actualRaceParseResult.Attributes.Classification.RaceType.Should().Be(RaceType.Hurdle);
     }
 }

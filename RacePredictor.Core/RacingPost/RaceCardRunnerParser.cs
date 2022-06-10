@@ -5,13 +5,11 @@ namespace RacePredictor.Core.RacingPost;
 
 internal class RaceCardRunnerParser : RunnerParser
 {
-    private readonly HtmlDocument _document;
     private readonly HtmlNodeFinder _find;
     private bool[] _nonRunners = Array.Empty<bool>();
 
     public RaceCardRunnerParser(HtmlDocument document)
     {
-        _document = document;
         _find = new HtmlNodeFinder(document.DocumentNode);
     }
 

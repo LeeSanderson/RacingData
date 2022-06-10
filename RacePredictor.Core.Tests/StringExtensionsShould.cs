@@ -10,4 +10,24 @@ public class StringExtensionsShould
     {
         value.AsTimeSpan().Should().Be(new TimeSpan(0, 0, expectedMinutes, expectedSeconds, expectedMilliseconds));
     }
+
+    [Theory]
+    [InlineData("2022-02-07", 2022, 02, 07, 2022, 02, 07)]
+    [InlineData("2022-02-07-2022-04-29", 2022, 02, 07, 2022, 04, 29)]
+    public void ParseValidDateRange(string value, int startYear, int startMonth, int startDay, int endYear, int endMonth, int endDay)
+    {
+        var expectedStartDate = new DateOnly(startYear, startMonth, startDay);
+        var expectedEndDate = new DateOnly(endYear, endMonth, endDay);
+
+        var (start, end) = value.ToRange();
+
+        start.Should().Be(expectedStartDate);
+        end.Should().Be(expectedEndDate);
+    }
+
+    [Fact]
+    public void ThrowErrorForInvalidDateRange()
+    {
+        Assert.Throws<Exception>(() => "not-a-range".ToRange());
+    }
 }

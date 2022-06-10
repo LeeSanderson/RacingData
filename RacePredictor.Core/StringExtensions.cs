@@ -86,5 +86,28 @@ public static class StringExtensions
 
     public static string? NullIfEmpty(this string? s) => string.IsNullOrEmpty(s) ? null : s;
 
-    public static bool ContainsAnyIgnoreCase(this string s, params string[] values) =>  values.Any(v => s.Contains(v, StringComparison.CurrentCultureIgnoreCase));
+    public static bool ContainsAnyIgnoreCase(this string s, params string[] values) =>  
+        values.Any(v => s.Contains(v, StringComparison.CurrentCultureIgnoreCase));
+
+    public static (DateOnly start, DateOnly end) ToRange(this string range)
+    {
+        if (@"(\d{4})-(\d{2})-(\d{2})-(\d{4})-(\d{2})-(\d{2})".TryMatch(range, out var rangeMatch))
+        {
+            return (CreateStart(rangeMatch!.Groups), CreateEnd(rangeMatch!.Groups));
+        }
+
+        if (@"(\d{4})-(\d{2})-(\d{2})".TryMatch(range, out rangeMatch))
+        {
+            var start = CreateStart(rangeMatch!.Groups);
+            return (start, start);
+        }
+
+        throw new Exception($"Unable to parse date range from string '{range}'");
+
+        DateOnly CreateStart(GroupCollection groups) =>
+            new(groups[1].Value.AsInt(), groups[2].Value.AsInt(), groups[3].Value.AsInt());
+
+        DateOnly CreateEnd(GroupCollection groups) =>
+            new(groups[4].Value.AsInt(), groups[5].Value.AsInt(), groups[6].Value.AsInt());
+    }
 }
