@@ -13,25 +13,20 @@ public class RacingDataDownloader
 
     public async IAsyncEnumerable<string> GetResultUrls(DateOnly start, DateOnly end)
     {
-        var client = _httpClientFactory.CreateClient();
         var currentDate = start;
         while (currentDate <= end)
         {
             var resultsUrl = $"https://www.racingpost.com/results/{currentDate:yyyy-MM-dd}";
-            string responseBody;
+            HtmlDocument htmlDocument;
             try
             {
-                var response = await client.GetAsync(resultsUrl);
-                response.EnsureSuccessStatusCode();
-                responseBody = await response.Content.ReadAsStringAsync();
+                htmlDocument = await GetHtmlDocumentFrom(resultsUrl);
             }
             catch (Exception e)
             {
                 throw new Exception($"Failed to load URL {resultsUrl}: {e.Message}", e);
             }
 
-            var htmlDocument = new HtmlDocument();
-            htmlDocument.LoadHtml(responseBody);
             var finder = new HtmlNodeFinder(htmlDocument.DocumentNode);
             var urls =
                 finder.Anchor()
@@ -47,5 +42,28 @@ public class RacingDataDownloader
 
             currentDate = currentDate.AddDays(1);
         }
+    }
+
+    public async Task<RaceResult> DownloadResults(string url)
+    {
+        var htmlResponse = await GetHtmlResponseFrom(url);
+        var parser = new RacingResultParser();
+        return await parser.Parse(htmlResponse);
+    }
+
+    private async Task<string> GetHtmlResponseFrom(string url)
+    {
+        var client = _httpClientFactory.CreateClient();
+        var response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+
+    private async Task<HtmlDocument> GetHtmlDocumentFrom(string url)
+    {
+        var responseBody = await GetHtmlResponseFrom(url);
+        var htmlDocument = new HtmlDocument();
+        htmlDocument.LoadHtml(responseBody);
+        return htmlDocument;
     }
 }

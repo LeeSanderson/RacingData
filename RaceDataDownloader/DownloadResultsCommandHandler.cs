@@ -29,7 +29,19 @@ public class DownloadResultsCommandHandler
         {
             var (start, end, outputFolder) = ValidateOptions(options);
             var downloader = new RacingDataDownloader(_httpClientFactory);
-            throw new NotImplementedException();
+            var raceResults = new List<RaceResult>();
+            await foreach (var url in downloader.GetResultUrls(start, end))
+            {
+                try
+                {
+                    var raceResult = await downloader.DownloadResults(url);
+                    raceResults.Add(raceResult);
+                }
+                catch (VoidRaceException)
+                {
+                    _logger.LogInformation("Skipping void race {URL}", url);
+                }
+            }
         }
         catch (ValidationException ve)
         {
