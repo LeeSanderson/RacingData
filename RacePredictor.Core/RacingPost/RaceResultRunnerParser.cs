@@ -123,25 +123,23 @@ namespace RacePredictor.Core.RacingPost
         private IEnumerable<RaceResultRunnerResults> GetRaceResultRunnerResults()
         {
             var positionTexts = GetPositions();
-            var positions = positionTexts.Select(s => RaceIsVoidOrRunnerHasFallen(s) ? 0 : s.AsInt()).ToArray();
-            var fallers = positionTexts.Select(RunnerHasFallen).ToArray();
+            var positions = positionTexts.Select(s => CompletedRace(s) ? s.AsInt() : 0).ToArray();
+            var resultStatus = positionTexts.Select(s => s.ToResultStatus()).ToArray();
             var (beatenDistances, overallBeatenDistances) = GetBeatenDistances();
             var raceTimes = CalculateRaceTimes(overallBeatenDistances);
 
             for (var i = 0; i < positions.Length; i++)
             {
                 yield return new RaceResultRunnerResults(
+                    resultStatus[i],
                     positions[i],
-                    fallers[i],
                     beatenDistances[i], 
                     overallBeatenDistances[i], 
                     raceTimes[i]);
             }
         }
 
-        private static bool RaceIsVoidOrRunnerHasFallen(string racePosition) => racePosition.ContainsAnyIgnoreCase("VOI", "F");
-
-        private static bool RunnerHasFallen(string racePosition) => string.Equals(racePosition, "F", StringComparison.OrdinalIgnoreCase);
+        private static bool CompletedRace(string racePosition) => racePosition.ToResultStatus() == ResultStatus.CompletedRace;
 
         private string[] GetPositions() =>
             _find.Span()

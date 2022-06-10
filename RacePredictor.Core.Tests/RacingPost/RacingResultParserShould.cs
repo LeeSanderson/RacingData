@@ -23,35 +23,35 @@ public class RacingResultParserShould
                             new RaceEntity(39124, "Charlie & Mark Johnston"),
                             new RaceRunnerAttributes(6, 5, 2, new RaceWeight(9, 2), null),
                             new RaceRunnerStats(new RaceOdds("3/1"), null, 79, 56),
-                            new RaceResultRunnerResults(1, false, 0, 0, new TimeSpan(0, 0, 1, 4, 650))),
+                            new RaceResultRunnerResults(ResultStatus.CompletedRace, 1, 0, 0, new TimeSpan(0, 0, 1, 4, 650))),
                         new RaceResultRunner(
                             new RaceEntity(4303314, "Monte Forte"),
                             new RaceEntity(91867, "Kevin Stott"),
                             new RaceEntity(22525, "Kevin Ryan"),
                             new RaceRunnerAttributes(3, 6, 2, new RaceWeight(9, 7), null),
                             new RaceRunnerStats(new RaceOdds("7/5F"), null, 74, 50),
-                            new RaceResultRunnerResults(2, false, 2.75, 2.75, new TimeSpan(0, 0, 1, 5, 200))),
+                            new RaceResultRunnerResults(ResultStatus.CompletedRace, 2,  2.75, 2.75, new TimeSpan(0, 0, 1, 5, 200))),
                         new RaceResultRunner(
                             new RaceEntity(4270008, "Al Hitmi"),
                             new RaceEntity(90243, "Jason Hart"),
                             new RaceEntity(5019, "K R Burke"),
                             new RaceRunnerAttributes(1, 1, 2, new RaceWeight(9, 7), null),
                             new RaceRunnerStats(new RaceOdds("5/2"), null, 62, 36),
-                            new RaceResultRunnerResults(3, false, 3.5, 6.25, new TimeSpan(0, 0, 1, 5, 900))),
+                            new RaceResultRunnerResults(ResultStatus.CompletedRace, 3, 3.5, 6.25, new TimeSpan(0, 0, 1, 5, 900))),
                         new RaceResultRunner(
                             new RaceEntity(4274167, "Carmentis"),
                             new RaceEntity(81166, "Andrew Mullen"),
                             new RaceEntity(22367, "Ben Haslam"),
                             new RaceRunnerAttributes(4, 4, 2, new RaceWeight(9, 2), null),
                             new RaceRunnerStats(new RaceOdds("10/1"), null, 41, 14),
-                            new RaceResultRunnerResults(4, false, 4.25, 10.5, new TimeSpan(0, 0, 1, 6, 750))),
+                            new RaceResultRunnerResults(ResultStatus.CompletedRace, 4, 4.25, 10.5, new TimeSpan(0, 0, 1, 6, 750))),
                         new RaceResultRunner(
                             new RaceEntity(4315426, "Dixiedoodledragon"),
                             new RaceEntity(87290, "Sam James"),
                             new RaceEntity(24548, "Keith Dalgleish"),
                             new RaceRunnerAttributes(5, 3, 2, new RaceWeight(9, 2), null),
                             new RaceRunnerStats(new RaceOdds("16/1"), null, 37, 9),
-                            new RaceResultRunnerResults(5, false, 1.25, 11.75, new TimeSpan(0, 0, 1, 7, 0))),
+                            new RaceResultRunnerResults(ResultStatus.CompletedRace, 5, 1.25, 11.75, new TimeSpan(0, 0, 1, 7, 0))),
             });
 
     [Fact]
@@ -109,15 +109,28 @@ public class RacingResultParserShould
                 new RaceEntity(39501, "Harriet Dickin"),
                 new RaceRunnerAttributes(8, null, 6, new RaceWeight(10, 11), null),
                 new RaceRunnerStats(new RaceOdds("250/1"), null, null, null),
-                new RaceResultRunnerResults(0, true, 0, 0, new TimeSpan(0, 0, 3, 57, 800)))
+                new RaceResultRunnerResults(ResultStatus.Fell, 0, 0, 0, new TimeSpan(0, 0, 3, 57, 800)))
         };
 
         var raceResultHtmlPage = ResourceLoader.ReadResource("results_southwell_20220606_1410_hurdles.html");
         var parser = new RacingResultParser();
 
         var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
-        var actualFallers = actualRaceParseResult.Runners.Where(r => r.Results.Fell).ToArray();
+        var actualFallers = actualRaceParseResult.Runners.Where(r => r.Results.ResultStatus == ResultStatus.Fell).ToArray();
 
         actualFallers.Should().BeEquivalentTo(expectedFallers);
     }
+
+    [Fact]
+    public async Task ParseExampleHanshinRaceWithExpectedUnseatedRider()
+    {
+        var raceResultHtmlPage = ResourceLoader.ReadResource("results_hanshin_20220501_1940_unseated_rider.html");
+        var parser = new RacingResultParser();
+
+        var actualRaceParseResult = await parser.Parse(raceResultHtmlPage);
+        var silverSonic = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 17);
+
+        silverSonic.Results.ResultStatus.Should().Be(ResultStatus.UnseatedRider);
+    }
+
 }

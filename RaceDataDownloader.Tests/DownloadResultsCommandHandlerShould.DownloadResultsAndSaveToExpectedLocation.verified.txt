@@ -20,7 +20,8 @@
         "RaceType": "Other",
         "Class": "Class 6",
         "RatingBand": "0-60",
-        "AgeBand": "4yo\u002B"
+        "AgeBand": "4yo\u002B",
+        "SexRestriction": "None"
       },
       "Going": "Good",
       "Surface": "Turf",
@@ -61,6 +62,9 @@
         },
         "Results": {
           "FinishingPosition": 1,
+          "ResultStatus": "CompletedRace",
+          "BeatenDistance": 0,
+          "OverallBeatenDistance": 0,
           "RaceTime": "00:01:10.9800000",
           "RaceTimeInSeconds": 70.98
         }
@@ -84,6 +88,7 @@
           "Age": 6,
           "Weight": {
             "Stones": 9,
+            "Pounds": 0,
             "TotalPounds": 144
           },
           "HeadGear": "p"
@@ -99,6 +104,7 @@
         },
         "Results": {
           "FinishingPosition": 2,
+          "ResultStatus": "CompletedRace",
           "BeatenDistance": 0.3,
           "OverallBeatenDistance": 0.3,
           "RaceTime": "00:01:11.0400000",
@@ -139,6 +145,7 @@
         },
         "Results": {
           "FinishingPosition": 3,
+          "ResultStatus": "CompletedRace",
           "BeatenDistance": 0.3,
           "OverallBeatenDistance": 0.5,
           "RaceTime": "00:01:11.0800000",
@@ -180,6 +187,7 @@
         },
         "Results": {
           "FinishingPosition": 4,
+          "ResultStatus": "CompletedRace",
           "BeatenDistance": 0.5,
           "OverallBeatenDistance": 1,
           "RaceTime": "00:01:11.1800000",
@@ -221,6 +229,7 @@
         },
         "Results": {
           "FinishingPosition": 5,
+          "ResultStatus": "CompletedRace",
           "BeatenDistance": 0.5,
           "OverallBeatenDistance": 1.5,
           "RaceTime": "00:01:11.2800000",
@@ -261,6 +270,7 @@
         },
         "Results": {
           "FinishingPosition": 6,
+          "ResultStatus": "CompletedRace",
           "BeatenDistance": 2,
           "OverallBeatenDistance": 3.5,
           "RaceTime": "00:01:11.6800000",
@@ -302,6 +312,7 @@
         },
         "Results": {
           "FinishingPosition": 7,
+          "ResultStatus": "CompletedRace",
           "BeatenDistance": 0.3,
           "OverallBeatenDistance": 4,
           "RaceTime": "00:01:11.7800000",
@@ -343,6 +354,7 @@
         },
         "Results": {
           "FinishingPosition": 8,
+          "ResultStatus": "CompletedRace",
           "BeatenDistance": 1.5,
           "OverallBeatenDistance": 5.5,
           "RaceTime": "00:01:12.0800000",
@@ -382,6 +394,7 @@
         },
         "Results": {
           "FinishingPosition": 9,
+          "ResultStatus": "CompletedRace",
           "BeatenDistance": 3.25,
           "OverallBeatenDistance": 8.75,
           "RaceTime": "00:01:12.7300000",

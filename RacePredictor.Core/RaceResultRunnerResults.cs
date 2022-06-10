@@ -2,17 +2,17 @@
 
 public class RaceResultRunnerResults
 {
-    public RaceResultRunnerResults(int finishingPosition, bool fell, double beatenDistance, double overallBeatenDistance,  TimeSpan raceTime)
+    public RaceResultRunnerResults(ResultStatus resultStatus, int finishingPosition, double beatenDistance, double overallBeatenDistance,  TimeSpan raceTime)
     {
         FinishingPosition = finishingPosition;
-        Fell = fell;
+        ResultStatus = resultStatus;
         OverallBeatenDistance = overallBeatenDistance;
         BeatenDistance = beatenDistance;
         RaceTime = raceTime;
     }
 
     public int FinishingPosition { get; }
-    public bool Fell { get; }
+    public ResultStatus ResultStatus { get; }
     public double BeatenDistance { get; }
     public double OverallBeatenDistance { get; }
     public TimeSpan RaceTime { get; }

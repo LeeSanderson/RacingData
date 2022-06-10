@@ -35,6 +35,7 @@ public class DownloadResultsCommandHandler
             var raceResults = new List<RaceResult>();
             await foreach (var url in downloader.GetResultUrls(start, end))
             {
+                _logger.LogInformation("Attempting to load race results from {URL}", url);
                 try
                 {
                     var raceResult = await downloader.DownloadResults(url);
@@ -101,7 +102,7 @@ public class DownloadResultsCommandHandler
                     d.Runner.Statistics.OfficialRating,
                     d.Runner.Statistics.RacingPostRating,
                     d.Runner.Statistics.TopSpeedRating,
-                    d.Runner.Results.Fell,
+                    d.Runner.Results.ResultStatus,
                     d.Runner.Results.FinishingPosition,
                     d.Runner.Results.BeatenDistance,
                     d.Runner.Results.OverallBeatenDistance,
@@ -120,7 +121,7 @@ public class DownloadResultsCommandHandler
         var jsonString = JsonSerializer.Serialize(raceResults,
             new JsonSerializerOptions
             {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault, 
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, 
                 IgnoreReadOnlyProperties = false,
                 WriteIndented = true,
                 Converters = { new JsonStringEnumConverter() }
