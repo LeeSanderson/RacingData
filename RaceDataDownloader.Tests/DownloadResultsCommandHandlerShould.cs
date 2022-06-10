@@ -20,8 +20,11 @@ namespace RaceDataDownloader.Tests
         public async Task DownloadResultsAndSaveToExpectedLocation()
         {
             var mockFileSystem = Substitute.For<IFileSystem>();
-            string? savedResultsJson = null;
-            mockFileSystem.File.WriteAllTextAsync(@"c:\out\Results.json", Arg.Do<string>(x => savedResultsJson = x))
+            string? savedResultsAsJson = null;
+            mockFileSystem.File.WriteAllTextAsync(@"c:\out\Results.json", Arg.Do<string>(x => savedResultsAsJson = x))
+                .Returns(Task.CompletedTask);
+            string? savedResultsAsCsv = null;
+            mockFileSystem.File.WriteAllTextAsync(@"c:\out\Results.csv", Arg.Do<string>(x => savedResultsAsCsv = x))
                 .Returns(Task.CompletedTask);
             mockFileSystem.Directory.Exists(@"c:\out").Returns(true);
 
@@ -39,7 +42,8 @@ namespace RaceDataDownloader.Tests
             var result = await handler.RunAsync(new DownloadResultsOptions { OutputDirectory = @"c:\out", DateRange = "2022-05-11" });
 
             result.Should().Be(0);
-            await Verify(savedResultsJson);
+            await Verify(savedResultsAsJson);
+            await Verify(savedResultsAsCsv).UseMethodName($"{nameof(DownloadResultsAndSaveToExpectedLocation)}_CSV");
         }
     }
 }

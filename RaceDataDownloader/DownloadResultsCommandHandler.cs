@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Globalization;
 using System.IO.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using CsvHelper;
 using Microsoft.Extensions.Logging;
 using RacePredictor.Core;
 using RacePredictor.Core.RacingPost;
+using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace RaceDataDownloader;
 
@@ -45,6 +47,7 @@ public class DownloadResultsCommandHandler
             }
 
             await SaveResultsAsJson(Path.Combine(outputFolder, "Results.json"), raceResults);
+            await SaveResultsAsCsv(Path.Combine(outputFolder, "Results.csv"), raceResults);
         }
         catch (ValidationException ve)
         {
@@ -60,16 +63,59 @@ public class DownloadResultsCommandHandler
         return 0;
     }
 
+    private async Task SaveResultsAsCsv(string outputFileName, List<RaceResult> raceResults)
+    {
+        DeleteFileIfExists(outputFileName);
+
+        await using var writer = new StringWriter();
+        await using var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
+        
+        await csvWriter.WriteRecordsAsync(
+            raceResults
+                .SelectMany(r => r.Runners.Select(rnr => new { Race = r, Runner = rnr }))
+                .Select(d => new
+                {
+                    RaceId = d.Race.Race.Id,
+                    RaceName = d.Race.Race.Name,
+                    CourseId = d.Race.Course.Id,
+                    CourseName = d.Race.Course.Name,
+                    d.Race.Attributes.Classification,
+                    d.Race.Attributes.Distance.Distance,
+                    d.Race.Attributes.Distance.DistanceInFurlongs,
+                    d.Race.Attributes.Distance.DistanceInMeters,
+                    d.Race.Attributes.Distance.DistanceInYards,
+                    HorseId = d.Runner.Horse.Id,
+                    HorseName = d.Runner.Horse.Name,
+                    JockeyId = d.Runner.Jockey.Id,
+                    JockeyName = d.Runner.Jockey.Name,
+                    TrainerId = d.Runner.Trainer.Id,
+                    TrainerName = d.Runner.Trainer.Name,
+                    d.Runner.Attributes.Age,
+                    d.Runner.Attributes.HeadGear,
+                    d.Runner.Attributes.RaceCardNumber,
+                    d.Runner.Attributes.StallNumber,
+                    Weight = d.Runner.Attributes.Weight.ToString(),
+                    WeightInPounds = d.Runner.Attributes.Weight.TotalPounds,
+                    d.Runner.Statistics.Odds.FractionalOdds,
+                    d.Runner.Statistics.Odds.DecimalOdds,
+                    d.Runner.Statistics.OfficialRating,
+                    d.Runner.Statistics.RacingPostRating,
+                    d.Runner.Statistics.TopSpeedRating,
+                    d.Runner.Results.Fell,
+                    d.Runner.Results.FinishingPosition,
+                    d.Runner.Results.BeatenDistance,
+                    d.Runner.Results.OverallBeatenDistance,
+                    d.Runner.Results.RaceTime,
+                    d.Runner.Results.RaceTimeInSeconds
+                }));
+
+        var csvString = writer.ToString();
+        await _fileSystem.File.WriteAllTextAsync(outputFileName, csvString);
+    }
+
     private async Task SaveResultsAsJson(string outputFileName, List<RaceResult> raceResults)
     {
-        if (_fileSystem.File.Exists(outputFileName))
-        {
-            _fileSystem.File.Delete(outputFileName);
-            if (_fileSystem.File.Exists(outputFileName))
-            {
-                throw new ValidationException($"Unable to delete existing output file {outputFileName}");
-            }
-        }
+        DeleteFileIfExists(outputFileName);
 
         var jsonString = JsonSerializer.Serialize(raceResults,
             new JsonSerializerOptions
@@ -81,6 +127,18 @@ public class DownloadResultsCommandHandler
             });
 
         await _fileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
+    }
+
+    private void DeleteFileIfExists(string fileName)
+    {
+        if (_fileSystem.File.Exists(fileName))
+        {
+            _fileSystem.File.Delete(fileName);
+            if (_fileSystem.File.Exists(fileName))
+            {
+                throw new ValidationException($"Unable to delete existing file {fileName}");
+            }
+        }
     }
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadResultsOptions options)
