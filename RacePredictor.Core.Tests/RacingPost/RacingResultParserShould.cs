@@ -170,6 +170,15 @@ public class RacingResultParserShould
         raceCardNumbers.Should().BeEquivalentTo(new[] { 1, 2, 3, 4, 5, 6 });
     }
 
+    [Fact]
+    public async Task ParseExampleKillarneyRaceWithRanOutRunner()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_killarney_20220515_1700_ran_out.html");
+        var horse = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 11);
+
+        horse.Results.ResultStatus.Should().Be(ResultStatus.RanOut);
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);

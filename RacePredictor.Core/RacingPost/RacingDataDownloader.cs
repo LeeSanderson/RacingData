@@ -54,6 +54,7 @@ public class RacingDataDownloader
     private async Task<string> GetHtmlResponseFrom(string url)
     {
         var client = _httpClientFactory.CreateClient();
+        HttpClientHelper.ConfigureRandomHeader(client);
         var response = await client.GetAsync(url);
         response.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
