@@ -134,6 +134,15 @@ public class RacingResultParserShould
         horse.Results.ResultStatus.Should().Be(ResultStatus.RefusedToRace);
     }
 
+    [Fact]
+    public async Task ParseExampleBeverlyRaceWithExpectedPulledUpRunner()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_beverley_20220502_1701_pulled_up.html");
+        var horse = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 3);
+
+        horse.Results.ResultStatus.Should().Be(ResultStatus.PulledUp);
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);

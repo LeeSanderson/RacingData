@@ -7,7 +7,8 @@ public enum ResultStatus
     Fell,
     UnseatedRider,
     SlippedUp,
-    RefusedToRace
+    RefusedToRace,
+    PulledUp
 }
 
 public static class ResultStatusExtensions 
@@ -26,6 +27,7 @@ public static class ResultStatusExtensions
             "UR" => ResultStatus.UnseatedRider,
             "SU" => ResultStatus.SlippedUp,
             "RR" => ResultStatus.RefusedToRace,
+            "PU" => ResultStatus.PulledUp,
             _ => throw new ArgumentOutOfRangeException(nameof(s), $"Unexpected result status '{s}'")
         };
     }
