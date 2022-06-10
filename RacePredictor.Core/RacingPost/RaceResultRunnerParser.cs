@@ -53,9 +53,16 @@ namespace RacePredictor.Core.RacingPost
 
             for (var i = 0; i < raceCardNumbers.Length; i++)
             {
-                yield return new RaceRunnerAttributes(raceCardNumbers[i], stallNumbers[i], ages[i], weights[i], headGears[i]);
+                yield return new RaceRunnerAttributes(
+                    RaceCardNumberOrIndexIfNoRaceCards(raceCardNumbers, i), 
+                    stallNumbers[i], 
+                    ages[i], 
+                    weights[i], 
+                    headGears[i]);
             }
         }
+
+        private static int RaceCardNumberOrIndexIfNoRaceCards(IReadOnlyList<int?> raceCardNumbers, int index) => raceCardNumbers[index] ?? index + 1;
 
         private string?[] GetHeadgear()
         {
@@ -86,11 +93,11 @@ namespace RacePredictor.Core.RacingPost
                 .WithSelector("horse-age")
                 .GetIntegers();
 
-        private int[] GetRaceCardNumbers() => 
+        private int?[] GetRaceCardNumbers() => 
             _find.Span()
                 .WithCssClass("rp-horseTable__saddleClothNo")
                 .GetTexts()
-                .Select(s => s.TrimEnd('.').AsInt())
+                .Select(s => s == "." || string.IsNullOrEmpty(s) ? (int?) null : s.TrimEnd('.').AsInt())
                 .ToArray();
 
         private int?[] GetStallNumbers() =>

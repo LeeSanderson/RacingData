@@ -161,6 +161,15 @@ public class RacingResultParserShould
         horse.Results.ResultStatus.Should().Be(ResultStatus.Disqualified);
     }
 
+    [Fact]
+    public async Task ParseExampleLesLandesRaceWithNoRaceCardNumbersUsesOrdinalPositionsInstead()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_les_landes_20220508_1430_no_racecard_numbers.html");
+        var raceCardNumbers = actualRaceParseResult.Runners.Select(r => r.Attributes.RaceCardNumber);
+
+        raceCardNumbers.Should().BeEquivalentTo(new[] { 1, 2, 3, 4, 5, 6 });
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
