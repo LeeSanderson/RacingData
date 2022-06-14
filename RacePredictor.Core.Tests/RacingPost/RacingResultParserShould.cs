@@ -72,6 +72,15 @@ public class RacingResultParserShould
     }
 
     [Fact]
+    public async Task ParseExampleLingfieldRaceAsVoidRace()
+    {
+        var raceResultHtmlPage = ResourceLoader.ReadResource("result_lingfield_20220304_1555_void.html");
+        var parser = new RacingResultParser();
+
+        await Assert.ThrowsAsync<VoidRaceException>(() => parser.Parse(raceResultHtmlPage));
+    }
+
+    [Fact]
     public async Task ParseExampleBrightonRaceWithExpectedHeadgear()
     {
         var actualRaceParseResult = await GetRaceResult("results_brighton_20220607_1300_headgear.html");

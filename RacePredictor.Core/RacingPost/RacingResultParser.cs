@@ -27,7 +27,7 @@ public class RacingResultParser : RaceParser
 
     private int GetRunnerCountAndCheckIfRaceIsVoid()
     {
-        var positions = _find.Span().WithSelector("text-horsePosition").GetTexts().ToArray();
+        var positions = _find.Span().WithSelector("text-horsePosition").GetDirectTexts().ToArray();
         if (positions.Any(s => s == "VOI"))
             throw new VoidRaceException();
         return positions.Length;
