@@ -206,6 +206,15 @@ public class RacingResultParserShould
         horse.Results.ResultStatus.Should().Be(ResultStatus.CarriedOut);
     }
 
+    [Fact]
+    public async Task ParseExampleShaTinRaceWithLeftAtStartRunners()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_sha_tin_20220416_1045_left_at_start.html");
+        var horse = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 6);
+
+        horse.Results.ResultStatus.Should().Be(ResultStatus.LeftAtStart);
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
