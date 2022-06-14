@@ -197,6 +197,15 @@ public class RacingResultParserShould
         ratings.Should().BeEquivalentTo(new[] { 72, 67, 49, 69, 72, 63 });
     }
 
+    [Fact]
+    public async Task ParseExampleCompiegneRaceWithCarriedOutRunners()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_compiegne_20220406_1150_carriedout.html");
+        var horse = actualRaceParseResult.Runners.First(r => r.Attributes.RaceCardNumber == 3);
+
+        horse.Results.ResultStatus.Should().Be(ResultStatus.CarriedOut);
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
