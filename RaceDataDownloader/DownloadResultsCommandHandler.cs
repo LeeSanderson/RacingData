@@ -52,8 +52,10 @@ public class DownloadResultsCommandHandler
                     {
                         _logger.LogInformation("Skipping {URL} - could not find race (404)", url);
                     }
-
-                    throw;
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
 
