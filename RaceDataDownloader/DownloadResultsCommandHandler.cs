@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.IO.Abstractions;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CsvHelper;
@@ -44,6 +45,15 @@ public class DownloadResultsCommandHandler
                 catch (VoidRaceException)
                 {
                     _logger.LogInformation("Skipping void race {URL}", url);
+                }
+                catch (HttpRequestException hre)
+                {
+                    if (hre.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        _logger.LogInformation("Skipping {URL} - could not find race (404)", url);
+                    }
+
+                    throw;
                 }
             }
 
