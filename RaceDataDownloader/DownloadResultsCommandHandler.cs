@@ -97,6 +97,8 @@ public class DownloadResultsCommandHandler
                     d.Race.Attributes.Distance.DistanceInFurlongs,
                     d.Race.Attributes.Distance.DistanceInMeters,
                     d.Race.Attributes.Distance.DistanceInYards,
+                    d.Race.Attributes.Going,
+                    d.Race.Attributes.Surface,
                     HorseId = d.Runner.Horse.Id,
                     HorseName = d.Runner.Horse.Name,
                     JockeyId = d.Runner.Jockey.Id,
