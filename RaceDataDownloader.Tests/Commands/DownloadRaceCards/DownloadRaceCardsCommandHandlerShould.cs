@@ -1,7 +1,6 @@
 ﻿using System.IO.Abstractions;
 using NSubstitute;
 using RaceDataDownloader.Commands.DownloadRaceCards;
-using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Tests.Fakes;
 using RichardSzalay.MockHttp;
 using Xunit.Abstractions;
