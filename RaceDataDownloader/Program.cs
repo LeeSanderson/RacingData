@@ -22,7 +22,7 @@ var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>()
 await Parser.Default.ParseArguments<DownloadResultsOptions>(args)
     .MapResult(
         options => CreateDownloadResultsCommandHandler().RunAsync(options),
-        _ => Task.FromResult(1));
+        _ => Task.FromResult(ExitCodes.Error));
 
 DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() => 
     new(new FileSystem(), httpClientFactory, loggerFactory.CreateLogger<DownloadResultsCommandHandler>());

@@ -41,7 +41,7 @@ namespace RaceDataDownloader.Tests
             var handler = new DownloadResultsCommandHandler(mockFileSystem, httpClientFactory,logger);
             var result = await handler.RunAsync(new DownloadResultsOptions { OutputDirectory = @"c:\out", DateRange = "2022-05-11" });
 
-            result.Should().Be(0);
+            result.Should().Be(ExitCodes.Success);
             await Verify(savedResultsAsJson);
             await Verify(savedResultsAsCsv).UseMethodName($"{nameof(DownloadResultsAndSaveToExpectedLocation)}_CSV");
         }

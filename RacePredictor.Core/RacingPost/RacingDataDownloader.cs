@@ -67,4 +67,37 @@ public class RacingDataDownloader
         htmlDocument.LoadHtml(responseBody);
         return htmlDocument;
     }
+
+    public async IAsyncEnumerable<string> GetRaceCardUrls(DateOnly start, DateOnly end)
+    {
+        var currentDate = start;
+        while (currentDate <= end)
+        {
+            var resultsUrl = $"https://www.racingpost.com/racecards/{currentDate:yyyy-MM-dd}";
+            HtmlDocument htmlDocument;
+            try
+            {
+                htmlDocument = await GetHtmlDocumentFrom(resultsUrl);
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Failed to load URL {resultsUrl}: {e.Message}", e);
+            }
+
+            var finder = new HtmlNodeFinder(htmlDocument.DocumentNode);
+            var urls =
+                finder.Anchor()
+                    .WithCssClass("RC-meetingItem__link")
+                    .GetNodes()
+                    .Select(n => "https://www.racingpost.com" + n.GetAttributeValue("href", string.Empty))
+                    .ToArray();
+
+            foreach (var url in urls)
+            {
+                yield return url;
+            }
+
+            currentDate = currentDate.AddDays(1);
+        }
+    }
 }

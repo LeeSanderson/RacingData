@@ -11,18 +11,16 @@ using ValidationException = System.ComponentModel.DataAnnotations.ValidationExce
 
 namespace RaceDataDownloader;
 
-public class DownloadResultsCommandHandler
+public class DownloadResultsCommandHandler : FileCommandHandlerBase
 {
-    private readonly IFileSystem _fileSystem;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<DownloadResultsCommandHandler> _logger;
 
     public DownloadResultsCommandHandler(
         IFileSystem fileSystem,
         IHttpClientFactory httpClientFactory,
-        ILogger<DownloadResultsCommandHandler> logger)
+        ILogger<DownloadResultsCommandHandler> logger) : base(fileSystem)
     {
-        _fileSystem = fileSystem;
         _httpClientFactory = httpClientFactory;
         _logger = logger;
     }
@@ -65,15 +63,15 @@ public class DownloadResultsCommandHandler
         catch (ValidationException ve)
         {
             _logger.LogError(ve.Message);
-            return 1;
+            return ExitCodes.Error;
         }
         catch (Exception e)
         {
             _logger.LogError(e, "{Handler} failed with unexpected error", nameof(DownloadResultsCommandHandler));
-            return 1;
+            return ExitCodes.Error;
         }
 
-        return 0;
+        return ExitCodes.Success;
     }
 
     private async Task SaveResultsAsCsv(string outputFileName, List<RaceResult> raceResults)
@@ -125,7 +123,7 @@ public class DownloadResultsCommandHandler
                 }));
 
         var csvString = writer.ToString();
-        await _fileSystem.File.WriteAllTextAsync(outputFileName, csvString);
+        await FileSystem.File.WriteAllTextAsync(outputFileName, csvString);
     }
 
     private async Task SaveResultsAsJson(string outputFileName, List<RaceResult> raceResults)
@@ -141,19 +139,7 @@ public class DownloadResultsCommandHandler
                 Converters = { new JsonStringEnumConverter() }
             });
 
-        await _fileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
-    }
-
-    private void DeleteFileIfExists(string fileName)
-    {
-        if (_fileSystem.File.Exists(fileName))
-        {
-            _fileSystem.File.Delete(fileName);
-            if (_fileSystem.File.Exists(fileName))
-            {
-                throw new ValidationException($"Unable to delete existing file {fileName}");
-            }
-        }
+        await FileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
     }
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadResultsOptions options)
@@ -170,15 +156,7 @@ public class DownloadResultsCommandHandler
             throw new ValidationException(e.Message);
         }
 
-        if (!_fileSystem.Directory.Exists(outputFolder))
-        {
-            _fileSystem.Directory.CreateDirectory(outputFolder);
-            if (!_fileSystem.Directory.Exists(outputFolder))
-            {
-                throw new ValidationException($"Unable to create 'output' directory '{outputFolder}' ");
-            }
-        }
-
+        CreateDirectoryIfNotExists(outputFolder);
         return (start, end, outputFolder);
     }
 }
