@@ -2,7 +2,7 @@
 
 namespace RaceDataDownloader.Commands.DownloadRaceCards;
 
-[Verb("racecards", isDefault: true, HelpText = "Download race cards")]
+[Verb("racecards", HelpText = "Download race cards")]
 public class DownloadRaceCardsOptions
 {
     [Option(
