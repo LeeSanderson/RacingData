@@ -1,15 +1,15 @@
 ﻿using CommandLine;
 
-namespace RaceDataDownloader.Commands.DownloadResults;
+namespace RaceDataDownloader.Commands.DownloadRaceCards;
 
-[Verb("results", isDefault: true, HelpText = "Download race results")]
-public class DownloadResultsOptions
+[Verb("racecards", isDefault: true, HelpText = "Download race cards")]
+public class DownloadRaceCardsOptions
 {
     [Option(
         'o',
         "output",
         Required = true,
-        HelpText = "The directory to write the results to.")]
+        HelpText = "The directory to write the race cards to.")]
     public string? OutputDirectory { get; set; }
 
     [Option(

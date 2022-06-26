@@ -1,0 +1,219 @@
+﻿[
+  {
+    "Course": {
+      "Id": 22,
+      "Name": "Hamilton"
+    },
+    "Race": {
+      "Id": 813803,
+      "Name": "racingtv.com Maiden Stakes (A Hamilton Park 2Yo Series Qualifier) (GBB Race)"
+    },
+    "Attributes": {
+      "Off": "2022-06-28T13:15:00",
+      "Distance": {
+        "Distance": "6f",
+        "DistanceInFurlongs": 6,
+        "DistanceInMeters": 1206,
+        "DistanceInYards": 1320
+      },
+      "Classification": {
+        "RaceType": "Other",
+        "Class": "Class 4",
+        "RatingBand": "",
+        "AgeBand": "2yo",
+        "SexRestriction": "None"
+      },
+      "Going": "Good To Firm",
+      "Surface": "Turf",
+      "NumberOfRunners": 6
+    },
+    "Runners": [
+      {
+        "Horse": {
+          "Id": 4379550,
+          "Name": "Blue Yonder"
+        },
+        "Jockey": {
+          "Id": 79004,
+          "Name": "Tony Hamilton"
+        },
+        "Trainer": {
+          "Id": 8010,
+          "Name": "Richard Fahey"
+        },
+        "Attributes": {
+          "RaceCardNumber": 1,
+          "StallNumber": 6,
+          "Age": 2,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 7,
+            "TotalPounds": 151
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "SP"
+          },
+          "RacingPostRating": 63,
+          "TopSpeedRating": 55
+        }
+      },
+      {
+        "Horse": {
+          "Id": 4307331,
+          "Name": "Catch The Paddy"
+        },
+        "Jockey": {
+          "Id": 91867,
+          "Name": "Kevin Stott"
+        },
+        "Trainer": {
+          "Id": 22525,
+          "Name": "Kevin Ryan"
+        },
+        "Attributes": {
+          "RaceCardNumber": 2,
+          "StallNumber": 4,
+          "Age": 2,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 7,
+            "TotalPounds": 151
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "SP"
+          },
+          "RacingPostRating": 89,
+          "TopSpeedRating": 64
+        }
+      },
+      {
+        "Horse": {
+          "Id": 4175361,
+          "Name": "Chuck Taylor"
+        },
+        "Jockey": {
+          "Id": 2572,
+          "Name": "Joe Fanning"
+        },
+        "Trainer": {
+          "Id": 39124,
+          "Name": "Charlie \u0026 Mark Johnston"
+        },
+        "Attributes": {
+          "RaceCardNumber": 3,
+          "StallNumber": 1,
+          "Age": 2,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 7,
+            "TotalPounds": 151
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "SP"
+          },
+          "RacingPostRating": 57
+        }
+      },
+      {
+        "Horse": {
+          "Id": 4348699,
+          "Name": "Lord Sam\u0027s Castle"
+        },
+        "Jockey": {
+          "Id": 81166,
+          "Name": "Andrew Mullen"
+        },
+        "Trainer": {
+          "Id": 21516,
+          "Name": "Iain Jardine"
+        },
+        "Attributes": {
+          "RaceCardNumber": 4,
+          "StallNumber": 2,
+          "Age": 2,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 7,
+            "TotalPounds": 151
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "SP"
+          },
+          "RacingPostRating": 85,
+          "TopSpeedRating": 73
+        }
+      },
+      {
+        "Horse": {
+          "Id": 4336808,
+          "Name": "Marie\u0027s Jewel"
+        },
+        "Jockey": {
+          "Id": 100783,
+          "Name": "Jonny Peate"
+        },
+        "Trainer": {
+          "Id": 32385,
+          "Name": "Roger Fell"
+        },
+        "Attributes": {
+          "RaceCardNumber": 5,
+          "StallNumber": 3,
+          "Age": 2,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 7,
+            "TotalPounds": 151
+          }
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "SP"
+          },
+          "RacingPostRating": 62,
+          "TopSpeedRating": 32
+        }
+      },
+      {
+        "Horse": {
+          "Id": 4340204,
+          "Name": "Lumacho"
+        },
+        "Jockey": {
+          "Id": 85793,
+          "Name": "William Buick"
+        },
+        "Trainer": {
+          "Id": 36211,
+          "Name": "George Boughey"
+        },
+        "Attributes": {
+          "RaceCardNumber": 6,
+          "StallNumber": 5,
+          "Age": 2,
+          "Weight": {
+            "Stones": 9,
+            "Pounds": 2,
+            "TotalPounds": 146
+          },
+          "HeadGear": "h"
+        },
+        "Statistics": {
+          "Odds": {
+            "FractionalOdds": "SP"
+          },
+          "RacingPostRating": 44,
+          "TopSpeedRating": 25
+        }
+      }
+    ]
+  }
+]

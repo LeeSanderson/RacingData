@@ -100,4 +100,11 @@ public class RacingDataDownloader
             currentDate = currentDate.AddDays(1);
         }
     }
+
+    public async Task<RaceCard> DownloadRaceCard(string url)
+    {
+        var htmlResponse = await GetHtmlResponseFrom(url);
+        var parser = new RaceCardParser();
+        return await parser.Parse(htmlResponse);
+    }
 }

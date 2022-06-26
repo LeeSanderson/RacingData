@@ -37,4 +37,8 @@
 		<EmbeddedResource Include="Fakes\*.html" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="Fakes\FakeRaceCardsPage.html" />
+	</ItemGroup>
+
 </Project>
