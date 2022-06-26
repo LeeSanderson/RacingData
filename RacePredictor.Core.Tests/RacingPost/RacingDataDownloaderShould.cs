@@ -14,8 +14,9 @@ public class RacingDataDownloaderShould
             .Respond("text/html", ResourceLoader.ReadResource("daily_results_20220511.html"));
 
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
+        var clock = Substitute.For<IClock>();
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));
-        var downloader = new RacingDataDownloader(httpClientFactory);
+        var downloader = new RacingDataDownloader(httpClientFactory, clock);
         var startDate = new DateOnly(2022, 05, 11);
 
         var urls = await downloader.GetResultUrls(startDate, startDate).ToListAsync();
@@ -33,7 +34,10 @@ public class RacingDataDownloaderShould
 
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));
-        var downloader = new RacingDataDownloader(httpClientFactory);
+
+        var clock = Substitute.For<IClock>();
+
+        var downloader = new RacingDataDownloader(httpClientFactory, clock);
         var startDate = new DateOnly(2022, 06, 28);
 
         var urls = await downloader.GetRaceCardUrls(startDate, startDate).ToListAsync();

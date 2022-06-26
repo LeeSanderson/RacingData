@@ -2,6 +2,7 @@
 using NSubstitute;
 using RaceDataDownloader.Commands.DownloadRaceCards;
 using RaceDataDownloader.Tests.Fakes;
+using RacePredictor.Core.RacingPost;
 using RichardSzalay.MockHttp;
 using Xunit.Abstractions;
 
@@ -37,9 +38,10 @@ public class DownloadRaceCardsCommandHandlerShould
 
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));
+        var clock = Substitute.For<IClock>();
         var logger = new OutputLogger<DownloadRaceCardsCommandHandler>(_output);
 
-        var handler = new DownloadRaceCardsCommandHandler(mockFileSystem, httpClientFactory, logger);
+        var handler = new DownloadRaceCardsCommandHandler(mockFileSystem, httpClientFactory, clock, logger);
         var result = await handler.RunAsync(new DownloadRaceCardsOptions { OutputDirectory = @"c:\out", DateRange = "2022-06-28" });
 
         result.Should().Be(ExitCodes.Success);

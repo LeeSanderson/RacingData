@@ -5,10 +5,12 @@ namespace RacePredictor.Core.RacingPost;
 public class RacingDataDownloader
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IClock _clock;
 
-    public RacingDataDownloader(IHttpClientFactory httpClientFactory)
+    public RacingDataDownloader(IHttpClientFactory httpClientFactory, IClock clock)
     {
         _httpClientFactory = httpClientFactory;
+        _clock = clock;
     }
 
     public async IAsyncEnumerable<string> GetResultUrls(DateOnly start, DateOnly end)
@@ -73,7 +75,8 @@ public class RacingDataDownloader
         var currentDate = start;
         while (currentDate <= end)
         {
-            var resultsUrl = $"https://www.racingpost.com/racecards/{currentDate:yyyy-MM-dd}";
+            var currentDateAsString = GetRaceCardDateAsString(currentDate);
+            var resultsUrl = $"https://www.racingpost.com/racecards/{currentDateAsString}";
             HtmlDocument htmlDocument;
             try
             {
@@ -99,6 +102,21 @@ public class RacingDataDownloader
 
             currentDate = currentDate.AddDays(1);
         }
+    }
+
+    private string GetRaceCardDateAsString(DateOnly date)
+    {
+        if (_clock.IsToday(date))
+        {
+            return string.Empty;
+        }
+
+        if (_clock.IsTomorrow(date))
+        {
+            return "tomorrow";
+        }
+
+        return $"{date:yyyy-MM-dd}";
     }
 
     public async Task<RaceCard> DownloadRaceCard(string url)

@@ -12,14 +12,17 @@ namespace RaceDataDownloader.Commands.DownloadRaceCards;
 public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IClock _clock;
     private readonly ILogger<DownloadRaceCardsCommandHandler> _logger;
 
     public DownloadRaceCardsCommandHandler(
         IFileSystem fileSystem,
         IHttpClientFactory httpClientFactory,
+        IClock clock,
         ILogger<DownloadRaceCardsCommandHandler> logger) : base(fileSystem)
     {
         _httpClientFactory = httpClientFactory;
+        _clock = clock;
         _logger = logger;
     }
 
@@ -28,7 +31,7 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
         try
         {
             var (start, end, outputFolder) = ValidateOptions(options);
-            var downloader = new RacingDataDownloader(_httpClientFactory);
+            var downloader = new RacingDataDownloader(_httpClientFactory, _clock);
             var raceResults = new List<RaceCard>();
             await foreach (var url in downloader.GetRaceCardUrls(start, end))
             {

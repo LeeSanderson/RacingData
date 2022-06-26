@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
+using RaceDataDownloader.Commands.DownloadRaceCards;
 using RaceDataDownloader.Commands.DownloadResults;
 
 var loggerConfiguration = new LoggerConfiguration()
@@ -20,10 +21,14 @@ serviceCollection.AddHttpClient();
 var serviceProvider = serviceCollection.BuildServiceProvider();
 var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
-await Parser.Default.ParseArguments<DownloadResultsOptions>(args)
+await Parser.Default.ParseArguments<DownloadResultsOptions, DownloadRaceCardsOptions>(args)
     .MapResult(
-        options => CreateDownloadResultsCommandHandler().RunAsync(options),
+        (DownloadResultsOptions downloadResultsOptions)  => CreateDownloadResultsCommandHandler().RunAsync(downloadResultsOptions),
+        (DownloadRaceCardsOptions downloadRaceCardsOptions) => CreateDownloadRaceCardsCommandHandler().RunAsync(downloadRaceCardsOptions),
         _ => Task.FromResult(ExitCodes.Error));
 
 DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() => 
-    new(new FileSystem(), httpClientFactory, loggerFactory.CreateLogger<DownloadResultsCommandHandler>());
+    new(new FileSystem(), httpClientFactory, new RealClock(),  loggerFactory.CreateLogger<DownloadResultsCommandHandler>());
+
+DownloadRaceCardsCommandHandler CreateDownloadRaceCardsCommandHandler() =>
+    new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadRaceCardsCommandHandler>());

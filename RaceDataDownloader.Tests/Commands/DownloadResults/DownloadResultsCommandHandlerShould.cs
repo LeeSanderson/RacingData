@@ -2,6 +2,7 @@ using System.IO.Abstractions;
 using NSubstitute;
 using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Tests.Fakes;
+using RacePredictor.Core.RacingPost;
 using RichardSzalay.MockHttp;
 using Xunit.Abstractions;
 
@@ -37,9 +38,12 @@ namespace RaceDataDownloader.Tests.Commands.DownloadResults
 
             var httpClientFactory = Substitute.For<IHttpClientFactory>();
             httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));
+
+            var clock = Substitute.For<IClock>();
+
             var logger = new OutputLogger<DownloadResultsCommandHandler>(_output);
 
-            var handler = new DownloadResultsCommandHandler(mockFileSystem, httpClientFactory, logger);
+            var handler = new DownloadResultsCommandHandler(mockFileSystem, httpClientFactory, clock, logger);
             var result = await handler.RunAsync(new DownloadResultsOptions { OutputDirectory = @"c:\out", DateRange = "2022-05-11" });
 
             result.Should().Be(ExitCodes.Success);
