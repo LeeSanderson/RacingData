@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.IO.Abstractions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace RaceDataDownloader;
+namespace RaceDataDownloader.Commands;
 
 public class FileCommandHandlerBase
 {
@@ -24,6 +26,21 @@ public class FileCommandHandlerBase
         }
     }
 
+    protected async Task SaveDataAsJson<TRecord>(string outputFileName, List<TRecord> records)
+    {
+        DeleteFileIfExists(outputFileName);
+
+        var jsonString = JsonSerializer.Serialize(records,
+            new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                IgnoreReadOnlyProperties = false,
+                WriteIndented = true,
+                Converters = { new JsonStringEnumConverter() }
+            });
+
+        await FileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
+    }
     protected void CreateDirectoryIfNotExists(string directory)
     {
         if (!FileSystem.Directory.Exists(directory))

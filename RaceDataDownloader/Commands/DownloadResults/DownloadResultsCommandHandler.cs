@@ -1,15 +1,13 @@
 ﻿using System.Globalization;
 using System.IO.Abstractions;
 using System.Net;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using CsvHelper;
 using Microsoft.Extensions.Logging;
 using RacePredictor.Core;
 using RacePredictor.Core.RacingPost;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
-namespace RaceDataDownloader;
+namespace RaceDataDownloader.Commands.DownloadResults;
 
 public class DownloadResultsCommandHandler : FileCommandHandlerBase
 {
@@ -57,7 +55,7 @@ public class DownloadResultsCommandHandler : FileCommandHandlerBase
                 }
             }
 
-            await SaveResultsAsJson(Path.Combine(outputFolder, "Results.json"), raceResults);
+            await SaveDataAsJson(Path.Combine(outputFolder, "Results.json"), raceResults);
             await SaveResultsAsCsv(Path.Combine(outputFolder, "Results.csv"), raceResults);
         }
         catch (ValidationException ve)
@@ -80,7 +78,7 @@ public class DownloadResultsCommandHandler : FileCommandHandlerBase
 
         await using var writer = new StringWriter();
         await using var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
-        
+
         await csvWriter.WriteRecordsAsync(
             raceResults
                 .SelectMany(r => r.Runners.Select(rnr => new { Race = r, Runner = rnr }))
@@ -124,22 +122,6 @@ public class DownloadResultsCommandHandler : FileCommandHandlerBase
 
         var csvString = writer.ToString();
         await FileSystem.File.WriteAllTextAsync(outputFileName, csvString);
-    }
-
-    private async Task SaveResultsAsJson(string outputFileName, List<RaceResult> raceResults)
-    {
-        DeleteFileIfExists(outputFileName);
-
-        var jsonString = JsonSerializer.Serialize(raceResults,
-            new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, 
-                IgnoreReadOnlyProperties = false,
-                WriteIndented = true,
-                Converters = { new JsonStringEnumConverter() }
-            });
-
-        await FileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
     }
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadResultsOptions options)

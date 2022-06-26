@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
+using RaceDataDownloader.Commands.DownloadResults;
 
 var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Is(LogEventLevel.Verbose)
