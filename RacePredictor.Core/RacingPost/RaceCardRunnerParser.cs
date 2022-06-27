@@ -38,8 +38,8 @@ internal class RaceCardRunnerParser : RunnerParser
     private IEnumerable<RaceRunnerAttributes> GetRaceResultRunnerAttributes()
     {
         var raceCardNumberTexts = GetRaceCardNumbers();
-        var raceCardNumbers = raceCardNumberTexts.Select(s => IsNonRunner(s) ? 0 : s.AsInt()).ToArray();
-        _nonRunners = raceCardNumberTexts.Select(IsNonRunner).ToArray();
+        var raceCardNumbers = raceCardNumberTexts.Select(s => IsNonRunnerOrReserve(s) ? 0 : s.AsInt()).ToArray();
+        _nonRunners = raceCardNumberTexts.Select(IsNonRunnerOrReserve).ToArray();
 
         var stallNumbers = GetStallNumbers();
         var ages = GetAges();
@@ -58,7 +58,9 @@ internal class RaceCardRunnerParser : RunnerParser
             .GetDirectTexts()
             .ToArray();
 
-    private bool IsNonRunner(string raceCardNumber) => string.Equals(raceCardNumber, "NR", StringComparison.OrdinalIgnoreCase);
+    private bool IsNonRunnerOrReserve(string raceCardNumber) => 
+        string.Equals(raceCardNumber, "NR", StringComparison.OrdinalIgnoreCase) ||
+        raceCardNumber.StartsWith("R", StringComparison.OrdinalIgnoreCase);
 
     private int?[] GetStallNumbers() =>
         _find.Span()

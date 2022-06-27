@@ -105,6 +105,13 @@ public class RaceCardParserShould
 
     }
 
+    [Fact]
+    public async Task ParseExampleRoscommonRaceCardWithReserves()
+    {
+        var actualRaceParseResult = await GetRaceCard("racecard_roscommon_20220628_1810_reserves.html");
+        actualRaceParseResult.Runners.Length.Should().Be(15);
+    }
+
     private async Task<RaceCard> GetRaceCard(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
