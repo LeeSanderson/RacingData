@@ -112,6 +112,15 @@ public class RaceCardParserShould
         actualRaceParseResult.Runners.Length.Should().Be(15);
     }
 
+    [Fact]
+    public async Task ParseExampleThirskRaceCard()
+    {
+        var actualRaceParseResult = await GetRaceCard("racecard_thirsk_20220629_1320_missing_jockies.html");
+        var unknownJockies = actualRaceParseResult.Runners.Where(r => r.Jockey.Name == "Unknown Jockey");
+
+        unknownJockies.Count().Should().Be(2);
+    }
+
     private async Task<RaceCard> GetRaceCard(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);

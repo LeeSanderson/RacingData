@@ -16,7 +16,7 @@ internal class RaceCardRunnerParser : RunnerParser
     public IEnumerable<RaceRunner> Parse()
     {
         var horses = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerName").GetNodes());
-        var jocks = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerJockey-name").GetNodes());
+        var jocks = GetJockies().ToArray();
         var trainers = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerTrainer-name").GetNodes());
         var attributes = GetRaceResultRunnerAttributes().ToArray();
         var statistics = GetRaceResultRunnerStats().ToArray();
@@ -32,6 +32,17 @@ internal class RaceCardRunnerParser : RunnerParser
                     attributes[i], 
                     statistics[i]);
             }
+        }
+    }
+
+    private IEnumerable<RaceEntity> GetJockies()
+    {
+        var infoNodes = _find.Div().WithCssClass("RC-runnerInfo_jockey").GetNodes();
+        foreach (var infoNode in infoNodes)
+        {
+            var infoFinder = new HtmlNodeFinder(infoNode);
+            var jockeyNode = infoFinder.Optional().Anchor().WithSelector("RC-cardPage-runnerJockey-name").GetNode();
+            yield return jockeyNode != null ? AnchorNodeToEntity(jockeyNode) : new RaceEntity(0, "Unknown Jockey");
         }
     }
 
