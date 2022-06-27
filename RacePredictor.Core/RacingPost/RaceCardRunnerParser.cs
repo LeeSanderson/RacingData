@@ -16,9 +16,9 @@ internal class RaceCardRunnerParser : RunnerParser
     public IEnumerable<RaceRunner> Parse()
     {
         var horses = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerName").GetNodes());
-        var jocks = GetJockies().ToArray();
+        var jocks = GetJockies(horses.Length).ToArray();
         var trainers = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerTrainer-name").GetNodes());
-        var attributes = GetRaceResultRunnerAttributes().ToArray();
+        var attributes = GetRaceResultRunnerAttributes(horses.Length).ToArray();
         var statistics = GetRaceResultRunnerStats().ToArray();
 
         for (var i = 0; i < horses.Length; i++)
@@ -35,9 +35,14 @@ internal class RaceCardRunnerParser : RunnerParser
         }
     }
 
-    private IEnumerable<RaceEntity> GetJockies()
+    private IEnumerable<RaceEntity> GetJockies(int expectedNumberOfJockies)
     {
         var infoNodes = _find.Div().WithCssClass("RC-runnerInfo_jockey").GetNodes();
+        if (infoNodes.Length != expectedNumberOfJockies)
+        {
+            throw new Exception($"Failed to extract jockies. Expected {expectedNumberOfJockies}, but only found {infoNodes.Length}");
+        }
+
         foreach (var infoNode in infoNodes)
         {
             var infoFinder = new HtmlNodeFinder(infoNode);
@@ -46,7 +51,7 @@ internal class RaceCardRunnerParser : RunnerParser
         }
     }
 
-    private IEnumerable<RaceRunnerAttributes> GetRaceResultRunnerAttributes()
+    private IEnumerable<RaceRunnerAttributes> GetRaceResultRunnerAttributes(int expectedNumberOfRaces)
     {
         var raceCardNumberTexts = GetRaceCardNumbers();
         var raceCardNumbers = raceCardNumberTexts.Select(s => IsNonRunnerOrReserve(s) ? 0 : s.AsInt()).ToArray();
@@ -54,7 +59,7 @@ internal class RaceCardRunnerParser : RunnerParser
 
         var stallNumbers = GetStallNumbers();
         var ages = GetAges();
-        var weights = GetWeights();
+        var weights = GetWeights(expectedNumberOfRaces).ToArray();
         var headGears = GetHeadgear();
 
         for (var i = 0; i < raceCardNumbers.Length; i++)
@@ -85,19 +90,21 @@ internal class RaceCardRunnerParser : RunnerParser
             .WithSelector("RC-cardPage-runnerAge")
             .GetIntegers();
 
-    private RaceWeight[] GetWeights()
+    private IEnumerable<RaceWeight> GetWeights(int expectedNumberOfRaces)
     {
-        var stones =
-            _find.Span()
-                .WithCssClass("RC-runnerWgt__carried_st")
-                .GetIntegers();
+        var weightNodes = _find.Span().WithSelector("RC-cardPage-runnerWgt-carried").GetNodes();
+        if (weightNodes.Length != expectedNumberOfRaces)
+        {
+            throw new Exception($"Failed to extract weights. Expected {expectedNumberOfRaces}, but only found {weightNodes.Length}");
+        }
 
-        var pounds =
-            _find.Span()
-                .WithCssClass("RC-runnerWgt__carried_lb")
-                .GetIntegers();
-
-        return stones.Zip(pounds, (st, lbs) => new RaceWeight(st, lbs)).ToArray();
+        foreach (var weightNode in weightNodes)
+        {
+            var infoFinder = new HtmlNodeFinder(weightNode);
+            var stones = infoFinder.Optional().Span().WithCssClass("RC-runnerWgt__carried_st").GetText().AsOptionalInt();
+            var lbs = infoFinder.Optional().Span().WithCssClass("RC-runnerWgt__carried_lb").GetText().AsOptionalInt();
+            yield return stones != null ? new RaceWeight(stones.Value, lbs ?? 0) : new RaceWeight(0, 0);
+        }
     }
 
     private string?[] GetHeadgear() =>

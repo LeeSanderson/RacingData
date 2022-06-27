@@ -113,12 +113,21 @@ public class RaceCardParserShould
     }
 
     [Fact]
-    public async Task ParseExampleThirskRaceCard()
+    public async Task ParseExampleThirskRaceCardWithMissingJockies()
     {
         var actualRaceParseResult = await GetRaceCard("racecard_thirsk_20220629_1320_missing_jockies.html");
         var unknownJockies = actualRaceParseResult.Runners.Where(r => r.Jockey.Name == "Unknown Jockey");
 
         unknownJockies.Count().Should().Be(2);
+    }
+
+    [Fact]
+    public async Task ParseExamplePerthRaceCardMissingWeights()
+    {
+        var actualRaceParseResult = await GetRaceCard("racecard_perth_20220630_1340_missing_weights.html");
+        var missingWeights = actualRaceParseResult.Runners.Where(r => r.Attributes.Weight.TotalPounds == 0);
+
+        missingWeights.Count().Should().Be(1);
     }
 
     private async Task<RaceCard> GetRaceCard(string resourceFileName)
