@@ -2,7 +2,7 @@
   "profiles": {
     "RaceDataDownloader": {
       "commandName": "Project",
-      "commandLineArgs": "racecards --dates 2022-06-27-2022-07-02 --output $(SolutionDir)Data"
+      "commandLineArgs": "racecards --dates 2022-06-28-2022-07-03 --output $(SolutionDir)Data"
     }
   }
 }

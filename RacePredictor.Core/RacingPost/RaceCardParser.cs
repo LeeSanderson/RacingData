@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
 
@@ -60,7 +59,7 @@ public class RaceCardParser : RaceParser
     private RaceDistance GetDistance() => new(_find.Element("strong").WithSelector("RC-header__raceDistanceRound").GetText().TrimParens());
 
     private string GetGoing() =>
-        @"Going:\s*(.+)"
+        @"Going:\s*(.*)"
             .GetMatch(_find.Div().WithSelector("RC-headerBox__going").GetText());
 
     private int GetNumberOfRunners() =>
