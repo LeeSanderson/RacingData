@@ -1,6 +1,5 @@
 ﻿using System.IO.Abstractions;
 using NSubstitute;
-using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Commands.UpdateResults;
 using RaceDataDownloader.Tests.Fakes;
 using RacePredictor.Core.RacingPost;
@@ -12,6 +11,9 @@ namespace RaceDataDownloader.Tests.Commands.UpdateResults;
 [UsesVerify]
 public class UpdateResultsCommandHandlerShould
 {
+    private const string MockDataDirectory = @"c:\out";
+    private const string ResultsFileForMay2022 = @"c:\out\Results_202205.csv";
+
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly OutputLogger<UpdateResultsCommandHandler> _logger;
 
@@ -37,12 +39,13 @@ public class UpdateResultsCommandHandlerShould
 
         var mockFileSystem = Substitute.For<IFileSystem>();
         string? savedResultsAsCsv = null;
-        mockFileSystem.File.WriteAllTextAsync(@"c:\out\Results_202205.csv", Arg.Do<string>(x => savedResultsAsCsv = x))
+        mockFileSystem.File.WriteAllTextAsync(ResultsFileForMay2022, Arg.Do<string>(x => savedResultsAsCsv = x))
             .Returns(Task.CompletedTask);
-        mockFileSystem.Directory.Exists(@"c:\out").Returns(true);
+        mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
+        mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
 
         var handler = new UpdateResultsCommandHandler(mockFileSystem, _httpClientFactory, clock, _logger);
-        var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = @"c:\out", MinimumPeriodInDays = 1 });
+        var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 1 });
 
         result.Should().Be(ExitCodes.Success);
         await Verify(savedResultsAsCsv);
