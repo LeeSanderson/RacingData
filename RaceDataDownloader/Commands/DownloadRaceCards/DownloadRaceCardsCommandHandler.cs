@@ -1,7 +1,5 @@
-﻿using System.Globalization;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.Net;
-using CsvHelper;
 using Microsoft.Extensions.Logging;
 using RacePredictor.Core;
 using RacePredictor.Core.RacingPost;
@@ -54,7 +52,7 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
                 }
             }
 
-            await SaveDataAsJson(Path.Combine(outputFolder, "RaceCards.json"), raceResults);
+            await FileSystem.WriteRecordsToJsonFile(Path.Combine(outputFolder, "RaceCards.json"), raceResults);
             await SaveResultsAsCsv(Path.Combine(outputFolder, "RaceCards.csv"), raceResults);
         }
         catch (ValidationException ve)
@@ -73,12 +71,7 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
 
     private async Task SaveResultsAsCsv(string outputFileName, List<RaceCard> raceCards)
     {
-        DeleteFileIfExists(outputFileName);
-
-        await using var writer = new StringWriter();
-        await using var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
-
-        await csvWriter.WriteRecordsAsync(
+        var records =
             raceCards
                 .SelectMany(r => r.Runners.Select(rnr => new { Race = r, Runner = rnr }))
                 .Select(d => new
@@ -111,11 +104,9 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
                     d.Runner.Statistics.OfficialRating,
                     d.Runner.Statistics.RacingPostRating,
                     d.Runner.Statistics.TopSpeedRating
-                }));
+                });
 
-        var csvString = writer.ToString();
-        await FileSystem.File.WriteAllTextAsync(outputFileName, csvString);
-
+        await FileSystem.WriteRecordsToCsvFile(outputFileName, records);
     }
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadRaceCardsOptions options)
@@ -132,7 +123,7 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
             throw new ValidationException(e.Message);
         }
 
-        CreateDirectoryIfNotExists(outputFolder);
+        FileSystem.CreateDirectoryIfNotExists(outputFolder);
         return (start, end, outputFolder);
     }
 }

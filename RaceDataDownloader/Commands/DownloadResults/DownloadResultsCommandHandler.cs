@@ -1,7 +1,5 @@
-﻿using System.Globalization;
-using System.IO.Abstractions;
+﻿using System.IO.Abstractions;
 using System.Net;
-using CsvHelper;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
 using RacePredictor.Core;
@@ -59,8 +57,8 @@ public class DownloadResultsCommandHandler : FileCommandHandlerBase
                 }
             }
 
-            await SaveDataAsJson(Path.Combine(outputFolder, "Results.json"), raceResults);
-            await SaveResultsAsCsv(Path.Combine(outputFolder, "Results.csv"), raceResults);
+            await FileSystem.WriteRecordsToJsonFile(Path.Combine(outputFolder, "Results.json"), raceResults);
+            await FileSystem.WriteRecordsToCsvFile(Path.Combine(outputFolder, "Results.csv"), raceResults.SelectMany(RaceResultRecord.ListFrom));
         }
         catch (ValidationException ve)
         {
@@ -74,19 +72,6 @@ public class DownloadResultsCommandHandler : FileCommandHandlerBase
         }
 
         return ExitCodes.Success;
-    }
-
-    private async Task SaveResultsAsCsv(string outputFileName, List<RaceResult> raceResults)
-    {
-        DeleteFileIfExists(outputFileName);
-
-        await using var writer = new StringWriter();
-        await using var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
-
-        await csvWriter.WriteRecordsAsync(raceResults.SelectMany(RaceResultRecord.ListFrom));
-
-        var csvString = writer.ToString();
-        await FileSystem.File.WriteAllTextAsync(outputFileName, csvString);
     }
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadResultsOptions options)
@@ -103,7 +88,7 @@ public class DownloadResultsCommandHandler : FileCommandHandlerBase
             throw new ValidationException(e.Message);
         }
 
-        CreateDirectoryIfNotExists(outputFolder);
+        FileSystem.CreateDirectoryIfNotExists(outputFolder);
         return (start, end, outputFolder);
     }
 }
