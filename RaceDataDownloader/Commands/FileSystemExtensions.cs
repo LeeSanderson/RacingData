@@ -7,7 +7,7 @@ using ValidationException = System.ComponentModel.DataAnnotations.ValidationExce
 
 namespace RaceDataDownloader.Commands
 {
-    internal static class FileSystemExtensions
+    public static class FileSystemExtensions
     {
         public static async Task WriteRecordsToCsvFile<TRecord>(
             this IFileSystem fileSystem,
@@ -15,21 +15,27 @@ namespace RaceDataDownloader.Commands
             IEnumerable<TRecord> records)
         {
             fileSystem.DeleteFileIfExists(fileName);
+            var csvString = await records.ToCsvString();
+            await fileSystem.File.WriteAllTextAsync(fileName, csvString);
+        }
 
+        public static async Task<string> ToCsvString<TRecord>(this IEnumerable<TRecord> records)
+        {
             await using var writer = new StringWriter();
             await using var csvWriter = new CsvWriter(writer, CultureInfo.InvariantCulture);
-
             await csvWriter.WriteRecordsAsync(records);
-
-            var csvString = writer.ToString();
-            await fileSystem.File.WriteAllTextAsync(fileName, csvString);
+            return writer.ToString();
         }
 
         public static async Task<List<TRecord>> ReadRecordsFromCsvFile<TRecord>(
             this IFileSystem fileSystem,
             string fileName)
         {
-            throw new NotImplementedException();
+            fileSystem.EnsureFileExists(fileName);
+            var csvString = await fileSystem.File.ReadAllTextAsync(fileName);
+            using var reader = new StringReader(csvString);
+            using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
+            return await csvReader.GetRecordsAsync<TRecord>().ToListAsync();
         }
 
         public static async Task WriteRecordsToJsonFile<TRecord>(this IFileSystem fileSystem, string outputFileName, List<TRecord> records)
@@ -48,7 +54,6 @@ namespace RaceDataDownloader.Commands
             await fileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
         }
 
-
         public static void DeleteFileIfExists(this IFileSystem fileSystem, string fileName)
         {
             if (fileSystem.File.Exists(fileName))
@@ -58,6 +63,14 @@ namespace RaceDataDownloader.Commands
                 {
                     throw new ValidationException($"Unable to delete existing file {fileName}");
                 }
+            }
+        }
+
+        public static void EnsureFileExists(this IFileSystem fileSystem, string fileName)
+        {
+            if (!fileSystem.File.Exists(fileName))
+            { 
+                throw new ValidationException($"Unable to fine expected file {fileName}");
             }
         }
 

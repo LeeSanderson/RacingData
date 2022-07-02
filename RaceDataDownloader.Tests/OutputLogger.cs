@@ -15,6 +15,10 @@ public class OutputLogger<T> : ILogger<T>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         _output.WriteLine(formatter(state, exception));
+        if (exception != null)
+        {
+            _output.WriteLine(exception.ToString());
+        }
     }
 
     public bool IsEnabled(LogLevel logLevel)

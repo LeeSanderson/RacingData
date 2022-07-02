@@ -15,6 +15,7 @@ public record RaceResultRecord
                     RaceName = d.Race.Race.Name,
                     CourseId = d.Race.Course.Id,
                     CourseName = d.Race.Course.Name,
+                    Off = d.Race.Attributes.Off,
                     RaceType = d.Race.Attributes.Classification.RaceType,
                     Class = d.Race.Attributes.Classification.Class,
                     Pattern = d.Race.Attributes.Classification.Pattern,
@@ -57,6 +58,7 @@ public record RaceResultRecord
     public string RaceName { get; set; } = string.Empty;
     public int CourseId { get; set; }
     public string CourseName { get; set; } = string.Empty;
+    public DateTime Off { get; set; }
     public RaceType RaceType { get; set; }
     public string? Class { get; set; }
     public string? Pattern { get; set; }

@@ -1,6 +1,8 @@
 ﻿using System.IO.Abstractions;
 using NSubstitute;
+using RaceDataDownloader.Commands;
 using RaceDataDownloader.Commands.UpdateResults;
+using RaceDataDownloader.Models;
 using RaceDataDownloader.Tests.Fakes;
 using RacePredictor.Core.RacingPost;
 using RichardSzalay.MockHttp;
@@ -60,6 +62,8 @@ public class UpdateResultsCommandHandlerShould
         var mockFileSystem = Substitute.For<IFileSystem>();
         mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
         mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
+        var existingResults = new[] {new RaceResultRecord { Off = new DateTime(2022, 05, 11, 13, 50, 00)}};
+        mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(await existingResults.ToCsvString()));
 
         var handler = new UpdateResultsCommandHandler(mockFileSystem, _httpClientFactory, clock, _logger);
         var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 1 });

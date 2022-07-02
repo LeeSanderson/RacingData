@@ -10,9 +10,9 @@ namespace RaceDataDownloader.Commands.UpdateResults;
 
 public class UpdateResultsCommandHandler : FileCommandHandlerBase
 {
-    private readonly IHttpClientFactory _httpClientFactory;
     private readonly IClock _clock;
     private readonly ILogger<UpdateResultsCommandHandler> _logger;
+    private readonly RacingDataDownloader _downloader;
 
     public UpdateResultsCommandHandler(
         IFileSystem fileSystem,
@@ -20,9 +20,9 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
         IClock clock,
         ILogger<UpdateResultsCommandHandler> logger) : base(fileSystem)
     {
-        _httpClientFactory = httpClientFactory;
         _clock = clock;
         _logger = logger;
+        _downloader = new RacingDataDownloader(httpClientFactory, _clock);
     }
 
     public async Task<int> RunAsync(UpdateResultsOptions options)
@@ -30,39 +30,9 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
         try
         {
             var (start, end, dataFolder) = ValidateOptions(options);
-            var downloader = new RacingDataDownloader(_httpClientFactory, _clock);
-
             foreach (var (monthStart, monthEnd) in SplitRangeIntoMonths(start, end))
             {
-                var monthlyResultsFile = $"Results_{monthStart.Year}{monthStart.Month:00}.csv";
-                var raceResults = new List<RaceResultRecord>();
-                await foreach (var url in downloader.GetResultUrls(monthStart, monthEnd))
-                {
-                    _logger.LogInformation("Attempting to load race results from {URL}", url);
-                    try
-                    {
-                        var raceResult = await downloader.DownloadResults(url);
-                        raceResults.AddRange(RaceResultRecord.ListFrom(raceResult));
-                    }
-                    catch (VoidRaceException)
-                    {
-                        _logger.LogInformation("Skipping void race {URL}", url);
-                    }
-                    catch (HttpRequestException hre)
-                    {
-                        if (hre.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            _logger.LogInformation("Skipping {URL} - could not find race (404)", url);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-
-                await FileSystem.WriteRecordsToCsvFile(Path.Combine(dataFolder, monthlyResultsFile), raceResults);
-
+                await UpdateMonthlyResultsFile(monthStart, monthEnd, dataFolder);
             }
         }
         catch (ValidationException ve)
@@ -77,6 +47,59 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
         }
 
         return ExitCodes.Success;
+    }
+
+    private async Task UpdateMonthlyResultsFile(DateOnly monthStart, DateOnly monthEnd, string dataFolder)
+    {
+        var monthlyResultsFile = Path.Combine(dataFolder, $"Results_{monthStart.Year}{monthStart.Month:00}.csv");
+        List<RaceResultRecord> raceResults;
+        if (FileSystem.File.Exists(monthlyResultsFile))
+        {
+            raceResults = await FileSystem.ReadRecordsFromCsvFile<RaceResultRecord>(monthlyResultsFile);
+            var maxOffDate = DateOnly.FromDateTime(raceResults.Max(x => x.Off));
+            var minOffDate = DateOnly.FromDateTime(raceResults.Min(x => x.Off));
+            if (monthStart >= minOffDate && monthEnd >= maxOffDate)
+            {
+                return;
+            }
+        }
+        else
+        {
+            raceResults = await GetRaceResultRecordsInRange(monthStart, monthEnd);
+        }
+
+        await FileSystem.WriteRecordsToCsvFile(monthlyResultsFile, raceResults);
+    }
+
+    private async Task<List<RaceResultRecord>> GetRaceResultRecordsInRange(DateOnly monthStart, DateOnly monthEnd)
+    {
+        await foreach (var url in _downloader.GetResultUrls(monthStart, monthEnd))
+        {
+            _logger.LogInformation("Attempting to load race results from {URL}", url);
+            try
+            {
+                var raceResult = await _downloader.DownloadResults(url);
+                return RaceResultRecord.ListFrom(raceResult).ToList();
+            }
+            catch (VoidRaceException)
+            {
+                _logger.LogInformation("Skipping void race {URL}", url);
+            }
+            catch (HttpRequestException hre)
+            {
+                if (hre.StatusCode == HttpStatusCode.NotFound)
+                {
+                    _logger.LogInformation("Skipping {URL} - could not find race (404)", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        // Non-critical error - return empty list
+        return new List<RaceResultRecord>();
     }
 
     private IEnumerable<(DateOnly monthStart, DateOnly monthEnd)> SplitRangeIntoMonths(DateOnly start, DateOnly end)
