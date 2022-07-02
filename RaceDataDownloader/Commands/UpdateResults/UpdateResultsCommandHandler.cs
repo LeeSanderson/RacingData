@@ -29,36 +29,41 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
     {
         try
         {
-
             var (start, end, dataFolder) = ValidateOptions(options);
             var downloader = new RacingDataDownloader(_httpClientFactory, _clock);
-            var raceResults = new List<RaceResultRecord>();
-            await foreach (var url in downloader.GetResultUrls(start, end))
-            {
-                _logger.LogInformation("Attempting to load race results from {URL}", url);
-                try
-                {
-                    var raceResult = await downloader.DownloadResults(url);
-                    raceResults.AddRange(RaceResultRecord.ListFrom(raceResult));
-                }
-                catch (VoidRaceException)
-                {
-                    _logger.LogInformation("Skipping void race {URL}", url);
-                }
-                catch (HttpRequestException hre)
-                {
-                    if (hre.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        _logger.LogInformation("Skipping {URL} - could not find race (404)", url);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
 
-            await FileSystem.WriteRecordsToCsvFile(Path.Combine(dataFolder, $"Results_{start.Year}{start.Month:00}.csv"), raceResults);
+            foreach (var (monthStart, monthEnd) in SplitRangeIntoMonths(start, end))
+            {
+                var monthlyResultsFile = $"Results_{monthStart.Year}{monthStart.Month:00}.csv";
+                var raceResults = new List<RaceResultRecord>();
+                await foreach (var url in downloader.GetResultUrls(monthStart, monthEnd))
+                {
+                    _logger.LogInformation("Attempting to load race results from {URL}", url);
+                    try
+                    {
+                        var raceResult = await downloader.DownloadResults(url);
+                        raceResults.AddRange(RaceResultRecord.ListFrom(raceResult));
+                    }
+                    catch (VoidRaceException)
+                    {
+                        _logger.LogInformation("Skipping void race {URL}", url);
+                    }
+                    catch (HttpRequestException hre)
+                    {
+                        if (hre.StatusCode == HttpStatusCode.NotFound)
+                        {
+                            _logger.LogInformation("Skipping {URL} - could not find race (404)", url);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+
+                await FileSystem.WriteRecordsToCsvFile(Path.Combine(dataFolder, monthlyResultsFile), raceResults);
+
+            }
         }
         catch (ValidationException ve)
         {
@@ -72,6 +77,18 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
         }
 
         return ExitCodes.Success;
+    }
+
+    private IEnumerable<(DateOnly monthStart, DateOnly monthEnd)> SplitRangeIntoMonths(DateOnly start, DateOnly end)
+    {
+        var monthStart = start;
+        while (monthStart <= end)
+        {
+            var monthEnd = new DateOnly(monthStart.Year, monthStart.Month, DateTime.DaysInMonth(monthStart.Year, monthStart.Month));
+            monthEnd = monthEnd > end ? end : monthEnd;
+            yield return (monthStart, monthEnd);
+            monthStart = monthEnd.AddDays(1);
+        }
     }
 
     private (DateOnly start, DateOnly end, string dataFolder) ValidateOptions(UpdateResultsOptions options)
