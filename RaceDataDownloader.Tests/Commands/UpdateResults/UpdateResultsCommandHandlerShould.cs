@@ -71,7 +71,7 @@ public class UpdateResultsCommandHandlerShould
     }
 
     [Fact]
-    public async Task DownloadDataForThe11ThWhenGetting2DaysOfDataAndTodayIs13ThAndHaveExistingDataFor12Th()
+    public async Task BackFillDataForThe11ThWhenGetting2DaysOfDataAndTodayIs13ThAndHaveExistingDataFor12Th()
     {
         _clock.Today.Returns(new DateOnly(2022, 05, 13));
 
