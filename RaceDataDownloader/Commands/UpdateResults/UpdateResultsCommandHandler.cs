@@ -85,13 +85,14 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
 
     private async Task<List<RaceResultRecord>> GetRaceResultRecordsInRange(DateOnly monthStart, DateOnly monthEnd)
     {
+        var raceResultRecords = new List<RaceResultRecord>();
         await foreach (var url in _downloader.GetResultUrls(monthStart, monthEnd))
         {
             _logger.LogInformation("Attempting to load race results from {URL}", url);
             try
             {
                 var raceResult = await _downloader.DownloadResults(url);
-                return RaceResultRecord.ListFrom(raceResult).ToList();
+                raceResultRecords.AddRange(RaceResultRecord.ListFrom(raceResult));
             }
             catch (VoidRaceException)
             {
@@ -110,8 +111,7 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
             }
         }
 
-        // Non-critical error - return empty list
-        return new List<RaceResultRecord>();
+        return raceResultRecords;
     }
 
     private IEnumerable<(DateOnly monthStart, DateOnly monthEnd)> SplitRangeIntoMonths(DateOnly start, DateOnly end)
