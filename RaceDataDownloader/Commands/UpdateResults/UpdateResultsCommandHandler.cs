@@ -63,10 +63,16 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
                 return;
             }
 
-            if (monthStart <= minOffDate)
+            if (monthStart < minOffDate)
             {
                 var preCurrentRaceResults = await GetRaceResultRecordsInRange(monthStart, monthEnd.AddDays(-1));
                 raceResults.AddRange(preCurrentRaceResults);
+            }
+
+            if (monthEnd > maxOffDate)
+            {
+                var postCurrentRaceResults = await GetRaceResultRecordsInRange(maxOffDate.AddDays(1), monthEnd);
+                raceResults.AddRange(postCurrentRaceResults);
             }
         }
         else
