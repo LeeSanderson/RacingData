@@ -18,6 +18,8 @@ public class UpdateResultsCommandHandlerShould
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly OutputLogger<UpdateResultsCommandHandler> _logger;
+    private readonly IClock _clock;
+    private readonly IFileSystem _mockFileSystem;
 
     public UpdateResultsCommandHandlerShould(ITestOutputHelper output)
     {
@@ -31,22 +33,23 @@ public class UpdateResultsCommandHandlerShould
 
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));
+
+        _clock = Substitute.For<IClock>();
+        _clock.Today.Returns(new DateOnly(2022, 05, 12));
+
+        _mockFileSystem = Substitute.For<IFileSystem>();
+        _mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
     }
 
     [Fact]
     public async Task DownloadResultsWhenNoResultsExist()
     {
-        var clock = Substitute.For<IClock>();
-        clock.Today.Returns(new DateOnly(2022, 05, 12));
-
-        var mockFileSystem = Substitute.For<IFileSystem>();
         string? savedResultsAsCsv = null;
-        mockFileSystem.File.WriteAllTextAsync(ResultsFileForMay2022, Arg.Do<string>(x => savedResultsAsCsv = x))
+        _mockFileSystem.File.WriteAllTextAsync(ResultsFileForMay2022, Arg.Do<string>(x => savedResultsAsCsv = x))
             .Returns(Task.CompletedTask);
-        mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
-        mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(false);
+        _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(false);
 
-        var handler = new UpdateResultsCommandHandler(mockFileSystem, _httpClientFactory, clock, _logger);
+        var handler = new UpdateResultsCommandHandler(_mockFileSystem, _httpClientFactory, _clock, _logger);
         var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 1 });
 
         result.Should().Be(ExitCodes.Success);
@@ -56,19 +59,14 @@ public class UpdateResultsCommandHandlerShould
     [Fact]
     public async Task SkipDownloadWhenResultsAlreadyExist()
     {
-        var clock = Substitute.For<IClock>();
-        clock.Today.Returns(new DateOnly(2022, 05, 12));
-
-        var mockFileSystem = Substitute.For<IFileSystem>();
-        mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
-        mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
+        _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
         var existingResults = new[] {new RaceResultRecord { Off = new DateTime(2022, 05, 11, 13, 50, 00)}};
-        mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(await existingResults.ToCsvString()));
+        _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(await existingResults.ToCsvString()));
 
-        var handler = new UpdateResultsCommandHandler(mockFileSystem, _httpClientFactory, clock, _logger);
+        var handler = new UpdateResultsCommandHandler(_mockFileSystem, _httpClientFactory, _clock, _logger);
         var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 1 });
 
         result.Should().Be(ExitCodes.Success);
-        await mockFileSystem.File.DidNotReceive().WriteAllTextAsync(ResultsFileForMay2022, Arg.Any<string>());
+        await _mockFileSystem.File.DidNotReceive().WriteAllTextAsync(ResultsFileForMay2022, Arg.Any<string>());
     }
 }
