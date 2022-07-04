@@ -58,9 +58,15 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
             raceResults = await FileSystem.ReadRecordsFromCsvFile<RaceResultRecord>(monthlyResultsFile);
             var maxOffDate = DateOnly.FromDateTime(raceResults.Max(x => x.Off));
             var minOffDate = DateOnly.FromDateTime(raceResults.Min(x => x.Off));
-            if (monthStart >= minOffDate && monthEnd >= maxOffDate)
+            if (monthStart >= minOffDate && monthEnd <= maxOffDate)
             {
                 return;
+            }
+
+            if (monthStart <= minOffDate)
+            {
+                var preCurrentRaceResults = await GetRaceResultRecordsInRange(monthStart, monthEnd.AddDays(-1));
+                raceResults.AddRange(preCurrentRaceResults);
             }
         }
         else

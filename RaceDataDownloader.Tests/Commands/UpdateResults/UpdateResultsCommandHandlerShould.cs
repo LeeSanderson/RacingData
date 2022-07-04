@@ -69,4 +69,24 @@ public class UpdateResultsCommandHandlerShould
         result.Should().Be(ExitCodes.Success);
         await _mockFileSystem.File.DidNotReceive().WriteAllTextAsync(ResultsFileForMay2022, Arg.Any<string>());
     }
+
+    [Fact]
+    public async Task DownloadDataForThe11ThWhenGetting2DaysOfDataAndTodayIs13ThAndHaveExistingDataFor12Th()
+    {
+        _clock.Today.Returns(new DateOnly(2022, 05, 13));
+
+        string? savedResultsAsCsv = null;
+        _mockFileSystem.File.WriteAllTextAsync(ResultsFileForMay2022, Arg.Do<string>(x => savedResultsAsCsv = x))
+            .Returns(Task.CompletedTask);
+
+        _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true, true, false, true);
+        var existingResults = new[] { new RaceResultRecord { Off = new DateTime(2022, 05, 12, 13, 50, 00) } };
+        _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(await existingResults.ToCsvString()));
+
+        var handler = new UpdateResultsCommandHandler(_mockFileSystem, _httpClientFactory, _clock, _logger);
+        var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 2 });
+
+        result.Should().Be(ExitCodes.Success);
+        await Verify(savedResultsAsCsv);
+    }
 }
