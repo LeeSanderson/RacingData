@@ -15,6 +15,8 @@ public class UpdateResultsCommandHandlerShould
 {
     private const string MockDataDirectory = @"c:\out";
     private const string ResultsFileForMay2022 = @"c:\out\Results_202205.csv";
+    private const string ResultsFileForApril2022 = @"c:\out\Results_202204.csv";
+    private const string ResultsFileForMarch2022 = @"c:\out\Results_202203.csv";
 
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly OutputLogger<UpdateResultsCommandHandler> _logger;
@@ -60,8 +62,7 @@ public class UpdateResultsCommandHandlerShould
     public async Task SkipDownloadWhenResultsAlreadyExist()
     {
         _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
-        var existingResults = new[] {new RaceResultRecord { Off = new DateTime(2022, 05, 11, 13, 50, 00)}};
-        _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(await existingResults.ToCsvString()));
+        await AddFakeResultsFile(ResultsFileForMay2022, 2022, 05, 11, 11);
 
         var handler = new UpdateResultsCommandHandler(_mockFileSystem, _httpClientFactory, _clock, _logger);
         var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 1 });
@@ -80,8 +81,7 @@ public class UpdateResultsCommandHandlerShould
             .Returns(Task.CompletedTask);
 
         _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true, true, false, true);
-        var existingResults = new[] { new RaceResultRecord { Off = new DateTime(2022, 05, 12, 13, 50, 00) } };
-        _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(await existingResults.ToCsvString()));
+        await AddFakeResultsFile(ResultsFileForMay2022, 2022, 05, 12, 12);
 
         var handler = new UpdateResultsCommandHandler(_mockFileSystem, _httpClientFactory, _clock, _logger);
         var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 2 });
@@ -89,7 +89,6 @@ public class UpdateResultsCommandHandlerShould
         result.Should().Be(ExitCodes.Success);
         await Verify(savedResultsAsCsv);
     }
-
 
     [Fact]
     public async Task FillInDataForThe11ThWhenGetting2DaysOfDataAndTodayIs12ThAndHaveExistingDataFor10Th()
@@ -101,13 +100,44 @@ public class UpdateResultsCommandHandlerShould
             .Returns(Task.CompletedTask);
 
         _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true, true, false, true);
-        var existingResults = new[] { new RaceResultRecord { Off = new DateTime(2022, 05, 10, 13, 50, 00) } };
-        _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(await existingResults.ToCsvString()));
+        await AddFakeResultsFile(ResultsFileForMay2022, 2022, 05, 10, 10);
 
         var handler = new UpdateResultsCommandHandler(_mockFileSystem, _httpClientFactory, _clock, _logger);
         var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 2 });
 
         result.Should().Be(ExitCodes.Success);
         await Verify(savedResultsAsCsv);
+    }
+
+
+    [Fact]
+    public async Task SkipDownloadOverMultipleMonthsWhenResultsAlreadyExist()
+    {
+        _clock.Today.Returns(new DateOnly(2022, 05, 31));
+
+        _mockFileSystem.File.Exists(ResultsFileForMarch2022).Returns(true);
+        _mockFileSystem.File.Exists(ResultsFileForApril2022).Returns(true);
+        _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
+
+        await AddFakeResultsFile(ResultsFileForMarch2022, 2022, 03, 01, 31);
+        await AddFakeResultsFile(ResultsFileForApril2022, 2022, 04, 01, 30);
+        await AddFakeResultsFile(ResultsFileForMay2022, 2022, 05, 01, 31);
+
+        var handler = new UpdateResultsCommandHandler(_mockFileSystem, _httpClientFactory, _clock, _logger);
+        var result = await handler.RunAsync(new UpdateResultsOptions { DataDirectory = MockDataDirectory, MinimumPeriodInDays = 90 });
+
+        result.Should().Be(ExitCodes.Success);
+        await _mockFileSystem.File.DidNotReceive().WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>());
+    }
+
+    private async Task AddFakeResultsFile(string fileName, int year, int month, int startDay, int endDay)
+    {
+        var existingResults = new List<RaceResultRecord> { new() { Off = new DateTime(year, month, startDay, 13, 50, 00) } };
+        if (startDay != endDay)
+        {
+            existingResults.Add(new RaceResultRecord { Off = new DateTime(year, month, endDay, 13, 50, 00) });
+        }
+
+        _mockFileSystem.File.ReadAllTextAsync(fileName).Returns(Task.FromResult(await existingResults.ToCsvString()));
     }
 }
