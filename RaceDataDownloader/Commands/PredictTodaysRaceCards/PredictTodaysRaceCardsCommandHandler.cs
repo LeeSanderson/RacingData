@@ -25,9 +25,9 @@ public class PredictTodaysRaceCardsCommandHandler : FileCommandHandlerBase<Predi
         var historicResults = await LoadHistoricResultsInRange(dataFolder, start, end);
         
         var predictor = new AverageSpeedRaceCardPredictor(historicResults);
-        var predictions = predictor.PredictRaceCardResults(raceCardsToPredict);
+        var predictions = predictor.PredictRaceCardResults(raceCardsToPredict).ToList();
 
-        FileSystem.WriteRecordsToJsonFile(Path.Combine(dataFolder, "Predictions.json"), predictions);
+        await FileSystem.WriteRecordsToJsonFile(Path.Combine(dataFolder, "Predictions.json"), predictions);
     }
 
     private async Task<List<RaceCardRecord>> LoadRaceCardsToPredict(string dataFolder) => 
