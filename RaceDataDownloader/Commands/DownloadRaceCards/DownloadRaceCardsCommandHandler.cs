@@ -1,5 +1,4 @@
 ﻿using System.IO.Abstractions;
-using System.Net;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
 using RacePredictor.Core;
@@ -31,30 +30,12 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
         {
             var (start, end, outputFolder) = ValidateOptions(options);
             var downloader = new RacingDataDownloader(_httpClientFactory, _clock);
-            var raceResults = new List<RaceCard>();
-            await foreach (var url in downloader.GetRaceCardUrls(start, end))
-            {
-                _logger.LogInformation("Attempting to load race card from {URL}", url);
-                try
-                {
-                    var raceResult = await downloader.DownloadRaceCard(url);
-                    raceResults.Add(raceResult);
-                }
-                catch (HttpRequestException hre)
-                {
-                    if (hre.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        _logger.LogInformation("Skipping {URL} - could not find race card (404)", url);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+            var raceResults = await downloader.DownloadRaceCardsInDateRange(_logger, start, end);
 
             await FileSystem.WriteRecordsToJsonFile(Path.Combine(outputFolder, "RaceCards.json"), raceResults);
-            await FileSystem.WriteRecordsToCsvFile(Path.Combine(outputFolder, "RaceCards.csv"), raceResults.SelectMany(RaceCardRecord.ListFrom));
+            await FileSystem.WriteRecordsToCsvFile(
+                Path.Combine(outputFolder, "RaceCards.csv"), 
+                raceResults.SelectMany(RaceCardRecord.ListFrom));
         }
         catch (ValidationException ve)
         {
