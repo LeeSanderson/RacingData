@@ -1,5 +1,4 @@
 ﻿using System.IO.Abstractions;
-using System.Net;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
 using RacePredictor.Core;
@@ -8,70 +7,31 @@ using ValidationException = System.ComponentModel.DataAnnotations.ValidationExce
 
 namespace RaceDataDownloader.Commands.DownloadResults;
 
-public class DownloadResultsCommandHandler : FileCommandHandlerBase
+public class DownloadResultsCommandHandler : FileCommandHandlerBase<DownloadResultsCommandHandler, DownloadResultsOptions>
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IClock _clock;
-    private readonly ILogger<DownloadResultsCommandHandler> _logger;
-
+    
     public DownloadResultsCommandHandler(
         IFileSystem fileSystem,
         IHttpClientFactory httpClientFactory,
         IClock clock,
-        ILogger<DownloadResultsCommandHandler> logger) : base(fileSystem)
+        ILogger<DownloadResultsCommandHandler> logger) : base(fileSystem, logger)
     {
         _httpClientFactory = httpClientFactory;
         _clock = clock;
-        _logger = logger;
     }
 
-    public async Task<int> RunAsync(DownloadResultsOptions options)
+    protected override async Task InternalRunAsync(DownloadResultsOptions options)
     {
-        try
-        {
-            var (start, end, outputFolder) = ValidateOptions(options);
-            var downloader = new RacingDataDownloader(_httpClientFactory, _clock);
-            var raceResults = new List<RaceResult>();
-            await foreach (var url in downloader.GetResultUrls(start, end))
-            {
-                _logger.LogInformation("Attempting to load race results from {URL}", url);
-                try
-                {
-                    var raceResult = await downloader.DownloadResults(url);
-                    raceResults.Add(raceResult);
-                }
-                catch (VoidRaceException)
-                {
-                    _logger.LogInformation("Skipping void race {URL}", url);
-                }
-                catch (HttpRequestException hre)
-                {
-                    if (hre.StatusCode == HttpStatusCode.NotFound)
-                    {
-                        _logger.LogInformation("Skipping {URL} - could not find race (404)", url);
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
+        var (start, end, outputFolder) = ValidateOptions(options);
+        var downloader = new RacingDataDownloader(_httpClientFactory, _clock);
+        var raceResults = await downloader.DownloadRaceResultsInRange(Logger, start, end);
 
-            await FileSystem.WriteRecordsToJsonFile(Path.Combine(outputFolder, "Results.json"), raceResults);
-            await FileSystem.WriteRecordsToCsvFile(Path.Combine(outputFolder, "Results.csv"), raceResults.SelectMany(RaceResultRecord.ListFrom));
-        }
-        catch (ValidationException ve)
-        {
-            _logger.LogError(ve.Message);
-            return ExitCodes.Error;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "{Handler} failed with unexpected error", nameof(DownloadResultsCommandHandler));
-            return ExitCodes.Error;
-        }
-
-        return ExitCodes.Success;
+        await FileSystem.WriteRecordsToJsonFile(Path.Combine(outputFolder, "Results.json"), raceResults);
+        await FileSystem.WriteRecordsToCsvFile(
+            Path.Combine(outputFolder, "Results.csv"), 
+            raceResults.SelectMany(RaceResultRecord.ListFrom));
     }
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadResultsOptions options)

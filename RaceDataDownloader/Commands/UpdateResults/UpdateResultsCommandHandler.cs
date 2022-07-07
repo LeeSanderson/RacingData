@@ -1,52 +1,33 @@
 ﻿using System.IO.Abstractions;
-using System.Net;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
-using RacePredictor.Core;
 using RacePredictor.Core.RacingPost;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace RaceDataDownloader.Commands.UpdateResults;
 
-public class UpdateResultsCommandHandler : FileCommandHandlerBase
+public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsCommandHandler, UpdateResultsOptions>
 {
     private readonly IClock _clock;
-    private readonly ILogger<UpdateResultsCommandHandler> _logger;
     private readonly RacingDataDownloader _downloader;
 
     public UpdateResultsCommandHandler(
         IFileSystem fileSystem,
         IHttpClientFactory httpClientFactory,
         IClock clock,
-        ILogger<UpdateResultsCommandHandler> logger) : base(fileSystem)
+        ILogger<UpdateResultsCommandHandler> logger) : base(fileSystem, logger)
     {
         _clock = clock;
-        _logger = logger;
         _downloader = new RacingDataDownloader(httpClientFactory, _clock);
     }
 
-    public async Task<int> RunAsync(UpdateResultsOptions options)
+    protected override async Task InternalRunAsync(UpdateResultsOptions options)
     {
-        try
+        var (start, end, dataFolder) = ValidateOptions(options);
+        foreach (var (monthStart, monthEnd) in SplitRangeIntoMonths(start, end))
         {
-            var (start, end, dataFolder) = ValidateOptions(options);
-            foreach (var (monthStart, monthEnd) in SplitRangeIntoMonths(start, end))
-            {
-                await UpdateMonthlyResultsFile(monthStart, monthEnd, dataFolder);
-            }
+            await UpdateMonthlyResultsFile(monthStart, monthEnd, dataFolder);
         }
-        catch (ValidationException ve)
-        {
-            _logger.LogError(ve.Message);
-            return ExitCodes.Error;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "{Handler} failed with unexpected error", nameof(UpdateResultsCommandHandler));
-            return ExitCodes.Error;
-        }
-
-        return ExitCodes.Success;
     }
 
     private async Task UpdateMonthlyResultsFile(DateOnly monthStart, DateOnly monthEnd, string dataFolder)
@@ -60,6 +41,7 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
             var minOffDate = DateOnly.FromDateTime(raceResults.Min(x => x.Off));
             if (monthStart >= minOffDate && monthEnd <= maxOffDate)
             {
+                Logger.LogInformation("Skipping update for {FileName} - file contains data for entire period.", monthlyResultsFile);
                 return;
             }
 
@@ -85,36 +67,12 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase
 
     private async Task<List<RaceResultRecord>> GetRaceResultRecordsInRange(DateOnly monthStart, DateOnly monthEnd)
     {
-        var raceResultRecords = new List<RaceResultRecord>();
-        await foreach (var url in _downloader.GetResultUrls(monthStart, monthEnd))
-        {
-            _logger.LogInformation("Attempting to load race results from {URL}", url);
-            try
-            {
-                var raceResult = await _downloader.DownloadResults(url);
-                raceResultRecords.AddRange(RaceResultRecord.ListFrom(raceResult));
-            }
-            catch (VoidRaceException)
-            {
-                _logger.LogInformation("Skipping void race {URL}", url);
-            }
-            catch (HttpRequestException hre)
-            {
-                if (hre.StatusCode == HttpStatusCode.NotFound)
-                {
-                    _logger.LogInformation("Skipping {URL} - could not find race (404)", url);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        return raceResultRecords;
+        Logger.LogInformation("Updating file with data for period {Start} to {End}.", monthStart, monthEnd);
+        var raceResults = await _downloader.DownloadRaceResultsInRange(Logger, monthStart, monthEnd);
+        return raceResults.SelectMany(RaceResultRecord.ListFrom).ToList();
     }
 
-    private IEnumerable<(DateOnly monthStart, DateOnly monthEnd)> SplitRangeIntoMonths(DateOnly start, DateOnly end)
+    private static IEnumerable<(DateOnly monthStart, DateOnly monthEnd)> SplitRangeIntoMonths(DateOnly start, DateOnly end)
     {
         var monthStart = start;
         while (monthStart <= end)

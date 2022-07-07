@@ -4,24 +4,22 @@ using RacePredictor.Core.RacingPost;
 
 namespace RaceDataDownloader.Commands.DownloadTodaysRaceCards;
 
-public class DownloadTodaysRaceCardsCommandHandler : FileCommandHandlerBase
+public class DownloadTodaysRaceCardsCommandHandler : FileCommandHandlerBase<DownloadTodaysRaceCardsCommandHandler, DownloadTodaysRaceCardsOptions>
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IClock _clock;
-    private readonly ILogger<DownloadTodaysRaceCardsCommandHandler> _logger;
 
     public DownloadTodaysRaceCardsCommandHandler(
         IFileSystem fileSystem,
         IHttpClientFactory httpClientFactory,
         IClock clock,
-        ILogger<DownloadTodaysRaceCardsCommandHandler> logger) : base(fileSystem)
+        ILogger<DownloadTodaysRaceCardsCommandHandler> logger) : base(fileSystem, logger)
     {
         _httpClientFactory = httpClientFactory;
         _clock = clock;
-        _logger = logger;
     }
 
-    public async Task<int> RunAsync(DownloadTodaysRaceCardsOptions options)
+    protected override async Task InternalRunAsync(DownloadTodaysRaceCardsOptions options)
     {
         throw new NotImplementedException();
     }
