@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
 using RacePredictor.Core.RacingPost;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace RaceDataDownloader.Commands.UpdateResults;
 
@@ -86,12 +85,12 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
 
     private (DateOnly start, DateOnly end, string dataFolder) ValidateOptions(UpdateResultsOptions options)
     {
-        var dataFolder = options.DataDirectory ?? throw new ValidationException("Required 'output' parameter was not provided.");
+        var dataFolder = ValidateAndCreateOutputFolder(options.DataDirectory);
+
         var range = options.MinimumPeriodInDays < 1 ? UpdateResultsOptions.DefaultMinimumPeriodInDays : options.MinimumPeriodInDays;
         var start = _clock.Today.AddDays(-range);
         var end = _clock.Today.AddDays(-1);
 
-        FileSystem.CreateDirectoryIfNotExists(dataFolder);
         return (start, end, dataFolder);
     }
 }

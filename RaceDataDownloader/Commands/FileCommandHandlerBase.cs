@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
+using RacePredictor.Core;
 
 namespace RaceDataDownloader.Commands;
 
@@ -38,4 +39,25 @@ public abstract class FileCommandHandlerBase<TCommandHandler, TOptions>
     }
 
     protected abstract Task InternalRunAsync(TOptions options);
+
+    protected string ValidateAndCreateOutputFolder(string? possibleOutputDirectory)
+    {
+        var outputFolder = possibleOutputDirectory ??
+                           throw new ValidationException("Required 'output' parameter was not provided.");
+        FileSystem.CreateDirectoryIfNotExists(outputFolder);
+        return outputFolder;
+    }
+
+    protected static (DateOnly start, DateOnly end) ValidateAndParseDateRange(string? dateRange)
+    {
+        var range = dateRange ?? throw new ValidationException("Required 'dates' parameter was not provided.");
+        try
+        {
+            return range.ToRange();
+        }
+        catch (Exception e)
+        {
+            throw new ValidationException(e.Message);
+        }
+    }
 }

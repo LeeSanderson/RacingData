@@ -1,9 +1,7 @@
 ﻿using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
-using RacePredictor.Core;
 using RacePredictor.Core.RacingPost;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace RaceDataDownloader.Commands.DownloadRaceCards;
 
@@ -36,19 +34,8 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase<DownloadRa
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadRaceCardsOptions options)
     {
-        var range = options.DateRange ?? throw new ValidationException("Required 'dates' parameter was not provided.");
-        var outputFolder = options.OutputDirectory ?? throw new ValidationException("Required 'output' parameter was not provided.");
-        DateOnly start, end;
-        try
-        {
-            (start, end) = range.ToRange();
-        }
-        catch (Exception e)
-        {
-            throw new ValidationException(e.Message);
-        }
-
-        FileSystem.CreateDirectoryIfNotExists(outputFolder);
+        var (start, end) = ValidateAndParseDateRange(options.DateRange);
+        var outputFolder = ValidateAndCreateOutputFolder(options.OutputDirectory);
         return (start, end, outputFolder);
     }
 }
