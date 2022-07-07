@@ -8,6 +8,7 @@ using Serilog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Commands.DownloadRaceCards;
 using RaceDataDownloader.Commands.DownloadResults;
+using RaceDataDownloader.Commands.DownloadTodaysRaceCards;
 using RaceDataDownloader.Commands.UpdateResults;
 
 var loggerConfiguration = new LoggerConfiguration()
@@ -22,14 +23,16 @@ serviceCollection.AddHttpClient();
 var serviceProvider = serviceCollection.BuildServiceProvider();
 var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
-await Parser.Default.ParseArguments
-        <DownloadResultsOptions, 
-            DownloadRaceCardsOptions, 
-            UpdateResultsOptions>(args)
+await Parser.Default.ParseArguments<
+        DownloadResultsOptions, 
+        DownloadRaceCardsOptions, 
+        UpdateResultsOptions,
+        DownloadTodaysRaceCardsOptions>(args)
     .MapResult(
-        (DownloadResultsOptions downloadResultsOptions)  => CreateDownloadResultsCommandHandler().RunAsync(downloadResultsOptions),
-        (DownloadRaceCardsOptions downloadRaceCardsOptions) => CreateDownloadRaceCardsCommandHandler().RunAsync(downloadRaceCardsOptions),
-        (UpdateResultsOptions updateResultsOptions) => CreateUpdateResultsCommandHandler().RunAsync(updateResultsOptions),
+        (DownloadResultsOptions options)  => CreateDownloadResultsCommandHandler().RunAsync(options),
+        (DownloadRaceCardsOptions options) => CreateDownloadRaceCardsCommandHandler().RunAsync(options),
+        (UpdateResultsOptions options) => CreateUpdateResultsCommandHandler().RunAsync(options),
+        (DownloadTodaysRaceCardsOptions options) => CreateDownloadTodaysRaceCardsCommandHandler().RunAsync(options),
         _ => Task.FromResult(ExitCodes.Error));
 
 DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() => 
@@ -40,3 +43,6 @@ DownloadRaceCardsCommandHandler CreateDownloadRaceCardsCommandHandler() =>
 
 UpdateResultsCommandHandler CreateUpdateResultsCommandHandler() =>
     new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<UpdateResultsCommandHandler>());
+
+DownloadTodaysRaceCardsCommandHandler CreateDownloadTodaysRaceCardsCommandHandler() =>
+    new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadTodaysRaceCardsCommandHandler>());
