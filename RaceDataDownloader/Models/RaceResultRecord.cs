@@ -1,8 +1,9 @@
-﻿using RacePredictor.Core;
+﻿using CsvHelper.Configuration.Attributes;
+using RacePredictor.Core;
 
 namespace RaceDataDownloader.Models;
 
-public record RaceResultRecord
+public record RaceResultRecord : RaceCardRecord
 {
     public static IEnumerable<RaceResultRecord> ListFrom(RaceResult raceResult)
     {
@@ -54,44 +55,16 @@ public record RaceResultRecord
                 });
     }
 
-    public int RaceId { get; set; }
-    public string RaceName { get; set; } = string.Empty;
-    public int CourseId { get; set; }
-    public string CourseName { get; set; } = string.Empty;
-    public DateTime Off { get; set; }
-    public RaceType RaceType { get; set; }
-    public string? Class { get; set; }
-    public string? Pattern { get; set; }
-    public string? RatingBand { get; set; }
-    public string? AgeBand { get; set; }
-    public RaceSexRestriction SexRestriction { get; set; }
-    public string Distance { get; set; } = string.Empty;
-    public double DistanceInFurlongs { get; set; }
-    public int DistanceInMeters { get; set; }
-    public int DistanceInYards { get; set; }
-    public string? Going { get; set; }
-    public RaceSurface Surface { get; set; }
-    public int HorseId { get; set; }
-    public string HorseName { get; set; } = string.Empty;
-    public int JockeyId { get; set; }
-    public string JockeyName { get; set; } = string.Empty;
-    public int TrainerId { get; set; }
-    public string TrainerName { get; set; } = string.Empty;
-    public int Age { get; set; }
-    public string? HeadGear { get; set; }
-    public int RaceCardNumber { get; set; }
-    public int? StallNumber { get; set; }
-    public string Weight { get; set; } = string.Empty;
-    public int WeightInPounds { get; set; }
-    public string FractionalOdds { get; set; } = "SP";
-    public double? DecimalOdds { get; set; }
-    public int? OfficialRating { get; set; }
-    public int? RacingPostRating { get; set; }
-    public int? TopSpeedRating { get; set; }
+    [Index(34)]
     public ResultStatus ResultStatus { get; set; }
+    [Index(35)]
     public int FinishingPosition { get; set; }
+    [Index(36)]
     public double BeatenDistance { get; set; }
+    [Index(37)]
     public double OverallBeatenDistance { get; set; }
+    [Index(38)]
     public TimeSpan RaceTime { get; set; }
+    [Index(39)]
     public double RaceTimeInSeconds { get; set; }
 }

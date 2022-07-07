@@ -1,6 +1,7 @@
 ﻿using System.IO.Abstractions;
 using System.Net;
 using Microsoft.Extensions.Logging;
+using RaceDataDownloader.Models;
 using RacePredictor.Core;
 using RacePredictor.Core.RacingPost;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
@@ -53,7 +54,7 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
             }
 
             await FileSystem.WriteRecordsToJsonFile(Path.Combine(outputFolder, "RaceCards.json"), raceResults);
-            await SaveResultsAsCsv(Path.Combine(outputFolder, "RaceCards.csv"), raceResults);
+            await FileSystem.WriteRecordsToCsvFile(Path.Combine(outputFolder, "RaceCards.csv"), raceResults.SelectMany(RaceCardRecord.ListFrom));
         }
         catch (ValidationException ve)
         {
@@ -67,46 +68,6 @@ public class DownloadRaceCardsCommandHandler : FileCommandHandlerBase
         }
 
         return ExitCodes.Success;
-    }
-
-    private async Task SaveResultsAsCsv(string outputFileName, List<RaceCard> raceCards)
-    {
-        var records =
-            raceCards
-                .SelectMany(r => r.Runners.Select(rnr => new { Race = r, Runner = rnr }))
-                .Select(d => new
-                {
-                    RaceId = d.Race.Race.Id,
-                    RaceName = d.Race.Race.Name,
-                    CourseId = d.Race.Course.Id,
-                    CourseName = d.Race.Course.Name,
-                    d.Race.Attributes.Classification,
-                    d.Race.Attributes.Distance.Distance,
-                    d.Race.Attributes.Distance.DistanceInFurlongs,
-                    d.Race.Attributes.Distance.DistanceInMeters,
-                    d.Race.Attributes.Distance.DistanceInYards,
-                    d.Race.Attributes.Going,
-                    d.Race.Attributes.Surface,
-                    HorseId = d.Runner.Horse.Id,
-                    HorseName = d.Runner.Horse.Name,
-                    JockeyId = d.Runner.Jockey.Id,
-                    JockeyName = d.Runner.Jockey.Name,
-                    TrainerId = d.Runner.Trainer.Id,
-                    TrainerName = d.Runner.Trainer.Name,
-                    d.Runner.Attributes.Age,
-                    d.Runner.Attributes.HeadGear,
-                    d.Runner.Attributes.RaceCardNumber,
-                    d.Runner.Attributes.StallNumber,
-                    Weight = d.Runner.Attributes.Weight.ToString(),
-                    WeightInPounds = d.Runner.Attributes.Weight.TotalPounds,
-                    d.Runner.Statistics.Odds.FractionalOdds,
-                    d.Runner.Statistics.Odds.DecimalOdds,
-                    d.Runner.Statistics.OfficialRating,
-                    d.Runner.Statistics.RacingPostRating,
-                    d.Runner.Statistics.TopSpeedRating
-                });
-
-        await FileSystem.WriteRecordsToCsvFile(outputFileName, records);
     }
 
     private (DateOnly start, DateOnly end, string outputFolder) ValidateOptions(DownloadRaceCardsOptions options)
