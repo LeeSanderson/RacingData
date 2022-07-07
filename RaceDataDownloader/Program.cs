@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Commands.DownloadRaceCards;
 using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Commands.DownloadTodaysRaceCards;
+using RaceDataDownloader.Commands.PredictTodaysRaceCards;
 using RaceDataDownloader.Commands.UpdateResults;
 
 var loggerConfiguration = new LoggerConfiguration()
@@ -27,12 +28,14 @@ await Parser.Default.ParseArguments<
         DownloadResultsOptions, 
         DownloadRaceCardsOptions, 
         UpdateResultsOptions,
-        DownloadTodaysRaceCardsOptions>(args)
+        DownloadTodaysRaceCardsOptions,
+        PredictTodaysRaceCardsOptions>(args)
     .MapResult(
         (DownloadResultsOptions options)  => CreateDownloadResultsCommandHandler().RunAsync(options),
         (DownloadRaceCardsOptions options) => CreateDownloadRaceCardsCommandHandler().RunAsync(options),
         (UpdateResultsOptions options) => CreateUpdateResultsCommandHandler().RunAsync(options),
         (DownloadTodaysRaceCardsOptions options) => CreateDownloadTodaysRaceCardsCommandHandler().RunAsync(options),
+        (PredictTodaysRaceCardsOptions options) => CreatePredictTodaysRaceCardsCommandHandler().RunAsync(options),
         _ => Task.FromResult(ExitCodes.Error));
 
 DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() => 
@@ -46,3 +49,6 @@ UpdateResultsCommandHandler CreateUpdateResultsCommandHandler() =>
 
 DownloadTodaysRaceCardsCommandHandler CreateDownloadTodaysRaceCardsCommandHandler() =>
     new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadTodaysRaceCardsCommandHandler>());
+
+PredictTodaysRaceCardsCommandHandler CreatePredictTodaysRaceCardsCommandHandler() =>
+    new(new FileSystem(), new RealClock(), loggerFactory.CreateLogger<PredictTodaysRaceCardsCommandHandler>());
