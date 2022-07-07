@@ -9,6 +9,9 @@ namespace RaceDataDownloader.Commands
 {
     public static class FileSystemExtensions
     {
+        public static string GetResultsFileName(this IFileSystem fileSystem, string dataFolder, DateOnly date) =>
+            Path.Combine(dataFolder, $"Results_{date.Year}{date.Month:00}.csv");
+
         public static async Task WriteRecordsToCsvFile<TRecord>(
             this IFileSystem fileSystem,
             string fileName,

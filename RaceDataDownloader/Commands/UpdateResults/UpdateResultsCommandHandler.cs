@@ -23,7 +23,7 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
     protected override async Task InternalRunAsync(UpdateResultsOptions options)
     {
         var (start, end, dataFolder) = ValidateOptions(options);
-        foreach (var (monthStart, monthEnd) in SplitRangeIntoMonths(start, end))
+        foreach (var (monthStart, monthEnd) in DateRange.SplitRangeIntoMonths(start, end))
         {
             await UpdateMonthlyResultsFile(monthStart, monthEnd, dataFolder);
         }
@@ -31,7 +31,7 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
 
     private async Task UpdateMonthlyResultsFile(DateOnly monthStart, DateOnly monthEnd, string dataFolder)
     {
-        var monthlyResultsFile = Path.Combine(dataFolder, $"Results_{monthStart.Year}{monthStart.Month:00}.csv");
+        var monthlyResultsFile = FileSystem.GetResultsFileName(dataFolder, monthStart);
         List<RaceResultRecord> raceResults;
         if (FileSystem.File.Exists(monthlyResultsFile))
         {
@@ -71,23 +71,11 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
         return raceResults.SelectMany(RaceResultRecord.ListFrom).ToList();
     }
 
-    private static IEnumerable<(DateOnly monthStart, DateOnly monthEnd)> SplitRangeIntoMonths(DateOnly start, DateOnly end)
-    {
-        var monthStart = start;
-        while (monthStart <= end)
-        {
-            var monthEnd = new DateOnly(monthStart.Year, monthStart.Month, DateTime.DaysInMonth(monthStart.Year, monthStart.Month));
-            monthEnd = monthEnd > end ? end : monthEnd;
-            yield return (monthStart, monthEnd);
-            monthStart = monthEnd.AddDays(1);
-        }
-    }
-
     private (DateOnly start, DateOnly end, string dataFolder) ValidateOptions(UpdateResultsOptions options)
     {
         var dataFolder = ValidateAndCreateOutputFolder(options.DataDirectory);
 
-        var range = options.MinimumPeriodInDays < 1 ? UpdateResultsOptions.DefaultMinimumPeriodInDays : options.MinimumPeriodInDays;
+        var range = options.MinimumPeriodInDays < 1 ? DefaultOptions.MinimumPeriodInDays : options.MinimumPeriodInDays;
         var start = _clock.Today.AddDays(-range);
         var end = _clock.Today.AddDays(-1);
 
