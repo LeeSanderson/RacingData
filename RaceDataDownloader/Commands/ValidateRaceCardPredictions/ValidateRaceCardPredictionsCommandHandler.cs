@@ -28,18 +28,44 @@ public class ValidateRaceCardPredictionsCommandHandler :
         var scores = await ScorePredictions(predictions).ToListAsync();
         if (scores.Any())
         {
-            var start = DateOnly.FromDateTime(scores.Min(x => x.Off));
-            var predictionsFileName = FileSystem.GetPredictionScoresFileName(_dataFolder, start);
-            await FileSystem.WriteRecordsToCsvFile(predictionsFileName, scores);
+            await MergePredictionScores(scores);
 
             // Calculate winnings and losses based on a £1 bet on each race
             var stake = scores.Count;
-            var losses = scores.Count(x => !x.Won);
-            var winnings = scores.Where(x => x.Won).Sum(x => x.DecimalOdds ?? 0);
+            var losses = scores.Count(x => !x.Won && x.ResultStatus == ResultStatus.CompletedRace);
+            var returned = scores.Count(x => x.ResultStatus != ResultStatus.CompletedRace);
+            var winnings = scores.Where(x => x.Won).Sum(x => x.DecimalOdds ?? 0) + returned;
             var percentageGains = ((winnings - losses) / stake) * 100.0;
             Logger.LogInformation($"Scored {scores.Count} predictions.");
             Logger.LogInformation($"With a £{stake} stake and {losses} losses, total winnings would be £{winnings:00} representing a {percentageGains:00}% gain/loss.");
         }
+    }
+
+    private async Task MergePredictionScores(List<RaceCardPredictionScore> scores)
+    {
+        var start = DateOnly.FromDateTime(scores.Min(x => x.Off));
+        var predictionsFileName = FileSystem.GetPredictionScoresFileName(_dataFolder, start);
+        if (FileSystem.File.Exists(predictionsFileName))
+        {
+            var scoresUpdated = false;
+            var newScores = scores;
+            scores = await FileSystem.ReadRecordsFromCsvFile<RaceCardPredictionScore>(predictionsFileName);
+            foreach (var score in newScores)
+            {
+                if (!scores.Any(x => x.RaceId == score.RaceId && x.HorseId == score.HorseId))
+                {
+                    scores.Add(score);
+                    scoresUpdated = true;
+                }
+            }
+
+            if (!scoresUpdated)
+            {
+                return;
+            }
+        }
+
+        await FileSystem.WriteRecordsToCsvFile(predictionsFileName, scores);
     }
 
     private async IAsyncEnumerable<RaceCardPredictionScore> ScorePredictions(List<RaceCardPrediction> predictions)
@@ -68,14 +94,14 @@ public class ValidateRaceCardPredictionsCommandHandler :
     private async Task<RaceResultRecord> FindResultForPrediction(RaceCardPrediction prediction)
     {
         var predictionRaceDate = DateOnly.FromDateTime(prediction.Off);
-        var resultsForDate = await EnsureResultsLoadedFor(predictionRaceDate);
+        var resultsForDate = await EnsureResultsLoadedFor(prediction.RaceId, predictionRaceDate);
         if (resultsForDate.Count == 0)
         {
             throw new ValidationException($"Unable to find race results for race {prediction.RaceId} on {prediction.Off}");
         }
 
         var resultForPrediction =
-            resultsForDate.FirstOrDefault(r => r.RaceId == prediction.RaceId && r.HorseId == prediction.HorseId);
+            resultsForDate.FirstOrDefault(r => r.HorseId == prediction.HorseId);
         if (resultForPrediction == null)
         {
             throw new ValidationException($"Unable to find horse {prediction.HorseId} in race results for race {prediction.RaceId} on {prediction.Off}");
@@ -84,7 +110,7 @@ public class ValidateRaceCardPredictionsCommandHandler :
         return resultForPrediction;
     }
 
-    private async Task<List<RaceResultRecord>> EnsureResultsLoadedFor(DateOnly date)
+    private async Task<List<RaceResultRecord>> EnsureResultsLoadedFor(int raceId, DateOnly date)
     {
         var resultsFileName = FileSystem.GetResultsFileName(_dataFolder, date);
         if (!_resultsCache.TryGetValue(resultsFileName, out var resultsForMonth))
@@ -100,6 +126,6 @@ public class ValidateRaceCardPredictionsCommandHandler :
 
         var start = date.ToDateTime(TimeOnly.MinValue);
         var end = start.AddDays(1);
-        return resultsForMonth.Where(r => r.ResultStatus == ResultStatus.CompletedRace && r.Off >= start && r.Off < end).ToList();
+        return resultsForMonth.Where(r => r.RaceId == raceId && r.Off >= start && r.Off < end).ToList();
     }
 }
