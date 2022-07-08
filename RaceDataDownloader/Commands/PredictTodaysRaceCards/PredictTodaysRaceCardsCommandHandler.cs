@@ -26,12 +26,18 @@ public class PredictTodaysRaceCardsCommandHandler : FileCommandHandlerBase<Predi
         
         var predictor = new AverageSpeedRaceCardPredictor(historicResults);
         var predictions = predictor.PredictRaceCardResults(raceCardsToPredict).ToList();
+        Logger.LogInformation("Predicted winners for {PredictionCount} race cards", predictions.Count);
 
         await FileSystem.WriteRecordsToJsonFile(Path.Combine(dataFolder, "Predictions.json"), predictions);
     }
 
-    private async Task<List<RaceCardRecord>> LoadRaceCardsToPredict(string dataFolder) => 
-        await FileSystem.ReadRecordsFromCsvFile<RaceCardRecord>(Path.Combine(dataFolder, "TodaysRaceCards.csv"));
+    private async Task<List<RaceCardRecord>> LoadRaceCardsToPredict(string dataFolder)
+    {
+        var raceCardRecords = await FileSystem.ReadRecordsFromCsvFile<RaceCardRecord>(Path.Combine(dataFolder, "TodaysRaceCards.csv"));
+        var raceCardCount = raceCardRecords.Select(r => r.RaceId).Distinct().Count();
+        Logger.LogInformation("Predicting results for {RaceCardCount} race cards", raceCardCount);
+        return raceCardRecords;
+    }
 
     private async Task<List<RaceResultRecord>> LoadHistoricResultsInRange(string dataFolder, DateOnly rangeStart, DateOnly rangeEnd)
     {

@@ -90,7 +90,6 @@ public class PredictTodaysRaceCardsCommandHandlerShould
         _mockFileSystem = Substitute.For<IFileSystem>();
         _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(_resultsWhereHorse1IsFasterThanHorse2.ToCsvString().Result));
         _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
-
     }
 
     [Fact]

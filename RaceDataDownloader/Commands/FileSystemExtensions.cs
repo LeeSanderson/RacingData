@@ -12,6 +12,9 @@ namespace RaceDataDownloader.Commands
         public static string GetResultsFileName(this IFileSystem fileSystem, string dataFolder, DateOnly date) =>
             Path.Combine(dataFolder, $"Results_{date.Year}{date.Month:00}.csv");
 
+        public static string GetPredictionScoresFileName(this IFileSystem fileSystem, string dataFolder, DateOnly date) =>
+            Path.Combine(dataFolder, $"PredictionScores_{date.Year}{date.Month:00}.csv");
+
         public static async Task WriteRecordsToCsvFile<TRecord>(
             this IFileSystem fileSystem,
             string fileName,
@@ -36,7 +39,12 @@ namespace RaceDataDownloader.Commands
         {
             fileSystem.EnsureFileExists(fileName);
             var csvString = await fileSystem.File.ReadAllTextAsync(fileName);
-            using var reader = new StringReader(csvString);
+            return await csvString.FromCsvString<TRecord>();
+        }
+
+        public static async Task<List<TRecord>> FromCsvString<TRecord>(this string data)
+        {
+            using var reader = new StringReader(data);
             using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
             return await csvReader.GetRecordsAsync<TRecord>().ToListAsync();
         }
@@ -44,8 +52,12 @@ namespace RaceDataDownloader.Commands
         public static async Task WriteRecordsToJsonFile<TRecord>(this IFileSystem fileSystem, string outputFileName, List<TRecord> records)
         {
             fileSystem.DeleteFileIfExists(outputFileName);
+            var jsonString = records.ToJsonString();
+            await fileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
+        }
 
-            var jsonString = JsonSerializer.Serialize(records,
+        public static string ToJsonString<TRecord>(this IEnumerable<TRecord> records) =>
+            JsonSerializer.Serialize(records,
                 new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
@@ -54,7 +66,14 @@ namespace RaceDataDownloader.Commands
                     Converters = { new JsonStringEnumConverter() }
                 });
 
-            await fileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
+
+        public static async Task<List<TRecord>> ReadRecordsFromJsonFile<TRecord>(
+            this IFileSystem fileSystem,
+            string fileName)
+        {
+            fileSystem.EnsureFileExists(fileName);
+            var jsonString = await fileSystem.File.ReadAllTextAsync(fileName);
+            return JsonSerializer.Deserialize<List<TRecord>>(jsonString!) ?? new List<TRecord>();
         }
 
         public static void DeleteFileIfExists(this IFileSystem fileSystem, string fileName)
