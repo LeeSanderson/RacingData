@@ -31,6 +31,14 @@ public class ValidateRaceCardPredictionsCommandHandler :
             var start = DateOnly.FromDateTime(scores.Min(x => x.Off));
             var predictionsFileName = FileSystem.GetPredictionScoresFileName(_dataFolder, start);
             await FileSystem.WriteRecordsToCsvFile(predictionsFileName, scores);
+
+            // Calculate winnings and losses based on a £1 bet on each race
+            var stake = scores.Count;
+            var losses = scores.Count(x => !x.Won);
+            var winnings = scores.Where(x => x.Won).Sum(x => x.DecimalOdds ?? 0);
+            var percentageGains = ((winnings - losses) / stake) * 100.0;
+            Logger.LogInformation($"Scored {scores.Count} predictions.");
+            Logger.LogInformation($"With a £{stake} stake and {losses} losses, total winnings would be £{winnings:00} representing a {percentageGains:00}% gain/loss.");
         }
     }
 
