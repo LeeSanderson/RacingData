@@ -32,8 +32,8 @@ public class ValidateRaceCardPredictionsCommandHandler :
 
             // Calculate winnings and losses based on a £1 bet on each race
             var stake = scores.Count;
-            var losses = scores.Count(x => !x.Won && x.ResultStatus == ResultStatus.CompletedRace);
-            var returned = scores.Count(x => x.ResultStatus != ResultStatus.CompletedRace);
+            var losses = scores.Count(x => !x.Won && x.ResultStatus != ResultStatus.RaceVoid);
+            var returned = scores.Count(x => x.ResultStatus == ResultStatus.RaceVoid);
             var winnings = scores.Where(x => x.Won).Sum(x => x.DecimalOdds ?? 0) + returned;
             var percentageGains = ((winnings - losses) / stake) * 100.0;
             Logger.LogInformation($"Scored {scores.Count} predictions.");
@@ -47,21 +47,13 @@ public class ValidateRaceCardPredictionsCommandHandler :
         var predictionsFileName = FileSystem.GetPredictionScoresFileName(_dataFolder, start);
         if (FileSystem.File.Exists(predictionsFileName))
         {
-            var scoresUpdated = false;
-            var newScores = scores;
-            scores = await FileSystem.ReadRecordsFromCsvFile<RaceCardPredictionScore>(predictionsFileName);
-            foreach (var score in newScores)
+            var existingScores = await FileSystem.ReadRecordsFromCsvFile<RaceCardPredictionScore>(predictionsFileName);
+            foreach (var existingScore in existingScores)
             {
-                if (!scores.Any(x => x.RaceId == score.RaceId && x.HorseId == score.HorseId))
+                if (!scores.Any(x => x.RaceId == existingScore.RaceId && x.HorseId == existingScore.HorseId))
                 {
-                    scores.Add(score);
-                    scoresUpdated = true;
+                    scores.Add(existingScore);
                 }
-            }
-
-            if (!scoresUpdated)
-            {
-                return;
             }
         }
 
