@@ -44,3 +44,52 @@ FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,RaceName,Co
 2,False,9/2J,5.5,CompletedRace,814850,Coral Proud Supporter Of British Racing Handicap,17,Epsom,07/07/2022 19:53:00,3177334,Lenny's Spirit
 2,False,10/1,11,CompletedRace,814853,Coral Play 'Racing-Super-Series' For Free Handicap,17,Epsom,07/07/2022 20:23:00,3781893,Mrembo
 4,False,16/1,17,CompletedRace,816595,Prix de Cheffreville (Conditions) (3yo) (Moyenne Course) (Turf),211,Longchamp,07/07/2022 16:15:00,3549388,Lorenzo De Medici
+6,False,9/2,5.5,CompletedRace,814869,Weatherbys British EBF Maiden Stakes (Colts & Geldings),174,Newmarket (July),07/08/2022 13:15:00,4369765,Hope You Can Run
+8,False,17/2,9.5,CompletedRace,813932,bet365 Handicap (Heritage Handicap),174,Newmarket (July),07/08/2022 13:50:00,4014031,Knightswood
+6,False,11/5,3.2,CompletedRace,814866,Duchess Of Cambridge Stakes (Sponsored By bet365) (Group 2),174,Newmarket (July),07/08/2022 14:25:00,4322703,Maylandsea
+8,False,3/1F,4,CompletedRace,813931,bet365 Trophy (Heritage Handicap),174,Newmarket (July),07/08/2022 15:00:00,3257950,Candleford
+2,False,1/7F,1.1428571428571428,CompletedRace,813930,Tattersalls Falmouth Stakes (Group 1) (Fillies & Mares) (British Champions Series),174,Newmarket (July),07/08/2022 15:35:00,3636550,Inspiral
+8,False,12/1,13,CompletedRace,814867,Arioneo Handicap,174,Newmarket (July),07/08/2022 16:10:00,3226213,Dashing Dick
+2,False,4/1,5,CompletedRace,814868,Moet & Chandon Handicap,174,Newmarket (July),07/08/2022 16:45:00,3142198,Ancient Times
+4,False,11/1,12,CompletedRace,814911,William Hill Best Odds Guaranteed Handicap,107,York,07/08/2022 14:05:00,3173646,Fairmac
+1,True,9/4F,3.25,CompletedRace,814909,William Hill Summer Stakes (Group 3) (Fillies & Mares),107,York,07/08/2022 14:40:00,3558252,Flotus
+9,False,25/1,26,CompletedRace,814913,William Hill Play Responsibly Irish EBF Fillies' Novice Stakes (GBB Race) (IRE Incentive Race),107,York,07/08/2022 15:15:00,4277872,Heathcliff's Girl
+3,False,5/2,3.5,CompletedRace,814914,William Hill Pick Your Places Handicap,107,York,07/08/2022 15:50:00,3695495,Animato
+1,True,7/4F,2.75,CompletedRace,814910,Azets Handicap,107,York,07/08/2022 16:25:00,3481883,Saleymm
+6,False,12/1,13,CompletedRace,814912,Irish Thoroughbred Marketing Handicap,107,York,07/08/2022 17:00:00,3526632,Guest List
+2,False,5/2,3.5,CompletedRace,814915,Jigsaw Sports Branding Apprentice Handicap,107,York,07/08/2022 17:30:00,3687259,Piastrella
+4,False,7/2,4.5,CompletedRace,814885,Signature Capital Nursery Handicap,2,Ascot,07/08/2022 14:15:00,4310821,It's Chico Time
+2,False,6/4J,2.5,CompletedRace,814887,Knights Handicap,2,Ascot,07/08/2022 14:50:00,3984233,Teumessias Fox
+3,False,5/2F,3.5,CompletedRace,814883,Close Brothers Property Finance Handicap,2,Ascot,07/08/2022 15:25:00,3437719,Atrium
+7,False,13/2,7.5,CompletedRace,814881,Savills British EBF Fillies' Handicap,2,Ascot,07/08/2022 16:00:00,3862944,Makinmedoit
+3,False,15/8F,2.875,CompletedRace,814882,Long Harbour Derek Lucie-Smith Handicap,2,Ascot,07/08/2022 16:36:00,4340205,Sea The Casper
+5,False,15/2,8.5,CompletedRace,814884,Alvarium Handicap,2,Ascot,07/08/2022 17:11:00,2253263,Asad
+4,False,14/1,15,CompletedRace,814886,Property Raceday Targets £3M Apprentice Handicap,2,Ascot,07/08/2022 17:45:00,2781505,Global Esteem
+1,True,17/2,9.5,CompletedRace,816562,Sign Up To Our Newsletter Maiden Hurdle,596,Cork,07/08/2022 17:05:00,4175221,Lihyan
+5,False,7/2,4.5,CompletedRace,816563,Buy Tickets On www.CorkRacecourse.ie Maiden Hurdle,596,Cork,07/08/2022 17:35:00,3336134,Moulane West
+8,False,20/1,21,CompletedRace,816564,Mallow Handicap Hurdle,596,Cork,07/08/2022 18:05:00,1495038,Ashqar
+1,True,7/2,4.5,CompletedRace,816565,Follow Us On Twitter Maiden Hurdle,596,Cork,07/08/2022 18:35:00,4144663,Ramondo Dnzeo
+12,False,13/2F,7.5,CompletedRace,816566,Follow Us On Instagram Mares' Handicap Hurdle,596,Cork,07/08/2022 19:05:00,3217671,Eaton Lady
+3,False,8/1,9,CompletedRace,816567,Hothouse Flowers Play Live After Racing Hurdle,596,Cork,07/08/2022 19:35:00,2536650,Soviet Pimpernel
+2,False,12/1,13,CompletedRace,816568,Way To Paris At Coolagown Stud INH Flat Race,596,Cork,07/08/2022 20:05:00,4361099,Cash The Cheque
+6,False,4/9F,1.4444444444444444,CompletedRace,816556,KilbegganRaces.com Mares' Maiden Hurdle,203,Kilbeggan,07/08/2022 17:20:00,3743384,Walk On The Moone
+10,False,25/1,26,CompletedRace,816557,Kilbeggan Irish Whiskey Maiden Hurdle,203,Kilbeggan,07/08/2022 17:50:00,1633908,Big Kitten
+2,False,1/2F,1.5,CompletedRace,816558,Follow Kilbeggan On Twitter Handicap Hurdle,203,Kilbeggan,07/08/2022 18:20:00,3316948,Petrol Head
+8,False,13/2,7.5,CompletedRace,816559,Writech Handicap Hurdle,203,Kilbeggan,07/08/2022 18:50:00,3560290,Willaston
+5,False,9/1,10,CompletedRace,816560,Irish Stallion Farms EBF Beginners' Chase,203,Kilbeggan,07/08/2022 19:20:00,3282278,Caesar Rock
+2,False,9/1,10,CompletedRace,816305,AXA Farm Insurance Midlands National Handicap Chase (Grade B),203,Kilbeggan,07/08/2022 19:50:00,2602371,Popong
+9,False,28/1,29,CompletedRace,816561,Follow Kilbeggan On Facebook INH Flat Race,203,Kilbeggan,07/08/2022 20:20:00,4100972,Sameasiteverwas
+5,False,12/1,13,CompletedRace,814899,Boulton Group Handicap (For Female Amateur Jockeys),13,Chester,07/08/2022 18:00:00,3137662,Mercurius Power
+2,False,85/40,3.125,CompletedRace,814896,British Stallion Studs EBF Restricted Novice Stakes (Bands B/C/D) (Qual) (GBB) (IRE Incentive Race),13,Chester,07/08/2022 18:30:00,4175548,Boom Boom Pow
+2,False,4/1,5,CompletedRace,814895,Excell Supply Handicap,13,Chester,07/08/2022 19:00:00,3673840,Haunted Dream
+3,False,9/1,10,CompletedRace,814900,Envirosips Nursery Handicap,13,Chester,07/08/2022 19:30:00,4175659,Zephina
+3,False,50/1,51,CompletedRace,814901,GBR Everyone's Turf Handicap,13,Chester,07/08/2022 20:00:00,877155,Madrinho
+4,False,22/1,23,CompletedRace,814897,Elaine Williams Memorial Handicap,13,Chester,07/08/2022 20:30:00,3140868,Red Walls
+2,False,5/1,6,CompletedRace,814898,City Plate Day Tomorrow Fillies' Handicap,13,Chester,07/08/2022 21:00:00,3549490,Hellenista
+2,False,5/1,6,CompletedRace,814877,Hev And Pete Stay Sharp Handicap,12,Chepstow,07/08/2022 18:15:00,3908414,Baez
+8,False,16/1,17,CompletedRace,814880,Capital Windscreens Support Breast Cancer Handicap,12,Chepstow,07/08/2022 18:45:00,3057690,Fossos
+2,False,17/2,9.5,CompletedRace,814876,St Tewdrics House Luxury Wedding Venue Fillies' Handicap,12,Chepstow,07/08/2022 19:15:00,2617709,Port Noir
+6,False,40/1,41,CompletedRace,814875,Dragon TV And Film Studios Apprentice Handicap,12,Chepstow,07/08/2022 19:45:00,4107666,My Opinion
+1,True,100/30,4.333333333333334,CompletedRace,814879,Capital Windscreens Support Autism Handicap,12,Chepstow,07/08/2022 20:15:00,3550630,Connie's Rose
+9,False,22/1,23,CompletedRace,814878,Reecer Group Handicap,12,Chepstow,07/08/2022 20:45:00,3207179,Girl From Ipanema
+4,False,5/2,3.5,CompletedRace,817089,WATHBA STALLIONS CUP HANDICAP STAKES 0-65,1322,Chepstow (GB) (ARAB),07/08/2022 17:37:00,2012167,Bin Al Reeh (GB)
