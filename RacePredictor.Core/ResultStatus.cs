@@ -15,6 +15,7 @@ public enum ResultStatus
     Refused,
     CarriedOut,
     LeftAtStart,
+    NonRunner
 }
 
 public static class ResultStatusExtensions 

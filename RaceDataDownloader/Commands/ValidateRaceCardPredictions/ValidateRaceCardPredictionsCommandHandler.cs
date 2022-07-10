@@ -32,14 +32,17 @@ public class ValidateRaceCardPredictionsCommandHandler :
 
             // Calculate winnings and losses based on a £1 bet on each race
             var stake = scores.Count;
-            var losses = scores.Count(x => !x.Won && x.ResultStatus != ResultStatus.RaceVoid);
-            var returned = scores.Count(x => x.ResultStatus == ResultStatus.RaceVoid);
+            var losses = scores.Count(x => !x.Won && !StakeReturnedFor(x.ResultStatus));
+            var returned = scores.Count(x => StakeReturnedFor(x.ResultStatus));
             var winnings = scores.Where(x => x.Won).Sum(x => x.DecimalOdds ?? 0) + returned;
             var percentageGains = ((winnings - losses) / stake) * 100.0;
             Logger.LogInformation($"Scored {scores.Count} predictions.");
             Logger.LogInformation($"With a £{stake} stake and {losses} losses, total winnings would be £{winnings:00} representing a {percentageGains:00}% gain/loss.");
         }
     }
+
+    private static bool StakeReturnedFor(ResultStatus resultStatus) => 
+        resultStatus == ResultStatus.RaceVoid || resultStatus == ResultStatus.NonRunner;
 
     private async Task MergePredictionScores(List<RaceCardPredictionScore> scores)
     {
@@ -96,7 +99,19 @@ public class ValidateRaceCardPredictionsCommandHandler :
             resultsForDate.FirstOrDefault(r => r.HorseId == prediction.HorseId);
         if (resultForPrediction == null)
         {
-            throw new ValidationException($"Unable to find horse {prediction.HorseId} in race results for race {prediction.RaceId} on {prediction.Off}");
+            Logger.LogWarning("Unable to find horse {HorseName} ({HorseId}) in race results for race {RaceId} on {Off} - assuming non-runner",
+                prediction.HorseId, prediction.HorseName, prediction.RaceId, prediction.Off);
+            return new RaceResultRecord
+            {
+                HorseId = prediction.HorseId,
+                HorseName = prediction.HorseName,
+                RaceId = prediction.RaceId,
+                RaceName = prediction.RaceName,
+                CourseId = prediction.CourseId,
+                CourseName = prediction.CourseName,
+                Off = prediction.Off,
+                ResultStatus = ResultStatus.NonRunner,
+            };
         }
 
         return resultForPrediction;
