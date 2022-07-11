@@ -1,4 +1,47 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,RaceName,CourseId,CourseName,Off,HorseId,HorseName
+7,False,12/1,13,CompletedRace,816604,Durkin Bros. Electrical Maiden Hurdle,197,Sligo,07/10/2022 14:10:00,3538533,Brown Monday
+2,False,3/1J,4,CompletedRace,816605,Irish Stallion Farms EBF Mares Novice Handicap Hurdle,197,Sligo,07/10/2022 14:45:00,2698892,Hophornbeam
+5,False,6/1,7,CompletedRace,816606,Friends Of Brian Mulligan Opportunity Handicap Hurdle,197,Sligo,07/10/2022 15:20:00,1888946,Two Shoe Tom
+11,False,10/1,11,CompletedRace,816607,Taylor Construction & Civil Works Handicap Hurdle,197,Sligo,07/10/2022 15:55:00,4219815,Cracklinrose
+0,False,7/2F,4.5,PulledUp,816608,Sligo Park Hotel Handicap Hurdle,197,Sligo,07/10/2022 16:30:00,2995424,Don't Tell Allen
+4,False,14/1,15,CompletedRace,814718,New Mr And Mrs Duffy Novices' Hurdle (GBB Race),41,Perth,07/10/2022 13:45:00,3851628,Toucan Sam
+2,False,7/4J,2.75,CompletedRace,814715,Your Career In Racing Starts Here Novices' Handicap Chase (GBB Race),41,Perth,07/10/2022 14:20:00,904030,Castletown
+2,False,11/5,3.2,CompletedRace,814717,Celebrating Eve Muirhead's Curling Gold Handicap Hurdle,41,Perth,07/10/2022 14:55:00,3221412,Keepthefaithinme
+2,False,2/1,3,CompletedRace,814714,Fosters Fortieth Flurry With Cragganvallie Fold Handicap Chase,41,Perth,07/10/2022 15:30:00,3325879,Planned Paradise
+2,False,15/8F,2.875,CompletedRace,814713,Perth Silver Cup Handicap Chase (For The Perth Silver Cup),41,Perth,07/10/2022 16:05:00,2370887,Fearless
+3,False,25/1,26,CompletedRace,814716,Scottish Racing Academy Handicap Hurdle,41,Perth,07/10/2022 16:40:00,1025021,A Place Apart
+1,True,10/11F,1.9090909090909092,CompletedRace,814719,Careers In Racing Step On Track Conditional Jockeys' Handicap Hurdle,41,Perth,07/10/2022 17:15:00,1146385,Maifalki
+3,False,7/1,8,CompletedRace,816597,Irish Stallion Farms EBF Fillies Maiden (IRE Incentive Race),182,Fairyhouse,07/10/2022 13:55:00,4215661,Finsceal Go Deo
+5,False,5/2,3.5,CompletedRace,816598,fairyhouse.ie Maiden,182,Fairyhouse,07/10/2022 14:30:00,4332863,Plankton
+5,False,9/2F,5.5,CompletedRace,816599,GAIN The Advantage Series Handicap,182,Fairyhouse,07/10/2022 15:05:00,3523590,Jupiter Express
+6,False,11/2,6.5,CompletedRace,816600,SP Or Better Guaranteed With Tote At Fairyhouse Handicap,182,Fairyhouse,07/10/2022 15:40:00,3675941,Areille
+1,True,14/1,15,CompletedRace,815503,Irish Stallion Farms EBF Brownstown Stakes (Group 3) (Fillies & Mares),182,Fairyhouse,07/10/2022 16:15:00,2864407,Marbling
+1,True,5/2,3.5,CompletedRace,816601,Pat Smullen Coast To Curragh Charity Cycle August 27th Handicap,182,Fairyhouse,07/10/2022 16:50:00,3617922,Nectarine
+7,False,13/2,7.5,CompletedRace,816602,Irish Injured Jockeys Handicap,182,Fairyhouse,07/10/2022 17:25:00,1654266,Barrys Rock
+4,False,22/1,23,CompletedRace,814726,Cotswold Larder Conditional Jockeys' Handicap Hurdle,67,Stratford,07/10/2022 14:01:00,3763269,Le Mur
+3,False,7/2,4.5,CompletedRace,814721,Ladies Day Is The 17th July Juvenile Hurdle (GBB Race),67,Stratford,07/10/2022 14:36:00,3654384,Captain Square
+3,False,11/2,6.5,CompletedRace,814724,National Racehorse Week 10th-18th September Handicap Chase,67,Stratford,07/10/2022 15:11:00,2881458,Forget You Not
+0,False,100/30,4.333333333333334,PulledUp,814720,Allsopp's Stratford Races Day Out Handicap Hurdle (For The Stratford Summer Salver),67,Stratford,07/10/2022 15:46:00,906519,Sofia's Rock
+1,True,12/1,13,CompletedRace,814723,Stratford Racecourse Campsite Handicap Chase,67,Stratford,07/10/2022 16:21:00,2315243,Rostello
+5,False,25/1,26,CompletedRace,814722,"Stratford Racing Club ""National Hunt"" Maiden Hurdle (GBB Race)",67,Stratford,07/10/2022 16:56:00,4263221,Prince Cleni
+0,False,8/1,9,Fell,814725,Watch On RacingTV Handicap Chase,67,Stratford,07/10/2022 17:31:00,2878592,Groom D'Oudairies
+2,False,6/4F,2.5,CompletedRace,817094,Pearce Memorial Challenge Cup (Plate) (Conditions) (2yo+) (Course C+3) (Turf),416,Sha Tin,07/10/2022 18:00:00,4381617,Happy Won
+5,False,22/5,5.4,CompletedRace,817096,Purves Quaich (Handicap) (Class 4) (3yo+) (Dirt),416,Sha Tin,07/10/2022 18:30:00,1692177,Lady First
+2,False,10/1,11,CompletedRace,817097,Swaine Cup (Handicap) (Class 4) (3yo+) (Course C+3) (Turf),416,Sha Tin,07/10/2022 19:00:00,3811027,Proud Dragon
+8,False,12/1,13,CompletedRace,817098,Wong Cup (Handicap) (Class 5) (3yo+) (Course C+3) (Turf),416,Sha Tin,07/10/2022 19:30:00,2757628,Superb Daddy
+6,False,37/10,4.7,CompletedRace,817099,Li Cup (Handicap) (Class 4) (3yo+) (Course C+3) (Turf),416,Sha Tin,07/10/2022 20:00:00,4205028,Sweet Diamond
+8,False,31/5,7.2,CompletedRace,817100,Arculli Trophy (Handicap) (Class 4) (3yo+) (Course C+3) (Turf),416,Sha Tin,07/10/2022 20:35:00,3387997,Oscar Glory
+1,True,39/10,4.9,CompletedRace,817101,Chan Trophy (Handicap) (Class 4) (3yo+) (Course C+3) (Turf),416,Sha Tin,07/10/2022 21:05:00,3972465,All Riches
+4,False,9/5F,2.8,CompletedRace,817102,Stevenson Cup (Handicap) (Class 3) (3yo+) (Course C+3) (Turf),416,Sha Tin,07/10/2022 21:35:00,4146626,Reve Parisien
+6,False,57/10,6.7,CompletedRace,817103,Ip Jug (Handicap) (Class 3) (3yo+) (Dirt),416,Sha Tin,07/10/2022 22:10:00,3224031,Lightning Bolt
+2,False,17/10F,2.7,CompletedRace,817095,Chow Silver Plate (Handicap) (Class 2) (3yo+) (Course C+3) (Turf),416,Sha Tin,07/10/2022 22:45:00,3402614,Keefy
+8,False,24/1,25,CompletedRace,817196,Prix Yacowlef (Listed Race) (2yo) (Straight Course) (Turf),206,Deauville,07/10/2022 12:23:00,4233779,Mandega
+3,False,7/5F,2.4,CompletedRace,817200,Prix Roland de Chambure (Listed Race) (2yo) (Round Course) (Turf),206,Deauville,07/10/2022 12:58:00,4318730,Neversay
+1,True,41/5,9.2,CompletedRace,817197,Prix Goldikova - Fonds Europeen de l'Elevage (Listed Race) (4yo+ Fillies & Mares) (Straight Course),206,Deauville,07/10/2022 13:33:00,3098175,Kennella
+4,False,27/1,28,CompletedRace,817113,Haras d'Etreham Prix Jean Prat (Group 1) (3yo Colts & Fillies) (Straight Course) (Turf),206,Deauville,07/10/2022 14:50:00,3681666,Accakaba
+5,False,77/10,8.7,CompletedRace,817201,Prix de Ris-Orangis (Group 3) (3yo+) (Straight Course) (Turf),206,Deauville,07/10/2022 15:25:00,3125415,Prince Lancelot
+3,False,26/5,6.2,CompletedRace,817198,Prix Kistena (Listed Race) (3yo) (Straight Course) (Turf),206,Deauville,07/10/2022 16:00:00,3617906,Le Cadeau
+3,False,16/1,17,CompletedRace,817199,Prix Amandine (Listed Race) (3yo Fillies) (Straight Course) (Turf),206,Deauville,07/10/2022 16:35:00,3862893,Slevka
 1,True,6/1,7,CompletedRace,814873,Bedford Lodge Hotel & Spa Fillies' Handicap,174,Newmarket (July),07/09/2022 14:05:00,3833561,Miss Carol Ann
 4,False,7/1,8,CompletedRace,814871,bet365 Mile Handicap,174,Newmarket (July),07/09/2022 14:40:00,3535324,Lawful Command
 5,False,11/4,3.75,CompletedRace,814870,bet365 Superlative Stakes (Group 2),174,Newmarket (July),07/09/2022 15:15:00,4340208,Lion Of War

@@ -23,7 +23,7 @@ public class ValidateRaceCardPredictionsCommandHandler :
     {
         _dataFolder = ValidateAndCreateOutputFolder(options.DataDirectory);
         var predictions = await FileSystem.ReadRecordsFromJsonFile<RaceCardPrediction>(Path.Combine(_dataFolder, "Predictions.json"));
-        Logger.LogInformation("Scoring {PredictionCount} predictions", predictions.Count);
+        Logger.LogInformation("Scoring {PredictionCount} predictions for today", predictions.Count);
 
         var scores = await ScorePredictions(predictions).ToListAsync();
         if (scores.Any())
@@ -36,7 +36,7 @@ public class ValidateRaceCardPredictionsCommandHandler :
             var returned = scores.Count(x => StakeReturnedFor(x.ResultStatus));
             var winnings = scores.Where(x => x.Won).Sum(x => x.DecimalOdds ?? 0) + returned;
             var percentageGains = ((winnings - losses) / stake) * 100.0;
-            Logger.LogInformation($"Scored {scores.Count} predictions.");
+            Logger.LogInformation($"Scored {scores.Count} predictions so far this month.");
             Logger.LogInformation($"With a £{stake} stake and {losses} losses, total winnings would be £{winnings:00} representing a {percentageGains:00}% gain/loss.");
         }
     }
