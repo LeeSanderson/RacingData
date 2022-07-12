@@ -1,4 +1,39 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,RaceName,CourseId,CourseName,Off,HorseId,HorseName
+0,False,11/8F,2.375,Fell,814731,Visit attheraces.com Maiden Hurdle (GBB Race),39,Newton Abbot,07/11/2022 13:30:00,3308179,Tip Top Tonto
+0,False,100/30,4.333333333333334,Fell,814728,Just Married At The Par Inn Handicap Chase,39,Newton Abbot,07/11/2022 14:05:00,1961948,Yccs Portocervo
+3,False,5/2,3.5,CompletedRace,814727,William Hill Betting TV Handicap Hurdle,39,Newton Abbot,07/11/2022 14:40:00,3300580,Tulin
+3,False,15/8F,2.875,CompletedRace,814729,Watch Sky Sports Racing On Sky 415 Handicap Chase,39,Newton Abbot,07/11/2022 15:10:00,1089018,Romanor
+2,False,7/2,4.5,CompletedRace,814730,What Next At The Par Inn Handicap Hurdle,39,Newton Abbot,07/11/2022 15:45:00,1673054,Al Muffrih
+2,False,8/13F,1.6153846153846154,CompletedRace,814732,Talk Tidy Marketing Mares' Open National Hunt Flat Race (Category 2 Elimination) (GBB Race),39,Newton Abbot,07/11/2022 16:15:00,4231797,Come On Du Berlais
+8,False,3/1F,4,CompletedRace,814936,Hospitality At Scottish Sun Ladies Night Restricted Novice Stakes (Bands C And D) (GBB Race),3,Ayr,07/11/2022 13:50:00,4348699,Lord Sam's Castle
+7,False,4/1F,5,CompletedRace,814939,Book Virgin Bet Ayr Gold Cup Handicap,3,Ayr,07/11/2022 14:25:00,3164299,Rory
+6,False,7/1,8,CompletedRace,814938,Ayr Racecourse Sunday Market Handicap,3,Ayr,07/11/2022 15:00:00,3597215,Bobby Shaftoe
+3,False,100/30,4.333333333333334,CompletedRace,814935,Scottish Sun Ladies Night Handicap,3,Ayr,07/11/2022 15:35:00,2168858,Highwaygrey
+1,True,11/2,6.5,CompletedRace,814940,Summer Staycations At Western House Handicap,3,Ayr,07/11/2022 16:05:00,3831879,Glory Hallelujah
+3,False,100/30,4.333333333333334,CompletedRace,814937,Ayrshire Cancer Support Handicap,3,Ayr,07/11/2022 16:35:00,2300878,Catch My Breath
+6,False,80/1,81,CompletedRace,814944,Follow Vickers.Bet On Facebook Maiden Stakes (GBB Race),1212,Ffos Las,07/11/2022 14:15:00,4375479,Threeways Bruce
+2,False,11/5F,3.2,CompletedRace,814941,Go Racing With Vickers.Bet Nursery Handicap,1212,Ffos Las,07/11/2022 14:50:00,4229842,Kaasib
+7,False,12/1,13,CompletedRace,814946,Join Vickers.Bet Free Bet Club Classified Stakes,1212,Ffos Las,07/11/2022 15:55:00,3545657,Mellencamp
+4,False,8/1,9,CompletedRace,814943,Join The Bet Club @ Vickers.Bet Handicap,1212,Ffos Las,07/11/2022 16:25:00,2881464,Itsallaboutluck
+2,False,3/1,4,CompletedRace,814942,Best Odds Guaranteed @ Vickers.Bet Everyday Handicap,1212,Ffos Las,07/11/2022 16:55:00,3715504,Thanks Monica
+6,False,9/1,10,CompletedRace,817082,Irish Stallion Farms EBF Maiden,185,Killarney,07/11/2022 17:15:00,4352829,Arabian Legend
+1,True,13/8,2.625,CompletedRace,817083,Irish Stallion Farms EBF Race,185,Killarney,07/11/2022 17:45:00,4286040,Didn'thavemuchtodo
+2,False,7/2,4.5,CompletedRace,817084,TOTE Always SP Or Better At Killarney Handicap,185,Killarney,07/11/2022 18:15:00,3880923,Independent Expert
+3,False,8/1,9,CompletedRace,817085,SP Or Better Guaranteed With TOTE Handicap,185,Killarney,07/11/2022 18:45:00,2760610,Giuseppe Cassioli
+6,False,11/1,12,CompletedRace,817086,Play The TOTE Exacta On Every Race Fillies' Maiden,185,Killarney,07/11/2022 19:15:00,4233791,Wootton Babble
+3,False,11/8F,2.375,CompletedRace,817087,Irish Stallion Farms EBF Median Auction Race,185,Killarney,07/11/2022 19:45:00,4231672,Spasiba
+1,True,7/2F,4.5,CompletedRace,817088,Get Galway Races Ready With TOTE.ie Handicap,185,Killarney,07/11/2022 20:15:00,3679913,Rock Of Candy
+1,True,2/1F,3,CompletedRace,814952,British Stallion Studs EBF Novice Stakes (GBB Race),93,Windsor,07/11/2022 17:35:00,4175481,Eminency
+5,False,9/4F,3.25,CompletedRace,814951,At The Races App Form Study Handicap,93,Windsor,07/11/2022 18:05:00,3648387,Maybe Tonight
+1,True,11/4F,3.75,CompletedRace,814947,Fitzdares Sprint Series Handicap (Windsor Sprint Series Qualifier),93,Windsor,07/11/2022 19:05:00,2578012,Lequinto
+1,True,11/8F,2.375,CompletedRace,814950,Archers Financial Services Of Enfield Handicap,93,Windsor,07/11/2022 19:35:00,2645551,Spring Bloom
+1,True,9/2,5.5,CompletedRace,814948,Free Tips Daily On attheraces.com Handicap,93,Windsor,07/11/2022 20:05:00,1371557,Carp Kid
+7,False,10/1,11,CompletedRace,815124,Sky Sports Racing HD Virgin 535 Amateur Jockeys' Handicap,513,Wolverhampton (AW),07/11/2022 17:55:00,1167753,Just In Time
+3,False,14/1,15,CompletedRace,815127,Free Tips Daily On attheraces.com Handicap,513,Wolverhampton (AW),07/11/2022 18:25:00,3908412,Locksmith
+7,False,22/1,23,CompletedRace,815126,Cazoo Handicap,513,Wolverhampton (AW),07/11/2022 18:55:00,3437702,Tyson
+4,False,10/1,11,CompletedRace,815671,"At The Races App Form Study Restricted Novice Stakes (For horses In Bands B, C And D) (GBB Race)",513,Wolverhampton (AW),07/11/2022 19:25:00,3916396,Whimsy
+5,False,8/1,9,CompletedRace,815125,Download The At The Races App Handicap,513,Wolverhampton (AW),07/11/2022 19:55:00,3535314,Eternal Glory
+4,False,9/1,10,CompletedRace,815129,At The Races App Market Movers Restricted Novice Stakes (For horses In Band D),513,Wolverhampton (AW),07/11/2022 20:25:00,4177629,Cotai Star
 7,False,12/1,13,CompletedRace,816604,Durkin Bros. Electrical Maiden Hurdle,197,Sligo,07/10/2022 14:10:00,3538533,Brown Monday
 2,False,3/1J,4,CompletedRace,816605,Irish Stallion Farms EBF Mares Novice Handicap Hurdle,197,Sligo,07/10/2022 14:45:00,2698892,Hophornbeam
 5,False,6/1,7,CompletedRace,816606,Friends Of Brian Mulligan Opportunity Handicap Hurdle,197,Sligo,07/10/2022 15:20:00,1888946,Two Shoe Tom
