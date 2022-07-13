@@ -11,12 +11,4 @@ public class PredictTodaysRaceCardsOptions
         Required = true,
         HelpText = "The directory to read the data from and store the 'Predictions.json' file.")]
     public string? DataDirectory { get; set; }
-
-    [Option(
-        'p',
-        "period",
-        Required = false,
-        Default = 120,
-        HelpText = "The number of days of historic data to use in predicting race card results.")]
-    public int HistoricPeriodInDays { get; set; } = DefaultOptions.MinimumPeriodInDays;
 }

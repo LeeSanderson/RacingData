@@ -54,7 +54,7 @@ DownloadTodaysRaceCardsCommandHandler CreateDownloadTodaysRaceCardsCommandHandle
     new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadTodaysRaceCardsCommandHandler>());
 
 PredictTodaysRaceCardsCommandHandler CreatePredictTodaysRaceCardsCommandHandler() =>
-    new(new FileSystem(), new RealClock(), loggerFactory.CreateLogger<PredictTodaysRaceCardsCommandHandler>());
+    new(new FileSystem(), loggerFactory.CreateLogger<PredictTodaysRaceCardsCommandHandler>());
 
 ValidateRaceCardPredictionsCommandHandler CreateValidateRaceCardPredictionsCommandHandler() =>
     new(new FileSystem(), loggerFactory.CreateLogger<ValidateRaceCardPredictionsCommandHandler>());

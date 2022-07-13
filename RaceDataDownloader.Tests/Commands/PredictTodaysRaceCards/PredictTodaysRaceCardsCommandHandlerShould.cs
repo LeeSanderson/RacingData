@@ -4,8 +4,6 @@ using NSubstitute;
 using RaceDataDownloader.Commands;
 using RaceDataDownloader.Commands.PredictTodaysRaceCards;
 using RaceDataDownloader.Models;
-using RacePredictor.Core;
-using RacePredictor.Core.RacingPost;
 using Xunit.Abstractions;
 
 namespace RaceDataDownloader.Tests.Commands.PredictTodaysRaceCards;
@@ -13,33 +11,11 @@ namespace RaceDataDownloader.Tests.Commands.PredictTodaysRaceCards;
 public class PredictTodaysRaceCardsCommandHandlerShould
 {
     private const string MockDataDirectory = @"c:\out";
-    private const string ResultsFileForMay2022 = @"c:\out\Results_202205.csv";
     private const string TodaysRaceCard = @"c:\out\TodaysRaceCards.csv";
     private const string PredictionsFile = @"c:\out\Predictions.json";
 
     private readonly ITestOutputHelper _output;
     private readonly IFileSystem _mockFileSystem;
-    private readonly List<RaceResultRecord> _resultsWhereHorse1IsFasterThanHorse2 = new()
-    {
-        new RaceResultRecord
-        {
-            HorseId = 1, 
-            Off = new DateTime(2022, 05, 12, 13, 40, 0),
-            RaceType = RaceType.Flat,
-            DistanceInMeters = 3500,
-            Going = "Good",
-            RaceTimeInSeconds = 247.9
-        },
-        new RaceResultRecord
-        {
-            HorseId = 2, 
-            Off = new DateTime(2022, 05, 12, 13, 40, 0), 
-            RaceType = RaceType.Flat, 
-            DistanceInMeters = 3500, 
-            Going = "Good", 
-            RaceTimeInSeconds = 300.9
-        }
-    };
 
     private readonly List<RaceCardRecord> _raceCardForRaceBetweenHorse1AndHorse2 = new()
     {
@@ -52,9 +28,7 @@ public class PredictTodaysRaceCardsCommandHandlerShould
             HorseId = 1,
             HorseName = "Horse1",
             Off = new DateTime(2022, 05, 13, 13, 40, 0),
-            RaceType = RaceType.Flat,
-            DistanceInMeters = 3500,
-            Going = "Good"
+            RacingPostRating = 100
         },
         new RaceCardRecord
         {
@@ -64,9 +38,7 @@ public class PredictTodaysRaceCardsCommandHandlerShould
             CourseName = "Course1",
             HorseId = 2,
             HorseName = "Horse2",
-            RaceType = RaceType.Flat,
-            DistanceInMeters = 3500,
-            Going = "Good"
+            RacingPostRating = 99
         }
     };
 
@@ -88,8 +60,6 @@ public class PredictTodaysRaceCardsCommandHandlerShould
     {
         _output = output;
         _mockFileSystem = Substitute.For<IFileSystem>();
-        _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(_resultsWhereHorse1IsFasterThanHorse2.ToCsvString().Result));
-        _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
     }
 
     [Fact]
@@ -102,12 +72,9 @@ public class PredictTodaysRaceCardsCommandHandlerShould
         _mockFileSystem.File.ReadAllTextAsync(TodaysRaceCard).Returns(Task.FromResult(await _raceCardForRaceBetweenHorse1AndHorse2.ToCsvString()));
         _mockFileSystem.File.Exists(TodaysRaceCard).Returns(true);
 
-        var clock = Substitute.For<IClock>();
-        clock.Today.Returns(new DateOnly(2022, 05, 13));
-
         var logger = new OutputLogger<PredictTodaysRaceCardsCommandHandler>(_output);
 
-        var handler = new PredictTodaysRaceCardsCommandHandler(_mockFileSystem, clock, logger);
+        var handler = new PredictTodaysRaceCardsCommandHandler(_mockFileSystem, logger);
         var result = await handler.RunAsync(new PredictTodaysRaceCardsOptions { DataDirectory = MockDataDirectory });
 
         result.Should().Be(ExitCodes.Success);
