@@ -224,6 +224,13 @@ public class RacingResultParserShould
         horse.Results.ResultStatus.Should().Be(ResultStatus.LeftAtStart);
     }
 
+    [Fact]
+    public async Task ParseExampleYorkRaceWithExpectedNumberOfRunners()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_york_20220611_1505.html");
+        actualRaceParseResult.Runners.Length.Should().Be(6);
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
