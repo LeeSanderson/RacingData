@@ -13,7 +13,7 @@ public class RacingPostRatingPredictor
             double topRating = 0;
             foreach (var runner in race)
             {
-                var rating = runner.RacingPostRating;
+                var rating = runner.OfficialRating;
                 if (rating != null && rating.Value > topRating)
                 {
                     topRatedHorseRaceCardRecord = runner;
