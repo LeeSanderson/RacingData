@@ -5,6 +5,7 @@
         "iloc",
         "isin",
         "jockies",
-        "nunique"
+        "nunique",
+        "sklearn"
     ]
 }
