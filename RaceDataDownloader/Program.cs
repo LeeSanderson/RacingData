@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
+using RaceDataDownloader.Commands.DedupeResults;
 using RaceDataDownloader.Commands.DownloadRaceCards;
 using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Commands.DownloadTodaysRaceCards;
@@ -26,19 +27,21 @@ var serviceProvider = serviceCollection.BuildServiceProvider();
 var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
 await Parser.Default.ParseArguments<
-        DownloadResultsOptions, 
-        DownloadRaceCardsOptions, 
+        DownloadResultsOptions,
+        DownloadRaceCardsOptions,
         UpdateResultsOptions,
         DownloadTodaysRaceCardsOptions,
         PredictTodaysRaceCardsOptions,
-        ValidateRaceCardPredictionsOptions>(args)
+        ValidateRaceCardPredictionsOptions,
+        DedupeResultsOptions>(args)
     .MapResult(
-        (DownloadResultsOptions options)  => CreateDownloadResultsCommandHandler().RunAsync(options),
+        (DownloadResultsOptions options) => CreateDownloadResultsCommandHandler().RunAsync(options),
         (DownloadRaceCardsOptions options) => CreateDownloadRaceCardsCommandHandler().RunAsync(options),
         (UpdateResultsOptions options) => CreateUpdateResultsCommandHandler().RunAsync(options),
         (DownloadTodaysRaceCardsOptions options) => CreateDownloadTodaysRaceCardsCommandHandler().RunAsync(options),
         (PredictTodaysRaceCardsOptions options) => CreatePredictTodaysRaceCardsCommandHandler().RunAsync(options),
         (ValidateRaceCardPredictionsOptions options) => CreateValidateRaceCardPredictionsCommandHandler().RunAsync(options),
+        (DedupeResultsOptions options) => CreateDedupeResultsCommandHandler().RunAsync(options),
         _ => Task.FromResult(ExitCodes.Error));
 
 DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() => 
@@ -58,3 +61,6 @@ PredictTodaysRaceCardsCommandHandler CreatePredictTodaysRaceCardsCommandHandler(
 
 ValidateRaceCardPredictionsCommandHandler CreateValidateRaceCardPredictionsCommandHandler() =>
     new(new FileSystem(), loggerFactory.CreateLogger<ValidateRaceCardPredictionsCommandHandler>());
+
+DedupeResultsCommandHandler CreateDedupeResultsCommandHandler() =>
+    new(new FileSystem(), loggerFactory.CreateLogger<DedupeResultsCommandHandler>());

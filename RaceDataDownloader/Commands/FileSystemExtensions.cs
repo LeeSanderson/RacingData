@@ -92,7 +92,7 @@ namespace RaceDataDownloader.Commands
         {
             if (!fileSystem.File.Exists(fileName))
             { 
-                throw new ValidationException($"Unable to fine expected file {fileName}");
+                throw new ValidationException($"Unable to find expected file {fileName}");
             }
         }
 
