@@ -35,6 +35,7 @@ public class RacingDataDownloader
                     .WithSelector("link-listCourseNameLink")
                     .GetNodes()
                     .Select(n => "https://www.racingpost.com" + n.GetAttributeValue("href", string.Empty))
+                    .Distinct()
                     .ToArray();
 
             foreach (var url in urls)
