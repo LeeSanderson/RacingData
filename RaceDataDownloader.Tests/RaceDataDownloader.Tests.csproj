@@ -13,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<!-- ReSharper disable once VulnerablePackage -->
 		<PackageReference Include="AutoFixture" Version="4.18.0" />
 		<PackageReference Include="FluentAssertions" Version="6.7.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
