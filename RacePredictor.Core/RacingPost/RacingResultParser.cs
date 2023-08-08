@@ -1,4 +1,4 @@
-﻿using HtmlAgilityPack;
+using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
 
@@ -29,7 +29,10 @@ public class RacingResultParser : RaceParser
     {
         var positions = _find.Span().WithSelector("text-horsePosition").GetDirectTexts().ToArray();
         if (positions.Any(s => s == "VOI"))
+        {
             throw new VoidRaceException();
+        }
+
         return positions.Length;
     }
 
@@ -51,12 +54,12 @@ public class RacingResultParser : RaceParser
         return runnerParser.Parse().ToArray();
     }
 
-    private RaceAttributes GetRaceAttributes(RaceClassification classification, int defaultNumberOfRunners) => 
+    private RaceAttributes GetRaceAttributes(RaceClassification classification, int defaultNumberOfRunners) =>
         new(GetOff(), GetDistance(), classification, GetGoing(), GetNumberOfRunnersWith(defaultNumberOfRunners));
 
     private RaceClassification GetClassificationFor(string raceName)
     {
-        var raceClass = _find.Optional().Span().WithCssClass("rp-raceTimeCourseName_class").GetText().TrimParens().NullIfEmpty();
+        var raceClass = _find.Optional().Span().WithCssClass("rp-raceTimeCourseName_class").GetText().TrimParentheses().NullIfEmpty();
         var (ageBand, ratingBand) = GetAgeAndRatingBands();
         var pattern = GetRacePattern(raceName);
 

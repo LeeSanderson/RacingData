@@ -1,4 +1,4 @@
-﻿namespace RacePredictor.Core;
+namespace RacePredictor.Core;
 
 public enum RaceSurface
 {
@@ -37,5 +37,5 @@ public static class RaceSurfaceExtensions
     };
 
     public static RaceSurface ToRaceSurface(this string? s) =>
-        !string.IsNullOrEmpty(s) && StringToSurfaceMap.TryGetValue(s!, out var surface) ? surface: RaceSurface.Unknown;
+        !string.IsNullOrEmpty(s) && StringToSurfaceMap.TryGetValue(s, out var surface) ? surface: RaceSurface.Unknown;
 }

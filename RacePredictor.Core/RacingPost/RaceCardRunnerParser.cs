@@ -82,7 +82,7 @@ internal class RaceCardRunnerParser : RunnerParser
         _find.Span()
             .WithSelector("RC-cardPage-runnerNumber-draw")
             .GetTexts()
-            .Select(s => s.TrimParens().AsOptionalInt())
+            .Select(s => s.TrimParentheses().AsOptionalInt())
             .ToArray();
     
     private int[] GetAges() =>

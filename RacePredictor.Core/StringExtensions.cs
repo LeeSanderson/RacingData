@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 
 namespace RacePredictor.Core;
 
@@ -29,7 +29,11 @@ public static class StringExtensions
     {
         var regex = new Regex(regexPattern);
         match = null;
-        if (input == null) return false;
+        if (input == null)
+        {
+            return false;
+        }
+
         match = regex.Match(input);
         return match.Success;
     }
@@ -51,7 +55,7 @@ public static class StringExtensions
             seconds = groups[2].Value.AsInt();
             milliseconds = groups[3].Value.AsMilliseconds();
         }
-        else if ((@"(\d+)\.(\d+)s").TryMatch(s, out var secondsOnlyMatch))
+        else if (@"(\d+)\.(\d+)s".TryMatch(s, out var secondsOnlyMatch))
         {
             var groups = secondsOnlyMatch!.Groups;
             minutes = 0;
@@ -78,22 +82,22 @@ public static class StringExtensions
         ? result
         : throw new Exception($"Unable to convert string '{s}' to double");
 
-    public static string TrimAllWhiteSpace(this string? s) => 
+    public static string TrimAllWhiteSpace(this string? s) =>
         string.IsNullOrEmpty(s) ? string.Empty : Regex.Replace(s, @"(\s|&nbsp;)+", " ").Trim();
 
-    public static string TrimParens(this string? s) =>
+    public static string TrimParentheses(this string? s) =>
         string.IsNullOrEmpty(s) ? string.Empty : s.Trim('(', ')');
 
     public static string? NullIfEmpty(this string? s) => string.IsNullOrEmpty(s) ? null : s;
 
-    public static bool ContainsAnyIgnoreCase(this string s, params string[] values) =>  
+    public static bool ContainsAnyIgnoreCase(this string s, params string[] values) =>
         values.Any(v => s.Contains(v, StringComparison.CurrentCultureIgnoreCase));
 
     public static (DateOnly start, DateOnly end) ToRange(this string range)
     {
         if (@"(\d{4})-(\d{2})-(\d{2})-(\d{4})-(\d{2})-(\d{2})".TryMatch(range, out var rangeMatch))
         {
-            return (CreateStart(rangeMatch!.Groups), CreateEnd(rangeMatch!.Groups));
+            return (CreateStart(rangeMatch!.Groups), CreateEnd(rangeMatch.Groups));
         }
 
         if (@"(\d{4})-(\d{2})-(\d{2})".TryMatch(range, out rangeMatch))

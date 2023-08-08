@@ -1,4 +1,4 @@
-﻿using RacePredictor.Core.RacingPost;
+using RacePredictor.Core.RacingPost;
 
 namespace RacePredictor.Core.Tests.RacingPost;
 
@@ -7,7 +7,7 @@ public class UserAgentsShould
     [Fact]
     public void AllBeParseable()
     {
-        HttpClient client = new HttpClient();
+        var client = new HttpClient();
         var index = 0;
         foreach (var userAgent in UserAgents.Values)
         {

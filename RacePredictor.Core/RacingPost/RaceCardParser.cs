@@ -38,8 +38,8 @@ public class RaceCardParser : RaceParser
 
     private RaceClassification GetClassificationFor(string raceName)
     {
-        var raceClass = _find.Optional().Span().WithSelector("RC-header__raceClass").GetText().TrimParens().NullIfEmpty();
-        var bandText = _find.Optional().Span().WithSelector("RC-header__rpAges").GetText().TrimParens().NullIfEmpty();
+        var raceClass = _find.Optional().Span().WithSelector("RC-header__raceClass").GetText().TrimParentheses().NullIfEmpty();
+        var bandText = _find.Optional().Span().WithSelector("RC-header__rpAges").GetText().TrimParentheses().NullIfEmpty();
         var stallsText = _find.Optional().Div().WithSelector("RC-headerBox__stalls").GetText().NullIfEmpty();
 
         var (ageBand, ratingBand) = GetAgeAndRatingBands(bandText);
@@ -56,7 +56,7 @@ public class RaceCardParser : RaceParser
             _find.Span().WithSelector("RC-courseHeader__date").GetDirectText(),
             _find.Span().WithSelector("RC-courseHeader__time").GetText());
 
-    private RaceDistance GetDistance() => new(_find.Element("strong").WithSelector("RC-header__raceDistanceRound").GetText().TrimParens());
+    private RaceDistance GetDistance() => new(_find.Element("strong").WithSelector("RC-header__raceDistanceRound").GetText().TrimParentheses());
 
     private string GetGoing() =>
         @"Going:\s*(.*)"

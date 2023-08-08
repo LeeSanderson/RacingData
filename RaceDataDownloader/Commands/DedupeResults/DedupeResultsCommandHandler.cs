@@ -1,7 +1,6 @@
 ﻿using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
-using RacePredictor.Core;
 
 namespace RaceDataDownloader.Commands.DedupeResults;
 
@@ -27,7 +26,7 @@ public class DedupeResultsCommandHandler : FileCommandHandlerBase<DedupeResultsC
             }
 
             Logger.LogInformation(
-                "Deduped {FileName}. {Duplicates} duplicates found", 
+                "Deduped {FileName}. {Duplicates} duplicates found",
                 fileName,
                 raceResults.Count - deDupedRaceResults.Count);
             if (deDupedRaceResults.Count < raceResults.Count)

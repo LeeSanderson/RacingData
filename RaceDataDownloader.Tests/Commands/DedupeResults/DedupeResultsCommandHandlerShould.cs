@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using AutoFixture;
 using NSubstitute;
 using RaceDataDownloader.Commands;
@@ -29,10 +29,7 @@ public class DedupeResultsCommandHandlerShould
         _fixture = new Fixture();
         _fixture.Customize<RaceResultRecord>(c => c
             .Without(x => x.Off)
-            .Do(x =>
-            {
-                x.Off = new DateTime(2022, 05, 1, 13, 00, 00);
-            }));
+            .Do(x => x.Off = new DateTime(2022, 05, 1, 13, 00, 00)));
     }
 
     [Fact]
@@ -49,11 +46,11 @@ public class DedupeResultsCommandHandlerShould
         _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(await resultsWithDuplicates.ToCsvString()));
 
         var handler = new DedupeResultsCommandHandler(_mockFileSystem, _logger);
-        var result = await handler.RunAsync(new DedupeResultsOptions {DataDirectory = MockDataDirectory});
+        var result = await handler.RunAsync(new DedupeResultsOptions { DataDirectory = MockDataDirectory });
 
         result.Should().Be(ExitCodes.Success);
-        savedResultsAsCsv.Should().NotBeNull(); 
+        savedResultsAsCsv.Should().NotBeNull();
         var savedResults = await savedResultsAsCsv!.FromCsvString<RaceResultRecord>();
-        savedResults.Should().BeEquivalentTo(new[] {raceResult, raceResultWithDifferentHorse});
+        savedResults.Should().BeEquivalentTo(new[] { raceResult, raceResultWithDifferentHorse });
     }
 }
