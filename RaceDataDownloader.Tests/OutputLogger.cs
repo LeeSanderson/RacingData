@@ -21,15 +21,9 @@ public class OutputLogger<T> : ILogger<T>
         }
     }
 
-    public bool IsEnabled(LogLevel logLevel)
-    {
-        return true;
-    }
+    public bool IsEnabled(LogLevel logLevel) => true;
 
-    public IDisposable BeginScope<TState>(TState state)
-    {
-        return DoesNothingWhenDisposed.Instance;
-    }
+    public IDisposable BeginScope<TState>(TState state) => DoesNothingWhenDisposed.Instance;
 
     private class DoesNothingWhenDisposed : IDisposable
     {

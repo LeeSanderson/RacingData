@@ -31,7 +31,7 @@ public class DownloadTodaysRaceCardsCommandHandlerShould
         mockHttpMessageHandler.When(HttpMethod.Get, "https://www.racingpost.com/racecards/2022-06-28")
             .Respond("text/html", FakeData.DailyRaceCardsFor20220628);
         mockHttpMessageHandler.When(HttpMethod.Get, "https://www.racingpost.com/racecards/22/hamilton/2022-06-28/813803")
-            .Respond("text/html", FakeData.HamiltonRacecardFor1315RaceOn20220628);
+            .Respond("text/html", FakeData.HamiltonRaceCardFor1315RaceOn20220628);
 
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));
