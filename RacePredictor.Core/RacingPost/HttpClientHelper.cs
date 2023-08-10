@@ -1,4 +1,4 @@
-﻿namespace RacePredictor.Core.RacingPost;
+namespace RacePredictor.Core.RacingPost;
 
 internal static class HttpClientHelper
 {
@@ -16,11 +16,8 @@ internal static class HttpClientHelper
         headers.Add("Upgrade-Insecure-Requests", "1");
     }
 
-    private static string RandomIpAddress() => 
+    private static string RandomIpAddress() =>
         $"{Random.Next(255)}:{Random.Next(255)}:{Random.Next(255)}:{Random.Next(255)}";
 
-    private static string Choose(string[] option)
-    {
-        return option[Random.Next(option.Length)];
-    }
+    private static string Choose(string[] option) => option[Random.Next(option.Length)];
 }

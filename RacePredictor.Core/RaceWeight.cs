@@ -1,4 +1,4 @@
-﻿namespace RacePredictor.Core;
+namespace RacePredictor.Core;
 
 public class RaceWeight
 {
@@ -12,10 +12,7 @@ public class RaceWeight
 
     public int Stones { get; }
     public int Pounds { get; }
-    public int TotalPounds => Stones * NumberOfPoundsInOneStone + Pounds;
+    public int TotalPounds => (Stones * NumberOfPoundsInOneStone) + Pounds;
 
-    public override string ToString()
-    {
-        return $"{Stones}-{Pounds}";
-    }
+    public override string ToString() => $"{Stones}-{Pounds}";
 }

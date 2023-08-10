@@ -1,4 +1,4 @@
-﻿namespace RacePredictor.Core.Tests;
+namespace RacePredictor.Core.Tests;
 
 public class StringExtensionsShould
 {
@@ -6,10 +6,8 @@ public class StringExtensionsShould
     [InlineData("1m 45.5s", 1, 45, 500)]
     [InlineData("2m 53.50s", 2, 53, 500)]
     [InlineData("48.32s", 0, 48, 320)]
-    public void ConvertStingValueToExpectedTimeSpan(string value, int expectedMinutes, int expectedSeconds, int expectedMilliseconds)
-    {
+    public void ConvertStingValueToExpectedTimeSpan(string value, int expectedMinutes, int expectedSeconds, int expectedMilliseconds) =>
         value.AsTimeSpan().Should().Be(new TimeSpan(0, 0, expectedMinutes, expectedSeconds, expectedMilliseconds));
-    }
 
     [Theory]
     [InlineData("2022-02-07", 2022, 02, 07, 2022, 02, 07)]
@@ -26,8 +24,6 @@ public class StringExtensionsShould
     }
 
     [Fact]
-    public void ThrowErrorForInvalidDateRange()
-    {
+    public void ThrowErrorForInvalidDateRange() =>
         Assert.Throws<Exception>(() => "not-a-range".ToRange());
-    }
 }

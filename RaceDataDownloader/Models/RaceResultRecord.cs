@@ -1,13 +1,12 @@
-﻿using CsvHelper.Configuration.Attributes;
+using CsvHelper.Configuration.Attributes;
 using RacePredictor.Core;
 
 namespace RaceDataDownloader.Models;
 
 public record RaceResultRecord : RaceCardRecord
 {
-    public static IEnumerable<RaceResultRecord> ListFrom(RaceResult raceResult)
-    {
-        return raceResult.Runners
+    public static IEnumerable<RaceResultRecord> ListFrom(RaceResult raceResult) =>
+        raceResult.Runners
             .Select(rnr => new {Race = raceResult, Runner = rnr})
             .Select(d =>
                 new RaceResultRecord
@@ -53,7 +52,6 @@ public record RaceResultRecord : RaceCardRecord
                     RaceTime = d.Runner.Results.RaceTime,
                     RaceTimeInSeconds = d.Runner.Results.RaceTimeInSeconds
                 });
-    }
 
     [Index(34)]
     public ResultStatus ResultStatus { get; set; }

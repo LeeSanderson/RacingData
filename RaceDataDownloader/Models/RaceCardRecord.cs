@@ -1,52 +1,50 @@
-﻿using CsvHelper.Configuration.Attributes;
+using CsvHelper.Configuration.Attributes;
 using RacePredictor.Core;
 
 namespace RaceDataDownloader.Models;
 
 public record RaceCardRecord
 {
-    public static IEnumerable<RaceCardRecord> ListFrom(RaceCard raceCard)
-    {
-        return raceCard.Runners
-                .Select(rnr => new { Race = raceCard, Runner = rnr })
-                .Select(d => new RaceCardRecord
-                {
-                    RaceId = d.Race.Race.Id,
-                    RaceName = d.Race.Race.Name,
-                    CourseId = d.Race.Course.Id,
-                    CourseName = d.Race.Course.Name,
-                    Off = d.Race.Attributes.Off,
-                    RaceType = d.Race.Attributes.Classification.RaceType,
-                    Class = d.Race.Attributes.Classification.Class,
-                    Pattern = d.Race.Attributes.Classification.Pattern,
-                    RatingBand = d.Race.Attributes.Classification.RatingBand,
-                    AgeBand = d.Race.Attributes.Classification.AgeBand,
-                    SexRestriction = d.Race.Attributes.Classification.SexRestriction,
-                    Distance = d.Race.Attributes.Distance.Distance,
-                    DistanceInFurlongs = d.Race.Attributes.Distance.DistanceInFurlongs,
-                    DistanceInMeters = d.Race.Attributes.Distance.DistanceInMeters,
-                    DistanceInYards = d.Race.Attributes.Distance.DistanceInYards,
-                    Going = d.Race.Attributes.Going,
-                    Surface = d.Race.Attributes.Surface,
-                    HorseId = d.Runner.Horse.Id,
-                    HorseName = d.Runner.Horse.Name,
-                    JockeyId = d.Runner.Jockey.Id,
-                    JockeyName = d.Runner.Jockey.Name,
-                    TrainerId = d.Runner.Trainer.Id,
-                    TrainerName = d.Runner.Trainer.Name,
-                    Age = d.Runner.Attributes.Age,
-                    HeadGear = d.Runner.Attributes.HeadGear,
-                    RaceCardNumber = d.Runner.Attributes.RaceCardNumber,
-                    StallNumber = d.Runner.Attributes.StallNumber,
-                    Weight = d.Runner.Attributes.Weight.ToString(),
-                    WeightInPounds = d.Runner.Attributes.Weight.TotalPounds,
-                    FractionalOdds = d.Runner.Statistics.Odds.FractionalOdds,
-                    DecimalOdds = d.Runner.Statistics.Odds.DecimalOdds,
-                    OfficialRating = d.Runner.Statistics.OfficialRating,
-                    RacingPostRating = d.Runner.Statistics.RacingPostRating,
-                    TopSpeedRating = d.Runner.Statistics.TopSpeedRating
-                });
-    }
+    public static IEnumerable<RaceCardRecord> ListFrom(RaceCard raceCard) =>
+        raceCard.Runners
+            .Select(rnr => new { Race = raceCard, Runner = rnr })
+            .Select(d => new RaceCardRecord
+            {
+                RaceId = d.Race.Race.Id,
+                RaceName = d.Race.Race.Name,
+                CourseId = d.Race.Course.Id,
+                CourseName = d.Race.Course.Name,
+                Off = d.Race.Attributes.Off,
+                RaceType = d.Race.Attributes.Classification.RaceType,
+                Class = d.Race.Attributes.Classification.Class,
+                Pattern = d.Race.Attributes.Classification.Pattern,
+                RatingBand = d.Race.Attributes.Classification.RatingBand,
+                AgeBand = d.Race.Attributes.Classification.AgeBand,
+                SexRestriction = d.Race.Attributes.Classification.SexRestriction,
+                Distance = d.Race.Attributes.Distance.Distance,
+                DistanceInFurlongs = d.Race.Attributes.Distance.DistanceInFurlongs,
+                DistanceInMeters = d.Race.Attributes.Distance.DistanceInMeters,
+                DistanceInYards = d.Race.Attributes.Distance.DistanceInYards,
+                Going = d.Race.Attributes.Going,
+                Surface = d.Race.Attributes.Surface,
+                HorseId = d.Runner.Horse.Id,
+                HorseName = d.Runner.Horse.Name,
+                JockeyId = d.Runner.Jockey.Id,
+                JockeyName = d.Runner.Jockey.Name,
+                TrainerId = d.Runner.Trainer.Id,
+                TrainerName = d.Runner.Trainer.Name,
+                Age = d.Runner.Attributes.Age,
+                HeadGear = d.Runner.Attributes.HeadGear,
+                RaceCardNumber = d.Runner.Attributes.RaceCardNumber,
+                StallNumber = d.Runner.Attributes.StallNumber,
+                Weight = d.Runner.Attributes.Weight.ToString(),
+                WeightInPounds = d.Runner.Attributes.Weight.TotalPounds,
+                FractionalOdds = d.Runner.Statistics.Odds.FractionalOdds,
+                DecimalOdds = d.Runner.Statistics.Odds.DecimalOdds,
+                OfficialRating = d.Runner.Statistics.OfficialRating,
+                RacingPostRating = d.Runner.Statistics.RacingPostRating,
+                TopSpeedRating = d.Runner.Statistics.TopSpeedRating
+            });
 
     [Index(0)]
     public int RaceId { get; set; }
