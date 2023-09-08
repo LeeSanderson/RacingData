@@ -9,7 +9,7 @@ public class RaceDistance
     private const double NumberOfYardsInOneFurlong = 220.0;
     private const double NumberOfMetersInOneYard = 0.914;
 
-    public RaceDistance(string distance) 
+    public RaceDistance(string distance)
     {
         Distance = distance ?? throw new ArgumentNullException(nameof(distance));
         var cleanDistance = Distance.Replace("¼", ".25").Replace("½", ".5").Replace("¾", ".75");
