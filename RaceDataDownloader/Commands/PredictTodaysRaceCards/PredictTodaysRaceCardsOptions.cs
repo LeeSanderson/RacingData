@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 
 namespace RaceDataDownloader.Commands.PredictTodaysRaceCards;
 
@@ -11,4 +11,11 @@ public class PredictTodaysRaceCardsOptions
         Required = true,
         HelpText = "The directory to read the data from and store the 'Predictions.json' file.")]
     public string? DataDirectory { get; set; }
+
+    [Option(
+        'a',
+        "algorithm",
+        Required = true,
+        HelpText = "The algorithm to use when predicting race results (e.g. RacingPostRatingPredictor)")]
+    public string? Algorithm { get; set; }
 }

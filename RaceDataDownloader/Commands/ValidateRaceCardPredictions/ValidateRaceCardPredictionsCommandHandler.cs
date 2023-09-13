@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
@@ -41,8 +41,8 @@ public class ValidateRaceCardPredictionsCommandHandler :
         }
     }
 
-    private static bool StakeReturnedFor(ResultStatus resultStatus) => 
-        resultStatus == ResultStatus.RaceVoid || resultStatus == ResultStatus.NonRunner;
+    private static bool StakeReturnedFor(ResultStatus resultStatus) =>
+        resultStatus is ResultStatus.RaceVoid or ResultStatus.NonRunner;
 
     private async Task MergePredictionScores(List<RaceCardPredictionScore> scores)
     {

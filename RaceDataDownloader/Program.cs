@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
 using RaceDataDownloader;
@@ -11,6 +11,7 @@ using RaceDataDownloader.Commands.DownloadRaceCards;
 using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Commands.DownloadTodaysRaceCards;
 using RaceDataDownloader.Commands.PredictTodaysRaceCards;
+using RaceDataDownloader.Commands.PredictTodaysRaceCards.Algorithms;
 using RaceDataDownloader.Commands.UpdateResults;
 using RaceDataDownloader.Commands.ValidateRaceCardPredictions;
 
@@ -56,8 +57,12 @@ UpdateResultsCommandHandler CreateUpdateResultsCommandHandler() =>
 DownloadTodaysRaceCardsCommandHandler CreateDownloadTodaysRaceCardsCommandHandler() =>
     new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadTodaysRaceCardsCommandHandler>());
 
-PredictTodaysRaceCardsCommandHandler CreatePredictTodaysRaceCardsCommandHandler() =>
-    new(new FileSystem(), loggerFactory.CreateLogger<PredictTodaysRaceCardsCommandHandler>());
+PredictTodaysRaceCardsCommandHandler CreatePredictTodaysRaceCardsCommandHandler()
+{
+    var racePredictorFactory = new RacePredictorFactory();
+    // TODO: Register algorithms here
+    return new(new FileSystem(), racePredictorFactory, loggerFactory.CreateLogger<PredictTodaysRaceCardsCommandHandler>());
+}
 
 ValidateRaceCardPredictionsCommandHandler CreateValidateRaceCardPredictionsCommandHandler() =>
     new(new FileSystem(), loggerFactory.CreateLogger<ValidateRaceCardPredictionsCommandHandler>());

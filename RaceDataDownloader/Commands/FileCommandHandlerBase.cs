@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using RacePredictor.Core;
@@ -25,7 +25,7 @@ public abstract class FileCommandHandlerBase<TCommandHandler, TOptions>
         }
         catch (ValidationException ve)
         {
-            Logger.LogError(ve.Message);
+            Logger.LogError("{Message}", ve.Message);
             return ExitCodes.Error;
         }
         catch (Exception e)

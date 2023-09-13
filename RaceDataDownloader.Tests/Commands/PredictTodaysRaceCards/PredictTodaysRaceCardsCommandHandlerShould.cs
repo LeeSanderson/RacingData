@@ -1,8 +1,9 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using System.Text.Json;
 using NSubstitute;
 using RaceDataDownloader.Commands;
 using RaceDataDownloader.Commands.PredictTodaysRaceCards;
+using RaceDataDownloader.Commands.PredictTodaysRaceCards.Algorithms;
 using RaceDataDownloader.Models;
 using Xunit.Abstractions;
 
@@ -74,7 +75,7 @@ public class PredictTodaysRaceCardsCommandHandlerShould
 
         var logger = new OutputLogger<PredictTodaysRaceCardsCommandHandler>(_output);
 
-        var handler = new PredictTodaysRaceCardsCommandHandler(_mockFileSystem, logger);
+        var handler = new PredictTodaysRaceCardsCommandHandler(_mockFileSystem, new RacePredictorFactory(), logger);
         var result = await handler.RunAsync(new PredictTodaysRaceCardsOptions { DataDirectory = MockDataDirectory });
 
         result.Should().Be(ExitCodes.Success);

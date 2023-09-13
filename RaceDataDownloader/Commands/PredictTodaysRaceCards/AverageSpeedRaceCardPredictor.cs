@@ -1,4 +1,4 @@
-﻿using RaceDataDownloader.Models;
+using RaceDataDownloader.Models;
 using RacePredictor.Core;
 
 namespace RaceDataDownloader.Commands.PredictTodaysRaceCards;
@@ -33,8 +33,8 @@ public class AverageSpeedRaceCardPredictor
             foreach (var runner in race)
             {
                 var speed = _averageSpeeds.FirstOrDefault(s =>
-                    s.HorseId == runner.HorseId && 
-                    s.RaceType == runner.RaceType && 
+                    s.HorseId == runner.HorseId &&
+                    s.RaceType == runner.RaceType &&
                     s.Going == runner.Going &&
                     s.DistanceType == DistanceTypes.FromDistance(runner.DistanceInMeters));
                 if (speed != null && speed.AverageSpeed > fastestHorseAverageSpeed)

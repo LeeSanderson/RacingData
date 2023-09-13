@@ -1,4 +1,4 @@
-﻿using RaceDataDownloader.Commands.PredictTodaysRaceCards;
+using RaceDataDownloader.Commands.PredictTodaysRaceCards;
 using RaceDataDownloader.Models;
 using RacePredictor.Core;
 
@@ -6,7 +6,7 @@ namespace RaceDataDownloader.Tests.Commands.PredictTodaysRaceCards;
 
 public class AverageSpeedRaceCardPredictorShould
 {
-    private readonly List<RaceResultRecord> _resultsWhereHorse1IsFasterThanHorse2 = new()
+    private static readonly List<RaceResultRecord> ResultsWhereHorse1IsFasterThanHorse2 = new()
     {
         new RaceResultRecord
         {
@@ -28,7 +28,7 @@ public class AverageSpeedRaceCardPredictorShould
         }
     };
 
-    private readonly List<RaceCardRecord> _raceCardForRaceBetweenHorse1AndHorse2 = new()
+    private static readonly List<RaceCardRecord> RaceCardForRaceBetweenHorse1AndHorse2 = new()
     {
         new RaceCardRecord
         {
@@ -57,7 +57,7 @@ public class AverageSpeedRaceCardPredictorShould
         }
     };
 
-    private readonly List<RaceCardPrediction> _predictionThatHorse1WillWin = new()
+    private static readonly List<RaceCardPrediction> PredictionThatHorse1WillWin = new()
     {
         new RaceCardPrediction
         {
@@ -75,10 +75,10 @@ public class AverageSpeedRaceCardPredictorShould
     [Fact]
     public void PredictHorse1WillWinWhenHorse1IsFasterThanHorse2()
     {
-        var  predictor = new AverageSpeedRaceCardPredictor(_resultsWhereHorse1IsFasterThanHorse2);
+        var predictor = new AverageSpeedRaceCardPredictor(ResultsWhereHorse1IsFasterThanHorse2);
 
-        var generatedPredictions = predictor.PredictRaceCardResults(_raceCardForRaceBetweenHorse1AndHorse2);
+        var generatedPredictions = predictor.PredictRaceCardResults(RaceCardForRaceBetweenHorse1AndHorse2);
 
-        generatedPredictions.Should().BeEquivalentTo(_predictionThatHorse1WillWin);
+        generatedPredictions.Should().BeEquivalentTo(PredictionThatHorse1WillWin);
     }
 }

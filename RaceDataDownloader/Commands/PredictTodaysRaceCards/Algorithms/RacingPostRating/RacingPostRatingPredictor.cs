@@ -1,8 +1,13 @@
-﻿using RaceDataDownloader.Models;
+using RaceDataDownloader.Models;
 
-namespace RaceDataDownloader.Commands.PredictTodaysRaceCards;
+namespace RaceDataDownloader.Commands.PredictTodaysRaceCards.Algorithms.RacingPostRating;
 
-public class RacingPostRatingPredictor
+/// <summary>
+/// A relatively naive prediction algorithm that predicts the winner based on the "Racing post rating"
+/// While this seems highly accurate (based on historical race results data), actual race data is wildly inaccurate
+/// (seems like the Racing Post update their rating after the race in order to seem more predictive)
+/// </summary>
+public class RacingPostRatingPredictor : IRacePredictor
 {
     public IEnumerable<RaceCardPrediction> PredictRaceCardResults(List<RaceCardRecord> raceCardsToPredict)
     {
