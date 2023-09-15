@@ -7,6 +7,5 @@
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <PackageReference Include="Plotly.NET" Version="3.0.1" />
   </ItemGroup>
 </Project>
