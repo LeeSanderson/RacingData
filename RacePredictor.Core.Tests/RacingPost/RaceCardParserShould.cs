@@ -132,7 +132,7 @@ public class RaceCardParserShould
 
     private async Task<RaceCard> GetRaceCard(string resourceFileName)
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
+        var raceResultHtmlPage = ResourceLoader.ReadRacingPostExampleResource(resourceFileName);
         var parser = new RaceCardParser();
         return await parser.Parse(raceResultHtmlPage);
     }

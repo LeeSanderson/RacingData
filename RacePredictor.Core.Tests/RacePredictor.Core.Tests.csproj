@@ -13,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CsvHelper" Version="27.2.1" />
 		<PackageReference Include="FluentAssertions" Version="6.7.0" />
     <!-- ReSharper disable once VulnerablePackage -->
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
@@ -37,6 +38,14 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="RacingPost\Examples\*.html" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="ML\Validation.csv" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="ML\Validation.csv" />
 	</ItemGroup>
 
 </Project>

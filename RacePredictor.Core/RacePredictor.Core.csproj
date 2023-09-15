@@ -7,8 +7,6 @@
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <PackageReference Include="Microsoft.ML" Version="3.0.0-preview.23266.6" />
-    <PackageReference Include="Microsoft.ML.FastTree" Version="3.0.0-preview.23266.6" />
     <PackageReference Include="Plotly.NET" Version="3.0.1" />
   </ItemGroup>
 </Project>

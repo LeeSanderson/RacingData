@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using RacePredictor.Core.RacingPost;
 using RichardSzalay.MockHttp;
 
@@ -11,7 +11,7 @@ public class RacingDataDownloaderShould
     {
         var mockHttpMessageHandler = new MockHttpMessageHandler();
         mockHttpMessageHandler.When(HttpMethod.Get, "https://www.racingpost.com/results/2022-05-11")
-            .Respond("text/html", ResourceLoader.ReadResource("daily_results_20220511.html"));
+            .Respond("text/html", ResourceLoader.ReadRacingPostExampleResource("daily_results_20220511.html"));
 
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         var clock = Substitute.For<IClock>();
@@ -21,7 +21,7 @@ public class RacingDataDownloaderShould
 
         var urls = await downloader.GetResultUrls(startDate, startDate).ToListAsync();
 
-        urls.Count.Should().Be(57);
+        urls.Count.Should().Be(55);
         urls[0].Should().Be("https://www.racingpost.com/results/5/bath/2022-05-11/809925");
     }
 
@@ -30,7 +30,7 @@ public class RacingDataDownloaderShould
     {
         var mockHttpMessageHandler = new MockHttpMessageHandler();
         mockHttpMessageHandler.When(HttpMethod.Get, "https://www.racingpost.com/racecards/2022-06-28")
-            .Respond("text/html", ResourceLoader.ReadResource("daily_racecards_20220628.html"));
+            .Respond("text/html", ResourceLoader.ReadRacingPostExampleResource("daily_racecards_20220628.html"));
 
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));

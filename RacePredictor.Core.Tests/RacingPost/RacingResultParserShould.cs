@@ -65,7 +65,7 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleDoncasterRaceAsVoidRace()
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource("result_doncaster_20091212_1445_void.html");
+        var raceResultHtmlPage = ResourceLoader.ReadRacingPostExampleResource("result_doncaster_20091212_1445_void.html");
         var parser = new RacingResultParser();
 
         await Assert.ThrowsAsync<VoidRaceException>(() => parser.Parse(raceResultHtmlPage));
@@ -74,7 +74,7 @@ public class RacingResultParserShould
     [Fact]
     public async Task ParseExampleLingfieldRaceAsVoidRace()
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource("result_lingfield_20220304_1555_void.html");
+        var raceResultHtmlPage = ResourceLoader.ReadRacingPostExampleResource("result_lingfield_20220304_1555_void.html");
         var parser = new RacingResultParser();
 
         await Assert.ThrowsAsync<VoidRaceException>(() => parser.Parse(raceResultHtmlPage));
@@ -233,7 +233,7 @@ public class RacingResultParserShould
 
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
-        var raceResultHtmlPage = ResourceLoader.ReadResource(resourceFileName);
+        var raceResultHtmlPage = ResourceLoader.ReadRacingPostExampleResource(resourceFileName);
         var parser = new RacingResultParser();
 
         return await parser.Parse(raceResultHtmlPage);
