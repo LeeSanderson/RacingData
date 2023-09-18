@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.IO.Abstractions;
 using CommandLine;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,14 +11,12 @@ using RaceDataDownloader.Commands.DedupeResults;
 using RaceDataDownloader.Commands.DownloadRaceCards;
 using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Commands.DownloadTodaysRaceCards;
-using RaceDataDownloader.Commands.PredictTodaysRaceCards;
-using RaceDataDownloader.Commands.PredictTodaysRaceCards.Algorithms;
 using RaceDataDownloader.Commands.UpdateResults;
 using RaceDataDownloader.Commands.ValidateRaceCardPredictions;
 
 var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Is(LogEventLevel.Verbose)
-    .WriteTo.Console();
+    .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture);
 
 Log.Logger = loggerConfiguration.CreateLogger();
 var loggerFactory = new SerilogLoggerFactory();
@@ -32,7 +31,6 @@ await Parser.Default.ParseArguments<
         DownloadRaceCardsOptions,
         UpdateResultsOptions,
         DownloadTodaysRaceCardsOptions,
-        PredictTodaysRaceCardsOptions,
         ValidateRaceCardPredictionsOptions,
         DedupeResultsOptions>(args)
     .MapResult(
@@ -40,13 +38,12 @@ await Parser.Default.ParseArguments<
         (DownloadRaceCardsOptions options) => CreateDownloadRaceCardsCommandHandler().RunAsync(options),
         (UpdateResultsOptions options) => CreateUpdateResultsCommandHandler().RunAsync(options),
         (DownloadTodaysRaceCardsOptions options) => CreateDownloadTodaysRaceCardsCommandHandler().RunAsync(options),
-        (PredictTodaysRaceCardsOptions options) => CreatePredictTodaysRaceCardsCommandHandler().RunAsync(options),
         (ValidateRaceCardPredictionsOptions options) => CreateValidateRaceCardPredictionsCommandHandler().RunAsync(options),
         (DedupeResultsOptions options) => CreateDedupeResultsCommandHandler().RunAsync(options),
         _ => Task.FromResult(ExitCodes.Error));
 
-DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() => 
-    new(new FileSystem(), httpClientFactory, new RealClock(),  loggerFactory.CreateLogger<DownloadResultsCommandHandler>());
+DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() =>
+    new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadResultsCommandHandler>());
 
 DownloadRaceCardsCommandHandler CreateDownloadRaceCardsCommandHandler() =>
     new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadRaceCardsCommandHandler>());
@@ -56,13 +53,6 @@ UpdateResultsCommandHandler CreateUpdateResultsCommandHandler() =>
 
 DownloadTodaysRaceCardsCommandHandler CreateDownloadTodaysRaceCardsCommandHandler() =>
     new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadTodaysRaceCardsCommandHandler>());
-
-PredictTodaysRaceCardsCommandHandler CreatePredictTodaysRaceCardsCommandHandler()
-{
-    var racePredictorFactory = new RacePredictorFactory();
-    // TODO: Register algorithms here
-    return new(new FileSystem(), racePredictorFactory, loggerFactory.CreateLogger<PredictTodaysRaceCardsCommandHandler>());
-}
 
 ValidateRaceCardPredictionsCommandHandler CreateValidateRaceCardPredictionsCommandHandler() =>
     new(new FileSystem(), loggerFactory.CreateLogger<ValidateRaceCardPredictionsCommandHandler>());
