@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using NSubstitute;
 using RaceDataDownloader.Commands;
 using RaceDataDownloader.Commands.ValidateRaceCardPredictions;
@@ -12,7 +12,7 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
 {
     private const string MockDataDirectory = @"c:\out";
     private const string ResultsFileForMay2022 = @"c:\out\Results_202205.csv";
-    private const string PredictionsFile = @"c:\out\Predictions.json";
+    private const string PredictionsFile = @"c:\out\TodaysPredictions.csv";
     private const string PredictionsScoresFile = @"c:\out\PredictionScores_202205.csv";
 
     private readonly ITestOutputHelper _output;
@@ -22,7 +22,6 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         new RaceCardPrediction
         {
             RaceId = 1,
-            RaceName = "Race1",
             CourseId = 1,
             CourseName = "Course1",
             HorseId = 1,
@@ -66,7 +65,6 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         new RaceCardPredictionScore
         {
             RaceId = 1,
-            RaceName = "Race1",
             CourseId = 1,
             CourseName = "Course1",
             HorseId = 1,
@@ -87,7 +85,7 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         _mockFileSystem.File.ReadAllTextAsync(ResultsFileForMay2022).Returns(Task.FromResult(_resultsWhereHorse1Won.ToCsvString().Result));
         _mockFileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
 
-        _mockFileSystem.File.ReadAllTextAsync(PredictionsFile).Returns(Task.FromResult(_predictionThatHorse1WillWin.ToJsonString()));
+        _mockFileSystem.File.ReadAllTextAsync(PredictionsFile).Returns(Task.FromResult(_predictionThatHorse1WillWin.ToCsvString().Result));
         _mockFileSystem.File.Exists(PredictionsFile).Returns(true);
     }
 

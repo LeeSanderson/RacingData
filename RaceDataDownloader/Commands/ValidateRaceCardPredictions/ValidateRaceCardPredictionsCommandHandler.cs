@@ -6,7 +6,7 @@ using RacePredictor.Core;
 
 namespace RaceDataDownloader.Commands.ValidateRaceCardPredictions;
 
-public class ValidateRaceCardPredictionsCommandHandler : 
+public class ValidateRaceCardPredictionsCommandHandler :
     FileCommandHandlerBase<ValidateRaceCardPredictionsCommandHandler, ValidateRaceCardPredictionsOptions>
 {
     private readonly Dictionary<string, List<RaceResultRecord>> _resultsCache = new();
@@ -22,7 +22,7 @@ public class ValidateRaceCardPredictionsCommandHandler :
     protected override async Task InternalRunAsync(ValidateRaceCardPredictionsOptions options)
     {
         _dataFolder = ValidateAndCreateOutputFolder(options.DataDirectory);
-        var predictions = await FileSystem.ReadRecordsFromJsonFile<RaceCardPrediction>(Path.Combine(_dataFolder, "Predictions.json"));
+        var predictions = await FileSystem.ReadRecordsFromCsvFile<RaceCardPrediction>(Path.Combine(_dataFolder, "TodaysPredictions.csv"));
         Logger.LogInformation("Scoring {PredictionCount} predictions for today", predictions.Count);
 
         var scores = await ScorePredictions(predictions).ToListAsync();
@@ -35,9 +35,14 @@ public class ValidateRaceCardPredictionsCommandHandler :
             var losses = scores.Count(x => !x.Won && !StakeReturnedFor(x.ResultStatus));
             var returned = scores.Count(x => StakeReturnedFor(x.ResultStatus));
             var winnings = scores.Where(x => x.Won).Sum(x => x.DecimalOdds ?? 0) + returned;
-            var percentageGains = ((winnings - losses) / stake) * 100.0;
-            Logger.LogInformation($"Scored {scores.Count} predictions so far this month.");
-            Logger.LogInformation($"With a £{stake} stake and {losses} losses, total winnings would be £{winnings:00} representing a {percentageGains:00}% gain/loss.");
+            var percentageGains = (winnings - losses) / stake * 100.0;
+            Logger.LogInformation("Scored {ScoredCount} predictions so far this month.", scores.Count);
+            Logger.LogInformation(
+                "With a £{Stake} stake and {Losses} losses, total winnings would be £{Winnings:00} representing a {PercentageGains:00}% gain/loss.",
+                stake,
+                losses,
+                winnings,
+                percentageGains);
         }
     }
 
@@ -71,7 +76,6 @@ public class ValidateRaceCardPredictionsCommandHandler :
             yield return new RaceCardPredictionScore
             {
                 RaceId = prediction.RaceId,
-                RaceName = prediction.RaceName,
                 CourseId = prediction.CourseId,
                 CourseName = prediction.CourseName,
                 Off = prediction.Off,
@@ -106,7 +110,6 @@ public class ValidateRaceCardPredictionsCommandHandler :
                 HorseId = prediction.HorseId,
                 HorseName = prediction.HorseName,
                 RaceId = prediction.RaceId,
-                RaceName = prediction.RaceName,
                 CourseId = prediction.CourseId,
                 CourseName = prediction.CourseName,
                 Off = prediction.Off,
