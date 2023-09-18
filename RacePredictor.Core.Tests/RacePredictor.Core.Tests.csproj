@@ -40,12 +40,4 @@
 		<EmbeddedResource Include="RacingPost\Examples\*.html" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <None Remove="ML\Validation.csv" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="ML\Validation.csv" />
-	</ItemGroup>
-
 </Project>
