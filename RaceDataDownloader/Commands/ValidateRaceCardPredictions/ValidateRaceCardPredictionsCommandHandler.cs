@@ -78,7 +78,7 @@ public class ValidateRaceCardPredictionsCommandHandler :
                 HorseId = prediction.HorseId,
                 HorseName = prediction.HorseName,
                 FinishingPosition = result.FinishingPosition,
-                Won = (result.FinishingPosition) == 1,
+                Won = result.FinishingPosition == 1,
                 FractionalOdds = result.FractionalOdds,
                 DecimalOdds = result.DecimalOdds,
                 ResultStatus = result.ResultStatus

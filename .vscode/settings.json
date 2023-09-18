@@ -6,6 +6,7 @@
         "isin",
         "jockies",
         "nunique",
-        "sklearn"
+        "sklearn",
+        "todays"
     ]
 }
