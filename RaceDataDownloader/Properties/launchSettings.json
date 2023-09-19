@@ -2,11 +2,10 @@
   "profiles": {
     "RaceDataDownloader": {
       "commandName": "Project",
-      "commandLineArgs": "updateresults --output $(SolutionDir)Data --period 365",
+      // "commandLineArgs": "updateresults --output $(SolutionDir)Data --period 365",
       // "commandLineArgs": "deduperesults --output $(SolutionDir)Data"
-      // "commandLineArgs": "validate --output $(SolutionDir)Data"
-      // "commandLineArgs": "todaysracecards --output $(SolutionDir)Data"
-      // "commandLineArgs": "predict --output $(SolutionDir)Data"
+      //"commandLineArgs": "validate --output $(SolutionDir)Data"
+      "commandLineArgs": "todaysracecards --output $(SolutionDir)Data"
     }
   }
 }
