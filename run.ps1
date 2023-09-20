@@ -1,0 +1,55 @@
+$ErrorActionPreference = "Stop"
+
+function Invoke-NativeCommand() {
+    # A handy way to run a command, and automatically throw an error if the
+    # exit code is non-zero.
+
+    if ($args.Count -eq 0) {
+        throw "Must supply some arguments."
+    }
+
+    $command = $args[0]
+    $commandArgs = @()
+    if ($args.Count -gt 1) {
+        $commandArgs = $args[1..($args.Count - 1)]
+    }
+
+    & $command $commandArgs
+    $result = $LASTEXITCODE
+
+    if ($result -ne 0) {
+        throw "$command $commandArgs exited with code $result."
+    }
+}
+
+$InitialPath = Resolve-Path "."
+$RaceDownloaderPath = Resolve-Path ".\RaceDataDownloader\bin\Debug\net6.0"
+$RaceDownloaderExe = Join-Path $RaceDownloaderPath "RaceDataDownloader.exe"
+$RaceDataPath = Resolve-Path ".\Data"
+
+try {
+    Invoke-NativeCommand dotnet build
+    Invoke-NativeCommand dotnet test
+    Invoke-NativeCommand $RaceDownloaderExe updateresults --output $RaceDataPath --period 365
+    Invoke-NativeCommand $RaceDownloaderExe validate --output $RaceDataPath
+    Invoke-NativeCommand $RaceDownloaderExe todaysracecards --output $RaceDataPath
+
+    Invoke-NativeCommand pip install nbconvert --quiet
+    Invoke-NativeCommand pip install ipykernel --quiet
+
+    Set-Location $RaceDataPath
+    Invoke-NativeCommand python -m nbconvert --to script "FeatureAnalysis.ipynb"
+    Invoke-NativeCommand python "FeatureAnalysis.py"
+
+    Invoke-NativeCommand python -m nbconvert --to script "HorseStatsBuilder.ipynb"
+    Invoke-NativeCommand python "HorseStatsBuilder.py"
+
+    Invoke-NativeCommand python -m nbconvert --to script "JockeyStatsBuilder.ipynb"
+    Invoke-NativeCommand python "JockeyStatsBuilder.py"
+
+    Invoke-NativeCommand python -m nbconvert --to script "LinearRegressionPredictor.ipynb"
+    Invoke-NativeCommand python "LinearRegressionPredictor.py"
+
+} finally {
+    Set-Location $InitialPath
+}

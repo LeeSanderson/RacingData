@@ -351,5 +351,7 @@ MigrationBackup/
 .ionide/
 .dccache
 .dccache
+
 Data/Race_Features.csv
 Data/Clean_Race_Features.csv
+Data/*.py

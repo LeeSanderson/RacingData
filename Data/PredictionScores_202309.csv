@@ -1,4 +1,18 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+0,False,19/1,20,PulledUp,850062,205,Auteuil,09/19/2023 15:40:00,4100998,My Reprieve
+5,False,4/1,5,CompletedRace,849986,190,Listowel,09/19/2023 16:25:00,5147962,Tamrat
+0,False,SP,,NonRunner,849988,190,Listowel,09/19/2023 17:35:00,5113876,Night Glow
+5,False,15/2,8.5,CompletedRace,847954,1353,Newcastle (AW),09/19/2023 16:50:00,2863059,Ebony Maw
+8,False,10/1,11,CompletedRace,847955,1353,Newcastle (AW),09/19/2023 18:00:00,2517233,Bawaader
+4,False,8/1,9,CompletedRace,847734,47,Redcar,09/19/2023 15:35:00,4992625,Stressfree
+4,False,5/1,6,CompletedRace,847739,47,Redcar,09/19/2023 17:20:00,2653210,Assembled
+0,False,SP,,NonRunner,847889,84,Uttoxeter,09/19/2023 15:10:00,905150,Lough Salt
+0,False,SP,,NonRunner,847885,84,Uttoxeter,09/19/2023 15:45:00,3023386,Do No Wrong
+5,False,22/1,23,CompletedRace,847888,84,Uttoxeter,09/19/2023 16:20:00,4305431,Ip Up
+8,False,8/1,9,CompletedRace,847886,84,Uttoxeter,09/19/2023 16:55:00,1898610,Howling Milan
+2,False,15/2,8.5,CompletedRace,847745,104,Yarmouth,09/19/2023 14:15:00,4827036,Zariela
+9,False,6/1,7,CompletedRace,847741,104,Yarmouth,09/19/2023 16:35:00,4415412,Musical Tribute
+8,False,5/1,6,CompletedRace,847746,104,Yarmouth,09/19/2023 18:15:00,3098927,Bernard Spierpoint
 4,False,5/1,6,CompletedRace,847720,7,Brighton,09/18/2023 15:40:00,3382815,Cloudy Rose
 2,False,9/4F,3.25,CompletedRace,849918,182,Fairyhouse,09/18/2023 17:55:00,5009826,Velvet Skies
 2,False,100/30,4.333333333333334,CompletedRace,847880,101,Worcester,09/18/2023 14:05:00,3030298,Glory And Honour
