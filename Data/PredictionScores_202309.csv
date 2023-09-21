@@ -1,4 +1,24 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+7,False,100/30,4.333333333333334,CompletedRace,847768,6,Beverley,09/20/2023 13:50:00,5045863,Pete The Brief
+1,True,9/2,5.5,CompletedRace,847762,6,Beverley,09/20/2023 16:00:00,3526627,Mattice
+1,True,9/2J,5.5,CompletedRace,847764,6,Beverley,09/20/2023 17:10:00,2801626,Dandy's Angel
+6,False,12/1,13,CompletedRace,850101,6,Beverley,09/20/2023 17:45:00,3781879,Brunello Breeze
+1,True,21/10,3.1,CompletedRace,850103,396,Happy Valley,09/20/2023 12:15:00,3855484,Classic Archi
+1,True,14/5,3.8,CompletedRace,850105,396,Happy Valley,09/20/2023 13:15:00,4804239,June Planet
+10,False,37/10,4.7,CompletedRace,850108,396,Happy Valley,09/20/2023 14:45:00,3729007,Up And Up
+6,False,5/1,6,CompletedRace,847895,27,Kelso,09/20/2023 15:30:00,3966616,Our Marty
+3,False,100/30,4.333333333333334,CompletedRace,847892,27,Kelso,09/20/2023 16:05:00,2855872,Fusain
+1,True,11/4,3.75,CompletedRace,850102,27,Kelso,09/20/2023 17:15:00,2654538,Darkest Day
+3,False,2/1F,3,CompletedRace,847891,27,Kelso,09/20/2023 17:50:00,1785138,Sebastopol
+4,False,5/2F,3.5,CompletedRace,847893,27,Kelso,09/20/2023 18:25:00,3921705,Lights Are Green
+3,False,8/11F,1.7272727272727273,CompletedRace,849990,190,Listowel,09/20/2023 14:45:00,3234543,Bialystok
+5,False,11/8F,2.375,CompletedRace,849992,190,Listowel,09/20/2023 15:50:00,4001857,Heia
+4,False,4/1,5,CompletedRace,847775,54,Sandown,09/20/2023 13:55:00,4326483,Exquisitely
+3,False,4/1,5,CompletedRace,847771,54,Sandown,09/20/2023 16:15:00,4618303,Eastern Charm
+0,False,SP,,NonRunner,847770,54,Sandown,09/20/2023 16:50:00,4599600,Outgun
+1,True,20/1,21,CompletedRace,847754,104,Yarmouth,09/20/2023 14:05:00,4763551,Zina Colada
+8,False,11/1,12,CompletedRace,847750,104,Yarmouth,09/20/2023 16:20:00,4570896,Sceptic
+2,False,13/2,7.5,CompletedRace,847751,104,Yarmouth,09/20/2023 16:55:00,4628831,Shazam
 0,False,19/1,20,PulledUp,850062,205,Auteuil,09/19/2023 15:40:00,4100998,My Reprieve
 5,False,4/1,5,CompletedRace,849986,190,Listowel,09/19/2023 16:25:00,5147962,Tamrat
 0,False,SP,,NonRunner,849988,190,Listowel,09/19/2023 17:35:00,5113876,Night Glow
