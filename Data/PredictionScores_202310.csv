@@ -1,0 +1,198 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+1,True,1/16F,1.0625,CompletedRace,849699,24,Hereford,10/17/2023 13:50:00,4725804,Parade Away
+0,False,SP,,NonRunner,849702,24,Hereford,10/17/2023 15:00:00,3891064,Sadie Hill
+2,False,4/1,5,CompletedRace,849698,24,Hereford,10/17/2023 15:35:00,2829577,Pottlerath
+1,True,9/2,5.5,CompletedRace,849704,24,Hereford,10/17/2023 16:10:00,2248502,Ben Buie
+0,False,SP,,NonRunner,849701,24,Hereford,10/17/2023 16:45:00,889785,Ayr Of Elegance
+0,False,1/4F,1.25,Fell,849709,26,Huntingdon,10/17/2023 14:38:00,4721646,Norman Fletcher
+0,False,11/4F,3.75,PulledUp,849710,26,Huntingdon,10/17/2023 15:13:00,4159616,Honneur De Sivola
+2,False,3/1,4,CompletedRace,849705,26,Huntingdon,10/17/2023 16:25:00,2630748,Enemenemynemo
+3,False,6/4F,2.5,CompletedRace,849707,26,Huntingdon,10/17/2023 17:00:00,4191646,Parc D'Amour
+0,False,11/1,12,PulledUp,849706,26,Huntingdon,10/17/2023 17:35:00,3004122,Master Malachy
+2,False,2/1F,3,CompletedRace,849584,30,Leicester,10/17/2023 14:15:00,4507210,Wintercrack
+1,True,8/11F,1.7272727272727273,CompletedRace,849581,30,Leicester,10/17/2023 15:25:00,5059617,Adaay In Devon
+9,False,11/2,6.5,CompletedRace,849586,30,Leicester,10/17/2023 16:00:00,5099946,Budding Poet
+7,False,5/1,6,CompletedRace,849582,30,Leicester,10/17/2023 16:35:00,4405377,Smile And Pay
+5,False,9/4F,3.25,CompletedRace,849580,30,Leicester,10/17/2023 17:10:00,5029050,Lowton
+4,False,5/1,6,CompletedRace,852149,184,Gowran Park,10/16/2023 13:20:00,2617652,Mogwli
+1,True,7/1,8,CompletedRace,852150,184,Gowran Park,10/16/2023 13:50:00,4963766,Expecto
+5,False,5/1,6,CompletedRace,852151,184,Gowran Park,10/16/2023 14:20:00,4299527,Malbay Madness
+2,False,EvensF,2,CompletedRace,852152,184,Gowran Park,10/16/2023 14:50:00,5144106,Toll Stone
+5,False,13/2,7.5,CompletedRace,849563,16,Musselburgh,10/16/2023 14:05:00,1147804,Chinese Spirit
+7,False,20/1,21,CompletedRace,849561,16,Musselburgh,10/16/2023 15:05:00,3308263,Sixcor
+5,False,7/2J,4.5,CompletedRace,849564,16,Musselburgh,10/16/2023 15:35:00,2672180,Willing To Please
+3,False,50/1,51,CompletedRace,849559,16,Musselburgh,10/16/2023 16:10:00,3255768,Biplane
+3,False,7/2,4.5,CompletedRace,849562,16,Musselburgh,10/16/2023 16:40:00,4686996,Lady Bracken
+5,False,16/1,17,CompletedRace,849568,93,Windsor,10/16/2023 14:15:00,5021436,Happy Tears
+6,False,11/1,12,CompletedRace,849567,93,Windsor,10/16/2023 15:45:00,2996733,Silent Flame
+6,False,11/4F,3.75,CompletedRace,849566,93,Windsor,10/16/2023 16:15:00,4249823,Western Stars
+9,False,25/1,26,CompletedRace,849569,93,Windsor,10/16/2023 16:50:00,2951794,Pablo Del Pueblo
+4,False,100/30F,4.333333333333334,CompletedRace,849575,104,Yarmouth,10/16/2023 15:25:00,5082939,Ala Kaifi
+3,False,9/1,10,CompletedRace,849579,104,Yarmouth,10/16/2023 16:00:00,5051832,Brooklyn Express
+0,False,3/1,4,PulledUp,851700,596,Cork,10/15/2023 16:20:00,3293724,Butterflyvespiere
+0,False,9/2,5.5,UnseatedRider,849693,1212,Ffos Las,10/15/2023 13:35:00,3430967,Rosearelli
+2,False,9/2,5.5,CompletedRace,849692,1212,Ffos Las,10/15/2023 14:45:00,3892998,Cruz Control
+9,False,20/1,21,CompletedRace,849691,1212,Ffos Las,10/15/2023 15:20:00,2204203,Effernock Fizz
+1,True,13/8,2.625,CompletedRace,849697,1212,Ffos Las,10/15/2023 16:30:00,4657060,Ideallko
+3,False,5/1,6,CompletedRace,849557,21,Goodwood,10/15/2023 13:50:00,2924568,Beggarman
+1,True,1/2F,1.5,CompletedRace,849556,21,Goodwood,10/15/2023 14:25:00,5293177,Al Shabab Storm
+3,False,11/1,12,CompletedRace,849554,21,Goodwood,10/15/2023 15:35:00,5021458,Queues Likely
+1,True,3/1,4,CompletedRace,849552,21,Goodwood,10/15/2023 16:45:00,4373434,Thunder Ball
+5,False,25/1,26,CompletedRace,849558,21,Goodwood,10/15/2023 17:20:00,2868205,Platinum Prince
+1,True,14/1,15,CompletedRace,851694,192,Naas,10/15/2023 16:00:00,4477751,Bottler'secret
+8,False,13/1,14,CompletedRace,852181,416,Sha Tin,10/15/2023 18:00:00,3923515,Loyal Ambition
+0,False,3/1,4,PulledUp,849672,12,Chepstow,10/13/2023 15:23:00,4272455,Ioupy Collonges
+2,False,13/2,7.5,CompletedRace,849674,12,Chepstow,10/13/2023 17:08:00,3918386,Snowy Evening
+4,False,11/2,6.5,CompletedRace,849815,1353,Newcastle (AW),10/13/2023 16:20:00,3861050,Heatherdown Hero
+2,False,11/2,6.5,CompletedRace,849811,1353,Newcastle (AW),10/13/2023 18:00:00,4248048,Pastiche
+2,False,6/5F,2.2,CompletedRace,852116,1353,Newcastle (AW),10/13/2023 19:00:00,5065580,Townsend Manor
+2,False,9/4,3.25,CompletedRace,849818,1353,Newcastle (AW),10/13/2023 20:30:00,3130335,Elzaal
+5,False,11/1,12,CompletedRace,849520,3,Ayr,10/12/2023 15:20:00,3668350,Miss Calculation
+2,False,8/1,9,CompletedRace,849518,3,Ayr,10/12/2023 17:40:00,4409373,Tafsir
+10,False,2/1F,3,CompletedRace,849803,1083,Chelmsford (AW),10/12/2023 17:30:00,4559928,Leadenhall
+1,True,9/4F,3.25,CompletedRace,849804,1083,Chelmsford (AW),10/12/2023 18:30:00,4942564,The Waiting Game
+1,True,5/1,6,CompletedRace,849809,1083,Chelmsford (AW),10/12/2023 19:00:00,964496,Jumira Bridge
+2,False,100/30,4.333333333333334,CompletedRace,851678,1083,Chelmsford (AW),10/12/2023 19:30:00,1824284,Q Twenty Boy
+6,False,7/1,8,CompletedRace,849810,1083,Chelmsford (AW),10/12/2023 20:00:00,891993,Storm Melody
+1,True,2/7F,1.2857142857142856,CompletedRace,849657,14,Exeter,10/12/2023 13:40:00,3448782,Glengeever
+3,False,5/4F,2.25,CompletedRace,849661,14,Exeter,10/12/2023 14:15:00,3232210,Post No Bills
+1,True,11/10F,2.1,CompletedRace,849656,14,Exeter,10/12/2023 14:50:00,427572,Opening Bid
+3,False,16/5,4.2,CompletedRace,849660,14,Exeter,10/12/2023 16:35:00,2922339,Dan's Chosen
+7,False,9/2,5.5,CompletedRace,849658,14,Exeter,10/12/2023 17:10:00,3705601,Cabrakan
+3,False,6/1,7,CompletedRace,849663,101,Worcester,10/12/2023 13:55:00,2750244,Galice Macalo
+6,False,12/5,3.4,CompletedRace,851609,396,Happy Valley,10/11/2023 12:10:00,3395228,Tronic Mighty
+5,False,39/10,4.9,CompletedRace,851611,396,Happy Valley,10/11/2023 13:10:00,3137724,Comet Splendido
+1,True,4/5F,1.8,CompletedRace,849798,1079,Kempton (AW),10/11/2023 16:17:00,5248384,Mezzo Soprano
+6,False,12/1,13,CompletedRace,849795,1079,Kempton (AW),10/11/2023 18:30:00,5186090,Savvy Warrior
+8,False,100/1,101,CompletedRace,849645,34,Ludlow,10/11/2023 14:10:00,872576,Diamond Joel
+3,False,5/1,6,CompletedRace,849643,34,Ludlow,10/11/2023 15:20:00,3293715,Inishbiggle
+4,False,2/1F,3,CompletedRace,849644,34,Ludlow,10/11/2023 16:30:00,4584216,Hedera Park
+1,True,13/8F,2.625,CompletedRace,849642,34,Ludlow,10/11/2023 17:05:00,2901153,Quick Draw
+4,False,15/8F,2.875,CompletedRace,849510,40,Nottingham,10/11/2023 14:37:00,5073372,Sanction
+4,False,15/2,8.5,CompletedRace,849509,40,Nottingham,10/11/2023 15:47:00,5151719,Marefuori
+2,False,9/2,5.5,CompletedRace,849511,40,Nottingham,10/11/2023 16:57:00,4580182,Ectocross
+5,False,5/2F,3.5,CompletedRace,849513,40,Nottingham,10/11/2023 17:30:00,4528288,Corsican Caper
+2,False,12/1,13,CompletedRace,851437,195,Punchestown,10/11/2023 15:35:00,3970580,Senecia
+5,False,11/4,3.75,CompletedRace,851438,195,Punchestown,10/11/2023 16:10:00,1835881,Conflated
+6,False,4/1,5,CompletedRace,849649,57,Sedgefield,10/11/2023 14:55:00,3388031,Bergentown
+5,False,7/2C,4.5,CompletedRace,849654,57,Sedgefield,10/11/2023 16:05:00,3324904,Oceans Red
+0,False,9/2,5.5,PulledUp,849650,57,Sedgefield,10/11/2023 17:15:00,2922345,Getaway Jewel
+8,False,7/2J,4.5,CompletedRace,849500,7,Brighton,10/10/2023 13:45:00,5172518,Eyes Closed
+2,False,5/1,6,CompletedRace,849494,7,Brighton,10/10/2023 14:20:00,5242338,Fernden Wells
+2,False,9/2,5.5,CompletedRace,849496,7,Brighton,10/10/2023 14:55:00,4586180,Alodia
+6,False,100/30,4.333333333333334,CompletedRace,849497,7,Brighton,10/10/2023 15:30:00,3263954,Silver Bubble
+4,False,9/1,10,CompletedRace,849499,7,Brighton,10/10/2023 17:15:00,3616091,Thank The Lord
+2,False,17/2,9.5,CompletedRace,849636,26,Huntingdon,10/10/2023 15:10:00,3495432,Magistrato
+2,False,6/5F,2.2,CompletedRace,849640,26,Huntingdon,10/10/2023 15:45:00,4609243,Benny Silver
+5,False,4/1,5,CompletedRace,849639,26,Huntingdon,10/10/2023 16:20:00,4247972,Hollow Ron
+4,False,3/1F,4,CompletedRace,849637,26,Huntingdon,10/10/2023 16:55:00,3087833,Edison Kent
+0,False,SP,,NonRunner,849505,30,Leicester,10/10/2023 15:22:00,1558834,Stone Of Destiny
+1,True,11/10F,2.1,CompletedRace,851427,195,Punchestown,10/10/2023 13:50:00,4652535,Wodhooh
+2,False,Evs,2,CompletedRace,851429,195,Punchestown,10/10/2023 15:00:00,2962942,Run For Oscar
+2,False,11/8F,2.375,CompletedRace,849791,394,Southwell (AW),10/10/2023 18:30:00,4652537,Club Manager
+0,False,SP,,NonRunner,849788,394,Southwell (AW),10/10/2023 20:00:00,4624644,Rodborough
+3,False,5/1,6,CompletedRace,849481,46,Pontefract,10/09/2023 15:00:00,4373435,Metahorse
+3,False,4/1,5,CompletedRace,849484,46,Pontefract,10/09/2023 15:30:00,4528287,Cinnodin
+1,True,7/4F,2.75,CompletedRace,849480,46,Pontefract,10/09/2023 16:30:00,4664811,Safety Catch
+6,False,17/2,9.5,CompletedRace,851530,46,Pontefract,10/09/2023 17:40:00,5038624,Happier
+3,False,11/2,6.5,CompletedRace,849634,67,Stratford,10/09/2023 15:40:00,2653194,Time To Bite
+1,True,13/8F,2.625,CompletedRace,849631,67,Stratford,10/09/2023 16:10:00,3217623,Myristica
+0,False,3/1,4,PulledUp,849629,67,Stratford,10/09/2023 16:45:00,3239234,Allo Allo
+2,False,5/2F,3.5,CompletedRace,849490,93,Windsor,10/09/2023 13:50:00,5079044,Bjorn Ironside
+5,False,5/1,6,CompletedRace,849489,93,Windsor,10/09/2023 14:50:00,4827079,Beauty Generation
+0,False,SP,,NonRunner,849487,93,Windsor,10/09/2023 15:20:00,4415410,Dream Of Mischief
+7,False,80/1,81,CompletedRace,849780,513,Wolverhampton (AW),10/09/2023 16:25:00,4313211,Flame Of Kodiac
+7,False,15/2,8.5,CompletedRace,851532,513,Wolverhampton (AW),10/09/2023 17:00:00,2479598,Masque Of Anarchy
+3,False,11/2,6.5,CompletedRace,849779,513,Wolverhampton (AW),10/09/2023 19:00:00,2744020,Genesius
+6,False,12/1,13,CompletedRace,849781,513,Wolverhampton (AW),10/09/2023 19:30:00,2687070,Sir Rodneyredblood
+0,False,4/1,5,PulledUp,851256,182,Fairyhouse,10/07/2023 15:05:00,3136491,Sweet Will
+1,True,7/1,8,CompletedRace,851258,182,Fairyhouse,10/07/2023 16:15:00,4173269,Must Meet Cecil
+2,False,9/2,5.5,CompletedRace,848748,20,Fontwell,10/07/2023 14:15:00,3248546,Stiletto
+1,True,10/11F,1.9090909090909092,CompletedRace,848745,20,Fontwell,10/07/2023 14:50:00,2615861,Guy
+2,False,11/4,3.75,CompletedRace,848746,20,Fontwell,10/07/2023 16:00:00,4129101,Proper Twelve
+4,False,8/1,9,CompletedRace,848744,20,Fontwell,10/07/2023 16:35:00,3072071,Fifty Ball
+2,False,5/1,6,CompletedRace,848749,20,Fontwell,10/07/2023 17:10:00,2866754,Auditoria
+6,False,12/1,13,CompletedRace,848660,47,Redcar,10/07/2023 17:05:00,3726904,Gibside
+1,True,4/1,5,CompletedRace,848864,513,Wolverhampton (AW),10/07/2023 18:30:00,5172492,Salvuccio
+8,False,12/1,13,CompletedRace,848862,513,Wolverhampton (AW),10/07/2023 19:30:00,4459185,Sporting Hero
+9,False,12/1,13,CompletedRace,848868,513,Wolverhampton (AW),10/07/2023 20:30:00,3097495,Mostallim
+6,False,25/1,26,CompletedRace,848645,2,Ascot,10/06/2023 14:47:00,4672815,Waxing Gibbous
+4,False,11/4F,3.75,CompletedRace,848646,2,Ascot,10/06/2023 15:22:00,4648375,Florida
+5,False,11/4,3.75,CompletedRace,848644,2,Ascot,10/06/2023 16:30:00,4751464,El Jasor
+3,False,7/4F,2.75,CompletedRace,851210,179,Downpatrick,10/06/2023 14:25:00,4217514,Fathom Two
+2,False,7/2,4.5,CompletedRace,851215,179,Downpatrick,10/06/2023 17:20:00,3538501,Reddys Island
+6,False,9/2,5.5,CompletedRace,851203,1138,Dundalk (AW),10/06/2023 17:30:00,4420151,Hispanic
+3,False,4/1,5,CompletedRace,851208,1138,Dundalk (AW),10/06/2023 20:00:00,4493105,Sweetest Rose
+3,False,8/1,9,CompletedRace,848739,20,Fontwell,10/06/2023 13:45:00,1939908,Captain Tommy
+3,False,9/2,5.5,CompletedRace,848737,20,Fontwell,10/06/2023 14:55:00,2689814,Lermoos Legend
+4,False,10/1,11,CompletedRace,848738,20,Fontwell,10/06/2023 16:07:00,1454182,Clearance
+4,False,4/1,5,CompletedRace,848742,20,Fontwell,10/06/2023 16:40:00,1916124,Princess Midnight
+0,False,SP,,NonRunner,848732,25,Hexham,10/06/2023 14:00:00,4795997,Theirshegoes
+4,False,5/2,3.5,CompletedRace,848730,25,Hexham,10/06/2023 14:35:00,1572697,Ashington
+2,False,6/4F,2.5,CompletedRace,848731,25,Hexham,10/06/2023 15:45:00,3918408,General Officer
+3,False,15/8F,2.875,CompletedRace,848733,25,Hexham,10/06/2023 16:20:00,2429111,Janeslittlevoice
+0,False,28/1,29,PulledUp,848734,25,Hexham,10/06/2023 16:55:00,3550742,A Cheap Thrill
+6,False,5/4F,2.25,CompletedRace,848856,1353,Newcastle (AW),10/06/2023 16:35:00,4532156,Artisan Dancer
+4,False,9/4F,3.25,CompletedRace,848858,1353,Newcastle (AW),10/06/2023 18:15:00,3386707,Eleven Eleven
+6,False,5/1,6,CompletedRace,851315,1353,Newcastle (AW),10/06/2023 18:45:00,3687280,Time To Rumble
+1,True,11/8F,2.375,CompletedRace,848845,1083,Chelmsford (AW),10/05/2023 17:30:00,5109652,Full Regalia
+7,False,15/2,8.5,CompletedRace,848838,1083,Chelmsford (AW),10/05/2023 20:00:00,3224056,Haven Lady
+2,False,15/8F,2.875,CompletedRace,848840,1083,Chelmsford (AW),10/05/2023 20:30:00,3956910,Team Endeavour
+0,False,5/1,6,RefusedToRace,848853,393,Lingfield (AW),10/05/2023 14:10:00,4459191,Imperiousity
+2,False,100/30,4.333333333333334,CompletedRace,848638,52,Salisbury,10/05/2023 17:02:00,4507213,Bint Al Daar
+3,False,9/4F,3.25,CompletedRace,848637,52,Salisbury,10/05/2023 17:35:00,5002208,Sailing On
+1,True,EvensF,2,CompletedRace,851058,198,Thurles,10/05/2023 16:20:00,4609223,Deakin
+3,False,4/1,5,CompletedRace,848725,85,Warwick,10/05/2023 15:35:00,3420531,Alexandra Romanov
+4,False,22/1,23,CompletedRace,848726,85,Warwick,10/05/2023 16:05:00,1332670,The Paddy Pie
+3,False,7/1,8,CompletedRace,848718,4,Bangor-on-Dee,10/04/2023 14:05:00,1654283,Joly Maker
+4,False,13/2,7.5,CompletedRace,848721,4,Bangor-on-Dee,10/04/2023 14:35:00,4100996,Heros De Moutiers
+0,False,12/1,13,PulledUp,848719,4,Bangor-on-Dee,10/04/2023 15:05:00,2536720,Tom O'Roughley
+6,False,3/1F,4,CompletedRace,848717,4,Bangor-on-Dee,10/04/2023 16:05:00,4922472,Olivers Travels
+1,True,8/11F,1.7272727272727273,CompletedRace,851176,4,Bangor-on-Dee,10/04/2023 17:05:00,4217504,Act Of Authority
+1,True,3/1,4,CompletedRace,848628,10,Catterick,10/04/2023 14:20:00,3835638,Woobay
+3,False,9/2,5.5,CompletedRace,848624,10,Catterick,10/04/2023 14:50:00,5079236,Lotting's Lass
+3,False,100/30,4.333333333333334,CompletedRace,848622,10,Catterick,10/04/2023 15:50:00,5096518,Noo Point
+9,False,5/2F,3.5,CompletedRace,848623,10,Catterick,10/04/2023 17:20:00,4998714,Tarraff
+4,False,12/5F,3.4,CompletedRace,851182,396,Happy Valley,10/04/2023 14:15:00,4685001,Allgreektome
+3,False,5/1,6,CompletedRace,848830,1079,Kempton (AW),10/04/2023 18:30:00,2650223,Misty Grey
+7,False,16/1,17,CompletedRace,848832,1079,Kempton (AW),10/04/2023 19:30:00,4556226,Maid In Kentucky
+6,False,12/1,13,CompletedRace,848629,40,Nottingham,10/04/2023 15:42:00,3544305,Angle Land
+1,True,11/4F,3.75,CompletedRace,848631,40,Nottingham,10/04/2023 16:42:00,4652537,Club Manager
+5,False,2/1F,3,CompletedRace,848630,40,Nottingham,10/04/2023 17:12:00,4648365,Navarre Express
+4,False,28/1,29,CompletedRace,848618,3,Ayr,10/03/2023 13:42:00,4465605,Starshot
+7,False,2/1F,3,CompletedRace,848616,3,Ayr,10/03/2023 14:47:00,4465600,Star Start
+5,False,9/1,10,CompletedRace,848615,3,Ayr,10/03/2023 15:22:00,3588918,Rock Melody
+2,False,4/1,5,CompletedRace,848617,3,Ayr,10/03/2023 17:07:00,4274096,Mereside Diva
+3,False,100/30,4.333333333333334,CompletedRace,848619,3,Ayr,10/03/2023 17:37:00,4669038,Cantalupo Bella
+2,False,5/1,6,CompletedRace,851063,183,Galway,10/03/2023 14:25:00,2564314,Lake Chad
+2,False,1/2F,1.5,CompletedRace,851065,183,Galway,10/03/2023 15:35:00,4682884,Feronily
+4,False,11/8F,2.375,CompletedRace,851066,183,Galway,10/03/2023 16:10:00,3970594,Meetingofthewaters
+6,False,5/2J,3.5,CompletedRace,851067,183,Galway,10/03/2023 16:45:00,3918377,Battle Of Mirbat
+2,False,11/4,3.75,CompletedRace,848703,57,Sedgefield,10/03/2023 15:10:00,2995437,Latino Fling
+1,True,4/1,5,CompletedRace,848704,57,Sedgefield,10/03/2023 15:45:00,3205776,Restandbethankful
+1,True,100/30,4.333333333333334,CompletedRace,848716,61,Southwell,10/03/2023 14:20:00,4031511,Magic Mike
+2,False,6/5F,2.2,CompletedRace,848710,61,Southwell,10/03/2023 14:55:00,3540200,Swapped
+0,False,SP,,NonRunner,848715,61,Southwell,10/03/2023 15:30:00,2510174,Dreamsundermyfeet
+3,False,5/1,6,CompletedRace,848712,61,Southwell,10/03/2023 16:40:00,2647110,Could Be Trouble
+5,False,10/11F,1.9090909090909092,CompletedRace,848713,61,Southwell,10/03/2023 17:15:00,4165257,Sergeant Wilson
+3,False,9/2,5.5,CompletedRace,848829,513,Wolverhampton (AW),10/03/2023 17:00:00,5116057,Dadas Boy
+6,False,3/1,4,CompletedRace,848822,513,Wolverhampton (AW),10/03/2023 17:30:00,5079242,Make Clear
+4,False,4/1,5,CompletedRace,851156,513,Wolverhampton (AW),10/03/2023 18:30:00,4994702,Paternoster Square
+2,False,11/2,6.5,CompletedRace,848605,5,Bath,10/02/2023 16:02:00,5104257,Whiteley Way
+4,False,16/1,17,CompletedRace,848603,5,Bath,10/02/2023 17:05:00,2755571,Pop Dancer
+2,False,6/1,7,CompletedRace,848611,22,Hamilton,10/02/2023 14:40:00,3765237,The Gay Blade
+3,False,15/8F,2.875,CompletedRace,848609,22,Hamilton,10/02/2023 15:40:00,4459193,Anjo Bonita
+5,False,17/2,9.5,CompletedRace,848608,22,Hamilton,10/02/2023 16:10:00,2791132,Pisanello
+5,False,28/1,29,CompletedRace,848612,22,Hamilton,10/02/2023 16:40:00,1533074,Retirement Beckons
+7,False,4/1,5,CompletedRace,848613,22,Hamilton,10/02/2023 17:10:00,3550656,High Opinion
+3,False,17/2,9.5,CompletedRace,848614,22,Hamilton,10/02/2023 17:45:00,4418045,Rory The Cat
+1,True,11/8F,2.375,CompletedRace,848814,1353,Newcastle (AW),10/02/2023 18:00:00,4570893,Vaguely Royal
+3,False,13/2,7.5,CompletedRace,848818,1353,Newcastle (AW),10/02/2023 18:30:00,5230605,Gregorina
+2,False,4/1,5,CompletedRace,848821,1353,Newcastle (AW),10/02/2023 19:00:00,5063777,Anglesey Lad
+2,False,9/2,5.5,CompletedRace,848817,1353,Newcastle (AW),10/02/2023 19:30:00,4624644,Rodborough
+2,False,9/4,3.25,CompletedRace,848696,39,Newton Abbot,10/02/2023 14:15:00,4185066,Mount Tempest
+6,False,7/2,4.5,CompletedRace,848698,39,Newton Abbot,10/02/2023 14:45:00,3116606,Systemic
+4,False,6/1,7,CompletedRace,848697,39,Newton Abbot,10/02/2023 15:45:00,2964256,Tommie Beau
+2,False,5/1,6,CompletedRace,848699,39,Newton Abbot,10/02/2023 16:15:00,3001423,Fortunate Fred
+4,False,9/2,5.5,CompletedRace,848700,39,Newton Abbot,10/02/2023 16:45:00,3038231,Sherborne
+2,False,6/1,7,CompletedRace,848701,39,Newton Abbot,10/02/2023 17:15:00,3970600,Caitlin's Court

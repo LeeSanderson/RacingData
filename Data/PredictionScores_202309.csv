@@ -1,4 +1,73 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+7,False,9/2,5.5,CompletedRace,848812,1083,Chelmsford (AW),09/30/2023 16:57:00,5061630,Birkie Boy
+2,False,11/10F,2.1,CompletedRace,848574,13,Chester,09/30/2023 14:35:00,4664815,Britannica
+8,False,18/1,19,CompletedRace,848573,13,Chester,09/30/2023 15:10:00,1887402,Lihou
+1,True,5/4F,2.25,CompletedRace,848576,13,Chester,09/30/2023 15:45:00,4528454,Dreams Adozen
+0,False,SP,,NonRunner,848575,13,Chester,09/30/2023 16:20:00,3891045,Justcallmepete
+0,False,SP,,NonRunner,848577,13,Chester,09/30/2023 16:53:00,4076391,Dovena
+0,False,20/1,21,PulledUp,850512,184,Gowran Park,09/30/2023 16:00:00,2142178,Futurum Regem
+4,False,8/1,9,CompletedRace,850513,184,Gowran Park,09/30/2023 16:35:00,3575286,Hurricane Georgie
+1,True,10/11F,1.9090909090909092,CompletedRace,850514,184,Gowran Park,09/30/2023 17:10:00,3525039,Positive Thinker
+2,False,8/1,9,CompletedRace,848567,23,Haydock,09/30/2023 15:15:00,4175408,Knebworth
+2,False,11/4,3.75,CompletedRace,848569,23,Haydock,09/30/2023 17:02:00,5048065,Burdett
+3,False,3/1,4,CompletedRace,848568,23,Haydock,09/30/2023 17:35:00,3679926,De Vega's Warrior
+7,False,8/1,9,CompletedRace,850499,185,Killarney,09/30/2023 15:35:00,3178683,Church Mountain
+7,False,6/1,7,CompletedRace,850501,185,Killarney,09/30/2023 16:45:00,4963779,Macinamillion
+3,False,13/2,7.5,CompletedRace,850502,185,Killarney,09/30/2023 17:20:00,3118118,Penny Jar
+5,False,66/1,67,CompletedRace,848695,35,Market Rasen,09/30/2023 14:14:00,4757519,Inkwell
+6,False,12/1,13,CompletedRace,848692,35,Market Rasen,09/30/2023 14:45:00,4705233,Vitani
+6,False,14/1,15,CompletedRace,848694,35,Market Rasen,09/30/2023 15:20:00,905150,Lough Salt
+7,False,5/1,6,CompletedRace,848693,35,Market Rasen,09/30/2023 17:05:00,3481843,Shuil Donn
+5,False,9/2,5.5,CompletedRace,851033,35,Market Rasen,09/30/2023 17:40:00,4381743,Game Beaaa
+8,False,8/1,9,CompletedRace,848556,38,Newmarket,09/30/2023 17:25:00,4612983,Modesty
+1,True,6/4F,2.5,CompletedRace,848583,49,Ripon,09/30/2023 14:20:00,5141805,Miguel
+4,False,100/30F,4.333333333333334,CompletedRace,848586,49,Ripon,09/30/2023 14:55:00,3196008,Mr Trevor
+5,False,4/1,5,CompletedRace,848582,49,Ripon,09/30/2023 16:05:00,3158787,Khabib
+3,False,11/8F,2.375,CompletedRace,848584,49,Ripon,09/30/2023 16:40:00,5198122,Franberri
+4,False,9/4,3.25,CompletedRace,848581,49,Ripon,09/30/2023 17:15:00,3310984,Haizoom
+1,True,9/2,5.5,CompletedRace,850451,1138,Dundalk (AW),09/29/2023 16:35:00,4471444,Jalo
+2,False,17/2,9.5,CompletedRace,850461,184,Gowran Park,09/29/2023 15:50:00,3040683,Say Goodbye
+1,True,8/13F,1.6153846153846154,CompletedRace,850462,184,Gowran Park,09/29/2023 16:25:00,4117807,Lucky Zebo
+5,False,28/1,29,CompletedRace,850464,184,Gowran Park,09/29/2023 17:35:00,5242332,Stagecoach Mary
+4,False,7/2,4.5,CompletedRace,848562,23,Haydock,09/29/2023 14:00:00,3499193,Fascinating Lips
+1,True,3/1,4,CompletedRace,848560,23,Haydock,09/29/2023 15:45:00,5222216,Curious Rover
+3,False,5/1,6,CompletedRace,848558,23,Haydock,09/29/2023 16:20:00,4998713,Flower Of Dubai
+2,False,100/30,4.333333333333334,CompletedRace,848561,23,Haydock,09/29/2023 16:50:00,1403494,Zillion
+0,False,SP,,NonRunner,848559,23,Haydock,09/29/2023 17:25:00,1657488,Young Fire
+3,False,5/2F,3.5,CompletedRace,848801,1353,Newcastle (AW),09/29/2023 16:55:00,4485060,Denis Anthony
+1,True,5/4F,2.25,CompletedRace,848800,1353,Newcastle (AW),09/29/2023 17:30:00,4659076,Solray
+7,False,9/1,10,CompletedRace,848805,1353,Newcastle (AW),09/29/2023 18:30:00,3995332,Pink Sky At Night
+4,False,28/1,29,CompletedRace,850551,1353,Newcastle (AW),09/29/2023 19:00:00,2277445,See My Baby Jive
+1,True,5/2F,3.5,CompletedRace,848803,1353,Newcastle (AW),09/29/2023 19:30:00,4546193,Turquoise Diamond
+0,False,SP,,NonRunner,848553,38,Newmarket,09/29/2023 17:55:00,5069206,Crack Shot
+1,True,5/4,2.25,CompletedRace,848685,101,Worcester,09/29/2023 14:15:00,4586325,Broadway Boy
+4,False,9/1,10,CompletedRace,848686,101,Worcester,09/29/2023 14:50:00,1857642,Vinnie The Hoddie
+2,False,6/4F,2.5,CompletedRace,848688,101,Worcester,09/29/2023 15:25:00,4640751,Mylesfromwicklow
+1,True,11/10F,2.1,CompletedRace,848687,101,Worcester,09/29/2023 16:30:00,3547626,Ma Belle Noire
+1,True,5/4F,2.25,CompletedRace,848689,101,Worcester,09/29/2023 17:05:00,4078851,Getaway Tom
+2,False,7/2J,4.5,CompletedRace,850297,176,Bellewstown,09/27/2023 14:35:00,4318855,Rampage
+7,False,100/30,4.333333333333334,CompletedRace,850299,176,Bellewstown,09/27/2023 15:45:00,1922319,Aloysius Lilius
+1,True,7/2,4.5,CompletedRace,848524,21,Goodwood,09/27/2023 14:30:00,3123871,Rhoscolyn
+2,False,15/2,8.5,CompletedRace,848527,21,Goodwood,09/27/2023 15:05:00,4648391,Tiriac
+5,False,16/1,17,CompletedRace,848523,21,Goodwood,09/27/2023 16:50:00,2832894,Haseefah
+1,True,47/20,3.35,CompletedRace,850439,396,Happy Valley,09/27/2023 12:15:00,4061644,Medic Elite
+3,False,21/10F,3.1,CompletedRace,850440,396,Happy Valley,09/27/2023 12:45:00,3923516,Right As Rain
+5,False,13/10F,2.3,CompletedRace,850441,396,Happy Valley,09/27/2023 13:15:00,4843485,Turin Mascot
+6,False,51/10,6.1,CompletedRace,850445,396,Happy Valley,09/27/2023 15:15:00,5050146,Tomodachi Kokoroe
+2,False,19/5,4.8,CompletedRace,850438,396,Happy Valley,09/27/2023 23:45:00,4191575,Double Show
+7,False,10/1,11,CompletedRace,848789,1079,Kempton (AW),09/27/2023 18:30:00,4520650,Havanazam
+5,False,5/1,6,CompletedRace,848677,41,Perth,09/27/2023 14:20:00,4728110,Gaye Winnie
+0,False,6/1,7,PulledUp,848673,41,Perth,09/27/2023 14:55:00,3515064,Sanosuke
+0,False,4/1,5,PulledUp,848675,41,Perth,09/27/2023 15:30:00,1025021,A Place Apart
+5,False,7/2,4.5,CompletedRace,848674,41,Perth,09/27/2023 16:05:00,4440454,Nottodaybobo
+3,False,100/30,4.333333333333334,CompletedRace,848672,41,Perth,09/27/2023 16:40:00,3513302,Born Famous
+7,False,8/1,9,CompletedRace,848534,47,Redcar,09/27/2023 14:40:00,5051832,Brooklyn Express
+0,False,4/1,5,PulledUp,850317,197,Sligo,09/27/2023 14:10:00,3603970,Shesadream
+6,False,9/2,5.5,CompletedRace,850318,197,Sligo,09/27/2023 14:45:00,4119760,Ahead Of The Posse
+2,False,5/2,3.5,CompletedRace,850319,197,Sligo,09/27/2023 15:20:00,3302842,Tempo Chapter Two
+0,False,SP,,NonRunner,850320,197,Sligo,09/27/2023 15:55:00,1969749,No Thanks
+5,False,16/1,17,CompletedRace,850321,197,Sligo,09/27/2023 16:30:00,3134005,Roscomroe
+3,False,100/30,4.333333333333334,CompletedRace,850322,197,Sligo,09/27/2023 17:05:00,3272451,Mr Saxobeat
 7,False,18/1,19,CompletedRace,848512,6,Beverley,09/26/2023 14:15:00,3789286,Recorwoman
 3,False,5/4F,2.25,CompletedRace,848507,6,Beverley,09/26/2023 16:00:00,4481246,Marine Wave
 7,False,22/1,23,CompletedRace,848508,6,Beverley,09/26/2023 17:10:00,3550605,Miss Britain

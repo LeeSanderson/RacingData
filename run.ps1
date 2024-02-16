@@ -34,8 +34,13 @@ try {
     Invoke-NativeCommand $RaceDownloaderExe validate --output $RaceDataPath
     Invoke-NativeCommand $RaceDownloaderExe todaysracecards --output $RaceDataPath
 
-    Invoke-NativeCommand pip install nbconvert --quiet
-    Invoke-NativeCommand pip install ipykernel --quiet
+    Invoke-NativeCommand pip install nbconvert --quiet --user
+    Invoke-NativeCommand pip install ipykernel --quiet --user
+    Invoke-NativeCommand pip install numpy --quiet --user
+    Invoke-NativeCommand pip install Pandas --quiet --user
+    Invoke-NativeCommand pip install matplotlib --quiet --user
+    Invoke-NativeCommand pip install scikit-learn --quiet --user
+    Invoke-NativeCommand pip install ipywidgets --quiet --user   
 
     Set-Location $RaceDataPath
     Invoke-NativeCommand python -m nbconvert --to script "FeatureAnalysis.ipynb"
