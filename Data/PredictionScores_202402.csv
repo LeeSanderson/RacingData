@@ -1,0 +1,26 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+10,False,,,CompletedRace,861001,869,Bahrain,02/16/2024 12:40:00,4305436,Lecale's Destiny
+0,False,SP,,NonRunner,861002,869,Bahrain,02/16/2024 13:30:00,3689300,Exminster
+2,False,,,CompletedRace,861003,869,Bahrain,02/16/2024 13:55:00,4682859,Panning For Gold
+5,False,6/1,7,CompletedRace,860929,1138,Dundalk (AW),02/16/2024 15:47:00,4389427,Sam's Xpress
+2,False,7/2,4.5,CompletedRace,860934,1138,Dundalk (AW),02/16/2024 18:30:00,4996598,Mary Shoelaces
+1,True,4/1,5,CompletedRace,859151,18,Fakenham,02/16/2024 13:40:00,4313192,Mi Sueno
+0,False,11/4,3.75,PulledUp,859148,18,Fakenham,02/16/2024 14:10:00,4159611,Dream Jet
+0,False,4/1,5,PulledUp,859147,18,Fakenham,02/16/2024 15:10:00,4187538,Imac Wood
+2,False,11/10F,2.1,CompletedRace,859149,18,Fakenham,02/16/2024 15:40:00,3601930,Hermes Le Gris
+1,True,5/6F,1.8333333333333335,CompletedRace,859153,18,Fakenham,02/16/2024 16:15:00,993770,Secret Investor
+3,False,9/1,10,CompletedRace,859165,27,Kelso,02/16/2024 13:55:00,3862931,Step Above
+1,True,3/1,4,CompletedRace,859166,27,Kelso,02/16/2024 14:25:00,4002156,Alnilam
+5,False,8/1,9,CompletedRace,859163,27,Kelso,02/16/2024 14:55:00,4795998,Slugger
+0,False,5/1,6,Fell,859161,27,Kelso,02/16/2024 15:25:00,3448787,Richmond Lake
+0,False,5/4,2.25,Fell,859164,27,Kelso,02/16/2024 16:00:00,4203206,Imperial Merlin
+1,True,11/8F,2.375,CompletedRace,859162,27,Kelso,02/16/2024 16:32:00,3347663,Escapeandevade
+6,False,13/2,7.5,CompletedRace,861010,1231,Meydan,02/16/2024 17:35:00,4597239,Irregular Warfare
+6,False,7/2,4.5,CompletedRace,859333,513,Wolverhampton (AW),02/16/2024 16:10:00,3550654,Glamorous Express
+5,False,11/1,12,CompletedRace,861407,513,Wolverhampton (AW),02/16/2024 16:40:00,4396742,Revolucion
+1,True,11/10F,2.1,CompletedRace,859336,513,Wolverhampton (AW),02/16/2024 17:10:00,5021337,Southbank
+9,False,15/2,8.5,CompletedRace,859334,513,Wolverhampton (AW),02/16/2024 18:15:00,5061630,Birkie Boy
+1,True,100/30,4.333333333333334,CompletedRace,859330,513,Wolverhampton (AW),02/16/2024 18:45:00,4874888,Wadacre Gomez
+9,False,66/1,67,CompletedRace,859335,513,Wolverhampton (AW),02/16/2024 19:15:00,1483369,Rivas Rob Roy
+1,True,5/1,6,CompletedRace,859331,513,Wolverhampton (AW),02/16/2024 19:45:00,3423161,Cosmos Raj
+3,False,6/1,7,CompletedRace,861406,513,Wolverhampton (AW),02/16/2024 20:15:00,1860050,Fox Power
