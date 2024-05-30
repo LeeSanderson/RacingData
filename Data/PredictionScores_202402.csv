@@ -1,4 +1,22 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,5/4F,2.25,CompletedRace,859208,8,Carlisle,02/19/2024 14:00:00,4853584,Get A Superstar
+1,True,8/15F,1.5333333333333332,CompletedRace,859207,8,Carlisle,02/19/2024 14:30:00,4658876,Jagwar
+3,False,9/4F,3.25,CompletedRace,859204,8,Carlisle,02/19/2024 15:00:00,2591996,Fiston De Becon
+8,False,100/30J,4.333333333333334,CompletedRace,859206,8,Carlisle,02/19/2024 15:30:00,5202347,R S Ambush
+0,False,7/1,8,UnseatedRider,859202,8,Carlisle,02/19/2024 16:00:00,3538526,East Street
+4,False,5/6F,1.8333333333333335,CompletedRace,859203,8,Carlisle,02/19/2024 16:35:00,4853677,Booster Bob
+6,False,4/1,5,CompletedRace,859205,8,Carlisle,02/19/2024 17:10:00,3254677,Kiss My Face
+4,False,17/2,9.5,CompletedRace,859363,393,Lingfield (AW),02/19/2024 13:17:00,4826976,Hatadora
+1,True,6/4F,2.5,CompletedRace,859358,393,Lingfield (AW),02/19/2024 13:47:00,4346562,McLean House
+2,False,11/10F,2.1,CompletedRace,859364,393,Lingfield (AW),02/19/2024 14:47:00,5154274,Gogo Yubari
+1,True,5/6F,1.8333333333333335,CompletedRace,859362,393,Lingfield (AW),02/19/2024 15:17:00,3207177,Sunset In Paris
+4,False,4/1,5,CompletedRace,861521,393,Lingfield (AW),02/19/2024 15:47:00,4528451,Angel Of Antrim
+5,False,11/4J,3.75,CompletedRace,859370,513,Wolverhampton (AW),02/19/2024 17:00:00,4350771,Daley T
+8,False,9/1,10,CompletedRace,861522,513,Wolverhampton (AW),02/19/2024 17:30:00,3791405,Coast
+2,False,7/4F,2.75,CompletedRace,859371,513,Wolverhampton (AW),02/19/2024 18:00:00,5212131,Tuneful
+3,False,10/1,11,CompletedRace,859365,513,Wolverhampton (AW),02/19/2024 19:00:00,5042476,Rising Force
+1,True,5/4F,2.25,CompletedRace,859369,513,Wolverhampton (AW),02/19/2024 19:30:00,4467741,Malacanne
+9,False,15/2,8.5,CompletedRace,859368,513,Wolverhampton (AW),02/19/2024 20:30:00,3241329,Lion Ring
 10,False,,,CompletedRace,861001,869,Bahrain,02/16/2024 12:40:00,4305436,Lecale's Destiny
 0,False,SP,,NonRunner,861002,869,Bahrain,02/16/2024 13:30:00,3689300,Exminster
 2,False,,,CompletedRace,861003,869,Bahrain,02/16/2024 13:55:00,4682859,Panning For Gold
