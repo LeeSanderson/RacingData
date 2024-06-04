@@ -1,0 +1,22 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,6/1,7,CompletedRace,866877,8,Carlisle,05/30/2024 19:25:00,5073257,Jesmond Dawn
+3,False,20/1,21,CompletedRace,866878,8,Carlisle,05/30/2024 20:25:00,5386054,Barnsnape Boy
+4,False,9/2,5.5,CompletedRace,866876,8,Carlisle,05/30/2024 20:55:00,4465600,Star Start
+1,True,13/2,7.5,CompletedRace,869553,182,Fairyhouse,05/30/2024 18:00:00,5242309,Barnso
+1,True,9/4J,3.25,CompletedRace,869554,182,Fairyhouse,05/30/2024 18:30:00,5198196,Alto Sax
+6,False,15/2,8.5,CompletedRace,866632,1212,Ffos Las,05/30/2024 15:00:00,4420238,Jack The Savage
+6,False,3/1,4,CompletedRace,866633,1212,Ffos Las,05/30/2024 15:35:00,2370887,Fearless
+4,False,13/8F,2.625,CompletedRace,866637,1212,Ffos Las,05/30/2024 16:08:00,4622291,Thatza Dazzler
+7,False,9/1,10,CompletedRace,866634,1212,Ffos Las,05/30/2024 16:40:00,3116601,Gavin
+2,False,9/2,5.5,CompletedRace,869560,188,Limerick,05/30/2024 17:45:00,4942583,Field A Thistles
+8,False,4/1,5,CompletedRace,869563,188,Limerick,05/30/2024 19:17:00,3098278,Son Of Hypnos
+6,False,13/2,7.5,CompletedRace,869564,188,Limerick,05/30/2024 19:47:00,4292166,Walk In Time
+1,True,13/8F,2.625,CompletedRace,866865,31,Lingfield,05/30/2024 17:00:00,5134064,So Obsessed
+6,False,12/1,13,CompletedRace,866980,393,Lingfield (AW),05/30/2024 14:20:00,3332139,Doublethetrouble
+2,False,5/6F,1.8333333333333335,CompletedRace,866979,393,Lingfield (AW),05/30/2024 14:50:00,1028267,Poetic Force
+2,False,100/30,4.333333333333334,CompletedRace,866867,49,Ripon,05/30/2024 15:15:00,4994597,Loddon
+9,False,11/2,6.5,CompletedRace,866871,49,Ripon,05/30/2024 15:50:00,4826951,Medician Star
+3,False,11/2,6.5,CompletedRace,866866,49,Ripon,05/30/2024 16:20:00,3500898,Ey Up Its The Boss
+1,True,9/2,5.5,CompletedRace,866868,49,Ripon,05/30/2024 16:50:00,5063630,Woodleigh
+0,False,11/2,6.5,PulledUp,866641,85,Warwick,05/30/2024 19:40:00,3880938,Flemen's Tipple
+5,False,4/1,5,CompletedRace,866639,85,Warwick,05/30/2024 20:10:00,5082932,Bellbird
