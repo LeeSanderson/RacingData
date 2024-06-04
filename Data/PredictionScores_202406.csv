@@ -1,0 +1,22 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+1,True,12/1,13,CompletedRace,867931,3,Ayr,06/03/2024 14:45:00,3188347,Crystal Guard
+2,False,11/8F,2.375,CompletedRace,867932,3,Ayr,06/03/2024 15:15:00,1657488,Young Fire
+10,False,7/2,4.5,CompletedRace,867929,3,Ayr,06/03/2024 15:45:00,3877150,Westernesse
+3,False,9/1,10,CompletedRace,867933,3,Ayr,06/03/2024 16:15:00,4363053,Violeta
+1,True,15/2,8.5,CompletedRace,867930,3,Ayr,06/03/2024 16:45:00,4431800,Al Muqdad
+9,False,22/1,23,CompletedRace,867937,7,Brighton,06/03/2024 14:30:00,4782846,Mc's Wag
+7,False,7/4F,2.75,CompletedRace,867939,7,Brighton,06/03/2024 15:30:00,5705817,Dashing Donkey
+1,True,12/1,13,CompletedRace,867940,7,Brighton,06/03/2024 16:00:00,3437763,Shalfa
+4,False,100/30,4.333333333333334,CompletedRace,867936,7,Brighton,06/03/2024 16:30:00,2219524,Mudlahhim
+7,False,100/30,4.333333333333334,CompletedRace,867938,7,Brighton,06/03/2024 17:00:00,3526790,I'm Mable
+3,False,13/2,7.5,CompletedRace,869900,184,Gowran Park,06/03/2024 15:05:00,3916396,Whimsy
+1,True,5/2F,3.5,CompletedRace,869908,190,Listowel,06/03/2024 16:20:00,2100738,Easy Game
+1,True,8/1,9,CompletedRace,867942,87,Wetherby,06/03/2024 19:00:00,5193440,Eminent Jewel
+4,False,12/1,13,CompletedRace,867945,87,Wetherby,06/03/2024 19:30:00,5079240,Love Yours
+3,False,9/2,5.5,CompletedRace,867944,87,Wetherby,06/03/2024 20:00:00,4283974,Warminster
+4,False,9/1,10,CompletedRace,867946,87,Wetherby,06/03/2024 21:00:00,5061633,Smooth Silesie
+1,True,2/1F,3,CompletedRace,867951,93,Windsor,06/03/2024 17:10:00,5426848,Noisy Music
+4,False,14/1,15,CompletedRace,867947,93,Windsor,06/03/2024 18:45:00,5172492,Salvuccio
+2,False,4/1,5,CompletedRace,867948,93,Windsor,06/03/2024 19:15:00,3956913,Aerospace
+9,False,8/1,9,CompletedRace,867953,93,Windsor,06/03/2024 19:45:00,4438581,Velvet Vulcan
+1,True,5/1,6,CompletedRace,870019,93,Windsor,06/03/2024 20:15:00,1617316,Mujid
