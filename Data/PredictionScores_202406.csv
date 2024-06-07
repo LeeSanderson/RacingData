@@ -1,4 +1,17 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,2/1F,3,CompletedRace,868236,1083,Chelmsford (AW),06/06/2024 18:45:00,5151719,Marefuori
+1,True,4/1,5,CompletedRace,868235,1083,Chelmsford (AW),06/06/2024 19:45:00,4874888,Wadacre Gomez
+3,False,11/2,6.5,CompletedRace,868237,1083,Chelmsford (AW),06/06/2024 20:15:00,5128026,Havana Force
+0,False,SP,,NonRunner,868241,1083,Chelmsford (AW),06/06/2024 20:45:00,5605747,Sergeants Legacy
+7,False,18/1,19,CompletedRace,867973,22,Hamilton,06/06/2024 15:55:00,5226937,Arantes Nascimento
+5,False,18/5F,4.6,CompletedRace,867974,22,Hamilton,06/06/2024 16:30:00,4546194,Flight Of Angels
+7,False,10/1,11,CompletedRace,867977,22,Hamilton,06/06/2024 17:05:00,4741558,Casa Luna
+4,False,6/1,7,CompletedRace,867983,23,Haydock,06/06/2024 14:05:00,4757503,Scylla
+4,False,11/2,6.5,CompletedRace,867979,23,Haydock,06/06/2024 15:05:00,5125896,The Good Biscuit
+5,False,7/2F,4.5,CompletedRace,867984,23,Haydock,06/06/2024 17:10:00,5592571,Arnaz
+2,False,5/1,6,CompletedRace,869950,187,Leopardstown,06/06/2024 18:00:00,2005580,Bold Approach
+6,False,10/1,11,CompletedRace,869952,187,Leopardstown,06/06/2024 19:00:00,3558213,Exquisite Acclaim
+2,False,7/1,8,CompletedRace,867859,84,Uttoxeter,06/06/2024 15:43:00,3432680,Charlie's Glance
 8,False,66/1,67,CompletedRace,868233,1079,Kempton (AW),06/05/2024 17:05:00,3585050,Marayel
 7,False,11/4F,3.75,CompletedRace,868229,1079,Kempton (AW),06/05/2024 19:45:00,5162488,Miss Information
 6,False,5/1,6,CompletedRace,868228,1079,Kempton (AW),06/05/2024 20:15:00,4998713,Flower Of Dubai
