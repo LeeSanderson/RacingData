@@ -1,4 +1,57 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,9/4,3.25,CompletedRace,867869,4,Bangor-on-Dee,06/08/2024 15:25:00,3204166,Legendary Day
+8,False,6/1,7,CompletedRace,867872,4,Bangor-on-Dee,06/08/2024 16:00:00,5248374,Silverbridge
+1,True,15/8,2.875,CompletedRace,868029,6,Beverley,06/08/2024 13:30:00,5889841,Remoji
+3,False,7/4F,2.75,CompletedRace,868027,6,Beverley,06/08/2024 15:50:00,4488807,Blueflagflyinghigh
+4,False,9/1,10,CompletedRace,868028,6,Beverley,06/08/2024 16:25:00,5418906,Sun Dancer Girl
+5,False,13/2,7.5,CompletedRace,868031,10,Catterick,06/08/2024 17:05:00,3158787,Khabib
+4,False,12/1,13,CompletedRace,868034,10,Catterick,06/08/2024 17:40:00,5113813,Letmeseethecolts
+7,False,15/2,8.5,CompletedRace,868033,10,Catterick,06/08/2024 18:10:00,3154619,So Grateful
+3,False,15/2,8.5,CompletedRace,868043,12,Chepstow,06/08/2024 17:25:00,4269993,Wedgewood
+4,False,9/2,5.5,CompletedRace,868039,12,Chepstow,06/08/2024 18:30:00,5176377,Wrestling Revenue
+5,False,5/2F,3.5,CompletedRace,868042,12,Chepstow,06/08/2024 19:30:00,3904251,Diamondsinthesand
+3,False,7/1,8,CompletedRace,868041,12,Chepstow,06/08/2024 20:00:00,895434,Kenstone
+8,False,3/1,4,CompletedRace,870636,12,Chepstow,06/08/2024 20:30:00,4518768,Mayz
+1,True,4/5F,1.8,CompletedRace,868044,12,Chepstow,06/08/2024 21:00:00,5396367,Marmalade Lady
+3,False,6/1,7,CompletedRace,867996,23,Haydock,06/08/2024 17:20:00,5198129,Gunfighter
+4,False,5/1,6,CompletedRace,870635,23,Haydock,06/08/2024 17:52:00,5063637,Phone Tag
+1,True,5/2,3.5,CompletedRace,868049,31,Lingfield,06/08/2024 17:45:00,4757703,Pfingstberg
+1,True,2/1F,3,CompletedRace,868045,31,Lingfield,06/08/2024 18:45:00,5200361,Arctic Mountain
+4,False,7/2,4.5,CompletedRace,868048,31,Lingfield,06/08/2024 19:15:00,5073376,Kiss And Run
+3,False,6/4,2.5,CompletedRace,868047,31,Lingfield,06/08/2024 19:45:00,5343910,Ureshii
+2,False,9/2,5.5,CompletedRace,868051,31,Lingfield,06/08/2024 20:45:00,5048076,Just Rita
+4,False,5/2,3.5,CompletedRace,870171,193,Navan,06/08/2024 14:20:00,4313181,Blanc De Noir
+1,True,9/4F,3.25,CompletedRace,870174,193,Navan,06/08/2024 16:05:00,5089301,Old Faithful
+4,False,100/30,4.333333333333334,CompletedRace,870153,195,Punchestown,06/08/2024 13:22:00,4272400,Wandering Rocks
+1,True,3/1J,4,CompletedRace,870157,195,Punchestown,06/08/2024 13:57:00,3072057,The Banger Doyle
+1,True,41/20,3.05,CompletedRace,870645,416,Sha Tin,06/08/2024 12:05:00,5492809,Copartner Prance
+1,True,23/20F,2.15,CompletedRace,870641,416,Sha Tin,06/08/2024 22:00:00,4998633,Ka Ying Victory
+2,False,3/1,4,CompletedRace,868000,5,Bath,06/07/2024 18:45:00,1592913,Beyond Equal
+0,False,SP,,NonRunner,868001,5,Bath,06/07/2024 19:50:00,5216544,Continuance
+2,False,18/1,19,CompletedRace,868003,5,Bath,06/07/2024 21:00:00,1483369,Rivas Rob Roy
+2,False,9/2,5.5,CompletedRace,868010,7,Brighton,06/07/2024 14:00:00,3438109,Heer's Sadie
+1,True,13/8,2.625,CompletedRace,868006,7,Brighton,06/07/2024 14:30:00,5089270,Duran
+2,False,11/10F,2.1,CompletedRace,868009,7,Brighton,06/07/2024 15:00:00,2829583,Kondratiev Wave
+3,False,100/30,4.333333333333334,CompletedRace,868007,7,Brighton,06/07/2024 16:00:00,3781893,Mrembo
+1,True,EvensF,2,CompletedRace,868005,7,Brighton,06/07/2024 16:30:00,3243593,A Pint Of Bear
+3,False,5/1,6,CompletedRace,868011,7,Brighton,06/07/2024 17:05:00,5283748,Katie G
+1,True,7/1,8,CompletedRace,870098,177,Clonmel,06/07/2024 17:50:00,2750185,Druim Samhraidh
+1,True,11/10J,2.1,CompletedRace,870100,177,Clonmel,06/07/2024 18:50:00,3046814,Tag Man
+5,False,15/2,8.5,CompletedRace,870105,182,Fairyhouse,06/07/2024 17:10:00,5147970,Ragga Bomb
+6,False,3/1,4,CompletedRace,870106,182,Fairyhouse,06/07/2024 17:40:00,4423970,Desert Haven
+1,True,11/4,3.75,CompletedRace,870109,182,Fairyhouse,06/07/2024 19:10:00,5272535,Natural Ruler
+7,False,6/1,7,CompletedRace,868016,21,Goodwood,06/07/2024 19:05:00,4352800,Alpine Girl
+0,False,SP,,NonRunner,868014,21,Goodwood,06/07/2024 20:10:00,3499329,Cabinet Of Clowns
+5,False,3/1,4,CompletedRace,868013,21,Goodwood,06/07/2024 20:45:00,4334937,Fiddlers Green
+1,True,8/13F,1.6153846153846154,CompletedRace,870611,23,Haydock,06/07/2024 18:28:00,5237795,Move On In
+3,False,11/10F,2.1,CompletedRace,867985,23,Haydock,06/07/2024 19:28:00,4924617,Cuban Melody
+3,False,14/1,15,CompletedRace,867990,23,Haydock,06/07/2024 20:38:00,5353623,Campaign Medal
+6,False,10/1,11,CompletedRace,867866,35,Market Rasen,06/07/2024 14:48:00,4069859,Boot 'N' Shoe
+3,False,14/1,15,CompletedRace,870609,35,Market Rasen,06/07/2024 15:18:00,3921812,Zuul
+3,False,9/4,3.25,CompletedRace,867865,35,Market Rasen,06/07/2024 16:20:00,4697371,Isholo Du Vivien
+7,False,6/4F,2.5,CompletedRace,868018,80,Thirsk,06/07/2024 13:38:00,4977904,Incremental
+2,False,28/1,29,CompletedRace,868020,80,Thirsk,06/07/2024 15:08:00,5134090,Baileys Polka Dot
+9,False,11/1,12,CompletedRace,870610,80,Thirsk,06/07/2024 15:38:00,5488171,Aidan Andabettin
 2,False,2/1F,3,CompletedRace,868236,1083,Chelmsford (AW),06/06/2024 18:45:00,5151719,Marefuori
 1,True,4/1,5,CompletedRace,868235,1083,Chelmsford (AW),06/06/2024 19:45:00,4874888,Wadacre Gomez
 3,False,11/2,6.5,CompletedRace,868237,1083,Chelmsford (AW),06/06/2024 20:15:00,5128026,Havana Force
