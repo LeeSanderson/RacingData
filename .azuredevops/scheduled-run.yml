@@ -18,12 +18,29 @@ variables:
 
 
 steps:
+- checkout: none # Don't checkout using the default Azure DevOps task as this results in a detached head
+
+- task: PowerShell@2 
+  displayName: Clone RacingData repository
+  condition: succeeded()
+  inputs:
+    targetType: inline
+    workingDirectory: '$(System.DefaultWorkingDirectory)'
+    script: |
+      write-host "current directory = $(get-location)"
+      git clone https://LeeSanderson:$(GitHubAccessToken)@github.com/LeeSanderson/RacingData --branch=main SiteSource --quiet
+      if ($lastexitcode -gt 0)
+      {
+        write-host "Clone failed - check GitHubAccessToken is valid. Error code $lastexitcode"
+      }      
+
+
 - task: PowerShell@2 
   displayName: Run update script
   condition: succeeded()
   inputs:
     targetType: inline
-    workingDirectory: '$(Build.SourcesDirectory)'
+    workingDirectory: '$(Build.SourcesDirectory)/SiteSource'
     script: |
       write-host "current directory = $(get-location)"
       .\run.ps1
@@ -33,7 +50,7 @@ steps:
   condition: succeeded()
   inputs:
     targetType: inline
-    workingDirectory: '$(Build.SourcesDirectory)'
+    workingDirectory: '$(Build.SourcesDirectory)/SiteSource'
     script: |
       git config core.autocrlf false
       git config user.email lee.sndrsn@gmail.com
