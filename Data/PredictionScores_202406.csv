@@ -1,4 +1,18 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,6/5F,2.2,CompletedRace,868064,8,Carlisle,06/10/2024 14:50:00,3835637,Rainbow Rain
+5,False,10/1,11,CompletedRace,868063,8,Carlisle,06/10/2024 15:20:00,5128033,Chiefman
+3,False,8/1,9,CompletedRace,868067,31,Lingfield,06/10/2024 17:10:00,3057895,Amathus
+3,False,3/1,4,CompletedRace,868244,393,Lingfield (AW),06/10/2024 14:00:00,5327071,Publicity
+4,False,9/2,5.5,CompletedRace,868242,393,Lingfield (AW),06/10/2024 14:35:00,3273550,Isle Of Sark
+10,False,8/1,9,CompletedRace,868243,393,Lingfield (AW),06/10/2024 15:05:00,5476944,Rabinal
+4,False,5/1,6,CompletedRace,870721,393,Lingfield (AW),06/10/2024 15:35:00,3660571,Hul Ah Bah Loo
+2,False,9/4F,3.25,CompletedRace,868070,46,Pontefract,06/10/2024 18:30:00,3749591,Emperor Caradoc
+1,True,6/4F,2.5,CompletedRace,868068,46,Pontefract,06/10/2024 19:30:00,5118330,Esmeray
+1,True,6/1,7,CompletedRace,868069,46,Pontefract,06/10/2024 21:00:00,5692664,Travis
+2,False,16/5,4.2,CompletedRace,870630,196,Roscommon,06/10/2024 16:48:00,5021479,Going Live
+3,False,7/4,2.75,CompletedRace,870626,196,Roscommon,06/10/2024 17:18:00,3198796,Magnor Glory
+1,True,5/1,6,CompletedRace,868077,93,Windsor,06/10/2024 17:40:00,3225238,On Edge
+9,False,4/1,5,CompletedRace,868074,93,Windsor,06/10/2024 19:40:00,3499385,Antiphon
 4,False,9/4,3.25,CompletedRace,867869,4,Bangor-on-Dee,06/08/2024 15:25:00,3204166,Legendary Day
 8,False,6/1,7,CompletedRace,867872,4,Bangor-on-Dee,06/08/2024 16:00:00,5248374,Silverbridge
 1,True,15/8,2.875,CompletedRace,868029,6,Beverley,06/08/2024 13:30:00,5889841,Remoji
