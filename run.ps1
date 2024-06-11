@@ -23,7 +23,7 @@ function Invoke-NativeCommand() {
 }
 
 $InitialPath = Resolve-Path "."
-$RaceDownloaderPath = Resolve-Path ".\RaceDataDownloader\bin\Debug\net6.0"
+$RaceDownloaderPath = Join-Path $InitialPath "RaceDataDownloader\bin\Debug\net6.0"
 $RaceDownloaderExe = Join-Path $RaceDownloaderPath "RaceDataDownloader.exe"
 $RaceDataPath = Resolve-Path ".\Data"
 
