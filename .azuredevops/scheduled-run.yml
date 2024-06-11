@@ -1,0 +1,57 @@
+trigger: none
+pr: none
+
+schedules:
+  - cron: '0 6 * * *' 
+    displayName: 'Daily 6AM run'
+    branches:
+      include:
+        - main
+    always: true
+
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  - group: SharedVariables
+
+
+steps:
+- task: PowerShell@2 
+  displayName: Run update script
+  condition: succeeded()
+  inputs:
+    targetType: inline
+    workingDirectory: '$(Build.SourcesDirectory)'
+    script: |
+      write-host "current directory = $(get-location)"
+      .\run.ps1
+
+- task: PowerShell@2 
+  displayName: Update repository
+  condition: succeeded()
+  inputs:
+    targetType: inline
+    workingDirectory: '$(Build.SourcesDirectory)'
+    script: |
+      git config core.autocrlf false
+      git config user.email lee.sndrsn@gmail.com
+      git config user.name LeeSanderson
+      git add *
+      git ls-files --deleted | ForEach-Object {git rm $_}
+      git commit --allow-empty -m "Blog Update $(Build.BuildId)"      
+      if ($lastexitcode -gt 0)
+      {
+        write-host "Commit failed. Error code $lastexitcode"
+        [Environment]::Exit(1)
+      }      
+
+      git push --quiet
+      if ($lastexitcode -gt 0)
+      {
+        write-host "Push failed. Error code $lastexitcode"
+        [Environment]::Exit(1)
+      }      
+
+
