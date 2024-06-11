@@ -57,7 +57,7 @@ steps:
       git config user.name LeeSanderson
       git add *
       git ls-files --deleted | ForEach-Object {git rm $_}
-      git commit --allow-empty -m "Blog Update $(Build.BuildId)"      
+      git commit --allow-empty -m "Data Update $(Build.BuildId)"      
       if ($lastexitcode -gt 0)
       {
         write-host "Commit failed. Error code $lastexitcode"
