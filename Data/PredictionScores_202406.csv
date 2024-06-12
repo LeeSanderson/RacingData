@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,20/1,21,CompletedRace,868086,52,Salisbury,06/11/2024 15:02:00,4924660,Miss Idunn
+4,False,9/2,5.5,CompletedRace,870738,52,Salisbury,06/11/2024 15:37:00,4924655,Crocus Time
+2,False,13/2,7.5,CompletedRace,868085,52,Salisbury,06/11/2024 17:42:00,1887402,Lihou
+1,True,11/8F,2.375,CompletedRace,867883,61,Southwell,06/11/2024 14:45:00,3982462,Hyland
+3,False,7/1,8,CompletedRace,867888,61,Southwell,06/11/2024 16:55:00,4965715,Culligran
+4,False,2/1F,3,CompletedRace,870739,61,Southwell,06/11/2024 17:30:00,5017654,Mrs Tabitha
+5,False,4/1,5,CompletedRace,868090,87,Wetherby,06/11/2024 19:30:00,4076178,Oneforsue
+6,False,12/1,13,CompletedRace,868088,87,Wetherby,06/11/2024 21:00:00,1471893,Jewel Maker
 3,False,6/5F,2.2,CompletedRace,868064,8,Carlisle,06/10/2024 14:50:00,3835637,Rainbow Rain
 5,False,10/1,11,CompletedRace,868063,8,Carlisle,06/10/2024 15:20:00,5128033,Chiefman
 3,False,8/1,9,CompletedRace,868067,31,Lingfield,06/10/2024 17:10:00,3057895,Amathus
