@@ -1,4 +1,21 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+5,False,3/1,4,CompletedRace,867891,20,Fontwell,06/12/2024 14:43:00,5099942,Thirtyfour Thirty
+7,False,6/1,7,CompletedRace,867893,20,Fontwell,06/12/2024 15:13:00,4540831,Miss Fedora
+1,True,7/4F,2.75,CompletedRace,867890,20,Fontwell,06/12/2024 16:13:00,4942619,Village Master
+0,False,50/1,51,PulledUp,870758,20,Fontwell,06/12/2024 17:18:00,4948263,Vintage Icon
+1,True,17/2,9.5,CompletedRace,868095,22,Hamilton,06/12/2024 19:20:00,4990393,Moyola
+3,False,13/8F,2.625,CompletedRace,868094,22,Hamilton,06/12/2024 19:50:00,5176435,Sacred Falls
+6,False,9/4F,3.25,CompletedRace,868096,22,Hamilton,06/12/2024 20:25:00,5023487,Ski Angel
+5,False,13/5,3.6,CompletedRace,870764,396,Happy Valley,06/12/2024 13:40:00,4804238,Chill Chibi
+4,False,16/5,4.2,CompletedRace,868245,1079,Kempton (AW),06/12/2024 18:40:00,5405224,Rosa Applause
+5,False,100/30,4.333333333333334,CompletedRace,868248,1079,Kempton (AW),06/12/2024 19:10:00,5554913,College Choir
+4,False,6/1,7,CompletedRace,868251,1079,Kempton (AW),06/12/2024 19:40:00,2653210,Assembled
+5,False,6/1,7,CompletedRace,870759,1079,Kempton (AW),06/12/2024 20:15:00,4554400,Fravanco
+2,False,9/4F,3.25,CompletedRace,870672,188,Limerick,06/12/2024 19:00:00,5009818,Lady Lunette
+8,False,11/1,12,CompletedRace,868104,104,Yarmouth,06/12/2024 14:00:00,5019623,She Is A Keeper
+2,False,13/2,7.5,CompletedRace,868103,104,Yarmouth,06/12/2024 15:00:00,1371648,Mokaatil
+1,True,8/13F,1.6153846153846154,CompletedRace,868102,104,Yarmouth,06/12/2024 15:30:00,5047955,Baltic
+2,False,13/2,7.5,CompletedRace,868100,104,Yarmouth,06/12/2024 16:00:00,4686964,Lough Leane
 4,False,20/1,21,CompletedRace,868086,52,Salisbury,06/11/2024 15:02:00,4924660,Miss Idunn
 4,False,9/2,5.5,CompletedRace,870738,52,Salisbury,06/11/2024 15:37:00,4924655,Crocus Time
 2,False,13/2,7.5,CompletedRace,868085,52,Salisbury,06/11/2024 17:42:00,1887402,Lihou
