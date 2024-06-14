@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+5,False,5/1,6,CompletedRace,870678,187,Leopardstown,06/13/2024 18:30:00,3719571,Eastern Wind
+3,False,4/1,5,CompletedRace,868116,16,Musselburgh,06/13/2024 18:40:00,3096980,Desert Quest
+1,True,2/11F,1.1818181818181819,CompletedRace,868117,16,Musselburgh,06/13/2024 19:10:00,5894817,Unspoken Love
+3,False,7/1,8,CompletedRace,868114,16,Musselburgh,06/13/2024 19:40:00,5079222,Count Palatine
+1,True,13/8F,2.625,CompletedRace,868112,16,Musselburgh,06/13/2024 20:15:00,3215030,Patontheback
+3,False,9/4J,3.25,CompletedRace,868113,16,Musselburgh,06/13/2024 20:45:00,3521632,Golden Rainbow
+1,True,7/2,4.5,CompletedRace,868124,36,Newbury,06/13/2024 14:50:00,5146201,Charming Whisper
+2,False,9/2,5.5,CompletedRace,868123,36,Newbury,06/13/2024 17:40:00,5394042,Aulis
+1,True,3/1,4,CompletedRace,868125,40,Nottingham,06/13/2024 15:45:00,4409423,Great Blasket
+5,False,11/2,6.5,CompletedRace,867900,101,Worcester,06/13/2024 17:50:00,3499144,Dreaming Diamond
+4,False,7/2,4.5,CompletedRace,867897,101,Worcester,06/13/2024 18:20:00,4305379,Somespring Special
+5,False,13/2,7.5,CompletedRace,867896,101,Worcester,06/13/2024 18:50:00,2548203,Jessie Lightfoot
+2,False,7/2,4.5,CompletedRace,867898,101,Worcester,06/13/2024 19:25:00,3490652,Lallygag
+6,False,7/2,4.5,CompletedRace,868108,104,Yarmouth,06/13/2024 14:00:00,4307312,Harry The Haggler
+1,True,15/2,8.5,CompletedRace,868107,104,Yarmouth,06/13/2024 15:00:00,2246964,Hidden Pearl
+3,False,18/1,19,CompletedRace,868111,104,Yarmouth,06/13/2024 16:40:00,3098927,Bernard Spierpoint
 5,False,3/1,4,CompletedRace,867891,20,Fontwell,06/12/2024 14:43:00,5099942,Thirtyfour Thirty
 7,False,6/1,7,CompletedRace,867893,20,Fontwell,06/12/2024 15:13:00,4540831,Miss Fedora
 1,True,7/4F,2.75,CompletedRace,867890,20,Fontwell,06/12/2024 16:13:00,4942619,Village Master
