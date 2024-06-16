@@ -1,4 +1,23 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+5,False,4/1,5,CompletedRace,868180,5,Bath,06/15/2024 13:45:00,4593492,Taxiing
+0,False,SP,,NonRunner,868179,5,Bath,06/15/2024 14:55:00,5823817,Caribbean Wind
+1,True,EvensF,2,CompletedRace,868183,5,Bath,06/15/2024 16:05:00,5492854,Organic
+7,False,11/1,12,CompletedRace,868181,5,Bath,06/15/2024 17:15:00,1956418,Eye Of The Water
+5,False,5/1,6,CompletedRace,868149,13,Chester,06/15/2024 17:04:00,4735737,Order Of Malta
+7,False,11/1,12,CompletedRace,870877,13,Chester,06/15/2024 17:35:00,5671276,Rose Donnelly
+0,False,SP,,NonRunner,870818,179,Downpatrick,06/15/2024 16:00:00,2615827,Natural Breeze
+1,True,5/1,6,CompletedRace,867920,25,Hexham,06/15/2024 16:52:00,2510117,Going Mobile
+3,False,8/1,9,CompletedRace,868186,30,Leicester,06/15/2024 18:18:00,4597234,Royal Dream
+1,True,2/1F,3,CompletedRace,868185,30,Leicester,06/15/2024 19:25:00,5861967,Mutamanni
+1,True,6/1,7,CompletedRace,868191,30,Leicester,06/15/2024 20:30:00,2005611,Voltaic
+6,False,9/2,5.5,CompletedRace,868187,30,Leicester,06/15/2024 21:00:00,5089375,Perianth
+3,False,2/1F,3,CompletedRace,868161,54,Sandown,06/15/2024 13:30:00,5371937,Into Battle
+3,False,6/5F,2.2,CompletedRace,868162,54,Sandown,06/15/2024 15:15:00,5237791,Mount Teide
+3,False,9/1,10,CompletedRace,868164,54,Sandown,06/15/2024 16:25:00,4924685,Imperial Express
+1,True,2/1F,3,CompletedRace,868163,54,Sandown,06/15/2024 17:00:00,5104252,Coco Royale
+1,True,87/20,5.35,CompletedRace,870896,416,Sha Tin,06/15/2024 12:35:00,4318815,Capital Delight
+6,False,14/1,15,CompletedRace,870879,84,Uttoxeter,06/15/2024 17:40:00,4400639,Zodiac Star
+0,False,SP,,NonRunner,867925,84,Uttoxeter,06/15/2024 19:45:00,3908393,Limetree Boy
 1,True,9/4F,3.25,CompletedRace,868140,13,Chester,06/14/2024 13:40:00,3153448,Outrun The Storm
 2,False,8/1,9,CompletedRace,868139,13,Chester,06/14/2024 16:00:00,3986094,Khathak
 5,False,7/2,4.5,CompletedRace,870843,13,Chester,06/14/2024 16:35:00,4564395,Daisy Roots
