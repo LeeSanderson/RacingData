@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,4/1,5,CompletedRace,868193,15,Doncaster,06/16/2024 14:10:00,4277867,Albeseeingyer
+0,False,SP,,NonRunner,870928,15,Doncaster,06/16/2024 14:40:00,3288786,Algheed
+8,False,9/1,10,CompletedRace,870825,179,Downpatrick,06/16/2024 16:05:00,4936869,Augusta George
+1,True,4/1,5,CompletedRace,870830,184,Gowran Park,06/16/2024 15:16:00,5073248,Elinor Dashwood
+1,True,5/1,6,CompletedRace,870832,184,Gowran Park,06/16/2024 16:21:00,5048231,Tachos
+4,False,9/2,5.5,CompletedRace,870834,184,Gowran Park,06/16/2024 17:21:00,5147983,Buttermere Ridge
+9,False,4/1,5,CompletedRace,868202,52,Salisbury,06/16/2024 14:55:00,3267422,Beau Jardine
+3,False,7/2,4.5,CompletedRace,868203,52,Salisbury,06/16/2024 15:25:00,5141806,Hello Cotai
 5,False,4/1,5,CompletedRace,868180,5,Bath,06/15/2024 13:45:00,4593492,Taxiing
 0,False,SP,,NonRunner,868179,5,Bath,06/15/2024 14:55:00,5823817,Caribbean Wind
 1,True,EvensF,2,CompletedRace,868183,5,Bath,06/15/2024 16:05:00,5492854,Organic
