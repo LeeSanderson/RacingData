@@ -1,4 +1,17 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+8,False,18/1,19,CompletedRace,870961,8,Carlisle,06/17/2024 15:00:00,5297335,Jamie's Choice
+2,False,6/5F,2.2,CompletedRace,869142,8,Carlisle,06/17/2024 15:30:00,4502638,Manuelito
+0,False,SP,,NonRunner,869143,8,Carlisle,06/17/2024 16:00:00,2663645,Arranmore
+1,True,10/11F,1.9090909090909092,CompletedRace,869149,12,Chepstow,06/17/2024 14:48:00,3960811,Stockpyle
+4,False,3/1F,4,CompletedRace,869150,12,Chepstow,06/17/2024 15:48:00,3550654,Glamorous Express
+1,True,100/30F,4.333333333333334,CompletedRace,869152,12,Chepstow,06/17/2024 16:55:00,4863576,Kalama Sunrise
+3,False,6/1,7,CompletedRace,870870,184,Gowran Park,06/17/2024 15:05:00,5216516,Lohengrin
+4,False,3/1,4,CompletedRace,870873,184,Gowran Park,06/17/2024 16:35:00,5915793,Cancelled
+1,True,8/13F,1.6153846153846154,CompletedRace,870861,203,Kilbeggan,06/17/2024 16:45:00,4173267,Instant Tendance
+2,False,9/2,5.5,CompletedRace,870866,203,Kilbeggan,06/17/2024 19:45:00,3398269,The Dasher Conway
+2,False,11/2,6.5,CompletedRace,869157,93,Windsor,06/17/2024 17:30:00,5320934,Split The Profit
+6,False,5/2F,3.5,CompletedRace,869155,93,Windsor,06/17/2024 19:30:00,5048104,Queen's Guard
+1,True,6/4F,2.5,CompletedRace,869156,93,Windsor,06/17/2024 20:00:00,4257395,Metabolt
 6,False,4/1,5,CompletedRace,868193,15,Doncaster,06/16/2024 14:10:00,4277867,Albeseeingyer
 0,False,SP,,NonRunner,870928,15,Doncaster,06/16/2024 14:40:00,3288786,Algheed
 8,False,9/1,10,CompletedRace,870825,179,Downpatrick,06/16/2024 16:05:00,4936869,Augusta George
