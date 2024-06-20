@@ -1,4 +1,15 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,7/2,4.5,CompletedRace,869205,22,Hamilton,06/19/2024 13:45:00,1666309,The Navigator
+6,False,3/1,4,CompletedRace,869202,22,Hamilton,06/19/2024 15:30:00,4355310,Jaminoz
+4,False,100/30,4.333333333333334,CompletedRace,869204,22,Hamilton,06/19/2024 16:10:00,5488220,John L Sullivan
+3,False,5/2,3.5,CompletedRace,869203,22,Hamilton,06/19/2024 16:50:00,5073364,Persian Phoenix
+1,True,100/30F,4.333333333333334,CompletedRace,869206,22,Hamilton,06/19/2024 17:25:00,2080896,Hot Team
+6,False,15/2,8.5,CompletedRace,869208,40,Nottingham,06/19/2024 18:20:00,5101973,Chiedozie
+10,False,16/1,17,CompletedRace,869207,40,Nottingham,06/19/2024 18:50:00,4445404,Beauld As Brass
+1,True,EvensF,2,CompletedRace,869214,49,Ripon,06/19/2024 19:05:00,4648363,Kardia
+3,False,4/1,5,CompletedRace,869215,49,Ripon,06/19/2024 19:35:00,4990393,Moyola
+6,False,12/1,13,CompletedRace,869216,49,Ripon,06/19/2024 20:05:00,2801626,Dandy's Angel
+9,False,4/1,5,CompletedRace,869219,49,Ripon,06/19/2024 20:35:00,3528374,Canaria Prince
 1,True,8/13F,1.6153846153846154,CompletedRace,869163,6,Beverley,06/18/2024 18:40:00,5878997,Coppull Hall Lane
 6,False,9/2,5.5,CompletedRace,869162,6,Beverley,06/18/2024 19:45:00,5162472,Summit
 2,False,7/2J,4.5,CompletedRace,869165,6,Beverley,06/18/2024 20:15:00,2537620,Star Of St James
