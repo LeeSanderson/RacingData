@@ -1,4 +1,18 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+0,False,SP,,NonRunner,869456,1083,Chelmsford (AW),06/20/2024 14:50:00,2052711,The Defiant
+1,True,6/4F,2.5,CompletedRace,869453,1083,Chelmsford (AW),06/20/2024 16:10:00,4607023,Enfjaar
+3,False,13/2,7.5,CompletedRace,870911,187,Leopardstown,06/20/2024 18:20:00,5079033,Action Plan
+5,False,6/1,7,CompletedRace,869227,31,Lingfield,06/20/2024 20:30:00,2669619,Sir Oliver
+4,False,5/2,3.5,CompletedRace,869228,31,Lingfield,06/20/2024 21:00:00,4076255,Safari Dream
+4,False,12/1,13,CompletedRace,869459,393,Lingfield (AW),06/20/2024 19:00:00,5544167,Royal Praise
+5,False,13/2,7.5,CompletedRace,869223,49,Ripon,06/20/2024 13:35:00,2791181,Clifftop Heaven
+7,False,16/5F,4.2,CompletedRace,869220,49,Ripon,06/20/2024 15:55:00,3549479,Manila Scouse
+4,False,3/1,4,CompletedRace,869225,49,Ripon,06/20/2024 16:35:00,5216544,Continuance
+6,False,2/1F,3,CompletedRace,869226,49,Ripon,06/20/2024 17:10:00,5725093,Loose Tongue
+2,False,9/4,3.25,CompletedRace,869462,513,Wolverhampton (AW),06/20/2024 17:28:00,5355689,Pique'
+6,False,4/6F,1.6666666666666665,CompletedRace,869463,513,Wolverhampton (AW),06/20/2024 19:40:00,5315422,Muttasil
+4,False,8/1,9,CompletedRace,871022,513,Wolverhampton (AW),06/20/2024 20:10:00,5633229,Night Of Desire
+4,False,4/1,5,CompletedRace,869465,513,Wolverhampton (AW),06/20/2024 20:40:00,4219796,Comedian Leader
 2,False,7/2,4.5,CompletedRace,869205,22,Hamilton,06/19/2024 13:45:00,1666309,The Navigator
 6,False,3/1,4,CompletedRace,869202,22,Hamilton,06/19/2024 15:30:00,4355310,Jaminoz
 4,False,100/30,4.333333333333334,CompletedRace,869204,22,Hamilton,06/19/2024 16:10:00,5488220,John L Sullivan
