@@ -1,4 +1,32 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,9/4,3.25,CompletedRace,869266,3,Ayr,06/22/2024 16:45:00,2537502,Alligator Alley
+1,True,11/4F,3.75,CompletedRace,869268,3,Ayr,06/22/2024 17:25:00,5743693,Moon Man
+2,False,11/4J,3.75,CompletedRace,869264,3,Ayr,06/22/2024 17:55:00,4757705,Baileys Khelstar
+3,False,3/1F,4,CompletedRace,869265,3,Ayr,06/22/2024 18:55:00,3588751,Classy Al
+4,False,9/2,5.5,CompletedRace,871494,3,Ayr,06/22/2024 19:25:00,3880932,Lord Abama
+1,True,17/2,9.5,CompletedRace,871030,180,Down Royal,06/22/2024 14:40:00,3772663,Explorers Way
+1,True,5/4F,2.25,CompletedRace,871031,180,Down Royal,06/22/2024 15:15:00,5342164,Lady Doris
+3,False,7/2,4.5,CompletedRace,870837,180,Down Royal,06/22/2024 15:55:00,5147962,Tamrat
+2,False,4/1,5,CompletedRace,871033,180,Down Royal,06/22/2024 17:10:00,58956152,Dark Oak
+5,False,12/1,13,CompletedRace,869273,23,Haydock,06/22/2024 18:40:00,3723247,Vadamiah
+1,True,7/2,4.5,CompletedRace,869271,23,Haydock,06/22/2024 19:45:00,4534421,Dora Milaje
+3,False,6/4F,2.5,CompletedRace,869275,23,Haydock,06/22/2024 20:15:00,5079048,Straight A
+1,True,9/1,10,CompletedRace,869272,23,Haydock,06/22/2024 20:45:00,4336791,Eagle Day
+2,False,11/2,6.5,CompletedRace,871036,188,Limerick,06/22/2024 14:15:00,4996596,Byzantine Empress
+2,False,25/1,26,CompletedRace,871037,188,Limerick,06/22/2024 14:50:00,5329153,Katie Bairdie
+1,True,100/30,4.333333333333334,CompletedRace,871040,188,Limerick,06/22/2024 16:40:00,5301530,Gangster Granny
+2,False,5/1,6,CompletedRace,869278,31,Lingfield,06/22/2024 18:00:00,4330803,Tribal Wisdom
+6,False,4/1,5,CompletedRace,869277,31,Lingfield,06/22/2024 18:30:00,4274014,Major Major
+2,False,4/9F,1.4444444444444444,CompletedRace,869276,31,Lingfield,06/22/2024 20:00:00,5982515,Sense Of Spirit
+1,True,7/1,8,CompletedRace,869282,31,Lingfield,06/22/2024 20:30:00,5826587,Wedgewood Sapphire
+7,False,10/1,11,CompletedRace,869281,31,Lingfield,06/22/2024 21:00:00,2751674,Lilkian
+2,False,11/1,12,CompletedRace,869246,174,Newmarket (July),06/22/2024 13:35:00,4568970,Charlatan
+10,False,40/1,41,CompletedRace,869248,174,Newmarket (July),06/22/2024 14:45:00,5019626,Mademoisellecancan
+2,False,11/4F,3.75,CompletedRace,869245,174,Newmarket (July),06/22/2024 16:35:00,5089275,Jungle Mac
+4,False,16/5F,4.2,CompletedRace,869244,174,Newmarket (July),06/22/2024 17:15:00,4465675,Merrijig
+8,False,9/1,10,CompletedRace,869256,47,Redcar,06/22/2024 16:15:00,4274035,Mountain Warrior
+2,False,2/1F,3,CompletedRace,869257,47,Redcar,06/22/2024 16:55:00,5162479,Nazron
+9,False,22/1,23,CompletedRace,869260,47,Redcar,06/22/2024 17:30:00,2791155,Odd Venture
 3,False,7/2,4.5,CompletedRace,871004,180,Down Royal,06/21/2024 17:25:00,5826606,Beatrix Power
 3,False,8/1,9,CompletedRace,871008,180,Down Royal,06/21/2024 19:35:00,4299525,Distillate
 6,False,5/2,3.5,CompletedRace,869234,21,Goodwood,06/21/2024 18:20:00,5307278,Pure Of Heart
