@@ -1,4 +1,16 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,10/1,11,CompletedRace,869285,1212,Ffos Las,06/23/2024 14:10:00,5021348,Western
+4,False,4/1,5,CompletedRace,869287,1212,Ffos Las,06/23/2024 15:10:00,5222213,Ten O'Clock
+1,True,5/4F,2.25,CompletedRace,869288,1212,Ffos Las,06/23/2024 16:10:00,4863576,Kalama Sunrise
+4,False,8/1,9,CompletedRace,869284,1212,Ffos Las,06/23/2024 16:40:00,5151718,Indication Court
+2,False,6/1,7,CompletedRace,869098,25,Hexham,06/23/2024 16:18:00,3500957,Parvos
+7,False,40/1,41,CompletedRace,869097,25,Hexham,06/23/2024 17:18:00,1142952,Deadheat
+5,False,6/1,7,CompletedRace,869295,46,Pontefract,06/23/2024 14:30:00,4355200,Duchess
+3,False,5/1,6,CompletedRace,869292,46,Pontefract,06/23/2024 15:30:00,3226210,Valley Of Flowers
+2,False,9/1,10,CompletedRace,869290,46,Pontefract,06/23/2024 16:00:00,3632533,Appier
+6,False,50/1,51,CompletedRace,869293,46,Pontefract,06/23/2024 16:30:00,2663645,Arranmore
+4,False,14/1,15,CompletedRace,869291,46,Pontefract,06/23/2024 17:00:00,4225298,Rousing Encore
+1,True,17/5,4.4,CompletedRace,871505,416,Sha Tin,06/23/2024 21:30:00,5655603,Talents Ambition
 3,False,9/4,3.25,CompletedRace,869266,3,Ayr,06/22/2024 16:45:00,2537502,Alligator Alley
 1,True,11/4F,3.75,CompletedRace,869268,3,Ayr,06/22/2024 17:25:00,5743693,Moon Man
 2,False,11/4J,3.75,CompletedRace,869264,3,Ayr,06/22/2024 17:55:00,4757705,Baileys Khelstar
