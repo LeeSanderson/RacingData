@@ -1,4 +1,16 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,7/1,8,CompletedRace,869326,6,Beverley,06/25/2024 15:17:00,4691048,Ski Jump
+7,False,8/1,9,CompletedRace,869323,6,Beverley,06/25/2024 16:17:00,3500898,Ey Up Its The Boss
+1,True,4/5F,1.8,CompletedRace,869332,7,Brighton,06/25/2024 16:42:00,3366903,Three Dons
+9,False,9/4J,3.25,CompletedRace,869333,7,Brighton,06/25/2024 17:15:00,5248367,Small Fry
+4,False,3/1,4,CompletedRace,869331,7,Brighton,06/25/2024 17:45:00,5386068,The Cutest
+1,True,7/2,4.5,CompletedRace,869335,7,Brighton,06/25/2024 18:55:00,3123852,River Wharfe
+3,False,100/30,4.333333333333334,CompletedRace,869334,7,Brighton,06/25/2024 19:30:00,2219524,Mudlahhim
+6,False,13/2,7.5,CompletedRace,869336,36,Newbury,06/25/2024 18:05:00,5781950,Marhaba Million
+3,False,6/4F,2.5,CompletedRace,869341,36,Newbury,06/25/2024 18:40:00,5343910,Ureshii
+4,False,25/1,26,CompletedRace,869342,36,Newbury,06/25/2024 19:50:00,3048703,Impeach
+0,False,200/1,201,PulledUp,869104,39,Newton Abbot,06/25/2024 14:00:00,2496336,Fair To Dream
+1,True,5/2F,3.5,CompletedRace,869106,39,Newton Abbot,06/25/2024 16:30:00,4201377,Townhill
 6,False,9/4,3.25,CompletedRace,871477,175,Ballinrobe,06/24/2024 17:10:00,5258512,Punta Coco
 3,False,12/1,13,CompletedRace,871480,175,Ballinrobe,06/24/2024 18:45:00,3277139,River Derwent
 5,False,4/1,5,CompletedRace,869301,5,Bath,06/24/2024 17:55:00,5242272,Tres Chic
