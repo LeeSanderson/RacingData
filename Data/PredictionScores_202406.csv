@@ -1,4 +1,28 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,10/1,11,CompletedRace,869367,22,Hamilton,06/27/2024 17:45:00,3096683,Myboymax
+7,False,20/1,21,CompletedRace,869364,22,Hamilton,06/27/2024 18:15:00,5942593,Premium Pass
+1,True,9/2,5.5,CompletedRace,869369,22,Hamilton,06/27/2024 18:45:00,4924813,Zaphea
+7,False,9/4,3.25,CompletedRace,869363,22,Hamilton,06/27/2024 19:15:00,2710303,Zarzyni
+3,False,7/2,4.5,CompletedRace,869365,22,Hamilton,06/27/2024 20:15:00,5605750,Reyaadah Star
+4,False,100/30,4.333333333333334,CompletedRace,869368,22,Hamilton,06/27/2024 20:45:00,3154619,So Grateful
+1,True,1/66F,1.0151515151515151,CompletedRace,869370,30,Leicester,06/27/2024 18:00:00,5968961,Good Good Good
+8,False,28/1,29,CompletedRace,869374,30,Leicester,06/27/2024 18:30:00,4330662,Arnie Angell
+4,False,9/2,5.5,CompletedRace,869373,30,Leicester,06/27/2024 19:00:00,3233433,Shield Of Honour
+5,False,25/1,26,CompletedRace,869375,30,Leicester,06/27/2024 19:30:00,5204007,I Dare You
+1,True,7/2,4.5,CompletedRace,869371,30,Leicester,06/27/2024 20:00:00,5048047,Ten Commitments
+2,False,9/2,5.5,CompletedRace,869376,30,Leicester,06/27/2024 20:30:00,5073373,Monks Mead
+3,False,12/1,13,CompletedRace,869372,30,Leicester,06/27/2024 21:00:00,5009849,Scoops Ahoy
+3,False,100/30,4.333333333333334,CompletedRace,869475,1353,Newcastle (AW),06/27/2024 14:00:00,5595719,Swordstick
+0,False,SP,,NonRunner,869388,174,Newmarket (July),06/27/2024 14:50:00,5005620,Cosmic View
+2,False,3/1,4,CompletedRace,869385,174,Newmarket (July),06/27/2024 15:25:00,4826949,Drama
+4,False,100/30F,4.333333333333334,CompletedRace,869383,174,Newmarket (July),06/27/2024 16:30:00,2654565,Able Kane
+2,False,3/1,4,CompletedRace,869384,174,Newmarket (July),06/27/2024 17:05:00,5234277,Jayyash
+2,False,3/1,4,CompletedRace,869387,174,Newmarket (July),06/27/2024 17:40:00,4757703,Pfingstberg
+5,False,9/1,10,CompletedRace,869377,40,Nottingham,06/27/2024 14:10:00,2057749,Cherry Cola
+3,False,11/1,12,CompletedRace,869379,40,Nottingham,06/27/2024 15:10:00,5929142,Daylight Chorus
+1,True,10/1,11,CompletedRace,869381,40,Nottingham,06/27/2024 15:45:00,3097945,Sycamore
+5,False,11/2,6.5,CompletedRace,869378,40,Nottingham,06/27/2024 16:20:00,3638599,Lotus Rose
+5,False,15/2,8.5,CompletedRace,869382,40,Nottingham,06/27/2024 16:50:00,4225299,Dunnington Lad
 0,False,SP,,NonRunner,869347,8,Carlisle,06/26/2024 16:05:00,4934659,Island Native
 5,False,10/1,11,CompletedRace,869348,8,Carlisle,06/26/2024 17:15:00,4522959,Sibyl Charm
 1,True,7/2,4.5,CompletedRace,869353,1212,Ffos Las,06/26/2024 18:20:00,4407204,Jimmy Mark
