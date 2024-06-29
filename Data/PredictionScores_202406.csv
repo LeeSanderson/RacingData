@@ -1,4 +1,23 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+0,False,SP,,NonRunner,869118,4,Bangor-on-Dee,06/28/2024 18:13:00,4963793,Deerstalker
+2,False,14/1,15,CompletedRace,869116,4,Bangor-on-Dee,06/28/2024 19:23:00,2234063,Made For You
+5,False,10/1,11,CompletedRace,869127,9,Cartmel,06/28/2024 13:55:00,2223807,Stamina Chope
+6,False,4/1,5,CompletedRace,871679,9,Cartmel,06/28/2024 14:30:00,4669053,Faerie Cutlass
+3,False,3/1,4,CompletedRace,869123,9,Cartmel,06/28/2024 16:15:00,4922472,Olivers Travels
+7,False,8/1,9,CompletedRace,869412,15,Doncaster,06/28/2024 13:35:00,3500889,Dandy Dinmont
+5,False,17/2,9.5,CompletedRace,869416,15,Doncaster,06/28/2024 15:20:00,5266412,Notre Dame
+7,False,8/1,9,CompletedRace,869415,15,Doncaster,06/28/2024 15:55:00,5134068,Bay Of Australia
+5,False,3/1,4,CompletedRace,869413,15,Doncaster,06/28/2024 16:30:00,5453424,Night Horn
+3,False,EvensF,2,CompletedRace,869394,174,Newmarket (July),06/28/2024 17:50:00,5426860,Post Rider
+5,False,4/1,5,CompletedRace,869395,174,Newmarket (July),06/28/2024 19:00:00,4682863,Hitched
+1,True,10/11F,1.9090909090909092,CompletedRace,869390,174,Newmarket (July),06/28/2024 19:35:00,5315431,Lou Lou's Gift
+1,True,100/30,4.333333333333334,CompletedRace,869391,174,Newmarket (July),06/28/2024 20:10:00,5172505,Rosy Affair
+1,True,6/4F,2.5,CompletedRace,869393,174,Newmarket (July),06/28/2024 20:45:00,5385950,Signalman
+4,False,3/1,4,CompletedRace,869407,104,Yarmouth,06/28/2024 13:45:00,3671726,Al Baahy
+4,False,7/1,8,CompletedRace,869408,104,Yarmouth,06/28/2024 14:55:00,5396367,Marmalade Lady
+4,False,6/1,7,CompletedRace,869406,104,Yarmouth,06/28/2024 15:30:00,5003653,Jenni
+1,True,7/1,8,CompletedRace,869404,104,Yarmouth,06/28/2024 16:05:00,5146201,Charming Whisper
+2,False,4/1,5,CompletedRace,869410,104,Yarmouth,06/28/2024 17:10:00,2687070,Sir Rodneyredblood
 2,False,10/1,11,CompletedRace,869367,22,Hamilton,06/27/2024 17:45:00,3096683,Myboymax
 7,False,20/1,21,CompletedRace,869364,22,Hamilton,06/27/2024 18:15:00,5942593,Premium Pass
 1,True,9/2,5.5,CompletedRace,869369,22,Hamilton,06/27/2024 18:45:00,4924813,Zaphea
