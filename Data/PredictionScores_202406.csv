@@ -1,4 +1,31 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,100/30,4.333333333333334,CompletedRace,869429,13,Chester,06/29/2024 14:25:00,5504608,Open Secret
+2,False,2/1F,3,CompletedRace,869425,13,Chester,06/29/2024 15:35:00,5089275,Jungle Mac
+7,False,9/1,10,CompletedRace,869428,13,Chester,06/29/2024 16:10:00,4796001,African Star
+1,True,10/11F,1.9090909090909092,CompletedRace,869430,13,Chester,06/29/2024 16:45:00,5982382,Bobby Bennu
+3,False,7/2,4.5,CompletedRace,869426,13,Chester,06/29/2024 17:20:00,4642847,Loughville
+10,False,16/1,17,CompletedRace,869420,15,Doncaster,06/29/2024 17:50:00,4502654,Another Baar
+2,False,7/2J,4.5,CompletedRace,869419,15,Doncaster,06/29/2024 19:00:00,4175325,Signcastle City
+4,False,9/4,3.25,CompletedRace,869421,15,Doncaster,06/29/2024 20:30:00,4808607,Celebrating Ethel
+3,False,4/1,5,CompletedRace,869422,15,Doncaster,06/29/2024 21:00:00,4369878,War Chant
+0,False,SP,,NonRunner,869433,31,Lingfield,06/29/2024 19:45:00,4977930,Big Time Rascal
+2,False,15/2,8.5,CompletedRace,869437,31,Lingfield,06/29/2024 20:15:00,3505951,Essme
+5,False,6/1,7,CompletedRace,869438,31,Lingfield,06/29/2024 20:45:00,4175310,Muy Muy Guapo
+1,True,15/2,8.5,CompletedRace,869432,393,Lingfield (AW),06/29/2024 17:40:00,3933659,Hoornblower
+8,False,5/6F,1.8333333333333335,CompletedRace,869436,393,Lingfield (AW),06/29/2024 18:10:00,5186078,Knight Templar
+1,True,7/4F,2.75,CompletedRace,869435,393,Lingfield (AW),06/29/2024 18:45:00,4728086,Fair Dinkum
+1,True,7/2,4.5,CompletedRace,869492,1353,Newcastle (AW),06/29/2024 16:50:00,5007767,Bystander
+1,True,10/1,11,CompletedRace,869402,174,Newmarket (July),06/29/2024 16:00:00,5334571,Mercury Day
+4,False,5/2,3.5,CompletedRace,869400,174,Newmarket (July),06/29/2024 16:35:00,5859155,Candle Of Dubai
+1,True,12/1,13,CompletedRace,869401,174,Newmarket (July),06/29/2024 17:10:00,4507213,Bint Al Daar
+7,False,7/1,8,CompletedRace,869443,93,Windsor,06/29/2024 14:10:00,5366265,Potters Diamond
+3,False,12/1,13,CompletedRace,869439,93,Windsor,06/29/2024 15:17:00,5063677,Fior Di Bosco
+3,False,9/1,10,CompletedRace,869440,93,Windsor,06/29/2024 15:52:00,3763283,Aiming High
+0,False,SP,,NonRunner,869441,93,Windsor,06/29/2024 16:25:00,3097705,Temple Bruer
+4,False,18/1,19,CompletedRace,869442,93,Windsor,06/29/2024 17:00:00,5338294,Pegasus Of Harry
+8,False,16/1,17,CompletedRace,869444,93,Windsor,06/29/2024 17:32:00,5045862,Stryder
+3,False,15/8F,2.875,CompletedRace,871759,1325,Windsor (GB) (ARAB),06/29/2024 18:02:00,3664406,Upstart Crow (GB)
+3,False,15/8F,2.875,CompletedRace,871759,1325,Windsor (GB) (ARAB),06/29/2024 18:02:00,3664406,Upstart Crow (GB)
 0,False,SP,,NonRunner,869118,4,Bangor-on-Dee,06/28/2024 18:13:00,4963793,Deerstalker
 2,False,14/1,15,CompletedRace,869116,4,Bangor-on-Dee,06/28/2024 19:23:00,2234063,Made For You
 5,False,10/1,11,CompletedRace,869127,9,Cartmel,06/28/2024 13:55:00,2223807,Stamina Chope
