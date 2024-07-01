@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,4/1,5,CompletedRace,869134,9,Cartmel,06/30/2024 14:35:00,2643487,Secret Secret
+1,True,3/1F,4,CompletedRace,869128,9,Cartmel,06/30/2024 15:45:00,3239237,Charlie Uberalles
+0,False,SP,,NonRunner,869130,9,Cartmel,06/30/2024 16:20:00,3466244,Cuzco Du Mathan
+3,False,16/1,17,CompletedRace,869133,9,Cartmel,06/30/2024 16:55:00,2782543,Calahill
+1,True,2/1F,3,CompletedRace,871044,178,Curragh,06/30/2024 13:10:00,5357880,Sharinay
+4,False,5/2,3.5,CompletedRace,869138,84,Uttoxeter,06/30/2024 13:50:00,3982462,Hyland
+4,False,100/30,4.333333333333334,CompletedRace,869141,84,Uttoxeter,06/30/2024 16:45:00,3974506,Forget The Way
+2,False,25/1,26,CompletedRace,869497,513,Wolverhampton (AW),06/30/2024 13:35:00,5061633,Smooth Silesie
+4,False,9/2,5.5,CompletedRace,869498,513,Wolverhampton (AW),06/30/2024 14:10:00,5431213,Warbler
 2,False,100/30,4.333333333333334,CompletedRace,869429,13,Chester,06/29/2024 14:25:00,5504608,Open Secret
 2,False,2/1F,3,CompletedRace,869425,13,Chester,06/29/2024 15:35:00,5089275,Jungle Mac
 7,False,9/1,10,CompletedRace,869428,13,Chester,06/29/2024 16:10:00,4796001,African Star
@@ -24,7 +33,6 @@ FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,Co
 0,False,SP,,NonRunner,869441,93,Windsor,06/29/2024 16:25:00,3097705,Temple Bruer
 4,False,18/1,19,CompletedRace,869442,93,Windsor,06/29/2024 17:00:00,5338294,Pegasus Of Harry
 8,False,16/1,17,CompletedRace,869444,93,Windsor,06/29/2024 17:32:00,5045862,Stryder
-3,False,15/8F,2.875,CompletedRace,871759,1325,Windsor (GB) (ARAB),06/29/2024 18:02:00,3664406,Upstart Crow (GB)
 3,False,15/8F,2.875,CompletedRace,871759,1325,Windsor (GB) (ARAB),06/29/2024 18:02:00,3664406,Upstart Crow (GB)
 0,False,SP,,NonRunner,869118,4,Bangor-on-Dee,06/28/2024 18:13:00,4963793,Deerstalker
 2,False,14/1,15,CompletedRace,869116,4,Bangor-on-Dee,06/28/2024 19:23:00,2234063,Made For You
