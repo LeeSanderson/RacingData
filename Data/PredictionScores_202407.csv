@@ -1,4 +1,23 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,11/4,3.75,CompletedRace,870287,7,Brighton,07/02/2024 14:25:00,2456566,Rebel Redemption
+2,False,5/6F,1.8333333333333335,CompletedRace,870283,7,Brighton,07/02/2024 14:55:00,4737872,Shaw Park
+3,False,4/1,5,CompletedRace,870285,7,Brighton,07/02/2024 15:25:00,5279956,Blacklion
+8,False,12/1,13,CompletedRace,870282,7,Brighton,07/02/2024 15:55:00,2996800,Bhubezi
+1,True,7/2,4.5,CompletedRace,870284,7,Brighton,07/02/2024 16:25:00,3101931,Split Elevens
+4,False,5/2,3.5,CompletedRace,870286,7,Brighton,07/02/2024 17:00:00,5151735,Cogsworth
+1,True,6/1,7,CompletedRace,870291,22,Hamilton,07/02/2024 14:45:00,5256234,Mysteryofthesands
+2,False,9/1,10,CompletedRace,870288,22,Hamilton,07/02/2024 15:15:00,4518771,James McHenry
+4,False,5/2,3.5,CompletedRace,870290,22,Hamilton,07/02/2024 15:45:00,5176435,Sacred Falls
+4,False,3/1F,4,CompletedRace,870289,22,Hamilton,07/02/2024 16:15:00,5472320,L'Eagle Aid
+6,False,5/1,6,CompletedRace,870293,22,Hamilton,07/02/2024 16:52:00,4076444,Hardy Angel
+5,False,9/4,3.25,CompletedRace,870295,31,Lingfield,07/02/2024 20:30:00,5237867,Yellow Pages
+5,False,100/1,101,CompletedRace,870294,31,Lingfield,07/02/2024 21:00:00,859687,Hurricane Alert
+9,False,33/1,34,CompletedRace,870575,393,Lingfield (AW),07/02/2024 18:30:00,853102,Murhib
+5,False,11/1,12,CompletedRace,870576,393,Lingfield (AW),07/02/2024 19:00:00,3473069,Bristol Hill
+3,False,66/1,67,CompletedRace,870218,67,Stratford,07/02/2024 19:10:00,4125043,Boom Boom
+4,False,12/1,13,CompletedRace,870219,67,Stratford,07/02/2024 19:40:00,3447058,Lutinebella
+5,False,9/2,5.5,CompletedRace,871731,202,Tipperary,07/02/2024 14:03:00,3325883,Time Marches On
+1,True,5/2,3.5,CompletedRace,871736,202,Tipperary,07/02/2024 17:10:00,2888933,Dutch Schultz
 4,False,10/11F,1.9090909090909092,CompletedRace,870271,46,Pontefract,07/01/2024 14:10:00,5315421,Lennon
 9,False,4/5F,1.8,CompletedRace,870270,46,Pontefract,07/01/2024 15:45:00,5787813,Old Cock
 6,False,11/2,6.5,CompletedRace,871713,416,Sha Tin,07/01/2024 23:35:00,5445563,Gorgeous Win
