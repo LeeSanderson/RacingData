@@ -1,4 +1,23 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+5,False,9/2,5.5,CompletedRace,870302,5,Bath,07/03/2024 18:00:00,2734127,We're Reunited
+1,True,11/2,6.5,CompletedRace,870298,5,Bath,07/03/2024 18:30:00,2604441,Abolish
+6,False,14/1,15,CompletedRace,870303,5,Bath,07/03/2024 19:00:00,5174518,Call Me The Breeze
+2,False,6/1,7,CompletedRace,870301,5,Bath,07/03/2024 20:10:00,3521645,Alyara
+5,False,8/1,9,CompletedRace,870300,5,Bath,07/03/2024 20:45:00,2641711,Galactic Glow
+2,False,5/1,6,CompletedRace,870308,17,Epsom,07/03/2024 18:20:00,3781893,Mrembo
+5,False,4/1,5,CompletedRace,870304,17,Epsom,07/03/2024 19:25:00,5104259,Betties Bay
+8,False,15/2,8.5,CompletedRace,870305,17,Epsom,07/03/2024 20:00:00,4580182,Ectocross
+8,False,22/1,23,CompletedRace,870306,17,Epsom,07/03/2024 21:00:00,3662556,Hodler
+1,True,13/2,7.5,CompletedRace,870315,16,Musselburgh,07/03/2024 14:30:00,5826595,Harswell Dandy
+1,True,7/2,4.5,CompletedRace,870311,16,Musselburgh,07/03/2024 16:05:00,4914549,Jumeira Vision
+4,False,4/1,5,CompletedRace,870310,16,Musselburgh,07/03/2024 16:40:00,1917667,Lord Torranaga
+2,False,6/1,7,CompletedRace,870314,16,Musselburgh,07/03/2024 17:15:00,3612354,Golden Prosperity
+5,False,33/1,34,CompletedRace,870319,80,Thirsk,07/03/2024 14:45:00,5279951,Greenlightforgo
+6,False,4/1,5,CompletedRace,870318,80,Thirsk,07/03/2024 15:45:00,4827081,Georgie Wooster
+3,False,7/1,8,CompletedRace,871829,80,Thirsk,07/03/2024 16:20:00,4269989,Sunny Orange
+5,False,15/2,8.5,CompletedRace,870316,80,Thirsk,07/03/2024 16:55:00,2787196,Strong Johnson
+3,False,4/1,5,CompletedRace,871738,202,Tipperary,07/03/2024 17:05:00,5203868,Zarra Ellis
+1,True,6/1,7,CompletedRace,871742,202,Tipperary,07/03/2024 19:10:00,5301535,Blue Soul
 3,False,11/4,3.75,CompletedRace,870287,7,Brighton,07/02/2024 14:25:00,2456566,Rebel Redemption
 2,False,5/6F,1.8333333333333335,CompletedRace,870283,7,Brighton,07/02/2024 14:55:00,4737872,Shaw Park
 3,False,4/1,5,CompletedRace,870285,7,Brighton,07/02/2024 15:25:00,5279956,Blacklion
