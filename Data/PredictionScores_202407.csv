@@ -1,4 +1,24 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,7/2J,4.5,CompletedRace,871756,176,Bellewstown,07/04/2024 18:35:00,5021289,Air Force One
+4,False,14/1,15,CompletedRace,871758,176,Bellewstown,07/04/2024 20:20:00,4142829,Benjis Benefit
+3,False,1/2F,1.5,CompletedRace,871894,396,Happy Valley,07/04/2024 12:10:00,4628818,Beauty Waves
+1,True,4/11F,1.3636363636363638,CompletedRace,870337,23,Haydock,07/04/2024 14:10:00,5089386,Quietness
+1,True,7/1,8,CompletedRace,870339,23,Haydock,07/04/2024 14:40:00,5787812,Fahrenheit Seven
+6,False,4/1,5,CompletedRace,870338,23,Haydock,07/04/2024 16:45:00,5073253,Kode Secret
+1,True,8/11F,1.7272727272727273,CompletedRace,870581,1079,Kempton (AW),07/04/2024 17:50:00,5900729,Place Of Safety
+5,False,7/2,4.5,CompletedRace,870327,36,Newbury,07/04/2024 18:10:00,5320934,Split The Profit
+5,False,7/1,8,CompletedRace,870322,36,Newbury,07/04/2024 19:55:00,3288786,Algheed
+2,False,33/1,34,CompletedRace,870326,36,Newbury,07/04/2024 21:00:00,5198125,Flag Carrier
+6,False,9/1,10,CompletedRace,870226,41,Perth,07/04/2024 14:48:00,4165257,Sergeant Wilson
+6,False,8/1,9,CompletedRace,870224,41,Perth,07/04/2024 15:18:00,1342374,Sword Of Fate
+1,True,11/4F,3.75,CompletedRace,870227,41,Perth,07/04/2024 16:18:00,2253165,Easy Bucks
+3,False,11/1,12,CompletedRace,870228,41,Perth,07/04/2024 16:50:00,2973413,Diamond State
+3,False,9/4F,3.25,CompletedRace,871887,41,Perth,07/04/2024 17:20:00,5260509,Side Stepper
+0,False,11/1,12,PulledUp,871745,202,Tipperary,07/04/2024 17:10:00,5388077,My Mate Tony
+6,False,20/1,21,CompletedRace,871747,202,Tipperary,07/04/2024 18:15:00,4554375,Harsh
+4,False,2/1F,3,CompletedRace,870330,104,Yarmouth,07/04/2024 14:30:00,1500589,Lucky's Dream
+5,False,13/2,7.5,CompletedRace,870331,104,Yarmouth,07/04/2024 16:00:00,5181941,Galactic Charm
+5,False,4/1,5,CompletedRace,870332,104,Yarmouth,07/04/2024 16:30:00,5172495,Wonder Smile
 5,False,9/2,5.5,CompletedRace,870302,5,Bath,07/03/2024 18:00:00,2734127,We're Reunited
 1,True,11/2,6.5,CompletedRace,870298,5,Bath,07/03/2024 18:30:00,2604441,Abolish
 6,False,14/1,15,CompletedRace,870303,5,Bath,07/03/2024 19:00:00,5174518,Call Me The Breeze
