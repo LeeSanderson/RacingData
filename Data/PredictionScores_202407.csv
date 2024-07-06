@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,8/1,9,CompletedRace,870362,6,Beverley,07/05/2024 19:45:00,4691048,Ski Jump
+6,False,33/1,34,CompletedRace,870364,6,Beverley,07/05/2024 20:20:00,5202340,Amerigo Vespucci
+8,False,14/1,15,CompletedRace,872305,6,Beverley,07/05/2024 20:50:00,3571536,Clipsham Gold
+1,True,100/30,4.333333333333334,CompletedRace,871844,596,Cork,07/05/2024 20:00:00,1897862,Happy Jacky
+4,False,12/1,13,CompletedRace,870356,15,Doncaster,07/05/2024 14:05:00,5366263,Love Warrior
+8,False,25/1,26,CompletedRace,870354,15,Doncaster,07/05/2024 15:15:00,5262480,Arcon
+4,False,16/1,17,CompletedRace,870353,15,Doncaster,07/05/2024 15:50:00,3125461,Night On Earth
+3,False,13/2,7.5,CompletedRace,870355,15,Doncaster,07/05/2024 16:25:00,3526619,Princess Karine
+2,False,9/4F,3.25,CompletedRace,870357,15,Doncaster,07/05/2024 17:00:00,4449794,Alseeyerthere
+2,False,6/4F,2.5,CompletedRace,870344,23,Haydock,07/05/2024 18:43:00,5394042,Aulis
+4,False,11/10F,2.1,CompletedRace,870343,23,Haydock,07/05/2024 21:00:00,3634785,King Of War
+0,False,SP,,NonRunner,870231,39,Newton Abbot,07/05/2024 15:25:00,3630330,Theonlywayiswessex
+0,False,SP,,NonRunner,870232,39,Newton Abbot,07/05/2024 16:00:00,1454182,Clearance
+4,False,3/1,4,CompletedRace,872313,39,Newton Abbot,07/05/2024 17:45:00,5015356,Luna Run
+5,False,13/8F,2.625,CompletedRace,870376,54,Sandown,07/05/2024 15:05:00,3096879,Dream Composer
+3,False,9/2,5.5,CompletedRace,870377,54,Sandown,07/05/2024 17:25:00,4707505,Whispering Royal
 2,False,7/2J,4.5,CompletedRace,871756,176,Bellewstown,07/04/2024 18:35:00,5021289,Air Force One
 4,False,14/1,15,CompletedRace,871758,176,Bellewstown,07/04/2024 20:20:00,4142829,Benjis Benefit
 3,False,1/2F,1.5,CompletedRace,871894,396,Happy Valley,07/04/2024 12:10:00,4628818,Beauty Waves
