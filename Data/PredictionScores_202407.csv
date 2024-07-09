@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,2/1F,3,CompletedRace,870412,3,Ayr,07/08/2024 14:55:00,3588751,Classy Al
+2,False,9/2,5.5,CompletedRace,870411,3,Ayr,07/08/2024 16:05:00,3552557,Dark Moon Rising
+6,False,18/1,19,CompletedRace,870413,3,Ayr,07/08/2024 16:40:00,1506947,Black Friday
+2,False,100/30,4.333333333333334,CompletedRace,870418,49,Ripon,07/08/2024 19:25:00,3468184,Makalu
+6,False,50/1,51,CompletedRace,870421,49,Ripon,07/08/2024 20:30:00,5048087,Rubio De Oro
+5,False,EvensF,2,CompletedRace,870592,513,Wolverhampton (AW),07/08/2024 17:20:00,5146208,Letmebetheboss
+6,False,14/1,15,CompletedRace,872429,513,Wolverhampton (AW),07/08/2024 19:00:00,1008734,Peachey Carnehan
 4,False,10/1,11,CompletedRace,870407,3,Ayr,07/07/2024 14:30:00,964509,Saaheq
 3,False,10/1,11,CompletedRace,870405,3,Ayr,07/07/2024 16:10:00,3092706,Diamondonthehill
 0,False,SP,,NonRunner,870406,3,Ayr,07/07/2024 16:45:00,4586182,Powerful Response
