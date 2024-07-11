@@ -1,4 +1,26 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,16/5F,4.2,CompletedRace,870446,10,Catterick,07/10/2024 15:50:00,5842811,Unmistakeable
+4,False,5/1,6,CompletedRace,870442,10,Catterick,07/10/2024 16:55:00,5021423,Without Flaw
+4,False,11/4,3.75,CompletedRace,870445,10,Catterick,07/10/2024 17:30:00,5113814,Calafrio
+1,True,11/8F,2.375,CompletedRace,872368,182,Fairyhouse,07/10/2024 16:50:00,5329156,Signor Ferrari
+1,True,7/2,4.5,CompletedRace,872370,182,Fairyhouse,07/10/2024 18:00:00,3125483,Extensio
+5,False,5/1,6,CompletedRace,870453,1212,Ffos Las,07/10/2024 17:15:00,5492860,Kingwood Queen
+6,False,9/2,5.5,CompletedRace,870451,1212,Ffos Las,07/10/2024 17:50:00,1417685,Brandy Station
+5,False,11/4F,3.75,CompletedRace,870450,1212,Ffos Las,07/10/2024 18:20:00,3172519,Baileys Warrior
+5,False,17/2,9.5,CompletedRace,870449,1212,Ffos Las,07/10/2024 19:50:00,5151735,Cogsworth
+10,False,6/1,7,CompletedRace,872465,396,Happy Valley,07/10/2024 14:05:00,5050146,Tomodachi Kokoroe
+0,False,SP,,NonRunner,870605,1079,Kempton (AW),07/10/2024 16:05:00,4395025,Hadley Park
+3,False,3/1J,4,CompletedRace,870603,1079,Kempton (AW),07/10/2024 17:40:00,4611214,Banderas
+5,False,7/2,4.5,CompletedRace,870607,1079,Kempton (AW),07/10/2024 18:10:00,5015340,Forever A Diamond
+0,False,SP,,NonRunner,872459,1079,Kempton (AW),07/10/2024 18:40:00,5048055,Nasneen
+1,True,8/1,9,CompletedRace,870606,1079,Kempton (AW),07/10/2024 19:10:00,4076310,Top Of The Class
+1,True,4/5F,1.8,CompletedRace,872458,1079,Kempton (AW),07/10/2024 19:40:00,4520668,Kynsa
+2,False,9/1,10,CompletedRace,870441,31,Lingfield,07/10/2024 14:30:00,5127997,Aljadel
+7,False,14/1,15,CompletedRace,870440,31,Lingfield,07/10/2024 15:00:00,5390228,Make A Scene
+1,True,8/11F,1.7272727272727273,CompletedRace,870439,31,Lingfield,07/10/2024 15:30:00,5325161,Warmonger
+7,False,40/1,41,CompletedRace,870437,31,Lingfield,07/10/2024 16:30:00,5809873,Bluesy Moon
+2,False,11/8F,2.375,CompletedRace,870436,31,Lingfield,07/10/2024 17:00:00,5162479,Nazron
+5,False,4/1,5,CompletedRace,870455,104,Yarmouth,07/10/2024 16:10:00,4076251,Agostino
 4,False,2/1F,3,CompletedRace,870412,3,Ayr,07/08/2024 14:55:00,3588751,Classy Al
 2,False,9/2,5.5,CompletedRace,870411,3,Ayr,07/08/2024 16:05:00,3552557,Dark Moon Rising
 6,False,18/1,19,CompletedRace,870413,3,Ayr,07/08/2024 16:40:00,1506947,Black Friday
