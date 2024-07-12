@@ -1,4 +1,19 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+1,True,8/13F,1.6153846153846154,CompletedRace,870461,8,Carlisle,07/11/2024 14:10:00,5079032,Individualism
+5,False,7/1,8,CompletedRace,870460,8,Carlisle,07/11/2024 15:20:00,3116596,Run This Way
+4,False,5/1,6,CompletedRace,870462,8,Carlisle,07/11/2024 16:28:00,5390056,Lady Flora
+1,True,100/30,4.333333333333334,CompletedRace,870464,8,Carlisle,07/11/2024 17:03:00,5048133,Evelyn's Phoenix
+4,False,14/1,15,CompletedRace,870470,15,Doncaster,07/11/2024 14:35:00,3555998,Sir Joseph Swan
+0,False,SP,,NonRunner,872501,15,Doncaster,07/11/2024 15:10:00,3096683,Myboymax
+2,False,2/1F,3,CompletedRace,870468,15,Doncaster,07/11/2024 17:30:00,5021298,Chatty
+1,True,5/6F,1.8333333333333335,CompletedRace,870475,17,Epsom,07/11/2024 18:05:00,5181947,Allonsy
+2,False,9/1,10,CompletedRace,870472,17,Epsom,07/11/2024 19:15:00,3687266,Watchya
+4,False,7/2F,4.5,CompletedRace,870474,17,Epsom,07/11/2024 19:50:00,4415508,Buy The Dip
+1,True,14/1,15,CompletedRace,870476,17,Epsom,07/11/2024 20:25:00,3386696,Local Bay
+5,False,9/2,5.5,CompletedRace,870477,17,Epsom,07/11/2024 21:00:00,5381910,Charles Morin
+6,False,15/2,8.5,CompletedRace,870482,36,Newbury,07/11/2024 20:10:00,4686970,Johnjay
+4,False,100/30,4.333333333333334,CompletedRace,870481,36,Newbury,07/11/2024 20:45:00,5104251,Al Khawaneej River
+4,False,7/2F,4.5,CompletedRace,870488,174,Newmarket (July),07/11/2024 17:20:00,5848761,Fifty Nifty
 6,False,16/5F,4.2,CompletedRace,870446,10,Catterick,07/10/2024 15:50:00,5842811,Unmistakeable
 4,False,5/1,6,CompletedRace,870442,10,Catterick,07/10/2024 16:55:00,5021423,Without Flaw
 4,False,11/4,3.75,CompletedRace,870445,10,Catterick,07/10/2024 17:30:00,5113814,Calafrio
