@@ -1,4 +1,22 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+1,True,6/4F,2.5,CompletedRace,870526,13,Chester,07/13/2024 16:20:00,4288212,Grey Fable
+7,False,12/1,13,CompletedRace,870527,13,Chester,07/13/2024 18:35:00,5089270,Duran
+8,False,20/1,21,CompletedRace,870528,13,Chester,07/13/2024 19:10:00,2052711,The Defiant
+8,False,12/1,13,CompletedRace,870549,22,Hamilton,07/13/2024 17:50:00,5073236,Havana Rose
+1,True,8/11F,1.7272727272727273,CompletedRace,870545,22,Hamilton,07/13/2024 18:25:00,5960485,Airspeed
+5,False,5/2J,3.5,CompletedRace,870546,22,Hamilton,07/13/2024 19:00:00,4990393,Moyola
+2,False,10/1,11,CompletedRace,870543,22,Hamilton,07/13/2024 19:30:00,2863059,Ebony Maw
+9,False,28/1,29,CompletedRace,870544,22,Hamilton,07/13/2024 20:00:00,4442201,Banner Road
+1,True,9/4F,3.25,CompletedRace,870548,22,Hamilton,07/13/2024 20:30:00,4914549,Jumeira Vision
+4,False,11/2,6.5,CompletedRace,870547,22,Hamilton,07/13/2024 21:00:00,4355310,Jaminoz
+3,False,19/5,4.8,CompletedRace,872587,211,Longchamp,07/13/2024 18:37:00,4705207,Ottery
+3,False,19/5,4.8,CompletedRace,872587,211,Longchamp,07/13/2024 18:37:00,4705207,Ottery
+2,False,EvensF,2,CompletedRace,872529,193,Navan,07/13/2024 16:10:00,5147963,The Equator
+1,True,7/4F,2.75,CompletedRace,872530,193,Navan,07/13/2024 16:45:00,5353792,It'sonlyjustbegun
+3,False,9/1,10,CompletedRace,870554,52,Salisbury,07/13/2024 17:40:00,4251620,Destiny's Spirit
+5,False,13/2,7.5,CompletedRace,870551,52,Salisbury,07/13/2024 19:20:00,5242259,Winterfair
+7,False,16/1,17,CompletedRace,870555,52,Salisbury,07/13/2024 19:50:00,5708480,Itsalotafun
+7,False,7/1,8,CompletedRace,870550,52,Salisbury,07/13/2024 20:20:00,4415506,Enochdhu
 4,False,100/30,4.333333333333334,CompletedRace,870510,2,Ascot,07/12/2024 14:50:00,5875772,Number
 5,False,3/1F,4,CompletedRace,870506,2,Ascot,07/12/2024 15:25:00,5394029,Global Asset
 9,False,5/1,6,CompletedRace,870505,2,Ascot,07/12/2024 16:00:00,5837087,Galaxy Princess
