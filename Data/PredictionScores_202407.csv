@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+1,True,16/5,4.2,CompletedRace,870257,41,Perth,07/14/2024 14:45:00,4175192,Tonto Foley
+2,False,7/2F,4.5,CompletedRace,870256,41,Perth,07/14/2024 15:45:00,3349784,Everyday Champagne
+4,False,78/10,8.8,CompletedRace,872572,416,Sha Tin,07/14/2024 12:35:00,4121572,Atullibigeal
+1,True,36/5,8.2,CompletedRace,872566,416,Sha Tin,07/14/2024 21:30:00,4628818,Beauty Waves
+6,False,4/1C,5,CompletedRace,870267,67,Stratford,07/14/2024 14:00:00,4928623,Queen Of Steel
+5,False,11/10F,2.1,CompletedRace,870264,67,Stratford,07/14/2024 15:00:00,5287658,Mill Street
+2,False,15/8F,2.875,CompletedRace,870262,67,Stratford,07/14/2024 16:00:00,3389511,Finest View
 1,True,6/4F,2.5,CompletedRace,870526,13,Chester,07/13/2024 16:20:00,4288212,Grey Fable
 7,False,12/1,13,CompletedRace,870527,13,Chester,07/13/2024 18:35:00,5089270,Duran
 8,False,20/1,21,CompletedRace,870528,13,Chester,07/13/2024 19:10:00,2052711,The Defiant
@@ -9,7 +16,6 @@ FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,Co
 9,False,28/1,29,CompletedRace,870544,22,Hamilton,07/13/2024 20:00:00,4442201,Banner Road
 1,True,9/4F,3.25,CompletedRace,870548,22,Hamilton,07/13/2024 20:30:00,4914549,Jumeira Vision
 4,False,11/2,6.5,CompletedRace,870547,22,Hamilton,07/13/2024 21:00:00,4355310,Jaminoz
-3,False,19/5,4.8,CompletedRace,872587,211,Longchamp,07/13/2024 18:37:00,4705207,Ottery
 3,False,19/5,4.8,CompletedRace,872587,211,Longchamp,07/13/2024 18:37:00,4705207,Ottery
 2,False,EvensF,2,CompletedRace,872529,193,Navan,07/13/2024 16:10:00,5147963,The Equator
 1,True,7/4F,2.75,CompletedRace,872530,193,Navan,07/13/2024 16:45:00,5353792,It'sonlyjustbegun
