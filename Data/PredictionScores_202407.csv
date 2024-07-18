@@ -1,4 +1,17 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+8,False,4/1,5,CompletedRace,871156,5,Bath,07/17/2024 14:30:00,5580081,Sienna Gold
+1,True,1/20F,1.05,CompletedRace,871157,1212,Ffos Las,07/17/2024 18:30:00,5189706,Asinara
+1,True,6/5F,2.2,CompletedRace,871162,1212,Ffos Las,07/17/2024 19:30:00,4297869,Alfred Cove
+4,False,17/2,9.5,CompletedRace,871158,1212,Ffos Las,07/17/2024 20:00:00,5368097,Advert Rules
+3,False,2/1F,3,CompletedRace,871160,1212,Ffos Las,07/17/2024 21:00:00,4185051,Tarbat Ness
+6,False,2/1F,3,CompletedRace,871165,80,Thirsk,07/17/2024 14:22:00,2744020,Genesius
+1,True,4/1,5,CompletedRace,871167,80,Thirsk,07/17/2024 14:52:00,5248379,Ingleby Archie
+1,True,2/1F,3,CompletedRace,871168,80,Thirsk,07/17/2024 16:55:00,3096592,Yazaman
+5,False,7/2,4.5,CompletedRace,871062,84,Uttoxeter,07/17/2024 16:10:00,1044064,Chef De Troupe
+3,False,4/1,5,CompletedRace,871060,84,Uttoxeter,07/17/2024 16:40:00,3447035,Golfe Clair
+2,False,5/1,6,CompletedRace,871170,104,Yarmouth,07/17/2024 17:07:00,5415114,Rockymountainway
+1,True,7/4F,2.75,CompletedRace,871173,104,Yarmouth,07/17/2024 18:10:00,5102058,Merrimack
+1,True,100/30,4.333333333333334,CompletedRace,871175,104,Yarmouth,07/17/2024 19:40:00,3233433,Shield Of Honour
 1,True,16/5,4.2,CompletedRace,870257,41,Perth,07/14/2024 14:45:00,4175192,Tonto Foley
 2,False,7/2F,4.5,CompletedRace,870256,41,Perth,07/14/2024 15:45:00,3349784,Everyday Champagne
 4,False,78/10,8.8,CompletedRace,872572,416,Sha Tin,07/14/2024 12:35:00,4121572,Atullibigeal
