@@ -1,4 +1,30 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,100/30,4.333333333333334,CompletedRace,872732,180,Down Royal,07/19/2024 18:17:00,58956384,Heishybrid
+1,True,3/1,4,CompletedRace,872733,180,Down Royal,07/19/2024 18:52:00,5242312,Masoun
+1,True,13/2,7.5,CompletedRace,872734,180,Down Royal,07/19/2024 20:00:00,3757019,New Year Honours
+1,True,11/2,6.5,CompletedRace,872736,180,Down Royal,07/19/2024 20:30:00,5160455,Empress Alma
+0,False,SP,,NonRunner,871205,22,Hamilton,07/19/2024 18:00:00,5842807,Lady Luzon
+4,False,6/1,7,CompletedRace,871201,22,Hamilton,07/19/2024 18:35:00,3549479,Manila Scouse
+1,True,5/6F,1.8333333333333335,CompletedRace,871200,22,Hamilton,07/19/2024 19:10:00,5507022,Kalpana
+1,True,5/6F,1.8333333333333335,CompletedRace,871200,22,Hamilton,07/19/2024 19:10:00,5507022,Kalpana
+2,False,12/1,13,CompletedRace,871202,22,Hamilton,07/19/2024 19:45:00,4275938,Wee Fat Mac
+2,False,5/1,6,CompletedRace,871204,22,Hamilton,07/19/2024 20:20:00,5336305,Livinthelife
+7,False,12/1,13,CompletedRace,871206,22,Hamilton,07/19/2024 20:50:00,2184169,Major Snugfit
+2,False,85/40,3.125,CompletedRace,871222,23,Haydock,07/19/2024 14:05:00,4863576,Kalama Sunrise
+1,True,7/2,4.5,CompletedRace,871219,23,Haydock,07/19/2024 15:50:00,5034896,Story Horse
+6,False,5/1,6,CompletedRace,871223,23,Haydock,07/19/2024 17:00:00,2996954,Angel Amadea
+3,False,13/2,7.5,CompletedRace,872726,185,Killarney,07/19/2024 15:40:00,3398269,The Dasher Conway
+4,False,3/1,4,CompletedRace,872727,185,Killarney,07/19/2024 16:15:00,3198796,Magnor Glory
+1,True,2/1F,3,CompletedRace,871236,36,Newbury,07/19/2024 13:50:00,5212142,Sunny Corner
+7,False,15/2,8.5,CompletedRace,871233,36,Newbury,07/19/2024 17:20:00,5504608,Open Secret
+5,False,9/4F,3.25,CompletedRace,871243,174,Newmarket (July),07/19/2024 19:00:00,4924617,Cuban Melody
+9,False,22/1,23,CompletedRace,871245,174,Newmarket (July),07/19/2024 19:35:00,4303357,Diomed Spirit
+8,False,10/1,11,CompletedRace,871208,40,Nottingham,07/19/2024 15:25:00,5160463,Willolarupi
+4,False,5/4F,2.25,CompletedRace,871212,40,Nottingham,07/19/2024 17:11:00,3098705,Secret Handsheikh
+7,False,7/2,4.5,CompletedRace,871214,46,Pontefract,07/19/2024 19:20:00,4611199,Style Of Life
+7,False,8/1,9,CompletedRace,871213,46,Pontefract,07/19/2024 19:55:00,998344,Dakota Gold
+6,False,14/1,15,CompletedRace,871215,46,Pontefract,07/19/2024 20:25:00,5386056,Yippee
+2,False,6/1,7,CompletedRace,871217,46,Pontefract,07/19/2024 21:00:00,5207746,Act Of Violence
 5,False,9/4F,3.25,CompletedRace,871178,12,Chepstow,07/18/2024 14:30:00,3505924,So Smart
 7,False,18/1,19,CompletedRace,871180,12,Chepstow,07/18/2024 15:00:00,1266871,Gonzaga
 5,False,3/1J,4,CompletedRace,871176,12,Chepstow,07/18/2024 15:35:00,5237857,Milliterries
