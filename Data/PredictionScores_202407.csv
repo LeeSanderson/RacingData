@@ -1,11 +1,31 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,14/1,15,CompletedRace,871078,9,Cartmel,07/20/2024 14:50:00,4701460,Smurfette
+0,False,16/1,17,PulledUp,871076,9,Cartmel,07/20/2024 17:10:00,5412958,Tiny Angel
+4,False,11/8F,2.375,CompletedRace,872764,178,Curragh,07/20/2024 14:00:00,5708869,Shimmy Jimmy
+6,False,8/1,9,CompletedRace,872765,178,Curragh,07/20/2024 16:50:00,5048225,Courageous Strike
+4,False,5/2,3.5,CompletedRace,871257,15,Doncaster,07/20/2024 18:15:00,6074424,Jennifer Wren
+3,False,9/2,5.5,CompletedRace,871258,15,Doncaster,07/20/2024 20:15:00,5198119,Monsieur Melee
+8,False,14/1,15,CompletedRace,871260,15,Doncaster,07/20/2024 20:45:00,4827082,Havana Sky
+6,False,11/1,12,CompletedRace,871230,23,Haydock,07/20/2024 18:55:00,4313219,Sugar Hill Babe
+5,False,15/2,8.5,CompletedRace,871225,23,Haydock,07/20/2024 20:00:00,5453425,Marmaduke Lemon
+4,False,9/2,5.5,CompletedRace,871229,23,Haydock,07/20/2024 21:00:00,5268395,Puella Law
+2,False,3/1,4,CompletedRace,871085,35,Market Rasen,07/20/2024 16:25:00,2856069,Bannister
+7,False,4/1,5,CompletedRace,871240,36,Newbury,07/20/2024 16:45:00,5894806,Loves Loving
+2,False,6/5F,2.2,CompletedRace,871241,36,Newbury,07/20/2024 17:20:00,5218322,Battle Queen
+0,False,SP,,NonRunner,871253,174,Newmarket (July),07/20/2024 16:20:00,5237870,Formidable Force
+5,False,5/1,6,CompletedRace,871252,174,Newmarket (July),07/20/2024 17:30:00,3153448,Outrun The Storm
+4,False,100/30,4.333333333333334,CompletedRace,871251,174,Newmarket (July),07/20/2024 18:00:00,5251947,Berkshire Nugget
+9,False,100/30F,4.333333333333334,CompletedRace,871254,174,Newmarket (July),07/20/2024 19:05:00,5065579,Sugarloaf Lenny
+6,False,7/2,4.5,CompletedRace,871264,49,Ripon,07/20/2024 15:20:00,5034735,Up The Jazz
+1,True,6/1,7,CompletedRace,871262,49,Ripon,07/20/2024 15:55:00,5047947,Iron Lion
+1,True,1/4F,1.25,CompletedRace,872718,445,Saratoga,07/20/2024 23:17:00,5388039,Thorpedo Anna
+1,True,1/4F,1.25,CompletedRace,872718,445,Saratoga,07/20/2024 23:17:00,5388039,Thorpedo Anna
 3,False,100/30,4.333333333333334,CompletedRace,872732,180,Down Royal,07/19/2024 18:17:00,58956384,Heishybrid
 1,True,3/1,4,CompletedRace,872733,180,Down Royal,07/19/2024 18:52:00,5242312,Masoun
 1,True,13/2,7.5,CompletedRace,872734,180,Down Royal,07/19/2024 20:00:00,3757019,New Year Honours
 1,True,11/2,6.5,CompletedRace,872736,180,Down Royal,07/19/2024 20:30:00,5160455,Empress Alma
 0,False,SP,,NonRunner,871205,22,Hamilton,07/19/2024 18:00:00,5842807,Lady Luzon
 4,False,6/1,7,CompletedRace,871201,22,Hamilton,07/19/2024 18:35:00,3549479,Manila Scouse
-1,True,5/6F,1.8333333333333335,CompletedRace,871200,22,Hamilton,07/19/2024 19:10:00,5507022,Kalpana
 1,True,5/6F,1.8333333333333335,CompletedRace,871200,22,Hamilton,07/19/2024 19:10:00,5507022,Kalpana
 2,False,12/1,13,CompletedRace,871202,22,Hamilton,07/19/2024 19:45:00,4275938,Wee Fat Mac
 2,False,5/1,6,CompletedRace,871204,22,Hamilton,07/19/2024 20:20:00,5336305,Livinthelife
