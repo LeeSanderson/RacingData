@@ -1,4 +1,19 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,4/1,5,CompletedRace,871276,3,Ayr,07/22/2024 14:30:00,3096980,Desert Quest
+7,False,2/1F,3,CompletedRace,871280,3,Ayr,07/22/2024 15:40:00,5079235,La Boo
+2,False,7/2,4.5,CompletedRace,871279,3,Ayr,07/22/2024 16:15:00,3177303,Ramon Di Loria
+2,False,100/30,4.333333333333334,CompletedRace,871277,3,Ayr,07/22/2024 17:25:00,4409337,Helter Skelter
+7,False,7/2,4.5,CompletedRace,873170,175,Ballinrobe,07/22/2024 18:40:00,4274151,Queenie St Clair
+4,False,18/1,19,CompletedRace,873171,175,Ballinrobe,07/22/2024 19:10:00,3273550,Isle Of Sark
+5,False,7/1,8,CompletedRace,871285,6,Beverley,07/22/2024 19:30:00,4498974,Elettaria
+4,False,6/1,7,CompletedRace,873294,6,Beverley,07/22/2024 20:00:00,3772686,Cubanista
+4,False,5/1,6,CompletedRace,871282,6,Beverley,07/22/2024 21:00:00,1500678,Where's Jeff
+9,False,12/1,13,CompletedRace,871104,9,Cartmel,07/22/2024 13:40:00,2394550,Palm Beach
+4,False,7/1,8,CompletedRace,871105,9,Cartmel,07/22/2024 14:10:00,3301645,Flashthelights
+2,False,9/4F,3.25,CompletedRace,871099,9,Cartmel,07/22/2024 15:55:00,4189546,The Gypsy Davey
+0,False,SP,,NonRunner,871100,9,Cartmel,07/22/2024 16:30:00,3937994,Happy Du Mesnil
+7,False,6/1,7,CompletedRace,871289,93,Windsor,07/22/2024 17:18:00,5937845,Tolerance
+5,False,5/1,6,CompletedRace,871287,93,Windsor,07/22/2024 19:50:00,5412813,Sea Regal
 3,False,8/13F,1.6153846153846154,CompletedRace,871089,39,Newton Abbot,07/21/2024 14:05:00,5472317,Golden Path
 4,False,12/1,13,CompletedRace,871086,39,Newton Abbot,07/21/2024 16:45:00,3316966,Watergrange Jack
 3,False,7/1,8,CompletedRace,871268,47,Redcar,07/21/2024 15:52:00,4839377,Swift Salian
