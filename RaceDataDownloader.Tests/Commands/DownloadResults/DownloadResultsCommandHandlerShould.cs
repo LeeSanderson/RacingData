@@ -8,7 +8,6 @@ using Xunit.Abstractions;
 
 namespace RaceDataDownloader.Tests.Commands.DownloadResults;
 
-[UsesVerify]
 public class DownloadResultsCommandHandlerShould
 {
     private readonly ITestOutputHelper _output;

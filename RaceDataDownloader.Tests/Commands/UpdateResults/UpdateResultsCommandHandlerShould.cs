@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using NSubstitute;
 using RaceDataDownloader.Commands;
 using RaceDataDownloader.Commands.UpdateResults;
@@ -10,7 +10,6 @@ using Xunit.Abstractions;
 
 namespace RaceDataDownloader.Tests.Commands.UpdateResults;
 
-[UsesVerify]
 public class UpdateResultsCommandHandlerShould
 {
     private const string MockDataDirectory = @"c:\out";

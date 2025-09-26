@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using NSubstitute;
 using RaceDataDownloader.Commands.DownloadTodaysRaceCards;
 using RaceDataDownloader.Tests.Fakes;
@@ -8,7 +8,6 @@ using Xunit.Abstractions;
 
 namespace RaceDataDownloader.Tests.Commands.DownloadTodaysRaceCards;
 
-[UsesVerify]
 public class DownloadTodaysRaceCardsCommandHandlerShould
 {
     private readonly ITestOutputHelper _output;
