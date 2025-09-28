@@ -23,7 +23,7 @@ function Invoke-NativeCommand() {
 }
 
 $InitialPath = Resolve-Path "."
-$RaceDownloaderPath = Join-Path $InitialPath "RaceDataDownloader\bin\Debug\net6.0"
+$RaceDownloaderPath = Join-Path $InitialPath "RaceDataDownloader\bin\Debug\net9.0"
 $RaceDownloaderExe = Join-Path $RaceDownloaderPath "RaceDataDownloader.exe"
 $RaceDataPath = Resolve-Path ".\Data"
 
@@ -40,7 +40,7 @@ try {
     Invoke-NativeCommand pip install Pandas --quiet --user
     Invoke-NativeCommand pip install matplotlib --quiet --user
     Invoke-NativeCommand pip install scikit-learn --quiet --user
-    Invoke-NativeCommand pip install ipywidgets --quiet --user   
+    Invoke-NativeCommand pip install ipywidgets --quiet --user
 
     Set-Location $RaceDataPath
     Invoke-NativeCommand python -m nbconvert --to script "FeatureAnalysis.ipynb"
