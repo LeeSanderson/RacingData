@@ -1,4 +1,4 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
 using RacePredictor.Core.RacingPost;
@@ -46,7 +46,7 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
 
             if (monthStart < minOffDate)
             {
-                var preCurrentRaceResults = await GetRaceResultRecordsInRange(monthStart, monthEnd.AddDays(-1));
+                var preCurrentRaceResults = await GetRaceResultRecordsInRange(monthStart, minOffDate.AddDays(-1));
                 raceResults.AddRange(preCurrentRaceResults);
             }
 

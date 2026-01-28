@@ -211,6 +211,7 @@ internal class RaceResultRunnerParser : RunnerParser
             .Replace("¼", ".25")
             .Replace("½", ".5")
             .Replace("¾", ".75")
+            .Replace("lgnk", "0.4") // Long neck
             .Replace("snk", "0.2") // Short neck
             .Replace("nk", "0.3") // Neck
             .Replace("sht-hd", "0.1") // Short head

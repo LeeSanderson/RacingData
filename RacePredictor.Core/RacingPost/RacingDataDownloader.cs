@@ -1,3 +1,4 @@
+using System.Net;
 using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
@@ -30,10 +31,25 @@ public class RacingDataDownloader
             }
 
             var finder = new HtmlNodeFinder(htmlDocument.DocumentNode);
-            var urls =
-                finder.Anchor()
+            HtmlNode[] linkNodes = [];
+            try
+            {
+                linkNodes = finder.Anchor()
                     .WithSelector("link-listCourseNameLink")
-                    .GetNodes()
+                    .GetNodes();
+            }
+            catch
+            {
+                // This may fail if there are no races for a given day (e.g. Christmas Day)
+                // Verify this is the case by trying to get an optional "No results found" node 
+                var errorMessage = finder.Optional().Div().WithSelector("text-errorMessageText").GetText();
+                if (errorMessage != "No results in the Racing Post records for this date")
+                {
+                    throw new Exception($"Unexpected error getting links from {resultsUrl}: {errorMessage}");
+                }
+            }
+
+            var urls = linkNodes
                     .Select(n => "https://www.racingpost.com" + n.GetAttributeValue("href", string.Empty))
                     .Distinct()
                     .ToArray();
@@ -56,10 +72,36 @@ public class RacingDataDownloader
 
     private async Task<string> GetHtmlResponseFrom(string url)
     {
+        const int maxAttempts = 7;
+        const int delayMilliseconds = 1700;
+
         var client = _httpClientFactory.CreateClient();
+
         HttpClientHelper.ConfigureRandomHeader(client);
-        var response = await client.GetAsync(url);
-        response.EnsureSuccessStatusCode();
+
+        HttpResponseMessage? response = null;
+        for (var attempt = 0; attempt <= maxAttempts; attempt++)
+        {
+            response = await client.GetAsync(url);
+            if (response.StatusCode == HttpStatusCode.NotAcceptable)
+            {
+                if (attempt < maxAttempts)
+                {
+                    // Retry after delay
+                    await Task.Delay(delayMilliseconds);
+                }
+                else
+                {
+                    throw new Exception($"Received 406 for {maxAttempts} attempts on {url}");
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        response!.EnsureSuccessStatusCode();
         return await response.Content.ReadAsStringAsync();
     }
 
