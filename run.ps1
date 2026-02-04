@@ -32,7 +32,7 @@ $RaceDataPath = Resolve-Path ".\Data"
 try {
     Invoke-NativeCommand dotnet build
     Invoke-NativeCommand dotnet test
-    Invoke-NativeCommand $RaceDownloaderExe updateresults --output $RaceDataPath --period 70
+    Invoke-NativeCommand $RaceDownloaderExe updateresults --output $RaceDataPath --period 98
     ## Invoke-NativeCommand $RaceDownloaderExe deduperesults --output $RaceDataPath
     # Invoke-NativeCommand $RaceDownloaderExe updateresults --output $RaceDataPath --period 365
     # Invoke-NativeCommand $RaceDownloaderExe validate --output $RaceDataPath

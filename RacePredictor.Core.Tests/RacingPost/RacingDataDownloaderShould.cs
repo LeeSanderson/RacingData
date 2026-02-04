@@ -1,6 +1,5 @@
 using NSubstitute;
 using RacePredictor.Core.RacingPost;
-using RichardSzalay.MockHttp;
 
 namespace RacePredictor.Core.Tests.RacingPost;
 
@@ -9,14 +8,12 @@ public class RacingDataDownloaderShould
     [Fact]
     public async Task ReturnExpectedListOfResultUrlsForAGivenDay()
     {
-        var mockHttpMessageHandler = new MockHttpMessageHandler();
-        mockHttpMessageHandler.When(HttpMethod.Get, "https://www.racingpost.com/results/2022-05-11")
-            .Respond("text/html", ResourceLoader.ReadRacingPostExampleResource("daily_results_20220511.html"));
-
-        var httpClientFactory = Substitute.For<IHttpClientFactory>();
+        var htmlLoader = Substitute.For<IHtmlLoader>();
+        htmlLoader
+            .GetHtmlResponseFrom("https://www.racingpost.com/results/2022-05-11")
+            .Returns(ResourceLoader.ReadRacingPostExampleResource("daily_results_20220511.html"));
         var clock = Substitute.For<IClock>();
-        httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));
-        var downloader = new RacingDataDownloader(httpClientFactory, clock);
+        var downloader = new RacingDataDownloader(htmlLoader, clock);
         var startDate = new DateOnly(2022, 05, 11);
 
         var urls = await downloader.GetResultUrls(startDate, startDate).ToListAsync();
@@ -28,16 +25,12 @@ public class RacingDataDownloaderShould
     [Fact]
     public async Task ReturnExpectedListOfRaceCardUrlsForAGivenDay()
     {
-        var mockHttpMessageHandler = new MockHttpMessageHandler();
-        mockHttpMessageHandler.When(HttpMethod.Get, "https://www.racingpost.com/racecards/2022-06-28")
-            .Respond("text/html", ResourceLoader.ReadRacingPostExampleResource("daily_racecards_20220628.html"));
-
-        var httpClientFactory = Substitute.For<IHttpClientFactory>();
-        httpClientFactory.CreateClient(Arg.Any<string>()).Returns(new HttpClient(mockHttpMessageHandler));
-
+        var htmlLoader = Substitute.For<IHtmlLoader>();
+        htmlLoader
+            .GetHtmlResponseFrom("https://www.racingpost.com/racecards/2022-06-28")
+            .Returns(ResourceLoader.ReadRacingPostExampleResource("daily_racecards_20220628.html"));
         var clock = Substitute.For<IClock>();
-
-        var downloader = new RacingDataDownloader(httpClientFactory, clock);
+        var downloader = new RacingDataDownloader(htmlLoader, clock);
         var startDate = new DateOnly(2022, 06, 28);
 
         var urls = await downloader.GetRaceCardUrls(startDate, startDate).ToListAsync();

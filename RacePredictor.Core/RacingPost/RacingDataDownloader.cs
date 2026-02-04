@@ -1,9 +1,8 @@
-using System.Net;
 using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
 
-public class RacingDataDownloader(IHttpClientFactory httpClientFactory, IClock clock) : IRacingDataDownloader
+public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacingDataDownloader
 {
     public async IAsyncEnumerable<string> GetResultUrls(DateOnly start, DateOnly end)
     {
@@ -56,49 +55,14 @@ public class RacingDataDownloader(IHttpClientFactory httpClientFactory, IClock c
 
     public async Task<RaceResult> DownloadResults(string url)
     {
-        var htmlResponse = await GetHtmlResponseFrom(url);
+        var htmlResponse = await htmlLoader.GetHtmlResponseFrom(url);
         var parser = new RacingResultParser();
         return await parser.Parse(htmlResponse);
     }
 
-    private async Task<string> GetHtmlResponseFrom(string url)
-    {
-        const int maxAttempts = 7;
-        const int delayMilliseconds = 1700;
-
-        var client = httpClientFactory.CreateClient();
-
-        HttpClientHelper.ConfigureRandomHeader(client);
-
-        HttpResponseMessage? response = null;
-        for (var attempt = 0; attempt <= maxAttempts; attempt++)
-        {
-            response = await client.GetAsync(url);
-            if (response.StatusCode == HttpStatusCode.NotAcceptable)
-            {
-                if (attempt < maxAttempts)
-                {
-                    // Retry after delay
-                    await Task.Delay(delayMilliseconds);
-                }
-                else
-                {
-                    throw new Exception($"Received 406 for {maxAttempts} attempts on {url}");
-                }
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        response!.EnsureSuccessStatusCode();
-        return await response.Content.ReadAsStringAsync();
-    }
-
     private async Task<HtmlDocument> GetHtmlDocumentFrom(string url)
     {
-        var responseBody = await GetHtmlResponseFrom(url);
+        var responseBody = await htmlLoader.GetHtmlResponseFrom(url);
         var htmlDocument = new HtmlDocument();
         htmlDocument.LoadHtml(responseBody);
         return htmlDocument;
@@ -155,7 +119,7 @@ public class RacingDataDownloader(IHttpClientFactory httpClientFactory, IClock c
 
     public async Task<RaceCard> DownloadRaceCard(string url)
     {
-        var htmlResponse = await GetHtmlResponseFrom(url);
+        var htmlResponse = await htmlLoader.GetHtmlResponseFrom(url);
         var parser = new RaceCardParser();
         return await parser.Parse(htmlResponse);
     }
