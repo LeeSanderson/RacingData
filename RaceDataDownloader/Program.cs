@@ -11,6 +11,7 @@ using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Commands.DownloadTodaysRaceCards;
 using RaceDataDownloader.Commands.UpdateResults;
 using RaceDataDownloader.Commands.ValidateRaceCardPredictions;
+using RacePredictor.Core.RacingPost;
 using Serilog;
 using Serilog.Events;
 using Serilog.Extensions.Logging;
@@ -24,6 +25,9 @@ var loggerFactory = new SerilogLoggerFactory();
 
 var serviceCollection = new ServiceCollection();
 serviceCollection.AddSingleton<CookieContainer>();
+serviceCollection.AddSingleton<IClock, RealClock>();
+serviceCollection.AddSingleton<IFileSystem, FileSystem>();
+serviceCollection.AddSingleton<IRacingDataDownloader, RacingDataDownloader>();
 serviceCollection.AddHttpClient().ConfigureHttpClientDefaults(builder =>
 {
     builder.ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler
@@ -60,19 +64,29 @@ return await Parser.Default.ParseArguments<
         _ => Task.FromResult(ExitCodes.Error));
 
 DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() =>
-    new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadResultsCommandHandler>());
+    new(serviceProvider.GetRequiredService<IFileSystem>(),
+        serviceProvider.GetRequiredService<IRacingDataDownloader>(),
+        loggerFactory.CreateLogger<DownloadResultsCommandHandler>());
 
 DownloadRaceCardsCommandHandler CreateDownloadRaceCardsCommandHandler() =>
-    new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadRaceCardsCommandHandler>());
+    new(serviceProvider.GetRequiredService<IFileSystem>(),
+        serviceProvider.GetRequiredService<IRacingDataDownloader>(),
+        loggerFactory.CreateLogger<DownloadRaceCardsCommandHandler>());
 
 UpdateResultsCommandHandler CreateUpdateResultsCommandHandler() =>
-    new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<UpdateResultsCommandHandler>());
+    new(serviceProvider.GetRequiredService<IFileSystem>(),
+        serviceProvider.GetRequiredService<IRacingDataDownloader>(),
+        serviceProvider.GetRequiredService<IClock>(),
+        loggerFactory.CreateLogger<UpdateResultsCommandHandler>());
 
 DownloadTodaysRaceCardsCommandHandler CreateDownloadTodaysRaceCardsCommandHandler() =>
-    new(new FileSystem(), httpClientFactory, new RealClock(), loggerFactory.CreateLogger<DownloadTodaysRaceCardsCommandHandler>());
+    new(serviceProvider.GetRequiredService<IFileSystem>(),
+        serviceProvider.GetRequiredService<IRacingDataDownloader>(),
+        serviceProvider.GetRequiredService<IClock>(),
+        loggerFactory.CreateLogger<DownloadTodaysRaceCardsCommandHandler>());
 
 ValidateRaceCardPredictionsCommandHandler CreateValidateRaceCardPredictionsCommandHandler() =>
-    new(new FileSystem(), loggerFactory.CreateLogger<ValidateRaceCardPredictionsCommandHandler>());
+    new(serviceProvider.GetRequiredService<IFileSystem>(), loggerFactory.CreateLogger<ValidateRaceCardPredictionsCommandHandler>());
 
 DedupeResultsCommandHandler CreateDedupeResultsCommandHandler() =>
-    new(new FileSystem(), loggerFactory.CreateLogger<DedupeResultsCommandHandler>());
+    new(serviceProvider.GetRequiredService<IFileSystem>(), loggerFactory.CreateLogger<DedupeResultsCommandHandler>());

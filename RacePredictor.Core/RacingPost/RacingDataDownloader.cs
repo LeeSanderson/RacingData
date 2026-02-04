@@ -3,17 +3,8 @@ using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
 
-public class RacingDataDownloader
+public class RacingDataDownloader(IHttpClientFactory httpClientFactory, IClock clock) : IRacingDataDownloader
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IClock _clock;
-
-    public RacingDataDownloader(IHttpClientFactory httpClientFactory, IClock clock)
-    {
-        _httpClientFactory = httpClientFactory;
-        _clock = clock;
-    }
-
     public async IAsyncEnumerable<string> GetResultUrls(DateOnly start, DateOnly end)
     {
         var currentDate = start;
@@ -75,7 +66,7 @@ public class RacingDataDownloader
         const int maxAttempts = 7;
         const int delayMilliseconds = 1700;
 
-        var client = _httpClientFactory.CreateClient();
+        var client = httpClientFactory.CreateClient();
 
         HttpClientHelper.ConfigureRandomHeader(client);
 
@@ -149,12 +140,12 @@ public class RacingDataDownloader
 
     private string GetRaceCardDateAsString(DateOnly date)
     {
-        if (_clock.IsToday(date))
+        if (clock.IsToday(date))
         {
             return string.Empty;
         }
 
-        if (_clock.IsTomorrow(date))
+        if (clock.IsTomorrow(date))
         {
             return "tomorrow";
         }

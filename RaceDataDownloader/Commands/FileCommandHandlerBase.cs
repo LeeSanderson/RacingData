@@ -5,17 +5,13 @@ using RacePredictor.Core;
 
 namespace RaceDataDownloader.Commands;
 
-public abstract class FileCommandHandlerBase<TCommandHandler, TOptions>
+public abstract class FileCommandHandlerBase<TCommandHandler, TOptions>(
+    IFileSystem fileSystem,
+    ILogger<TCommandHandler> logger)
     where TCommandHandler : FileCommandHandlerBase<TCommandHandler, TOptions>
 {
-    protected readonly IFileSystem FileSystem;
-    protected readonly ILogger<TCommandHandler> Logger;
-
-    protected FileCommandHandlerBase(IFileSystem fileSystem, ILogger<TCommandHandler> logger)
-    {
-        FileSystem = fileSystem;
-        Logger = logger;
-    }
+    protected readonly IFileSystem FileSystem = fileSystem;
+    protected readonly ILogger<TCommandHandler> Logger = logger;
 
     public async Task<int> RunAsync(TOptions options)
     {
