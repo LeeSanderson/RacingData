@@ -27,7 +27,9 @@ var serviceCollection = new ServiceCollection();
 serviceCollection.AddSingleton<CookieContainer>();
 serviceCollection.AddSingleton<IClock, RealClock>();
 serviceCollection.AddSingleton<IFileSystem, FileSystem>();
+serviceCollection.AddSingleton<IHtmlLoader, HttpClientHtmlLoader>();
 serviceCollection.AddSingleton<IRacingDataDownloader, RacingDataDownloader>();
+
 serviceCollection.AddHttpClient().ConfigureHttpClientDefaults(builder =>
 {
     builder.ConfigurePrimaryHttpMessageHandler(sp => new SocketsHttpHandler
@@ -37,7 +39,6 @@ serviceCollection.AddHttpClient().ConfigureHttpClientDefaults(builder =>
     });
 });
 var serviceProvider = serviceCollection.BuildServiceProvider();
-var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 var cookieContainer = serviceProvider.GetRequiredService<CookieContainer>();
 
 // Add a dummy token cookie to avoid 406 responses
