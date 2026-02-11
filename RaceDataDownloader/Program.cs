@@ -27,7 +27,8 @@ var serviceCollection = new ServiceCollection();
 serviceCollection.AddSingleton<CookieContainer>();
 serviceCollection.AddSingleton<IClock, RealClock>();
 serviceCollection.AddSingleton<IFileSystem, FileSystem>();
-serviceCollection.AddSingleton<IHtmlLoader, HttpClientHtmlLoader>();
+// serviceCollection.AddSingleton<IHtmlLoader, HttpClientHtmlLoader>();
+serviceCollection.AddSingleton<IHtmlLoader, PuppeteerHtmlLoader>();
 serviceCollection.AddSingleton<IRacingDataDownloader, RacingDataDownloader>();
 
 serviceCollection.AddHttpClient().ConfigureHttpClientDefaults(builder =>
