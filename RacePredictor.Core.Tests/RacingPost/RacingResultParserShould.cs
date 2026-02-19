@@ -1,4 +1,4 @@
-﻿using RacePredictor.Core.RacingPost;
+using RacePredictor.Core.RacingPost;
 
 namespace RacePredictor.Core.Tests.RacingPost;
 
@@ -230,6 +230,16 @@ public class RacingResultParserShould
         var actualRaceParseResult = await GetRaceResult("results_york_20220611_1505.html");
         actualRaceParseResult.Runners.Length.Should().Be(6);
     }
+
+    [Fact]
+    public async Task ParseExampleSouthwellRaceWithExpectedRaceId()
+    {
+        // Canonical URL format changed and trailing slash is now optional, so we want to ensure
+        //we can still extract the RaceId correctly from the URL
+        var actualRaceParseResult = await GetRaceResult("results_southwell_20260218_1655.html");
+        actualRaceParseResult.Race.Id.Should().Be(911558);
+    }
+
 
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {

@@ -40,7 +40,7 @@ public class RacingResultParser : RaceParser
     {
         var canonicalUrl = _find.Element("link").WithAttribute("rel", "canonical").GetAttribute("href");
         var courseId = @"/results/(\d+)/".FindMatch(canonicalUrl).AsInt();
-        var raceId = @"/.*/(\d+)/".FindMatch(canonicalUrl).AsInt();
+        var raceId = @"/.*/(\d+)/?$".FindMatch(canonicalUrl).AsInt();
 
         var courseName = _find.Element("a").WithCssClass("rp-raceTimeCourseName__name").GetText();
         var raceName = _find.Element("h2").WithCssClass("rp-raceTimeCourseName__title").GetText();
