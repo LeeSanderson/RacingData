@@ -9,6 +9,7 @@ using RaceDataDownloader.Commands.DedupeResults;
 using RaceDataDownloader.Commands.DownloadRaceCards;
 using RaceDataDownloader.Commands.DownloadResults;
 using RaceDataDownloader.Commands.DownloadTodaysRaceCards;
+using RaceDataDownloader.Commands.FixRaceIds;
 using RaceDataDownloader.Commands.UpdateResults;
 using RaceDataDownloader.Commands.ValidateRaceCardPredictions;
 using RacePredictor.Core.RacingPost;
@@ -55,7 +56,8 @@ return await Parser.Default.ParseArguments<
         UpdateResultsOptions,
         DownloadTodaysRaceCardsOptions,
         ValidateRaceCardPredictionsOptions,
-        DedupeResultsOptions>(args)
+        DedupeResultsOptions,
+        FixRaceIdsOptions>(args)
     .MapResult(
         (DownloadResultsOptions options) => CreateDownloadResultsCommandHandler().RunAsync(options),
         (DownloadRaceCardsOptions options) => CreateDownloadRaceCardsCommandHandler().RunAsync(options),
@@ -63,6 +65,7 @@ return await Parser.Default.ParseArguments<
         (DownloadTodaysRaceCardsOptions options) => CreateDownloadTodaysRaceCardsCommandHandler().RunAsync(options),
         (ValidateRaceCardPredictionsOptions options) => CreateValidateRaceCardPredictionsCommandHandler().RunAsync(options),
         (DedupeResultsOptions options) => CreateDedupeResultsCommandHandler().RunAsync(options),
+        (FixRaceIdsOptions options) => CreateFixRaceIdsCommandHandler().RunAsync(options),
         _ => Task.FromResult(ExitCodes.Error));
 
 DownloadResultsCommandHandler CreateDownloadResultsCommandHandler() =>
@@ -92,3 +95,6 @@ ValidateRaceCardPredictionsCommandHandler CreateValidateRaceCardPredictionsComma
 
 DedupeResultsCommandHandler CreateDedupeResultsCommandHandler() =>
     new(serviceProvider.GetRequiredService<IFileSystem>(), loggerFactory.CreateLogger<DedupeResultsCommandHandler>());
+
+FixRaceIdsCommandHandler CreateFixRaceIdsCommandHandler() =>
+    new(serviceProvider.GetRequiredService<IFileSystem>(), loggerFactory.CreateLogger<FixRaceIdsCommandHandler>());
