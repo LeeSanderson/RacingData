@@ -33,6 +33,7 @@ try {
     Invoke-NativeCommand dotnet build
     Invoke-NativeCommand dotnet test
     ## Invoke-NativeCommand $RaceDownloaderExe deduperesults --output $RaceDataPath
+    ## Invoke-NativeCommand $RaceDownloaderExe fixraceids --output $RaceDataPath
     Invoke-NativeCommand $RaceDownloaderExe updateresults --output $RaceDataPath --period 365
     Invoke-NativeCommand $RaceDownloaderExe validate --output $RaceDataPath
     Invoke-NativeCommand $RaceDownloaderExe todaysracecards --output $RaceDataPath
