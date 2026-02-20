@@ -1,0 +1,5 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,13/2,7.5,CompletedRace,911744,1353,Newcastle (AW),02/19/2026 18:00:00,3048725,Swiss Ace right
+9,False,20/1,21,CompletedRace,911742,1353,Newcastle (AW),02/19/2026 20:00:00,4420156,Pop Star right
+1,True,13/2,7.5,CompletedRace,911576,57,Sedgefield,02/19/2026 13:58:00,3495434,Coup De Coeur right
+2,False,13/8F,2.625,CompletedRace,911579,57,Sedgefield,02/19/2026 16:17:00,4175161,Mersey Street right

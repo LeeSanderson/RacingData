@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO.Abstractions;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -9,6 +9,14 @@ namespace RaceDataDownloader.Commands;
 
 public static class FileSystemExtensions
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        IgnoreReadOnlyProperties = false,
+        WriteIndented = true,
+        Converters = { new JsonStringEnumConverter() }
+    };
+
     // ReSharper disable once UnusedParameter.Global
 #pragma warning disable IDE0060
     public static string GetResultsFileName(this IFileSystem fileSystem, string dataFolder, DateOnly date) =>
@@ -62,16 +70,7 @@ public static class FileSystemExtensions
         await fileSystem.File.WriteAllTextAsync(outputFileName, jsonString);
     }
 
-    public static string ToJsonString<TRecord>(this IEnumerable<TRecord> records) =>
-        JsonSerializer.Serialize(records,
-            new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                IgnoreReadOnlyProperties = false,
-                WriteIndented = true,
-                Converters = { new JsonStringEnumConverter() }
-            });
-
+    public static string ToJsonString<TRecord>(this IEnumerable<TRecord> records) => JsonSerializer.Serialize(records, JsonSerializerOptions);
 
     public static async Task<List<TRecord>> ReadRecordsFromJsonFile<TRecord>(
         this IFileSystem fileSystem,
@@ -79,7 +78,7 @@ public static class FileSystemExtensions
     {
         fileSystem.EnsureFileExists(fileName);
         var jsonString = await fileSystem.File.ReadAllTextAsync(fileName);
-        return JsonSerializer.Deserialize<List<TRecord>>(jsonString!) ?? new List<TRecord>();
+        return JsonSerializer.Deserialize<List<TRecord>>(jsonString!) ?? [];
     }
 
     public static void DeleteFileIfExists(this IFileSystem fileSystem, string fileName)

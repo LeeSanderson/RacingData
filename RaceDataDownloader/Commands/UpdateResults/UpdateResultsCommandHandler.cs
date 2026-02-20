@@ -1,25 +1,17 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
 using RacePredictor.Core.RacingPost;
 
 namespace RaceDataDownloader.Commands.UpdateResults;
 
-public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsCommandHandler, UpdateResultsOptions>
+public class UpdateResultsCommandHandler(
+    IFileSystem fileSystem,
+    IRacingDataDownloader downloader,
+    IClock clock,
+    ILogger<UpdateResultsCommandHandler> logger)
+    : FileCommandHandlerBase<UpdateResultsCommandHandler, UpdateResultsOptions>(fileSystem, logger)
 {
-    private readonly IClock _clock;
-    private readonly RacingDataDownloader _downloader;
-
-    public UpdateResultsCommandHandler(
-        IFileSystem fileSystem,
-        IHttpClientFactory httpClientFactory,
-        IClock clock,
-        ILogger<UpdateResultsCommandHandler> logger) : base(fileSystem, logger)
-    {
-        _clock = clock;
-        _downloader = new RacingDataDownloader(httpClientFactory, _clock);
-    }
-
     protected override async Task InternalRunAsync(UpdateResultsOptions options)
     {
         var (start, end, dataFolder) = ValidateOptions(options);
@@ -46,7 +38,7 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
 
             if (monthStart < minOffDate)
             {
-                var preCurrentRaceResults = await GetRaceResultRecordsInRange(monthStart, monthEnd.AddDays(-1));
+                var preCurrentRaceResults = await GetRaceResultRecordsInRange(monthStart, minOffDate.AddDays(-1));
                 raceResults.AddRange(preCurrentRaceResults);
             }
 
@@ -67,7 +59,7 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
     private async Task<List<RaceResultRecord>> GetRaceResultRecordsInRange(DateOnly monthStart, DateOnly monthEnd)
     {
         Logger.LogInformation("Updating file with data for period {Start} to {End}.", monthStart, monthEnd);
-        var raceResults = await _downloader.DownloadRaceResultsInRange(Logger, monthStart, monthEnd);
+        var raceResults = await downloader.DownloadRaceResultsInRange(Logger, monthStart, monthEnd);
         return raceResults.SelectMany(RaceResultRecord.ListFrom).ToList();
     }
 
@@ -76,8 +68,8 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
         var dataFolder = ValidateAndCreateOutputFolder(options.DataDirectory);
 
         var range = options.MinimumPeriodInDays < 1 ? DefaultOptions.MinimumPeriodInDays : options.MinimumPeriodInDays;
-        var start = _clock.Today.AddDays(-range);
-        var end = _clock.Today.AddDays(-1);
+        var start = clock.Today.AddDays(-range);
+        var end = clock.Today.AddDays(-1);
 
         return (start, end, dataFolder);
     }

@@ -1,8 +1,8 @@
 namespace RacePredictor.Core.RacingPost;
 
-internal static class HttpClientHelper
+public static class HttpClientHelper
 {
-    private static readonly string[] DoNotTrackOptions = { "0", "1" };
+    private static readonly string[] DoNotTrackOptions = ["0", "1"];
     private static readonly Random Random = new();
 
     public static void ConfigureRandomHeader(HttpClient client)

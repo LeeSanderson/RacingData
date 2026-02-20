@@ -6,18 +6,16 @@ using RacePredictor.Core;
 
 namespace RaceDataDownloader.Commands.ValidateRaceCardPredictions;
 
-public class ValidateRaceCardPredictionsCommandHandler :
-    FileCommandHandlerBase<ValidateRaceCardPredictionsCommandHandler, ValidateRaceCardPredictionsOptions>
+public class ValidateRaceCardPredictionsCommandHandler(
+    IFileSystem fileSystem,
+    ILogger<ValidateRaceCardPredictionsCommandHandler> logger)
+    :
+        FileCommandHandlerBase<ValidateRaceCardPredictionsCommandHandler, ValidateRaceCardPredictionsOptions>(
+            fileSystem, logger)
 {
     private readonly Dictionary<string, List<RaceResultRecord>> _resultsCache = new();
     private string _dataFolder = string.Empty;
 
-
-    public ValidateRaceCardPredictionsCommandHandler(
-        IFileSystem fileSystem,
-        ILogger<ValidateRaceCardPredictionsCommandHandler> logger) : base(fileSystem, logger)
-    {
-    }
 
     protected override async Task InternalRunAsync(ValidateRaceCardPredictionsOptions options)
     {
@@ -26,7 +24,7 @@ public class ValidateRaceCardPredictionsCommandHandler :
         Logger.LogInformation("Scoring {PredictionCount} predictions for today", predictions.Count);
 
         var scores = await ScorePredictions(predictions).ToListAsync();
-        if (scores.Any())
+        if (scores.Count > 0)
         {
             await MergePredictionScores(scores);
 

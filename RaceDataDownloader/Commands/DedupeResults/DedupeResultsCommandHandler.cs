@@ -1,15 +1,12 @@
-﻿using System.IO.Abstractions;
+using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
 
 namespace RaceDataDownloader.Commands.DedupeResults;
 
-public class DedupeResultsCommandHandler : FileCommandHandlerBase<DedupeResultsCommandHandler, DedupeResultsOptions>
+public class DedupeResultsCommandHandler(IFileSystem fileSystem, ILogger<DedupeResultsCommandHandler> logger)
+    : FileCommandHandlerBase<DedupeResultsCommandHandler, DedupeResultsOptions>(fileSystem, logger)
 {
-    public DedupeResultsCommandHandler(IFileSystem fileSystem, ILogger<DedupeResultsCommandHandler> logger) : base(fileSystem, logger)
-    {
-    }
-
     protected override async Task InternalRunAsync(DedupeResultsOptions options)
     {
         var dataFolder = ValidateAndCreateOutputFolder(options.DataDirectory);

@@ -1,8 +1,8 @@
-﻿using RacePredictor.Core.RacingPost;
+using RacePredictor.Core.RacingPost;
 
 namespace RaceDataDownloader;
 
-internal class RealClock : IClock
+internal sealed class RealClock : IClock
 {
     public bool IsToday(DateOnly date) => date == Today;
 
