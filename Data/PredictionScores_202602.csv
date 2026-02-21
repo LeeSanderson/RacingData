@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+7,False,12/1,13,CompletedRace,913787,1138,Dundalk (AW),02/20/2026 15:40:00,5073314,Clonmacash right
+1,True,4/1,5,CompletedRace,913794,1138,Dundalk (AW),02/20/2026 19:15:00,7588066,So Must I right
 6,False,13/2,7.5,CompletedRace,911744,1353,Newcastle (AW),02/19/2026 18:00:00,3048725,Swiss Ace right
 9,False,20/1,21,CompletedRace,911742,1353,Newcastle (AW),02/19/2026 20:00:00,4420156,Pop Star right
 1,True,13/2,7.5,CompletedRace,911576,57,Sedgefield,02/19/2026 13:58:00,3495434,Coup De Coeur right
