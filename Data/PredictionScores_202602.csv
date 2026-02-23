@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,25/1,26,CompletedRace,911760,1083,Chelmsford (AW),02/21/2026 18:00:00,3900242,Cabeza De Llave right
+3,False,12/1,13,CompletedRace,911758,1083,Chelmsford (AW),02/21/2026 20:00:00,4273975,Drafted right
+0,False,SP,,NonRunner,911767,393,Lingfield (AW),02/21/2026 17:00:00,7390871,Corniche Girl right
 7,False,12/1,13,CompletedRace,913787,1138,Dundalk (AW),02/20/2026 15:40:00,5073314,Clonmacash right
 1,True,4/1,5,CompletedRace,913794,1138,Dundalk (AW),02/20/2026 19:15:00,7588066,So Must I right
 6,False,13/2,7.5,CompletedRace,911744,1353,Newcastle (AW),02/19/2026 18:00:00,3048725,Swiss Ace right
