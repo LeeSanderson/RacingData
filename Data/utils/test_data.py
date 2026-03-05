@@ -9,6 +9,7 @@ class Race:
     CourseId: int
     CourseName: str
     Off: datetime
+    Surface: str
 
 def dt(date_str: str) -> datetime:
     return datetime.strptime(date_str, "%m/%d/%Y %H:%M:%S")
@@ -18,28 +19,32 @@ Ballinrobe20thAt1515 = Race(
     "Stores Maiden Hurdle",
     175,
     "Ballinrobe (IRE)",
-    dt("07/20/2021 15:15:00"))
+    dt("07/20/2021 15:15:00"),
+    "Turf")
 
 Chelmsford21stAt1805 = Race(
     788291,
     "Your First Bet Apprentice Handicap",
     1083,
     "Chelmsford (AW)",
-    dt("07/21/2021 18:05:00"))
+    dt("07/21/2021 18:05:00"),
+    "AllWeather")
 
 Nottingham22ndAt1815 = Race(
     787996,
     "National Race Horse Week Handicap",
     40,
     "Nottingham",
-    dt("07/22/2021 18:15:00"))
+    dt("07/22/2021 18:15:00"),
+    "Turf")
 
 Wolverhampton24thAt1300 = Race(
     788296,
     "Download The Free At The Races App Handicap (Div I)",
     513,
     "Wolverhampton (AW)",
-    dt("07/24/2021 13:00:00"))
+    dt("07/24/2021 13:00:00"),
+    "Dirt")
 
 
 @dataclass
@@ -71,6 +76,7 @@ class RaceResult:
     CourseId: int
     CourseName: str
     Off: datetime
+    Surface: str
     HorseId: int
     HorseName: str
     JockeyId: int
@@ -85,6 +91,7 @@ class RaceResult:
             race.CourseId,
             race.CourseName,
             race.Off,
+            race.Surface,
             horse.HorseId,
             horse.HorseName,
             jockey.JockeyId,

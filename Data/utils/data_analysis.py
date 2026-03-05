@@ -1,4 +1,11 @@
 import pandas as pd
+import numpy as np
+from ipywidgets import IntProgress
+from IPython.display import display
+from datetime import timedelta
+from abc import ABC
+
+from utils.data_transforms import surface_categories
 
 def calculateHorsesPerRace(races : pd.DataFrame) -> pd.DataFrame:
     groups = (races
@@ -6,11 +13,6 @@ def calculateHorsesPerRace(races : pd.DataFrame) -> pd.DataFrame:
           .agg(['count'])
           .rename(columns={'count': 'HorseCount'}))
     return pd.merge(races, groups, how='left', on=['RaceId'])
-
-from ipywidgets import IntProgress
-from IPython.display import display
-from datetime import timedelta
-from abc import ABC
 
 class RaceDataProcessor(ABC):
 
