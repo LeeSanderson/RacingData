@@ -4,7 +4,11 @@ import utils.test_data as td
 
 from utils.data_transforms import (
     encode_surfaces,
-    encode_going)
+    encode_going,
+    calculate_speed,
+    clean_weight,
+    calculate_horse_count,
+)
 
 @pytest.fixture
 def surface_dataframe():
@@ -178,3 +182,94 @@ def test_encode_going_handles_unknown_conditions():
     going_values = [result.iloc[1][col] for col in going_cols]
     assert sum(going_values) == 1.0, "Exactly one going column should be 1.0 for valid going"
     assert result.iloc[1]["Going_Good"] == 1.0, "Good going should set Going_Good = 1.0"
+
+
+# --- calculate_speed ---
+
+@pytest.fixture
+def speed_dataframe():
+    return pd.DataFrame({
+        "DistanceInMeters": [1600, 2000, 1200, 800],
+        "RaceTimeInSeconds": [100.0, 125.0, 60.0, 38.0],  # speeds: 16, 16, 20, ~21.05
+    })
+
+
+def test_calculate_speed_adds_speed_column(speed_dataframe):
+    result = calculate_speed(speed_dataframe)
+    assert "Speed" in result.columns
+
+
+def test_calculate_speed_calculates_correctly(speed_dataframe):
+    result = calculate_speed(speed_dataframe)
+    assert result.iloc[0]["Speed"] == pytest.approx(16.0)
+    assert result.iloc[1]["Speed"] == pytest.approx(16.0)
+
+
+def test_calculate_speed_clamps_over_20_to_nan(speed_dataframe):
+    result = calculate_speed(speed_dataframe)
+    # Row 3 has speed ~21.05 > 20, should be NaN
+    assert pd.isna(result.iloc[3]["Speed"])
+
+
+def test_calculate_speed_preserves_exactly_20(speed_dataframe):
+    result = calculate_speed(speed_dataframe)
+    # Row 2 has speed exactly 20, should be preserved
+    assert result.iloc[2]["Speed"] == pytest.approx(20.0)
+
+
+# --- clean_weight ---
+
+@pytest.fixture
+def weight_dataframe():
+    return pd.DataFrame({
+        "WeightInPounds": [126.0, 9.0, 0.0, 130.0, 10.0],
+    })
+
+
+def test_clean_weight_sets_invalid_to_nan(weight_dataframe):
+    result = clean_weight(weight_dataframe)
+    assert pd.isna(result.iloc[1]["WeightInPounds"])  # 9.0 < 10
+    assert pd.isna(result.iloc[2]["WeightInPounds"])  # 0.0 < 10
+
+
+def test_clean_weight_preserves_valid_weights(weight_dataframe):
+    result = clean_weight(weight_dataframe)
+    assert result.iloc[0]["WeightInPounds"] == 126.0
+    assert result.iloc[3]["WeightInPounds"] == 130.0
+
+
+def test_clean_weight_preserves_boundary_value(weight_dataframe):
+    result = clean_weight(weight_dataframe)
+    # Exactly 10 is valid (condition is < 10)
+    assert result.iloc[4]["WeightInPounds"] == 10.0
+
+
+# --- calculate_horse_count ---
+
+@pytest.fixture
+def horse_count_dataframe():
+    return pd.DataFrame([
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan),
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.LaylaDaffodil, td.ShaneFitzgerald),
+        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),
+        td.RaceResult.new(td.Chelmsford21stAt1805, td.DuckAndVanish, td.PhilipDonovan),
+    ])
+
+
+def test_calculate_horse_count_adds_column(horse_count_dataframe):
+    result = calculate_horse_count(horse_count_dataframe)
+    assert "HorseCount" in result.columns
+
+
+def test_calculate_horse_count_correct_counts(horse_count_dataframe):
+    result = calculate_horse_count(horse_count_dataframe)
+    ballinrobe_rows = result[result["RaceId"] == td.Ballinrobe20thAt1515.RaceId]
+    chelmsford_rows = result[result["RaceId"] == td.Chelmsford21stAt1805.RaceId]
+    assert (ballinrobe_rows["HorseCount"] == 3).all()
+    assert (chelmsford_rows["HorseCount"] == 2).all()
+
+
+def test_calculate_horse_count_preserves_row_count(horse_count_dataframe):
+    result = calculate_horse_count(horse_count_dataframe)
+    assert len(result) == len(horse_count_dataframe)

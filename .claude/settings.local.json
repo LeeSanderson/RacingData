@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import json; nb = json.load\\(open\\(''c:/Dev/Personal/RacingData/Data/FeatureAnalysis.ipynb''\\)\\); cells = nb[''cells'']; print\\(f''Total cells: {len\\(cells\\)}''\\); [print\\(f''Cell {i}: type={c[\"\"cell_type\"\"]}, lines={len\\(c[\"\"source\"\"]\\)}''\\) for i, c in enumerate\\(cells\\)]\")",
+      "Bash(python -m pytest utils/test_data_transforms.py -v)"
+    ]
+  }
+}

@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 surface_categories = ["Surface_AllWeather", "Surface_Dirt", "Surface_Turf"]
@@ -70,3 +71,25 @@ def encode_race_type(races: pd.DataFrame) -> pd.DataFrame:
     return pd.get_dummies(
         races, prefix="RaceType", columns=["RaceTypeTemp"], dtype=float
     )
+
+
+def calculate_speed(races: pd.DataFrame) -> pd.DataFrame:
+    races["Speed"] = races["DistanceInMeters"] / races["RaceTimeInSeconds"]
+    # Clamp invalid speeds (usually due to invalid race time) - fastest horses are ~20 m/s
+    races.loc[races["Speed"] > 20, "Speed"] = np.nan
+    return races
+
+
+def clean_weight(races: pd.DataFrame) -> pd.DataFrame:
+    # Occasionally weight will be undefined (usually zero)
+    races.loc[races["WeightInPounds"] < 10, "WeightInPounds"] = np.nan
+    return races
+
+
+def calculate_horse_count(races: pd.DataFrame) -> pd.DataFrame:
+    groups = (
+        races.groupby(["RaceId"])["HorseId"]
+        .agg(["count"])
+        .rename(columns={"count": "HorseCount"})
+    )
+    return pd.merge(races, groups, how="left", on=["RaceId"])
