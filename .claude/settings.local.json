@@ -5,7 +5,9 @@
       "Bash(python -m pytest utils/test_data_transforms.py -v)",
       "Bash(python -m pytest utils/test_data_analysis.py -v)",
       "Bash(python -m pytest utils/test_data_analysis.py utils/test_data_transforms.py -v)",
-      "Bash(python -m pytest --tb=short)"
+      "Bash(python -m pytest --tb=short)",
+      "Bash(python -c \":*)",
+      "Bash(python:*)"
     ]
   }
 }

@@ -1,4 +1,5 @@
 import math
+from typing import Any
 import pandas as pd
 import numpy as np
 from ipywidgets import IntProgress
@@ -50,7 +51,8 @@ class RaceDataProcessor(ABC):
             daily_slice = df[
                 (df["Off"].dt.date >= slice_start) & (df["Off"].dt.date < slice_end)
             ]
-            self.update(df, history, daily_slice)
+            if len(daily_slice) > 0:
+                self.update(df, history, daily_slice)
             slice_start = slice_end
             f.value += 1
 
@@ -189,7 +191,9 @@ class CalculateHorsesStats(RaceDataProcessor):
     def __calculate_counts_for_race_group(
         self, current_date: np.datetime64, horse_races: pd.DataFrame
     ) -> pd.Series:
-        new_columns = {self.NUMBER_OF_PRIOR_RACES: horse_races["RaceId"].count()}
+        new_columns: dict[str, Any] = {
+            self.NUMBER_OF_PRIOR_RACES: horse_races["RaceId"].count()
+        }
         last_race = horse_races.head(1)  # Data already ordered in Off descending order
         new_columns[self.LAST_RACE_GOING] = last_race["Going"].values[0]
         new_columns[self.LAST_RACE_SURFACE] = last_race["Surface"].values[0]

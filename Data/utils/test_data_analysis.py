@@ -93,6 +93,24 @@ def test_race_with_unknown_jockey_is_not_marked_known():
     assert df["KnownHorseAndJockey"].iloc[3] == False
 
 
+def test_no_races_on_intermediate_day_does_not_raise():
+    """Base class skips update() on gap days (no races), so subclasses never receive an empty slice."""
+    data = [
+        # July 20: establish history
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.ComeSeptember, td.SimonTorrens),
+        # July 21: no races (gap day) — iterator visits it with empty daily_slice
+        # July 22: same horses and jockeys → all known
+        td.RaceResult.new(td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown),
+        td.RaceResult.new(td.Nottingham22ndAt1815, td.ComeSeptember, td.SimonTorrens),
+    ]
+    df = pd.DataFrame(data)
+    # Should not raise KeyError
+    CalculateRacesWithKnownHorsesAndJockeys().process_race_data(df)
+    assert df["KnownHorseAndJockey"].iloc[2] == True
+    assert df["KnownHorseAndJockey"].iloc[3] == True
+
+
 def test_known_across_three_days():
     """Integration test: unknown on day 1 and 2, fully known by day 3."""
     data = [
