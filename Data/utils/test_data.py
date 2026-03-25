@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Self
 
 @dataclass
 class Race:
@@ -10,6 +9,7 @@ class Race:
     CourseName: str
     Off: datetime
     Surface: str
+    RaceType: str = "Flat"
 
 def dt(date_str: str) -> datetime:
     return datetime.strptime(date_str, "%m/%d/%Y %H:%M:%S")
@@ -20,7 +20,8 @@ Ballinrobe20thAt1515 = Race(
     175,
     "Ballinrobe (IRE)",
     dt("07/20/2021 15:15:00"),
-    "Turf")
+    "Turf",
+    "Hurdle")
 
 Chelmsford21stAt1805 = Race(
     788291,
@@ -82,9 +83,31 @@ class RaceResult:
     JockeyId: int
     JockeyName: str
     Going: str
+    FinishingPosition: int = 1
+    DistanceInMeters: float = 1600.0
+    WeightInPounds: float = 126.0
+    Speed: float = 16.0
+    DecimalOdds: float = 3.0
+    OfficialRating: float = 80.0
+    RacingPostRating: float = 100.0
+    TopSpeedRating: float = 90.0
+    RaceType: str = "Flat"
 
     @staticmethod
-    def new(race: Race, horse: Horse, jockey: Jockey, Going: str = "Good") -> "RaceResult":
+    def new(
+        race: Race,
+        horse: Horse,
+        jockey: Jockey,
+        Going: str = "Good",
+        FinishingPosition: int = 1,
+        DistanceInMeters: float = 1600.0,
+        WeightInPounds: float = 126.0,
+        Speed: float = 16.0,
+        DecimalOdds: float = 3.0,
+        OfficialRating: float = 80.0,
+        RacingPostRating: float = 100.0,
+        TopSpeedRating: float = 90.0,
+    ) -> "RaceResult":
         return RaceResult(
             race.RaceId,
             race.RaceName,
@@ -96,5 +119,14 @@ class RaceResult:
             horse.HorseName,
             jockey.JockeyId,
             jockey.JockeyName,
-            Going
+            Going,
+            FinishingPosition,
+            DistanceInMeters,
+            WeightInPounds,
+            Speed,
+            DecimalOdds,
+            OfficialRating,
+            RacingPostRating,
+            TopSpeedRating,
+            race.RaceType,
         )

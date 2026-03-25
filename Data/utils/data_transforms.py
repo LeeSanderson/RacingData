@@ -13,8 +13,11 @@ def encode_surfaces(races: pd.DataFrame) -> pd.DataFrame:
         races, prefix="Surface", columns=["SurfaceTemp"], dtype=float
     )
     races = races.drop(
-        "Surface_Unknown", axis=1
+        "Surface_Unknown", axis=1, errors="ignore"
     )  # Drop unknown surface as only small number.
+    for col in surface_categories:
+        if col not in races.columns:
+            races[col] = 0.0
     return races
 
 
@@ -54,7 +57,11 @@ def encode_going(races: pd.DataFrame) -> pd.DataFrame:
 
     races["NormGoing"] = races["Going"].map(norm_map)
     races = races.drop(going_categories, axis=1, errors="ignore")
-    return pd.get_dummies(races, prefix="Going", columns=["NormGoing"], dtype=float)
+    races = pd.get_dummies(races, prefix="Going", columns=["NormGoing"], dtype=float)
+    for col in going_categories:
+        if col not in races.columns:
+            races[col] = 0.0
+    return races
 
 
 race_type_categories = [
@@ -68,9 +75,13 @@ race_type_categories = [
 def encode_race_type(races: pd.DataFrame) -> pd.DataFrame:
     races = races.drop(race_type_categories, axis=1, errors="ignore")
     races["RaceTypeTemp"] = races["RaceType"]
-    return pd.get_dummies(
+    races = pd.get_dummies(
         races, prefix="RaceType", columns=["RaceTypeTemp"], dtype=float
     )
+    for col in race_type_categories:
+        if col not in races.columns:
+            races[col] = 0.0
+    return races
 
 
 def calculate_speed(races: pd.DataFrame) -> pd.DataFrame:
