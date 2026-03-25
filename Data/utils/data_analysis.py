@@ -149,7 +149,7 @@ class CalculateHorsesStats(RaceDataProcessor):
         string_cols = {self.LAST_RACE_GOING, self.LAST_RACE_SURFACE}
         for col in self.new_column_names:
             df[col] = None if col in string_cols else np.nan
-        df[self.NUMBER_OF_PRIOR_RACES] = 1
+        df[self.NUMBER_OF_PRIOR_RACES] = 1.0
 
     def update(
         self, df: pd.DataFrame, history: pd.DataFrame, daily_slice: pd.DataFrame

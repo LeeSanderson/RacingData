@@ -259,6 +259,36 @@ def test_horse_with_no_prior_history_has_nan_stats(horse_stats_dataframe):
     assert pd.isna(duck_day1["DaysRested"])
 
 
+def test_horse_stats_no_error_when_new_horse_races_alongside_known_horse():
+    """A daily slice with one known horse and one brand-new horse must not raise TypeError.
+
+    Before the fix, NumberOfPriorRaces was initialised as int64 (= 1). The
+    left-join merge in update() produces NaN for the new horse, and assigning
+    NaN into an int64 column raises:
+        TypeError: Invalid value '...' for dtype 'int64'
+    The fix is to initialise the column as float (1.0) so NaN is accepted.
+    """
+    data = [
+        # Day 1: SecretSecret establishes history
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
+        # Day 2: SecretSecret (known) + ComeSeptember (brand new, no prior history)
+        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),
+        td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.SimonTorrens),
+    ]
+    df = pd.DataFrame(data)
+    df = calculateHorsesPerRace(df)
+    df = encode_surfaces(df)
+    df = encode_going(df)
+    df = encode_race_type(df)
+    # Should NOT raise TypeError: Invalid value '...' for dtype 'int64'
+    CalculateHorsesStats().process_race_data(df)
+    come_day2 = df[
+        (df["HorseId"] == td.ComeSeptember.HorseId) &
+        (df["RaceId"] == td.Chelmsford21stAt1805.RaceId)
+    ].iloc[0]
+    assert pd.isna(come_day2["NumberOfPriorRaces"])
+
+
 # ================================================================
 # CalculateJockeyStats
 # ================================================================
