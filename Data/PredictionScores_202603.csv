@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,5/2,3.5,CompletedRace,914273,2,Ascot,03/29/2026 13:55:00,6891772,The Egyptian Ginge right
+3,False,2/1,3,CompletedRace,914274,2,Ascot,03/29/2026 14:30:00,5526349,Noahsgreatrainbow right
+3,False,7/4F,2.75,CompletedRace,914272,2,Ascot,03/29/2026 15:40:00,4948270,Pure Carbon right
+8,False,5/1,6,CompletedRace,914276,2,Ascot,03/29/2026 16:15:00,7426991,Glance Of Glory right
+2,False,11/8F,2.375,CompletedRace,914271,2,Ascot,03/29/2026 16:50:00,2644726,Gabbys Cross right
+0,False,7/2,4.5,PulledUp,914275,2,Ascot,03/29/2026 17:25:00,7227161,Lovely Gino right
+4,False,85/40,3.125,CompletedRace,914379,15,Doncaster,03/29/2026 16:40:00,7771207,Morbeh right
+3,False,7/2,4.5,CompletedRace,916716,416,Sha Tin,03/29/2026 19:15:00,5563307,Sky Heart right
+3,False,16/5,4.2,CompletedRace,916723,416,Sha Tin,03/29/2026 22:05:00,7178944,Bulb General right
 1,True,4/7F,1.5714285714285714,CompletedRace,914454,1079,Kempton (AW),03/28/2026 16:28:00,8455169,King's Trail right
 1,True,9/4F,3.25,CompletedRace,914459,394,Southwell (AW),03/28/2026 18:00:00,7436448,Tamashal right
 7,False,5/1,6,CompletedRace,914462,394,Southwell (AW),03/28/2026 19:30:00,4363056,Regal Glory right
