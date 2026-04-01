@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,6/1,7,CompletedRace,914284,4,Bangor-on-Dee,03/31/2026 14:45:00,7164961,Parliamo right
+4,False,3/1,4,CompletedRace,914287,4,Bangor-on-Dee,03/31/2026 16:50:00,5550818,Roaring Home right
+0,False,11/1,12,Fell,916736,188,Limerick,03/31/2026 18:42:00,4628811,Spinning Web right
+1,True,5/2,3.5,CompletedRace,914291,37,Newcastle,03/31/2026 14:30:00,6064598,Jehol De Thaix right
+3,False,5/1,6,CompletedRace,914292,37,Newcastle,03/31/2026 15:30:00,4924389,Florita right
+1,True,13/2,7.5,CompletedRace,914481,513,Wolverhampton (AW),03/31/2026 19:30:00,7020345,Simplify right
+4,False,11/1,12,CompletedRace,914483,513,Wolverhampton (AW),03/31/2026 20:00:00,3011839,Billy Bathgate right
+6,False,5/2,3.5,CompletedRace,914485,513,Wolverhampton (AW),03/31/2026 20:30:00,7583058,Jane Of The Jungle right
 1,True,3/1,4,CompletedRace,914471,1079,Kempton (AW),03/30/2026 14:40:00,7793644,Escape Plan right
 2,False,6/5F,2.2,CompletedRace,914468,1079,Kempton (AW),03/30/2026 15:10:00,8245520,Plaid right
 6,False,66/1,67,CompletedRace,914467,1079,Kempton (AW),03/30/2026 16:10:00,6928478,Lunanova right
