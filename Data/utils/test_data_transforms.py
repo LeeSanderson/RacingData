@@ -8,24 +8,37 @@ from utils.data_transforms import (
     calculate_speed,
     clean_weight,
     calculate_horse_count,
+    calculate_weight_change,
+    calculate_distance_change,
 )
+
 
 @pytest.fixture
 def surface_dataframe():
-    race_with_unknown_surface: td.Race = td.Race(1, "Test", 2, "Test Course", td.dt("01/01/2021 12:00:00"), "Unknown")
+    race_with_unknown_surface: td.Race = td.Race(
+        1, "Test", 2, "Test Course", td.dt("01/01/2021 12:00:00"), "Unknown"
+    )
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown), # Surface = Turf
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown), # Surface = AllWeather
-        td.RaceResult.new(td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown), # Surface = Dirt
-        race_with_unknown_surface, # Surface = Unknown
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown
+        ),  # Surface = Turf
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown
+        ),  # Surface = AllWeather
+        td.RaceResult.new(
+            td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown
+        ),  # Surface = Dirt
+        race_with_unknown_surface,  # Surface = Unknown
     ]
 
     return pd.DataFrame(data)
+
 
 def test_encode_surfaces_has_expected_columns(surface_dataframe):
     result = encode_surfaces(surface_dataframe)
     expected_columns = ["Surface_AllWeather", "Surface_Dirt", "Surface_Turf"]
     assert all(col in result.columns for col in expected_columns)
+
 
 def test_encode_surfaces_has_expected_values(surface_dataframe):
     result = encode_surfaces(surface_dataframe)
@@ -37,6 +50,7 @@ def test_encode_surfaces_has_expected_values(surface_dataframe):
     for col, expected in expected_values.items():
         assert result[col].tolist() == expected
 
+
 def test_encode_surfaces_drops_unknown_surface(surface_dataframe):
     result = encode_surfaces(surface_dataframe)
     assert "Surface_Unknown" not in result.columns
@@ -46,14 +60,27 @@ def test_encode_surfaces_drops_unknown_surface(surface_dataframe):
 def going_dataframe():
     """Test fixture with various going conditions"""
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good"),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"),
-        td.RaceResult.new(td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, "Good To Firm"),
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown, "Heavy"),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good To Soft"),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Firm"),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good"
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"
+        ),
+        td.RaceResult.new(
+            td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, "Good To Firm"
+        ),
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown, "Heavy"
+        ),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good To Soft"
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Firm"
+        ),
     ]
     return pd.DataFrame(data)
+
 
 def test_encode_going_has_expected_columns(going_dataframe):
     """Test that encode_going creates the expected columns for data that exists"""
@@ -61,7 +88,14 @@ def test_encode_going_has_expected_columns(going_dataframe):
 
     # Should have Going_ prefixed columns for categories that exist in the test data
     # Test data has: Good, Soft, Good To Firm, Heavy, Good To Soft, Firm
-    expected_columns = ["Going_Good", "Going_Good_To_Soft", "Going_Soft", "Going_Good_To_Firm", "Going_Firm", "Going_Heavy"]
+    expected_columns = [
+        "Going_Good",
+        "Going_Good_To_Soft",
+        "Going_Soft",
+        "Going_Good_To_Firm",
+        "Going_Firm",
+        "Going_Heavy",
+    ]
 
     for col in expected_columns:
         assert col in result.columns, f"Expected column {col} should exist"
@@ -93,48 +127,71 @@ def test_encode_going_standard_values(going_dataframe):
 def going_normalization_dataframe():
     """Test fixture with going conditions that need normalization"""
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Standard"),  # -> Good
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Yielding"),  # -> Good_To_Soft
-        td.RaceResult.new(td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, "Fast"),   # -> Firm
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown, "Very Soft"), # -> Heavy
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good To Yielding"), # -> Good_To_Soft
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Muddy"),     # -> Heavy
-        td.RaceResult.new(td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, "Slow"),   # -> Soft
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Standard"
+        ),  # -> Good
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Yielding"
+        ),  # -> Good_To_Soft
+        td.RaceResult.new(
+            td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, "Fast"
+        ),  # -> Firm
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown, "Very Soft"
+        ),  # -> Heavy
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good To Yielding"
+        ),  # -> Good_To_Soft
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Muddy"
+        ),  # -> Heavy
+        td.RaceResult.new(
+            td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, "Slow"
+        ),  # -> Soft
     ]
     return pd.DataFrame(data)
+
 
 def test_encode_going_normalization_mapping(going_normalization_dataframe):
     """Test that various going conditions are normalized to standard categories"""
     result = encode_going(going_normalization_dataframe)
 
     expected_values = [
-        ("Going_Good", 0),        # Standard -> Good
-        ("Going_Good_To_Soft", 1), # Yielding -> Good_To_Soft
-        ("Going_Firm", 2),        # Fast -> Firm
-        ("Going_Heavy", 3),       # Very Soft -> Heavy
-        ("Going_Good_To_Soft", 4), # Good To Yielding -> Good_To_Soft
-        ("Going_Heavy", 5),       # Muddy -> Heavy
-        ("Going_Soft", 6),        # Slow -> Soft
+        ("Going_Good", 0),  # Standard -> Good
+        ("Going_Good_To_Soft", 1),  # Yielding -> Good_To_Soft
+        ("Going_Firm", 2),  # Fast -> Firm
+        ("Going_Heavy", 3),  # Very Soft -> Heavy
+        ("Going_Good_To_Soft", 4),  # Good To Yielding -> Good_To_Soft
+        ("Going_Heavy", 5),  # Muddy -> Heavy
+        ("Going_Soft", 6),  # Slow -> Soft
     ]
 
     for expected_col, row_idx in expected_values:
         # Check that the expected column exists and is 1.0 for this row
         assert expected_col in result.columns, f"Column {expected_col} should exist"
-        assert result.iloc[row_idx][expected_col] == 1.0, f"Row {row_idx} should have {expected_col} = 1.0"
+        assert (
+            result.iloc[row_idx][expected_col] == 1.0
+        ), f"Row {row_idx} should have {expected_col} = 1.0"
 
         # Check that all other going columns are 0.0 for this row
         all_going_cols = [col for col in result.columns if col.startswith("Going_")]
         other_cols = [col for col in all_going_cols if col != expected_col]
         for col in other_cols:
-            assert result.iloc[row_idx][col] == 0.0, f"Row {row_idx} should have {col} = 0.0"
+            assert (
+                result.iloc[row_idx][col] == 0.0
+            ), f"Row {row_idx} should have {col} = 0.0"
 
 
 def test_encode_going_drops_existing_going_columns():
     """Test that existing going columns are dropped before encoding"""
     # Create dataframe with existing Going_ columns
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good"),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good"
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"
+        ),
     ]
     df = pd.DataFrame(data)
 
@@ -164,8 +221,12 @@ def test_encode_going_preserves_other_columns(going_dataframe):
 def test_encode_going_handles_unknown_conditions():
     """Test behavior with going conditions not in the normalization map"""
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Unknown Going"),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Good"),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Unknown Going"
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Good"
+        ),
     ]
     df = pd.DataFrame(data)
 
@@ -180,18 +241,28 @@ def test_encode_going_handles_unknown_conditions():
 
     # Second row (Good) should have exactly one going column as 1.0
     going_values = [result.iloc[1][col] for col in going_cols]
-    assert sum(going_values) == 1.0, "Exactly one going column should be 1.0 for valid going"
+    assert (
+        sum(going_values) == 1.0
+    ), "Exactly one going column should be 1.0 for valid going"
     assert result.iloc[1]["Going_Good"] == 1.0, "Good going should set Going_Good = 1.0"
 
 
 # --- calculate_speed ---
 
+
 @pytest.fixture
 def speed_dataframe():
-    return pd.DataFrame({
-        "DistanceInMeters": [1600, 2000, 1200, 800],
-        "RaceTimeInSeconds": [100.0, 125.0, 60.0, 38.0],  # speeds: 16, 16, 20, ~21.05
-    })
+    return pd.DataFrame(
+        {
+            "DistanceInMeters": [1600, 2000, 1200, 800],
+            "RaceTimeInSeconds": [
+                100.0,
+                125.0,
+                60.0,
+                38.0,
+            ],  # speeds: 16, 16, 20, ~21.05
+        }
+    )
 
 
 def test_calculate_speed_adds_speed_column(speed_dataframe):
@@ -219,11 +290,14 @@ def test_calculate_speed_preserves_exactly_20(speed_dataframe):
 
 # --- clean_weight ---
 
+
 @pytest.fixture
 def weight_dataframe():
-    return pd.DataFrame({
-        "WeightInPounds": [126.0, 9.0, 0.0, 130.0, 10.0],
-    })
+    return pd.DataFrame(
+        {
+            "WeightInPounds": [126.0, 9.0, 0.0, 130.0, 10.0],
+        }
+    )
 
 
 def test_clean_weight_sets_invalid_to_nan(weight_dataframe):
@@ -246,15 +320,24 @@ def test_clean_weight_preserves_boundary_value(weight_dataframe):
 
 # --- calculate_horse_count ---
 
+
 @pytest.fixture
 def horse_count_dataframe():
-    return pd.DataFrame([
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.LaylaDaffodil, td.ShaneFitzgerald),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.DuckAndVanish, td.PhilipDonovan),
-    ])
+    return pd.DataFrame(
+        [
+            td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
+            td.RaceResult.new(
+                td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan
+            ),
+            td.RaceResult.new(
+                td.Ballinrobe20thAt1515, td.LaylaDaffodil, td.ShaneFitzgerald
+            ),
+            td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),
+            td.RaceResult.new(
+                td.Chelmsford21stAt1805, td.DuckAndVanish, td.PhilipDonovan
+            ),
+        ]
+    )
 
 
 def test_calculate_horse_count_adds_column(horse_count_dataframe):
@@ -273,3 +356,65 @@ def test_calculate_horse_count_correct_counts(horse_count_dataframe):
 def test_calculate_horse_count_preserves_row_count(horse_count_dataframe):
     result = calculate_horse_count(horse_count_dataframe)
     assert len(result) == len(horse_count_dataframe)
+
+
+# --- calculate_weight_change ---
+
+
+@pytest.fixture
+def weight_change_dataframe():
+    return pd.DataFrame(
+        {
+            "WeightInPounds": [130.0, 128.0, 126.0],
+            "LastRaceWeightInPounds": [126.0, 130.0, float("nan")],
+        }
+    )
+
+
+def test_calculate_weight_change_adds_column(weight_change_dataframe):
+    result = calculate_weight_change(weight_change_dataframe)
+    assert "WeightChange" in result.columns
+
+
+def test_calculate_weight_change_computes_correctly(weight_change_dataframe):
+    result = calculate_weight_change(weight_change_dataframe)
+    assert result.iloc[0]["WeightChange"] == pytest.approx(4.0)
+    assert result.iloc[1]["WeightChange"] == pytest.approx(-2.0)
+
+
+def test_calculate_weight_change_is_nan_when_last_race_weight_is_nan(
+    weight_change_dataframe,
+):
+    result = calculate_weight_change(weight_change_dataframe)
+    assert pd.isna(result.iloc[2]["WeightChange"])
+
+
+# --- calculate_distance_change ---
+
+
+@pytest.fixture
+def distance_change_dataframe():
+    return pd.DataFrame(
+        {
+            "DistanceInMeters": [2000.0, 1600.0, 1200.0],
+            "LastRaceDistanceInMeters": [1600.0, 2000.0, float("nan")],
+        }
+    )
+
+
+def test_calculate_distance_change_adds_column(distance_change_dataframe):
+    result = calculate_distance_change(distance_change_dataframe)
+    assert "DistanceChange" in result.columns
+
+
+def test_calculate_distance_change_computes_correctly(distance_change_dataframe):
+    result = calculate_distance_change(distance_change_dataframe)
+    assert result.iloc[0]["DistanceChange"] == pytest.approx(400.0)
+    assert result.iloc[1]["DistanceChange"] == pytest.approx(-400.0)
+
+
+def test_calculate_distance_change_is_nan_when_last_race_distance_is_nan(
+    distance_change_dataframe,
+):
+    result = calculate_distance_change(distance_change_dataframe)
+    assert pd.isna(result.iloc[2]["DistanceChange"])

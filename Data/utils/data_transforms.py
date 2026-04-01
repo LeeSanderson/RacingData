@@ -104,3 +104,15 @@ def calculate_horse_count(races: pd.DataFrame) -> pd.DataFrame:
         .rename(columns={"count": "HorseCount"})
     )
     return pd.merge(races, groups, how="left", on=["RaceId"])
+
+
+def calculate_weight_change(races: pd.DataFrame) -> pd.DataFrame:
+    races["WeightChange"] = races["WeightInPounds"] - races["LastRaceWeightInPounds"]
+    return races
+
+
+def calculate_distance_change(races: pd.DataFrame) -> pd.DataFrame:
+    races["DistanceChange"] = (
+        races["DistanceInMeters"] - races["LastRaceDistanceInMeters"]
+    )
+    return races

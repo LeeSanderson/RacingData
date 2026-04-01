@@ -121,6 +121,9 @@ class CalculateHorsesStats(RaceDataProcessor):
     LAST_RACE_RACING_POST_RATING = "LastRaceRacingPostRating"
     LAST_RACE_TOP_SPEED_RATING = "LastRaceTopSpeedRating"
     AVG_RELATIVE_FINISHING_POSITION = "LastRaceAvgRelFinishingPosition"
+    LAST3_AVG_SPEED = "Last3RaceAvgSpeed"
+    LAST3_SPEED_TREND = "Last3RaceSpeedTrend"
+    LAST3_AVG_REL_POS = "Last3AvgRelFinishingPosition"
     ONE_DAY = np.timedelta64(1, "D")
 
     def before_process_data(self, df: pd.DataFrame) -> None:
@@ -138,6 +141,9 @@ class CalculateHorsesStats(RaceDataProcessor):
                 self.LAST_RACE_RACING_POST_RATING,
                 self.LAST_RACE_TOP_SPEED_RATING,
                 self.AVG_RELATIVE_FINISHING_POSITION,
+                self.LAST3_AVG_SPEED,
+                self.LAST3_SPEED_TREND,
+                self.LAST3_AVG_REL_POS,
             ]
             + [f"LastRace{surface}" for surface in surface_categories]
             + [f"LastRace{going}" for going in going_categories]
@@ -216,6 +222,22 @@ class CalculateHorsesStats(RaceDataProcessor):
         new_columns[self.AVG_RELATIVE_FINISHING_POSITION] = (
             horse_races["FinishingPosition"] / horse_races["HorseCount"]
         ).mean()
+        last3 = horse_races.head(3)
+        last3_speeds = last3["Speed"].dropna()
+        if len(last3_speeds) >= 3:
+            last3_avg = last3_speeds.mean()
+            new_columns[self.LAST3_AVG_SPEED] = last3_avg
+            new_columns[self.LAST3_SPEED_TREND] = (
+                new_columns[self.LAST_RACE_SPEED] - last3_avg
+            )
+        else:
+            new_columns[self.LAST3_AVG_SPEED] = np.nan
+            new_columns[self.LAST3_SPEED_TREND] = np.nan
+        new_columns[self.LAST3_AVG_REL_POS] = (
+            (last3["FinishingPosition"] / last3["HorseCount"]).mean()
+            if len(last3) >= 3
+            else np.nan
+        )
         for going in going_categories:
             new_columns[f"LastRace{going}"] = last_race[going].values[0]
         for surface in surface_categories:
@@ -286,6 +308,62 @@ class CalculateJockeyStats(RaceDataProcessor):
             self.DAYS_SINCE_LAST_RACE: math.ceil(
                 (current_date - last_race["Off"].values[0]) / self.ONE_DAY
             ),
+            self.WIN_PERCENTAGE: wins / number_of_races,
+            self.TOP_THREE_FINISH_PERCENTAGE: top_finishes / number_of_races,
+            self.AVG_RELATIVE_FINISHING_POSITION: average_position,
+        }
+        return pd.Series(new_columns, index=self.new_column_names)
+
+
+# ================================================================
+# Calculate, for each trainer, stats based on their previous races
+# ================================================================
+class CalculateTrainerStats(RaceDataProcessor):
+    NUMBER_OF_PRIOR_RACES = "TrainerNumberOfPriorRaces"
+    WIN_PERCENTAGE = "TrainerWinPercentage"
+    TOP_THREE_FINISH_PERCENTAGE = "TrainerTop3Percentage"
+    AVG_RELATIVE_FINISHING_POSITION = "TrainerAvgRelFinishingPosition"
+
+    def before_process_data(self, df: pd.DataFrame) -> None:
+        df.loc[:, self.NUMBER_OF_PRIOR_RACES] = 1.0
+        self.new_column_names = [
+            self.NUMBER_OF_PRIOR_RACES,
+            self.WIN_PERCENTAGE,
+            self.TOP_THREE_FINISH_PERCENTAGE,
+            self.AVG_RELATIVE_FINISHING_POSITION,
+        ]
+
+    def update(
+        self, df: pd.DataFrame, history: pd.DataFrame, daily_slice: pd.DataFrame
+    ) -> None:
+        slice_trainers = daily_slice["TrainerId"].unique().tolist()
+        trainer_history = history[
+            history["TrainerId"].isin(slice_trainers)
+        ].sort_values(["TrainerId", "Off"], ascending=[True, False])
+        if len(trainer_history) > 0:
+            stats = trainer_history.groupby("TrainerId").apply(
+                lambda g: self.__calculate_stats_for_trainer(g),
+                include_groups=False,
+            )
+            daily_stats = pd.merge(
+                daily_slice.drop(self.new_column_names, axis=1, errors="ignore"),
+                stats,
+                how="left",
+                on=["TrainerId"],
+            )
+            df.loc[df.index.isin(daily_slice.index), self.new_column_names] = (
+                daily_stats[self.new_column_names].values
+            )
+
+    def __calculate_stats_for_trainer(self, trainer_races: pd.DataFrame) -> pd.Series:
+        number_of_races = trainer_races["RaceId"].count()
+        wins = len(trainer_races[trainer_races["FinishingPosition"] == 1])
+        top_finishes = len(trainer_races[trainer_races["FinishingPosition"] < 4])
+        average_position = (
+            trainer_races["FinishingPosition"] / trainer_races["HorseCount"]
+        ).mean()
+        new_columns = {
+            self.NUMBER_OF_PRIOR_RACES: number_of_races,
             self.WIN_PERCENTAGE: wins / number_of_races,
             self.TOP_THREE_FINISH_PERCENTAGE: top_finishes / number_of_races,
             self.AVG_RELATIVE_FINISHING_POSITION: average_position,
