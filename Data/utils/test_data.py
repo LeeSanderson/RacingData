@@ -130,7 +130,7 @@ class RaceResult:
         OfficialRating: float = 80.0,
         RacingPostRating: float = 100.0,
         TopSpeedRating: float = 90.0,
-        trainer: "Trainer" = None,
+        trainer: "Trainer | None" = None,
     ) -> "RaceResult":
         t = trainer or TrainerSmith
         return RaceResult(
