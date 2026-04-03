@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,,,CompletedRace,916982,869,Bahrain,04/02/2026 16:30:00,3358578,Merlin's Beard right
+2,False,11/4,3.75,CompletedRace,914315,12,Chepstow,04/02/2026 15:32:00,4880928,Ben Solo right
+2,False,13/2,7.5,CompletedRace,914326,27,Kelso,04/02/2026 15:10:00,5085230,Vanilla Dancer right
+1,True,13/2,7.5,CompletedRace,914325,27,Kelso,04/02/2026 15:40:00,4701582,Looking Splendid right
+5,False,6/4F,2.5,CompletedRace,914323,27,Kelso,04/02/2026 16:46:00,4867594,Always A Reason right
+8,False,9/2,5.5,CompletedRace,914496,394,Southwell (AW),04/02/2026 18:18:00,8362121,Tewkesbury right
+2,False,17/2,9.5,CompletedRace,914497,394,Southwell (AW),04/02/2026 19:18:00,8259461,Keep An Eye On It right
+9,False,18/1,19,CompletedRace,914495,394,Southwell (AW),04/02/2026 20:18:00,4303532,Pigeon House right
 4,False,16/1,17,CompletedRace,914489,1079,Kempton (AW),04/01/2026 18:00:00,4303356,Chico Dulce right
 6,False,22/1,23,CompletedRace,914491,1079,Kempton (AW),04/01/2026 19:00:00,7551805,Black Endeavour right
 2,False,9/2,5.5,CompletedRace,914486,1079,Kempton (AW),04/01/2026 19:30:00,7947754,Devil's Peak right
