@@ -10,7 +10,8 @@
       "Bash(python:*)",
       "Bash(py -c \":*)",
       "Bash(ls -la Data/Results_*.csv)",
-      "Bash(sort -k6,7)"
+      "Bash(sort -k6,7)",
+      "WebSearch"
     ]
   }
 }
