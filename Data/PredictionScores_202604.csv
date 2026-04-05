@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+0,False,5/2F,3.5,PulledUp,914328,8,Carlisle,04/04/2026 13:13:00,6719013,Benmore right
+1,True,11/10F,2.1,CompletedRace,917108,8,Carlisle,04/04/2026 16:40:00,6979142,Kado Sacree right
+2,False,7/2,4.5,CompletedRace,916948,596,Cork,04/04/2026 14:54:00,7865950,Chicago Pope right
+5,False,4/1,5,CompletedRace,916971,182,Fairyhouse,04/04/2026 17:35:00,8784170,Lizzie Twigg right
+4,False,4/1,5,CompletedRace,914340,23,Haydock,04/04/2026 16:30:00,5705822,Big Storm Brewing right
+1,True,9/4,3.25,CompletedRace,914344,26,Huntingdon,04/04/2026 16:17:00,5045948,Overabottleofred right
+7,False,6/1,7,CompletedRace,914345,26,Huntingdon,04/04/2026 16:50:00,4001950,Sullivan Bay right
+1,True,100/30,4.333333333333334,CompletedRace,914342,26,Huntingdon,04/04/2026 17:25:00,4857576,Park Annonciade right
+3,False,5/1,6,CompletedRace,914343,26,Huntingdon,04/04/2026 18:00:00,6763612,Sweeper System right
+7,False,13/2,7.5,CompletedRace,914351,39,Newton Abbot,04/04/2026 15:10:00,4757516,Jackeline right
+4,False,10/1,11,CompletedRace,914347,39,Newton Abbot,04/04/2026 15:49:00,4719430,Nickelforce right
+1,True,3/1,4,CompletedRace,914348,39,Newton Abbot,04/04/2026 16:20:00,58956240,Top Guy right
+7,False,12/1,13,CompletedRace,914533,513,Wolverhampton (AW),04/04/2026 17:50:00,2537529,Always Fearless right
+2,False,10/1,11,CompletedRace,914531,513,Wolverhampton (AW),04/04/2026 18:55:00,2578012,Lequinto right
+2,False,6/1,7,CompletedRace,914532,513,Wolverhampton (AW),04/04/2026 20:00:00,3177331,Shalaa Asker right
+1,True,6/4F,2.5,CompletedRace,914534,513,Wolverhampton (AW),04/04/2026 20:30:00,7020387,Karakula Dancer right
 4,False,,,CompletedRace,916984,869,Bahrain,04/03/2026 15:00:00,7561592,Mawood right
 4,False,,,CompletedRace,916982,869,Bahrain,04/02/2026 16:30:00,3358578,Merlin's Beard right
 2,False,11/4,3.75,CompletedRace,914315,12,Chepstow,04/02/2026 15:32:00,4880928,Ben Solo right
