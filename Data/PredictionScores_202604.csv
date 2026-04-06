@@ -1,4 +1,15 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+0,False,SP,,NonRunner,916977,596,Cork,04/05/2026 16:10:00,5947074,Promontory right
+1,True,13/2,7.5,CompletedRace,916957,182,Fairyhouse,04/05/2026 14:40:00,5826645,Koktail Brut right
+0,False,14/1,15,UnseatedRider,915941,182,Fairyhouse,04/05/2026 17:00:00,4969844,Western Fold right
+1,True,15/8,2.875,CompletedRace,914353,35,Market Rasen,04/05/2026 14:13:00,6873172,Emerald Breeze right
+4,False,9/2,5.5,CompletedRace,914358,35,Market Rasen,04/05/2026 16:33:00,4743594,Diesel Line right
+2,False,2/1J,3,CompletedRace,914362,44,Plumpton,04/05/2026 14:20:00,6868950,Delgany Deadline right
+2,False,5/2,3.5,CompletedRace,914360,44,Plumpton,04/05/2026 16:40:00,3458017,Superstylin right
+0,False,28/1,29,PulledUp,914364,44,Plumpton,04/05/2026 17:10:00,1860137,Smith right
+8,False,11/1,12,CompletedRace,914541,394,Southwell (AW),04/05/2026 13:55:00,6032309,Andalprofit right
+5,False,12/1,13,CompletedRace,914535,394,Southwell (AW),04/05/2026 15:41:00,7762479,Likeness right
+2,False,3/1J,4,CompletedRace,914538,394,Southwell (AW),04/05/2026 16:15:00,5809776,Marry The Night right
 0,False,5/2F,3.5,PulledUp,914328,8,Carlisle,04/04/2026 13:13:00,6719013,Benmore right
 1,True,11/10F,2.1,CompletedRace,917108,8,Carlisle,04/04/2026 16:40:00,6979142,Kado Sacree right
 2,False,7/2,4.5,CompletedRace,916948,596,Cork,04/04/2026 14:54:00,7865950,Chicago Pope right
