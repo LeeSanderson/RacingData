@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,4/1,5,CompletedRace,917069,596,Cork,04/06/2026 14:25:00,6829601,Glenashling right
+1,True,5/4F,2.25,CompletedRace,917080,182,Fairyhouse,04/06/2026 14:40:00,8132996,Proactif right
+1,True,4/1,5,CompletedRace,915230,18,Fakenham,04/06/2026 14:50:00,8418738,Cotton Socks right
+2,False,9/4,3.25,CompletedRace,915228,18,Fakenham,04/06/2026 15:25:00,3456392,Walking On Air right
+0,False,7/2,4.5,PulledUp,915232,18,Fakenham,04/06/2026 16:00:00,6398099,Abbey Law right
+0,False,SP,,NonRunner,915236,24,Hereford,04/06/2026 14:10:00,4757516,Jackeline right
+0,False,15/2,8.5,PulledUp,915235,24,Hereford,04/06/2026 15:20:00,3246076,Lelantos right
+1,True,5/2,3.5,CompletedRace,915234,24,Hereford,04/06/2026 15:55:00,4938773,Party Vibes right
+0,False,14/1,15,Refused,915240,24,Hereford,04/06/2026 16:30:00,3545666,Walkinthewoods right
+1,True,5/4F,2.25,CompletedRace,915226,44,Plumpton,04/06/2026 14:00:00,5911208,Local Derby right
+4,False,100/30,4.333333333333334,CompletedRace,915227,44,Plumpton,04/06/2026 17:30:00,7272299,Cheap Sandwiches right
+4,False,48/10,5.8,CompletedRace,917115,416,Sha Tin,04/06/2026 21:10:00,5915756,Harold Win right
+5,False,12/1,13,CompletedRace,917117,416,Sha Tin,04/06/2026 22:20:00,3662413,Drombeg Banner right
+5,False,9/1,10,CompletedRace,915546,513,Wolverhampton (AW),04/06/2026 13:55:00,3366623,King Of Speed right
+2,False,EvensF,2,CompletedRace,915551,513,Wolverhampton (AW),04/06/2026 15:05:00,8326149,Kelly Burn right
+7,False,16/1,17,CompletedRace,917195,513,Wolverhampton (AW),04/06/2026 17:25:00,5875730,East Tyrone right
 0,False,SP,,NonRunner,916977,596,Cork,04/05/2026 16:10:00,5947074,Promontory right
 1,True,13/2,7.5,CompletedRace,916957,182,Fairyhouse,04/05/2026 14:40:00,5826645,Koktail Brut right
 0,False,14/1,15,UnseatedRider,915941,182,Fairyhouse,04/05/2026 17:00:00,4969844,Western Fold right
