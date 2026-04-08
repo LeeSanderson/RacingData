@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,6/1,7,CompletedRace,915244,14,Exeter,04/07/2026 15:10:00,5015351,Blacksamssenorita right
+0,False,5/6F,1.8333333333333335,Fell,915241,14,Exeter,04/07/2026 16:40:00,7015878,Dyno Dave right
+2,False,11/8F,2.375,CompletedRace,915554,394,Southwell (AW),04/07/2026 19:30:00,6509785,Analogical right
 2,False,4/1,5,CompletedRace,917069,596,Cork,04/06/2026 14:25:00,6829601,Glenashling right
 1,True,5/4F,2.25,CompletedRace,917080,182,Fairyhouse,04/06/2026 14:40:00,8132996,Proactif right
 1,True,4/1,5,CompletedRace,915230,18,Fakenham,04/06/2026 14:50:00,8418738,Cotton Socks right
