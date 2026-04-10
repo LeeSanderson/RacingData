@@ -1,4 +1,17 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,22/1,23,CompletedRace,915263,32,Aintree,04/09/2026 14:20:00,4255108,Blueking d'Oroux right
+2,False,22/1,23,CompletedRace,915263,32,Aintree,04/09/2026 14:20:00,4255108,Blueking d'Oroux right
+3,False,12/1,13,CompletedRace,915261,32,Aintree,04/09/2026 14:55:00,1886134,Pic d'Orhy right
+3,False,12/1,13,CompletedRace,915261,32,Aintree,04/09/2026 14:55:00,1886134,Pic d'Orhy right
+0,False,SP,,NonRunner,915573,394,Southwell (AW),04/09/2026 16:25:00,7006358,Senor Cortez right
+1,True,2/7F,1.2857142857142856,CompletedRace,915257,73,Taunton,04/09/2026 14:32:00,8236364,Minella Yoga right
+0,False,11/10F,2.1,UnseatedRider,915258,73,Taunton,04/09/2026 15:07:00,4144673,Noble Blue right
+0,False,SP,,NonRunner,915259,73,Taunton,04/09/2026 15:40:00,4305392,Dance Havana right
+6,False,5/1,6,CompletedRace,915255,73,Taunton,04/09/2026 16:15:00,3290480,Autonomous Cloud right
+5,False,8/1,9,CompletedRace,917152,513,Wolverhampton (AW),04/09/2026 18:30:00,5806696,Isla Bella right
+1,True,EvensF,2,CompletedRace,917153,513,Wolverhampton (AW),04/09/2026 19:00:00,3293697,Youarenotforgiven right
+1,True,5/4F,2.25,CompletedRace,917154,513,Wolverhampton (AW),04/09/2026 19:30:00,6233857,Gold Star Hero right
+1,True,2/9F,1.2222222222222223,CompletedRace,917155,513,Wolverhampton (AW),04/09/2026 20:00:00,7605832,On The Inlet right
 7,False,14/1,15,CompletedRace,915413,10,Catterick,04/08/2026 15:58:00,2863059,Ebony Maw right
 0,False,SP,,NonRunner,917239,10,Catterick,04/08/2026 16:33:00,4438579,Gastronomy right
 1,True,14/1,15,CompletedRace,915409,10,Catterick,04/08/2026 17:05:00,5379853,Sir Garfield right
