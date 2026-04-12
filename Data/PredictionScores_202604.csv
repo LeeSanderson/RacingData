@@ -1,4 +1,19 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,10/1,11,CompletedRace,915274,32,Aintree,04/11/2026 12:45:00,5577244,Be Aware right
+1,True,1/2F,1.5,CompletedRace,915289,12,Chepstow,04/11/2026 13:05:00,8313802,Tenter Le Tout right
+1,True,5/2J,3.5,CompletedRace,915288,12,Chepstow,04/11/2026 13:40:00,4739608,Pep Talking right
+1,True,15/8F,2.875,CompletedRace,915287,12,Chepstow,04/11/2026 14:50:00,3265163,The Boola Boss right
+6,False,9/1,10,CompletedRace,915290,12,Chepstow,04/11/2026 15:32:00,2779120,Benignitas right
+1,True,4/1,5,CompletedRace,915295,37,Newcastle,04/11/2026 13:30:00,5457584,The Clonmel Kid right
+3,False,9/4J,3.25,CompletedRace,915292,37,Newcastle,04/11/2026 14:42:00,3891072,Special Rate right
+4,False,100/30,4.333333333333334,CompletedRace,915294,37,Newcastle,04/11/2026 15:25:00,4668948,Double Digits right
+2,False,100/30,4.333333333333334,CompletedRace,915293,37,Newcastle,04/11/2026 16:32:00,7365377,Port Station right
+1,True,10/11,1.9090909090909092,CompletedRace,915588,394,Southwell (AW),04/11/2026 16:45:00,8062546,Galilean Quality right
+1,True,7/1,8,CompletedRace,915592,394,Southwell (AW),04/11/2026 18:45:00,6613669,Shades Of May right
+8,False,17/2,9.5,CompletedRace,915591,394,Southwell (AW),04/11/2026 19:45:00,4076451,Northcliff right
+1,True,4/1,5,CompletedRace,915593,394,Southwell (AW),04/11/2026 20:15:00,5322904,Piperstown right
+5,False,6/1,7,CompletedRace,915432,104,Yarmouth,04/11/2026 17:40:00,6023334,Skellig Isle right
+8,False,11/1,12,CompletedRace,915435,104,Yarmouth,04/11/2026 18:10:00,7529969,Phantom Shadow right
 5,False,4/1,5,CompletedRace,917268,1138,Dundalk (AW),04/10/2026 20:20:00,8179306,Elm Creek right
 2,False,EvensF,2,CompletedRace,915282,57,Sedgefield,04/10/2026 15:38:00,5045993,Defence Witness right
 4,False,5/2,3.5,CompletedRace,915283,57,Sedgefield,04/10/2026 16:13:00,3837474,Star Vantage right
