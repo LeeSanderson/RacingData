@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,16/1,17,CompletedRace,916264,27,Kelso,04/20/2026 14:00:00,8313788,Thorneylands right
+2,False,2/1F,3,CompletedRace,916265,27,Kelso,04/20/2026 15:00:00,4701582,Looking Splendid right
+2,False,5/1,6,CompletedRace,918384,27,Kelso,04/20/2026 16:30:00,4509293,Newport right
+5,False,10/1,11,CompletedRace,916576,393,Lingfield (AW),04/20/2026 14:51:00,3560267,Twilight Jet right
+1,True,7/2,4.5,CompletedRace,916579,393,Lingfield (AW),04/20/2026 15:21:00,6183958,Twilight Moon right
+1,True,11/8F,2.375,CompletedRace,916582,393,Lingfield (AW),04/20/2026 16:55:00,6197909,Magna right
+4,False,5/2,3.5,CompletedRace,916585,1353,Newcastle (AW),04/20/2026 18:00:00,7324765,Mao Shang Wong right
+1,True,11/10F,2.1,CompletedRace,916356,47,Redcar,04/20/2026 16:20:00,8009415,Mr Colonel right
 1,True,13/2,7.5,CompletedRace,915389,44,Plumpton,04/19/2026 14:17:00,3308182,Begin The Luck right
 3,False,7/1,8,CompletedRace,915390,44,Plumpton,04/19/2026 16:37:00,6807916,Chartwell Jock right
 3,False,10/1,11,CompletedRace,915392,44,Plumpton,04/19/2026 17:12:00,4125042,Alien Storm right
