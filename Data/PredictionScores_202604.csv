@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+0,False,SP,,NonRunner,916389,10,Catterick,04/22/2026 13:52:00,5007775,Miss Rainbow right
+6,False,9/4F,3.25,CompletedRace,916387,10,Catterick,04/22/2026 14:22:00,7365393,Rotokura Belle right
+2,False,7/4F,2.75,CompletedRace,916385,10,Catterick,04/22/2026 15:52:00,4303399,Vince Le Prince right
+1,True,EvensF,2,CompletedRace,916383,10,Catterick,04/22/2026 16:25:00,2645543,Aberama Gold right
+2,False,10/1,11,CompletedRace,916388,10,Catterick,04/22/2026 17:00:00,2163734,Arctic Fox right
+1,True,9/1,10,CompletedRace,916277,34,Ludlow,04/22/2026 14:30:00,6961659,Sonic Pioneer right
+4,False,3/1F,4,CompletedRace,916278,34,Ludlow,04/22/2026 15:00:00,4666929,Tzarmix right
+3,False,3/1,4,CompletedRace,916276,34,Ludlow,04/22/2026 15:30:00,3513261,Gris Majeur right
+1,True,5/2F,3.5,CompletedRace,916291,41,Perth,04/22/2026 14:10:00,5469751,Barlovento right
+4,False,14/1,15,CompletedRace,916288,41,Perth,04/22/2026 14:40:00,7200315,Sogna In Grande right
+3,False,4/6F,1.6666666666666665,CompletedRace,916289,41,Perth,04/22/2026 15:10:00,2969900,Panic Attack right
+1,True,15/8F,2.875,CompletedRace,916290,41,Perth,04/22/2026 15:40:00,3960806,Heltenham right
+5,False,4/1,5,CompletedRace,916293,41,Perth,04/22/2026 16:10:00,4824961,Fresh As A Daisy right
+7,False,125/1,126,CompletedRace,916285,73,Taunton,04/22/2026 16:53:00,4879087,Winning Paddy right
+1,True,13/2,7.5,CompletedRace,916286,73,Taunton,04/22/2026 17:30:00,5424980,Jena d'Oudairies right
+8,False,2/1,3,CompletedRace,916284,73,Taunton,04/22/2026 18:00:00,7365472,Myrighthandman right
 5,False,9/2,5.5,CompletedRace,916272,1212,Ffos Las,04/21/2026 18:12:00,8048331,Asta La Vista right
 7,False,5/2F,3.5,CompletedRace,916275,1212,Ffos Las,04/21/2026 19:12:00,6732770,Largy Panic right
 2,False,100/30,4.333333333333334,CompletedRace,918397,1212,Ffos Las,04/21/2026 19:42:00,7643456,Mancero right
