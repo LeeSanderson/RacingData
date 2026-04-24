@@ -1,4 +1,16 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,9/2,5.5,CompletedRace,916392,6,Beverley,04/23/2026 14:52:00,4175424,Trilby right
+6,False,9/1,10,CompletedRace,918527,6,Beverley,04/23/2026 16:52:00,2729681,Hostelry right
+3,False,15/2,8.5,CompletedRace,918339,1138,Dundalk (AW),04/23/2026 18:15:00,7708584,Wedding Year right
+0,False,10/1,11,PulledUp,916300,41,Perth,04/23/2026 14:10:00,7865940,Largy Meadow right
+2,False,5/1,6,CompletedRace,916295,41,Perth,04/23/2026 15:10:00,2536683,Tommy's Oscar right
+0,False,11/1,12,PulledUp,916296,41,Perth,04/23/2026 15:40:00,2922348,Minella Drama right
+1,True,6/5F,2.2,CompletedRace,918290,394,Southwell (AW),04/23/2026 17:30:00,8445261,Life After Love right
+2,False,4/7F,1.5714285714285714,CompletedRace,918291,394,Southwell (AW),04/23/2026 19:00:00,7784972,Raspoutine right
+9,False,10/1,11,CompletedRace,918289,394,Southwell (AW),04/23/2026 20:00:00,6079175,Louie The Legend right
+2,False,3/1,4,CompletedRace,918292,394,Southwell (AW),04/23/2026 20:30:00,3096581,Fircombe Hall right
+4,False,6/5F,2.2,CompletedRace,916309,85,Warwick,04/23/2026 14:30:00,5441306,J J Moon right
+4,False,13/8F,2.625,CompletedRace,916311,85,Warwick,04/23/2026 17:02:00,5689589,Claim Du Brizais right
 0,False,SP,,NonRunner,916389,10,Catterick,04/22/2026 13:52:00,5007775,Miss Rainbow right
 6,False,9/4F,3.25,CompletedRace,916387,10,Catterick,04/22/2026 14:22:00,7365393,Rotokura Belle right
 2,False,7/4F,2.75,CompletedRace,916385,10,Catterick,04/22/2026 15:52:00,4303399,Vince Le Prince right
