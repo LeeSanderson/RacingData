@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,100/30,4.333333333333334,CompletedRace,916413,15,Doncaster,04/25/2026 18:45:00,8807032,Sailor Song right
+4,False,2/1F,3,CompletedRace,916428,30,Leicester,04/25/2026 14:44:00,4438490,Wreck It Ryley right
+7,False,12/1,13,CompletedRace,916431,30,Leicester,04/25/2026 15:19:00,5315432,Dark Sun right
+4,False,5/1,6,CompletedRace,916434,49,Ripon,04/25/2026 15:00:00,4185051,Tarbat Ness right
+7,False,9/2,5.5,CompletedRace,916433,49,Ripon,04/25/2026 16:10:00,5937879,Dyonisos right
+2,False,3/1J,4,CompletedRace,916864,54,Sandown,04/25/2026 13:13:00,6429628,Made U Blush right
+0,False,SP,,NonRunner,916331,54,Sandown,04/25/2026 16:02:00,5424978,Kabral Du Mathan right
+1,True,3/1,4,CompletedRace,916332,54,Sandown,04/25/2026 16:40:00,6518575,Kahavari right
+5,False,11/8F,2.375,CompletedRace,916610,394,Southwell (AW),04/25/2026 17:30:00,6143336,Clover Time right
+5,False,9/1,10,CompletedRace,916608,394,Southwell (AW),04/25/2026 20:00:00,7204935,What Fools Believe right
 2,False,9/4,3.25,CompletedRace,916318,12,Chepstow,04/24/2026 16:20:00,6487592,Treasure Planet right
 0,False,SP,,NonRunner,916316,12,Chepstow,04/24/2026 18:37:00,3908386,Bonza Boy right
 1,True,6/4F,2.5,CompletedRace,916317,12,Chepstow,04/24/2026 19:07:00,4969976,The Kemble Brewery right
