@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,7/2,4.5,CompletedRace,919215,211,Longchamp,04/26/2026 12:58:00,5141717,Presage Nocturne right
+4,False,7/2,4.5,CompletedRace,919215,211,Longchamp,04/26/2026 12:58:00,5141717,Presage Nocturne right
+1,True,7/10F,1.7,CompletedRace,919216,211,Longchamp,04/26/2026 15:25:00,7382696,Daryz right
+1,True,7/10F,1.7,CompletedRace,919216,211,Longchamp,04/26/2026 15:25:00,7382696,Daryz right
+4,False,3/1F,4,CompletedRace,916451,40,Nottingham,04/26/2026 15:20:00,4827183,Phoenix Moon right
+4,False,16/1,17,CompletedRace,916449,40,Nottingham,04/26/2026 17:55:00,6402362,It's Only Fun right
+7,False,7/2,4.5,CompletedRace,916459,87,Wetherby,04/26/2026 13:55:00,7395254,Harswell River right
+3,False,2/1,3,CompletedRace,916454,87,Wetherby,04/26/2026 16:05:00,7020370,Rosa Inglesa right
+2,False,100/30,4.333333333333334,CompletedRace,916458,87,Wetherby,04/26/2026 17:05:00,4839379,True Promise right
 6,False,100/30,4.333333333333334,CompletedRace,916413,15,Doncaster,04/25/2026 18:45:00,8807032,Sailor Song right
 4,False,2/1F,3,CompletedRace,916428,30,Leicester,04/25/2026 14:44:00,4438490,Wreck It Ryley right
 7,False,12/1,13,CompletedRace,916431,30,Leicester,04/25/2026 15:19:00,5315432,Dark Sun right
