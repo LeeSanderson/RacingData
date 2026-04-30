@@ -11,7 +11,16 @@
       "Bash(py -c \":*)",
       "Bash(ls -la Data/Results_*.csv)",
       "Bash(sort -k6,7)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(xargs grep *)",
+      "Bash(dotnet test *)",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0.0.0 Safari/537.36\" \"https://www.racingpost.com/results/195/punchestown/2026-04-28/919174\" -o \"C:\\\\Dev\\\\Personal\\\\RacingData\\\\RacePredictor.Core.Tests\\\\RacingPost\\\\Examples\\\\results_punchestown_20260428_919174.html\")",
+      "Bash(grep -v 'data-test-selector\\\\|^--$')",
+      "Bash(grep -v 'data-test-selector\\\\|class=\\\\|href=\\\\|^--$\\\\|ui-')",
+      "Bash(dotnet script *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet clean *)",
+      "Bash(grep -v '^--$')"
     ]
   }
 }

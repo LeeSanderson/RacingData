@@ -20,16 +20,10 @@ internal class RaceResultRunnerParser : RunnerParser
     public IEnumerable<RaceResultRunner> Parse()
     {
         var horses = AnchorNodesToEntities(_find.Anchor().WithSelector("link-horseName").GetNodes());
-        var jockeyNodes = _document.DocumentNode.SelectNodes(
-            "//div[contains(@class, 'rp-horseTable__human_medium')]/*/a[@data-test-selector='link-jockeyName']");
-        var jocks = AnchorNodesToEntities(jockeyNodes);
-        var trainerNodes = _document.DocumentNode.SelectNodes(
-            "//div[contains(@class, 'rp-horseTable__human_medium')]/*/a[@data-test-selector='link-trainerName']");
-        var trainers = AnchorNodesToEntities(trainerNodes);
+        var (jocks, trainers) = GetJockeysAndTrainers();
         var attributes = GetRaceResultRunnerAttributes().ToArray();
         var statistics = GetRaceResultRunnerStats().ToArray();
         var results = GetRaceResultRunnerResults().ToArray();
-
 
         for (var i = 0; i < horses.Length; i++)
         {
@@ -41,6 +35,37 @@ internal class RaceResultRunnerParser : RunnerParser
                 statistics[i],
                 results[i]);
         }
+    }
+
+    private (RaceEntity[] jockeys, RaceEntity[] trainers) GetJockeysAndTrainers()
+    {
+        var mediumDivs = _document.DocumentNode.SelectNodes(
+            "//div[contains(@class, 'rp-horseTable__human_medium')]");
+
+        var jockeys = mediumDivs.Select(div =>
+            div.SelectSingleNode(".//*[@data-test-selector='link-jockeyName']") is { } node
+                ? SafeAnchorNodeToEntity(node)
+                : new RaceEntity(0, "")).ToArray();
+
+        var trainers = mediumDivs.Select(div =>
+            div.SelectSingleNode(".//*[@data-test-selector='link-trainerName']") is { } node
+                ? SafeAnchorNodeToEntity(node)
+                : new RaceEntity(0, "")).ToArray();
+
+        var missingJockeys = jockeys.Count(j => j.Id == 0);
+        var missingTrainers = trainers.Count(t => t.Id == 0);
+        if (missingJockeys > 1 || missingTrainers > 1)
+        {
+            throw new Exception($"Unexpected missing entries: {missingJockeys} jockeys, {missingTrainers} trainers");
+        }
+
+        return (jockeys, trainers);
+    }
+
+    private static RaceEntity SafeAnchorNodeToEntity(HtmlNode node)
+    {
+        var idStr = @"/(\d+)/".FindMatch(node.GetAttributeValue("href", ""));
+        return new RaceEntity(idStr != null ? idStr.AsInt() : 0, node.InnerText.TrimAllWhiteSpace());
     }
 
     private IEnumerable<RaceRunnerAttributes> GetRaceResultRunnerAttributes()

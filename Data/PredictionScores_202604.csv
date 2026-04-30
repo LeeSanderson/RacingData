@@ -1,4 +1,17 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+5,False,15/8F,2.875,CompletedRace,918382,17,Epsom,04/28/2026 16:23:00,8120579,Montague Menace right
+2,False,8/15F,1.5333333333333332,CompletedRace,916629,393,Lingfield (AW),04/28/2026 16:43:00,6916300,Ancient State right
+3,False,5/2F,3.5,CompletedRace,916627,393,Lingfield (AW),04/28/2026 17:50:00,7597366,Alasrae right
+4,False,2/1F,3,CompletedRace,918090,195,Punchestown,04/28/2026 16:15:00,5840006,El Cairos right
+1,True,8/11F,1.7272727272727273,CompletedRace,918092,195,Punchestown,04/28/2026 18:05:00,4078697,Il Etait Temps right
+4,False,9/2,5.5,CompletedRace,916634,394,Southwell (AW),04/28/2026 16:05:00,7609870,Tupero right
+0,False,20/1,21,UnseatedRider,916636,394,Southwell (AW),04/28/2026 17:10:00,4839348,Angel Of England right
+3,False,100/30C,4.333333333333334,CompletedRace,918478,394,Southwell (AW),04/28/2026 17:42:00,5436876,Phoenix Of Dreams right
+3,False,11/2,6.5,CompletedRace,918482,104,Yarmouth,04/28/2026 14:12:00,6166264,Noble Guest right
+2,False,5/2,3.5,CompletedRace,918485,104,Yarmouth,04/28/2026 15:57:00,6613675,Pershalla right
+3,False,22/1,23,CompletedRace,918486,104,Yarmouth,04/28/2026 16:28:00,5580129,Ironist right
+5,False,11/5F,3.2,CompletedRace,918487,104,Yarmouth,04/28/2026 17:03:00,6482623,No Gain right
+1,True,2/1F,3,CompletedRace,919107,104,Yarmouth,04/28/2026 17:35:00,7852226,Go Lockers Go right
 4,False,5/2,3.5,CompletedRace,916464,5,Bath,04/27/2026 14:00:00,4597266,Bohemian Breeze right
 1,True,11/4,3.75,CompletedRace,916465,5,Bath,04/27/2026 14:30:00,2819114,Party Island right
 1,True,15/2,8.5,CompletedRace,916463,5,Bath,04/27/2026 16:00:00,6032411,Solar Edge right

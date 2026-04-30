@@ -240,6 +240,23 @@ public class RacingResultParserShould
         actualRaceParseResult.Race.Id.Should().Be(911558);
     }
 
+    [Fact]
+    public async Task ParseExamplePunchestownRaceWithExpectedRunnersAndJockeys()
+    {
+        var actualRaceParseResult = await GetRaceResult("results_punchestown_20260428_919174.html");
+
+        actualRaceParseResult.Race.Id.Should().Be(919174);
+        actualRaceParseResult.Course.Id.Should().Be(195);
+        actualRaceParseResult.Runners.Length.Should().Be(18);
+        actualRaceParseResult.Runners[0].Jockey.Name.Should().Be("Mr P W Mullins");
+
+        // Its My Twist doesn't have a jockey listed on the page
+        // We want to ensure we still parse the horse name and set the jockey id a dummy value of 0,
+        // rather than throwing an exception or missing the runner entirely
+        actualRaceParseResult.Runners.Should().ContainSingle(r => r.Jockey.Id == 0)
+            .Which.Horse.Name.Should().Be("Its My Twist");
+    }
+
 
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
