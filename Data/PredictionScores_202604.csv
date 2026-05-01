@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,6/4F,2.5,CompletedRace,916657,1079,Kempton (AW),04/30/2026 19:45:00,7793630,Space Bear right
+3,False,7/2F,4.5,CompletedRace,916658,1079,Kempton (AW),04/30/2026 20:15:00,8157551,Make It Up right
+8,False,100/30F,4.333333333333334,CompletedRace,916663,393,Lingfield (AW),04/30/2026 14:55:00,4676216,Poetic Jack right
+1,True,4/6F,1.6666666666666665,CompletedRace,916666,393,Lingfield (AW),04/30/2026 16:05:00,5859153,Tuscan Point right
+1,True,13/2,7.5,CompletedRace,916661,393,Lingfield (AW),04/30/2026 17:40:00,5875734,Bold Suitor right
+4,False,7/4,2.75,CompletedRace,919181,195,Punchestown,04/30/2026 15:05:00,5817979,Diamond Du Berlais right
+0,False,4/11F,1.3636363636363638,Fell,918096,195,Punchestown,04/30/2026 17:25:00,5713791,Kopek Des Bordes right
+1,True,4/1,5,CompletedRace,918097,195,Punchestown,04/30/2026 18:05:00,2913412,Bob Olinger right
+6,False,7/4F,2.75,CompletedRace,916499,47,Redcar,04/30/2026 15:58:00,5740905,Doralee right
+0,False,SP,,NonRunner,916495,47,Redcar,04/30/2026 16:30:00,3583183,Austrian Theory right
+6,False,9/1,10,CompletedRace,918295,394,Southwell (AW),04/30/2026 17:52:00,5198114,Roman Secret right
+5,False,7/2,4.5,CompletedRace,918297,394,Southwell (AW),04/30/2026 19:00:00,5089382,Commander Of Life right
+3,False,2/1,3,CompletedRace,918296,394,Southwell (AW),04/30/2026 19:30:00,5242348,Roberto Caro right
+3,False,18/1,19,CompletedRace,918300,394,Southwell (AW),04/30/2026 20:00:00,4082520,Eldeyaar right
+4,False,100/1,101,CompletedRace,916506,104,Yarmouth,04/30/2026 14:05:00,5845558,Duke Orsino right
+1,True,10/11F,1.9090909090909092,CompletedRace,916507,104,Yarmouth,04/30/2026 15:50:00,8468001,Alice De Clare right
 5,False,15/8F,2.875,CompletedRace,918382,17,Epsom,04/28/2026 16:23:00,8120579,Montague Menace right
 2,False,8/15F,1.5333333333333332,CompletedRace,916629,393,Lingfield (AW),04/28/2026 16:43:00,6916300,Ancient State right
 3,False,5/2F,3.5,CompletedRace,916627,393,Lingfield (AW),04/28/2026 17:50:00,7597366,Alasrae right
