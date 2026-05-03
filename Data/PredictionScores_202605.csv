@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,3/1,4,CompletedRace,916341,25,Hexham,05/02/2026 18:15:00,3612360,Sonigino right
+3,False,8/11F,1.7272727272727273,CompletedRace,918101,195,Punchestown,05/02/2026 16:15:00,4652535,Wodhooh right
+1,True,8/13F,1.6153846153846154,CompletedRace,916351,84,Uttoxeter,05/02/2026 13:20:00,8111196,Trigg right
 2,False,15/8,2.875,CompletedRace,916514,2,Ascot,05/01/2026 14:00:00,8881265,Dance A Jig right
 2,False,3/1,4,CompletedRace,916520,21,Goodwood,05/01/2026 17:00:00,7771207,Morbeh right
 1,True,11/10F,2.1,CompletedRace,916519,21,Goodwood,05/01/2026 17:35:00,6388840,Gallivanted right
