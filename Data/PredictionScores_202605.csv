@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+2,False,9/1,10,CompletedRace,916563,22,Hamilton,05/03/2026 14:05:00,7547295,You Mystify Me right
+1,True,8/13F,1.6153846153846154,CompletedRace,916570,52,Salisbury,05/03/2026 14:35:00,5007788,Dapper Valley right
 3,False,3/1,4,CompletedRace,916341,25,Hexham,05/02/2026 18:15:00,3612360,Sonigino right
 3,False,8/11F,1.7272727272727273,CompletedRace,918101,195,Punchestown,05/02/2026 16:15:00,4652535,Wodhooh right
 1,True,8/13F,1.6153846153846154,CompletedRace,916351,84,Uttoxeter,05/02/2026 13:20:00,8111196,Trigg right
