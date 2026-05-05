@@ -1,4 +1,15 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+5,False,11/2,6.5,CompletedRace,917574,5,Bath,05/04/2026 14:50:00,5237783,Fidelius right
+2,False,6/4F,2.5,CompletedRace,917575,5,Bath,05/04/2026 15:25:00,5884206,Toolatetonegotiate right
+5,False,8/11F,1.7272727272727273,CompletedRace,917580,5,Bath,05/04/2026 16:00:00,7713442,Takincareofbizness right
+1,True,9/2,5.5,CompletedRace,919529,180,Down Royal,05/04/2026 15:55:00,6679753,Goody Four Shoes right
+1,True,4/1,5,CompletedRace,917432,18,Fakenham,05/04/2026 14:18:00,6300774,Pottersmattyeeehaa right
+1,True,11/1,12,CompletedRace,917430,18,Fakenham,05/04/2026 14:53:00,4255065,Best Women right
+3,False,9/1,10,CompletedRace,917429,18,Fakenham,05/04/2026 15:28:00,7816037,Lady Kara right
+4,False,10/1,11,CompletedRace,917428,18,Fakenham,05/04/2026 16:38:00,5019560,Wicked Thoughts right
+1,True,15/8,2.875,CompletedRace,917431,18,Fakenham,05/04/2026 17:48:00,58956410,Dartmouth Rose right
+4,False,5/2J,3.5,CompletedRace,917435,85,Warwick,05/04/2026 15:15:00,4159569,Tommy Cullen right
+6,False,12/1,13,CompletedRace,917436,85,Warwick,05/04/2026 17:00:00,4697468,Jaminska right
 2,False,9/1,10,CompletedRace,916563,22,Hamilton,05/03/2026 14:05:00,7547295,You Mystify Me right
 1,True,8/13F,1.6153846153846154,CompletedRace,916570,52,Salisbury,05/03/2026 14:35:00,5007788,Dapper Valley right
 3,False,3/1,4,CompletedRace,916341,25,Hexham,05/02/2026 18:15:00,3612360,Sonigino right
