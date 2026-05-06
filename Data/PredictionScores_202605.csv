@@ -1,4 +1,17 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,16/1,17,CompletedRace,917600,3,Ayr,05/05/2026 15:00:00,2687060,Little Ted right
+3,False,11/1,12,CompletedRace,917596,3,Ayr,05/05/2026 17:00:00,4211312,Aighear right
+0,False,SP,,NonRunner,917442,1212,Ffos Las,05/05/2026 15:48:00,5806750,Hillwalk right
+4,False,9/2,5.5,CompletedRace,918620,24,Hereford,05/05/2026 18:47:00,5689584,Queens Venture right
+0,False,2/1F,3,Fell,918621,24,Hereford,05/05/2026 19:17:00,4942600,Mount Anglesby right
+2,False,11/8F,2.375,CompletedRace,918622,24,Hereford,05/05/2026 19:47:00,5851406,Tao Enki right
+3,False,33/1,34,CompletedRace,918623,24,Hereford,05/05/2026 20:17:00,5867527,Kill The Groove right
+3,False,54/10,6.4,CompletedRace,919653,219,Saint-Cloud,05/05/2026 14:05:00,7952211,Waybreaker right
+3,False,54/10,6.4,CompletedRace,919653,219,Saint-Cloud,05/05/2026 14:05:00,7952211,Waybreaker right
+3,False,6/1,7,CompletedRace,917827,513,Wolverhampton (AW),05/05/2026 18:30:00,6023320,Shielas Well right
+2,False,12/1,13,CompletedRace,917826,513,Wolverhampton (AW),05/05/2026 19:30:00,7957270,Mimi's Magic right
+7,False,15/2,8.5,CompletedRace,917828,513,Wolverhampton (AW),05/05/2026 20:30:00,4624486,Colors Of Freedom right
+1,True,4/1,5,CompletedRace,917825,513,Wolverhampton (AW),05/05/2026 21:00:00,6197909,Magna right
 5,False,11/2,6.5,CompletedRace,917574,5,Bath,05/04/2026 14:50:00,5237783,Fidelius right
 2,False,6/4F,2.5,CompletedRace,917575,5,Bath,05/04/2026 15:25:00,5884206,Toolatetonegotiate right
 5,False,8/11F,1.7272727272727273,CompletedRace,917580,5,Bath,05/04/2026 16:00:00,7713442,Takincareofbizness right
