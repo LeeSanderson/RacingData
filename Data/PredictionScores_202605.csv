@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,20/1,21,CompletedRace,919702,175,Ballinrobe,05/08/2026 17:15:00,9014954,Cascade Canyon right
+2,False,10/1,11,CompletedRace,917479,35,Market Rasen,05/08/2026 15:15:00,4175199,El Muchacho right
+4,False,25/1,26,CompletedRace,917476,35,Market Rasen,05/08/2026 15:50:00,2418442,Annsam right
+4,False,22/1,23,CompletedRace,917481,35,Market Rasen,05/08/2026 16:52:00,5412838,Top Flight Century right
+2,False,11/4,3.75,CompletedRace,917847,513,Wolverhampton (AW),05/08/2026 19:00:00,8070675,Forever Perfect right
+4,False,18/5,4.6,CompletedRace,917846,513,Wolverhampton (AW),05/08/2026 20:30:00,7303382,Maury right
+1,True,13/8F,2.625,CompletedRace,917848,513,Wolverhampton (AW),05/08/2026 21:00:00,8132983,Nana's Boy George right
 2,False,Evs,2,CompletedRace,917470,26,Huntingdon,05/07/2026 13:15:00,6640436,Katarcice right
 1,True,7/2,4.5,CompletedRace,917473,26,Huntingdon,05/07/2026 14:15:00,7108265,Catwalk Girl right
 3,False,3/1,4,CompletedRace,917474,26,Huntingdon,05/07/2026 15:15:00,3974508,Indian Sunbird right
