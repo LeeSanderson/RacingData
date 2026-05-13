@@ -1,4 +1,16 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,10/1,11,CompletedRace,917696,5,Bath,05/12/2026 14:50:00,2127472,Under Curfew right
+3,False,9/1,10,CompletedRace,917698,5,Bath,05/12/2026 15:50:00,3737114,Bobby Dassler right
+1,True,9/2,5.5,CompletedRace,917695,5,Bath,05/12/2026 16:23:00,2819114,Party Island right
+6,False,11/1,12,CompletedRace,917704,6,Beverley,05/12/2026 17:10:00,8120576,Fareenar right
+0,False,SP,,NonRunner,918625,24,Hereford,05/12/2026 14:38:00,5848872,Court In A Storm right
+2,False,1/3F,1.3333333333333333,CompletedRace,918624,24,Hereford,05/12/2026 15:08:00,6504986,Delpotro right
+3,False,5/2,3.5,CompletedRace,918628,24,Hereford,05/12/2026 16:10:00,7108265,Catwalk Girl right
+5,False,28/1,29,CompletedRace,918629,24,Hereford,05/12/2026 16:45:00,4757516,Jackeline right
+1,True,1/2F,1.5,CompletedRace,917860,393,Lingfield (AW),05/12/2026 17:15:00,6397997,Arc Zoosve right
+8,False,9/2,5.5,CompletedRace,917861,393,Lingfield (AW),05/12/2026 18:50:00,8589410,Grey Force right
+8,False,50/1,51,CompletedRace,917856,393,Lingfield (AW),05/12/2026 19:20:00,6202577,Special Ghaiyyath right
+6,False,7/2,4.5,CompletedRace,917855,393,Lingfield (AW),05/12/2026 20:20:00,6183958,Twilight Moon right
 3,False,14/1,15,CompletedRace,917512,61,Southwell,05/11/2026 14:42:00,5113799,Crac De Megaudais right
 5,False,9/2,5.5,CompletedRace,919781,596,Cork,05/10/2026 14:05:00,6323501,Blue Train right
 1,True,9/1,10,CompletedRace,919824,187,Leopardstown,05/10/2026 15:40:00,8214848,James J Braddock right
