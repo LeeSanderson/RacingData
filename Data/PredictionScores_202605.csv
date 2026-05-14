@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,4/1,5,CompletedRace,917709,5,Bath,05/13/2026 18:42:00,8039762,Just A Gambler right
+5,False,7/2,4.5,CompletedRace,917710,5,Bath,05/13/2026 19:12:00,4586195,Endofastorm right
+5,False,40/1,41,CompletedRace,917712,5,Bath,05/13/2026 19:42:00,7865988,Skyolaire right
+1,True,31/10,4.1,CompletedRace,920534,291,Compiegne,05/13/2026 13:12:00,3612368,Kyrov right
+1,True,EvensF,2,CompletedRace,920485,396,Happy Valley,05/13/2026 12:40:00,7529937,Romantic Gladiator right
+3,False,9/5,2.8,CompletedRace,920487,396,Happy Valley,05/13/2026 13:40:00,5550822,Ace War right
+1,True,7/4F,2.75,CompletedRace,917523,39,Newton Abbot,05/13/2026 18:30:00,4963704,Move With The Beat right
+2,False,11/8,2.375,CompletedRace,917522,39,Newton Abbot,05/13/2026 19:30:00,4187552,Hoe Joly Smoke right
+6,False,11/10F,2.1,CompletedRace,917529,41,Perth,05/13/2026 14:33:00,6604747,Next Twist right
+5,False,18/1,19,CompletedRace,917718,104,Yarmouth,05/13/2026 17:03:00,7529951,Loleeta right
 6,False,10/1,11,CompletedRace,917696,5,Bath,05/12/2026 14:50:00,2127472,Under Curfew right
 3,False,9/1,10,CompletedRace,917698,5,Bath,05/12/2026 15:50:00,3737114,Bobby Dassler right
 1,True,9/2,5.5,CompletedRace,917695,5,Bath,05/12/2026 16:23:00,2819114,Party Island right
