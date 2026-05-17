@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+3,False,3/1,4,CompletedRace,917784,15,Doncaster,05/16/2026 16:50:00,7922017,In The Post right
+1,True,7/2J,4.5,CompletedRace,917783,15,Doncaster,05/16/2026 19:08:00,7926369,Watchdog right
+1,True,7/1,8,CompletedRace,920612,193,Navan,05/16/2026 16:42:00,8214849,Santa Bravado right
+2,False,4/11F,1.3636363636363638,CompletedRace,917771,38,Newmarket,05/16/2026 16:02:00,8767117,Shabab Al Ahli right
+4,False,11/1,12,CompletedRace,917776,38,Newmarket,05/16/2026 16:37:00,7570749,Guest House right
+0,False,SP,,NonRunner,917562,84,Uttoxeter,05/16/2026 17:50:00,7445343,Double Tiger right
+1,True,100/30,4.333333333333334,CompletedRace,917560,84,Uttoxeter,05/16/2026 18:50:00,4969967,Geezer Rockstar right
+0,False,SP,,NonRunner,917561,84,Uttoxeter,05/16/2026 19:20:00,6898542,Stanners Glen right
+1,True,4/1,5,CompletedRace,917566,84,Uttoxeter,05/16/2026 20:30:00,6523167,Genbu right
+1,True,11/8F,2.375,CompletedRace,920620,201,Wexford,05/16/2026 16:25:00,4837103,Workahead right
 3,False,2/1F,3,CompletedRace,917548,32,Aintree,05/15/2026 17:45:00,4725954,Breizh River right
 4,False,5/2F,3.5,CompletedRace,917547,32,Aintree,05/15/2026 18:55:00,5842826,Calimystic right
 2,False,7/1,8,CompletedRace,920684,32,Aintree,05/15/2026 20:05:00,5162467,Maple right
