@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+7,False,46/1,47,CompletedRace,920795,205,Auteuil,05/17/2026 14:15:00,7538827,Louminos right
+1,True,9/10F,1.9,CompletedRace,920797,205,Auteuil,05/17/2026 16:30:00,8111137,Metronomique right
+3,False,9/2,5.5,CompletedRace,920628,192,Naas,05/17/2026 13:56:00,9009949,Latin America right
+2,False,3/1,4,CompletedRace,917802,49,Ripon,05/17/2026 14:17:00,4270009,Scottish Dancer right
+3,False,7/2,4.5,CompletedRace,917799,49,Ripon,05/17/2026 15:50:00,4827145,Shallow right
+7,False,7/2,4.5,CompletedRace,917805,49,Ripon,05/17/2026 17:20:00,7978773,Hares Bredth right
+5,False,9/4F,3.25,CompletedRace,920790,49,Ripon,05/17/2026 17:50:00,8013553,I'm Dan Dare right
+1,True,7/4F,2.75,CompletedRace,917571,67,Stratford,05/17/2026 15:35:00,5424980,Jena d'Oudairies right
+0,False,SP,,NonRunner,917570,67,Stratford,05/17/2026 16:05:00,4540831,Miss Fedora right
+1,True,22/1,23,CompletedRace,917573,67,Stratford,05/17/2026 16:35:00,6728396,Prettylady right
 3,False,3/1,4,CompletedRace,917784,15,Doncaster,05/16/2026 16:50:00,7922017,In The Post right
 1,True,7/2J,4.5,CompletedRace,917783,15,Doncaster,05/16/2026 19:08:00,7926369,Watchdog right
 1,True,7/1,8,CompletedRace,920612,193,Navan,05/16/2026 16:42:00,8214849,Santa Bravado right
