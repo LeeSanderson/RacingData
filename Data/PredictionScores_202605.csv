@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+5,False,8/1,9,CompletedRace,918779,8,Carlisle,05/18/2026 17:10:00,4303399,Vince Le Prince right
+4,False,3/1J,4,CompletedRace,918782,31,Lingfield,05/18/2026 14:20:00,3142182,Oman right
+4,False,17/2,9.5,CompletedRace,918784,31,Lingfield,05/18/2026 16:57:00,7983190,Solar Invincible right
+2,False,11/4F,3.75,CompletedRace,920825,47,Redcar,05/18/2026 16:43:00,8013552,Long Shot right
+4,False,15/2,8.5,CompletedRace,919076,513,Wolverhampton (AW),05/18/2026 18:00:00,7365393,Rotokura Belle right
+10,False,17/2,9.5,CompletedRace,919075,513,Wolverhampton (AW),05/18/2026 20:30:00,7913263,Dontwaste A Moment right
+1,True,7/4,2.75,CompletedRace,919074,513,Wolverhampton (AW),05/18/2026 21:00:00,8326149,Kelly Burn right
 7,False,46/1,47,CompletedRace,920795,205,Auteuil,05/17/2026 14:15:00,7538827,Louminos right
 1,True,9/10F,1.9,CompletedRace,920797,205,Auteuil,05/17/2026 16:30:00,8111137,Metronomique right
 3,False,9/2,5.5,CompletedRace,920628,192,Naas,05/17/2026 13:56:00,9009949,Latin America right
