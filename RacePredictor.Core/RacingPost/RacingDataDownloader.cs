@@ -74,7 +74,7 @@ public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacin
         while (currentDate <= end)
         {
             var currentDateAsString = GetRaceCardDateAsString(currentDate);
-            var resultsUrl = $"https://www.racingpost.com/racecards/{currentDateAsString}";
+            var resultsUrl = $"https://www.racingpost.com/racecards/time-order/{currentDateAsString}";
             HtmlDocument htmlDocument;
             try
             {
@@ -88,9 +88,10 @@ public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacin
             var finder = new HtmlNodeFinder(htmlDocument.DocumentNode);
             var urls =
                 finder.Anchor()
-                    .WithCssClass("RC-meetingItem__link")
+                    .WithTestIdStartingWith("Link__TimeOrderRace__")
                     .GetNodes()
                     .Select(n => "https://www.racingpost.com" + n.GetAttributeValue("href", string.Empty))
+                    .Distinct()
                     .ToArray();
 
             foreach (var url in urls)

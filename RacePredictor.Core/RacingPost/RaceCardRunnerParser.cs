@@ -1,12 +1,16 @@
-﻿using HtmlAgilityPack;
-
+using System.Globalization;
+using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
 
-internal class RaceCardRunnerParser : RunnerParser
+internal partial class RaceCardRunnerParser : RunnerParser
 {
+    private static readonly Regex AgeRegex = AgeRegexGenerator();
+    private static readonly Regex WeightRegex = WeightRegexGenerator();
+    private static readonly Regex HeadgearRegex = HeadgearRegexGenerator();
+
     private readonly HtmlNodeFinder _find;
-    private bool[] _nonRunners = Array.Empty<bool>();
 
     public RaceCardRunnerParser(HtmlDocument document)
     {
@@ -15,120 +19,173 @@ internal class RaceCardRunnerParser : RunnerParser
 
     public IEnumerable<RaceRunner> Parse()
     {
-        var horses = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerName").GetNodes());
-        var jocks = GetJockies(horses.Length).ToArray();
-        var trainers = AnchorNodesToEntities(_find.Anchor().WithSelector("RC-cardPage-runnerTrainer-name").GetNodes());
-        var attributes = GetRaceResultRunnerAttributes(horses.Length).ToArray();
-        var statistics = GetRaceResultRunnerStats().ToArray();
+        var rowNodes = _find.AnyElement().WithAttribute("data-testid", "Container__RunnerRowDesktop").GetNodes();
+        var seenHorseIds = new HashSet<int>();
 
-        for (var i = 0; i < horses.Length; i++)
+        foreach (var row in rowNodes)
         {
-            if (!_nonRunners[i])
+            var rowFind = new HtmlNodeFinder(row);
+
+            var horseAnchor = rowFind.Optional().Anchor().WithAttribute("data-testid", "Link__Horse").GetNode();
+            if (horseAnchor is null)
             {
-                yield return new RaceRunner(
-                    horses[i],
-                    jocks[i],
-                    trainers[i],
-                    attributes[i], 
-                    statistics[i]);
+                continue;
+            }
+
+            var horse = AnchorNodeToEntity(horseAnchor);
+            if (!seenHorseIds.Add(horse.Id))
+            {
+                continue;
+            }
+
+            var (cardNumber, draw, isNonRunner) = GetCardNumberAndDraw(rowFind);
+            if (isNonRunner)
+            {
+                continue;
+            }
+
+
+            var jockey = ResolveEntity(rowFind, "Link__Jockey", new RaceEntity(0, "Unknown Jockey"));
+            var trainer = ResolveEntity(rowFind, "Link__Trainer", new RaceEntity(0, "Unknown Trainer"));
+
+            var rowText = row.InnerText.TrimAllWhiteSpace();
+            var age = ExtractAge(rowText);
+            var weight = ExtractWeight(rowText);
+            var headgear = ExtractHeadgear(row);
+            var stats = ExtractStats(rowFind);
+
+            yield return new RaceRunner(
+                horse,
+                jockey,
+                trainer,
+                new RaceRunnerAttributes(cardNumber, draw, age, weight, headgear),
+                stats);
+        }
+    }
+
+    private RaceEntity ResolveEntity(HtmlNodeFinder rowFind, string testId, RaceEntity fallback)
+    {
+        var node = rowFind.Optional().Anchor().WithAttribute("data-testid", testId).GetNode();
+        return node != null ? AnchorNodeToEntity(node) : fallback;
+    }
+
+    private static (int cardNumber, int? draw, bool isNonRunner) GetCardNumberAndDraw(HtmlNodeFinder rowFind)
+    {
+        var runnerNumberNode = rowFind.Optional().AnyElement().WithAttribute("data-testid", "Container__RunnerNumber").GetNode();
+        if (runnerNumberNode is null)
+        {
+            return (0, null, true);
+        }
+
+        var scoped = new HtmlNodeFinder(runnerNumberNode);
+        var spans = scoped.Element("span").GetNodes();
+        if (spans.Length == 0)
+        {
+            return (0, null, true);
+        }
+
+        var cardText = spans[0].InnerText.TrimAllWhiteSpace();
+        if (string.IsNullOrEmpty(cardText) ||
+            cardText.Equals("NR", StringComparison.OrdinalIgnoreCase) ||
+            cardText.StartsWith("R", StringComparison.OrdinalIgnoreCase))
+        {
+            return (0, null, true);
+        }
+
+        if (!int.TryParse(cardText, out var cardNumber))
+        {
+            return (0, null, true);
+        }
+
+        int? draw = null;
+        if (spans.Length > 1)
+        {
+            var drawText = spans[1].InnerText.TrimAllWhiteSpace().TrimParentheses();
+            draw = drawText.AsOptionalInt();
+        }
+
+        return (cardNumber, draw, false);
+    }
+
+    private static int ExtractAge(string rowText)
+    {
+        var m = AgeRegex.Match(rowText);
+        return m.Success ? int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture) : 0;
+    }
+
+    private static RaceWeight ExtractWeight(string rowText)
+    {
+        var m = WeightRegex.Match(rowText);
+        return m.Success
+            ? new RaceWeight(
+                int.Parse(m.Groups[1].Value, CultureInfo.InvariantCulture),
+                int.Parse(m.Groups[2].Value, CultureInfo.InvariantCulture))
+            : new RaceWeight(0, 0);
+    }
+
+    private static string? ExtractHeadgear(HtmlNode rowNode)
+    {
+        // Headgear is a short lowercase code (e.g., "t", "b", "p", "v", "tb", "tp") in a small <span>
+        // sibling near the days-since-last-run sup. There's no data-testid, so scan spans inside the
+        // horse-info section for the first short-alpha-only span that isn't a known label.
+        var horseInfo = rowNode.SelectSingleNode(".//*[@data-testid='Container__HorseInfo']");
+        if (horseInfo == null)
+        {
+            return null;
+        }
+
+
+        foreach (var span in horseInfo.SelectNodes(".//span") ?? Enumerable.Empty<HtmlNode>())
+        {
+            // Skip spans with children — we only want leaf spans.
+            if (span.ChildNodes.Any(c => c.NodeType == HtmlNodeType.Element))
+            {
+                continue;
+            }
+
+
+            var text = span.InnerText.TrimAllWhiteSpace();
+            if (text.Length == 0)
+            {
+                continue;
+            }
+
+
+            if (HeadgearRegex.IsMatch(text) && text != "yo" && text != "st" && text != "lb")
+            {
+                return text;
             }
         }
+        return null;
     }
 
-    private IEnumerable<RaceEntity> GetJockies(int expectedNumberOfJockies)
+    private static RaceRunnerStats ExtractStats(HtmlNodeFinder rowFind)
     {
-        var infoNodes = _find.Div().WithCssClass("RC-runnerInfo_jockey").GetNodes();
-        if (infoNodes.Length != expectedNumberOfJockies)
-        {
-            throw new Exception($"Failed to extract jockies. Expected {expectedNumberOfJockies}, but only found {infoNodes.Length}");
-        }
-
-        foreach (var infoNode in infoNodes)
-        {
-            var infoFinder = new HtmlNodeFinder(infoNode);
-            var jockeyNode = infoFinder.Optional().Anchor().WithSelector("RC-cardPage-runnerJockey-name").GetNode();
-            yield return jockeyNode != null ? AnchorNodeToEntity(jockeyNode) : new RaceEntity(0, "Unknown Jockey");
-        }
+        var statsNode = rowFind.Optional().AnyElement().WithAttribute("data-testid", "Container__RunnerStats").GetNode();
+        var text = statsNode?.InnerText ?? string.Empty;
+        var or = ExtractIntStat(text, "OR");
+        var ts = ExtractIntStat(text, "TS");
+        var rpr = ExtractIntStat(text, "RPR");
+        return new RaceRunnerStats(new RaceOdds("SP"), or, rpr, ts);
     }
 
-    private IEnumerable<RaceRunnerAttributes> GetRaceResultRunnerAttributes(int expectedNumberOfRaces)
+    private static int? ExtractIntStat(string text, string label)
     {
-        var raceCardNumberTexts = GetRaceCardNumbers();
-        var raceCardNumbers = raceCardNumberTexts.Select(s => IsNonRunnerOrReserve(s) ? 0 : s.AsInt()).ToArray();
-        _nonRunners = raceCardNumberTexts.Select(IsNonRunnerOrReserve).ToArray();
-
-        var stallNumbers = GetStallNumbers();
-        var ages = GetAges();
-        var weights = GetWeights(expectedNumberOfRaces).ToArray();
-        var headGears = GetHeadgear();
-
-        for (var i = 0; i < raceCardNumbers.Length; i++)
+        var m = Regex.Match(text, $@"{label}\s*:\s*(-|\d+)");
+        if (!m.Success)
         {
-            yield return new RaceRunnerAttributes(raceCardNumbers[i], stallNumbers[i], ages[i], weights[i], headGears[i]);
+            return null;
         }
+
+        var v = m.Groups[1].Value;
+        return v == "-" ? null : int.Parse(v, CultureInfo.InvariantCulture);
     }
 
-    private string[] GetRaceCardNumbers() =>
-        _find.Span()
-            .WithSelector("RC-cardPage-runnerNumber-no")
-            .GetDirectTexts()
-            .ToArray();
+    [GeneratedRegex(@"(\d+)yo", RegexOptions.Compiled)]
+    private static partial Regex AgeRegexGenerator();
+    [GeneratedRegex(@"(\d+)st\s+(\d+)lb", RegexOptions.Compiled)]
+    private static partial Regex WeightRegexGenerator();
+    [GeneratedRegex(@"^[a-z]{1,3}$", RegexOptions.Compiled)]
+    private static partial Regex HeadgearRegexGenerator();
 
-    private bool IsNonRunnerOrReserve(string raceCardNumber) => 
-        string.Equals(raceCardNumber, "NR", StringComparison.OrdinalIgnoreCase) ||
-        raceCardNumber.StartsWith("R", StringComparison.OrdinalIgnoreCase);
-
-    private int?[] GetStallNumbers() =>
-        _find.Span()
-            .WithSelector("RC-cardPage-runnerNumber-draw")
-            .GetTexts()
-            .Select(s => s.TrimParentheses().AsOptionalInt())
-            .ToArray();
-    
-    private int[] GetAges() =>
-        _find.Span()
-            .WithSelector("RC-cardPage-runnerAge")
-            .GetIntegers();
-
-    private IEnumerable<RaceWeight> GetWeights(int expectedNumberOfRaces)
-    {
-        var weightNodes = _find.Span().WithSelector("RC-cardPage-runnerWgt-carried").GetNodes();
-        if (weightNodes.Length != expectedNumberOfRaces)
-        {
-            throw new Exception($"Failed to extract weights. Expected {expectedNumberOfRaces}, but only found {weightNodes.Length}");
-        }
-
-        foreach (var weightNode in weightNodes)
-        {
-            var infoFinder = new HtmlNodeFinder(weightNode);
-            var stones = infoFinder.Optional().Span().WithCssClass("RC-runnerWgt__carried_st").GetText().AsOptionalInt();
-            var lbs = infoFinder.Optional().Span().WithCssClass("RC-runnerWgt__carried_lb").GetText().AsOptionalInt();
-            yield return stones != null ? new RaceWeight(stones.Value, lbs ?? 0) : new RaceWeight(0, 0);
-        }
-    }
-
-    private string?[] GetHeadgear() =>
-        _find.Span()
-            .WithSelector("RC-cardPage-runnerHeadGear")
-            .GetTexts()
-            .Select(s => s.NullIfEmpty())
-            .ToArray();
-
-    private IEnumerable<RaceRunnerStats> GetRaceResultRunnerStats()
-    {
-        var officialRatings = ToRatings(_find.Span().WithSelector("RC-cardPage-runnerOr").GetTexts());
-        var topSpeedRatings = ToRatings(_find.Span().WithSelector("RC-cardPage-runnerTs").GetTexts());
-        var racingPostRatings = ToRatings(_find.Span().WithSelector("RC-cardPage-runnerRpr").GetTexts());
-
-        // Odds are set by JavaScript depending on the selected betting provider
-        // (hence they can't be read by the HTML agility pack)
-        // Set all odds to "SP" (starting price).
-        var odds = officialRatings.Select(_ => new RaceOdds("SP")).ToArray();
-
-
-        for (var i = 0; i < odds.Length; i++)
-        {
-            yield return new RaceRunnerStats(odds[i], officialRatings[i], racingPostRatings[i], topSpeedRatings[i]);
-        }
-    }
 }

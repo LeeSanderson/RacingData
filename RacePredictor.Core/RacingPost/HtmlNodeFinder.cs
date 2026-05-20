@@ -109,6 +109,12 @@ public class HtmlNodeFinder<THtmlNodeFinder>
         return (THtmlNodeFinder)this;
     }
 
+    public THtmlNodeFinder WithTestIdStartingWith(string prefix)
+    {
+        _subQuery = $"[starts-with(@data-testid, '{prefix}')]";
+        return (THtmlNodeFinder)this;
+    }
+
     public THtmlNodeFinder WithDataEnding(string dataValue)
     {
         _subQuery = $"[@data-ending='{dataValue}']";

@@ -103,6 +103,20 @@ public abstract class RaceParser
         return (ageBand, ratingBand);
     }
 
-    protected static DateTime ParseRaceDateAndTime(string raceDate, string raceTime) =>
-        DateTime.ParseExact(raceDate + " " + raceTime + " PM", "d MMM yyyy h:mm tt", CultureInfo.InvariantCulture);
+    protected static DateTime ParseRaceDateAndTime(string raceDate, string raceTime)
+    {
+        var trimmedTime = raceTime.Trim();
+        var colonIndex = trimmedTime.IndexOf(':');
+        var hoursPart = colonIndex >= 0 ? trimmedTime[..colonIndex] : trimmedTime;
+
+        // The current Racing Post site uses 24-hour times (e.g., "11:40", "13:42").
+        // Legacy result-page markup used 12-hour afternoon times (e.g., "1:30"); we still
+        // accept those and assume PM.
+        if (hoursPart.Length >= 2)
+        {
+            return DateTime.ParseExact(raceDate + " " + trimmedTime, "d MMM yyyy H:mm", CultureInfo.InvariantCulture);
+        }
+
+        return DateTime.ParseExact(raceDate + " " + trimmedTime + " PM", "d MMM yyyy h:mm tt", CultureInfo.InvariantCulture);
+    }
 }

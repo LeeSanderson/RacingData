@@ -20,7 +20,14 @@
       "Bash(dotnet script *)",
       "Bash(dotnet build *)",
       "Bash(dotnet clean *)",
-      "Bash(grep -v '^--$')"
+      "Bash(grep -v '^--$')",
+      "PowerShell(.\\\\run.ps1 2>&1 | Out-String)",
+      "PowerShell(& \"C:\\\\Dev\\\\Personal\\\\RacingData\\\\RaceDataDownloader\\\\bin\\\\Debug\\\\net9.0\\\\RaceDataDownloader.exe\" todaysracecards --output \"C:\\\\Dev\\\\Personal\\\\RacingData\\\\Data\" 2>&1 | Out-String)",
+      "Bash(ls C:\\\\Dev\\\\Personal\\\\RacingData\\\\ *)",
+      "PowerShell($ua = \"Mozilla/5.0 \\(iPad; CPU OS 17_0 like Mac OS X\\) AppleWebKit/605.1.15 \\(KHTML, like Gecko\\) Version/17.0 Mobile/15E148 Safari/604.1\"; try { $r = Invoke-WebRequest -Uri \"https://www.racingpost.com/racecards/\" -UserAgent $ua -MaximumRedirection 5 -ErrorAction Stop; \"STATUS=$\\($r.StatusCode\\)`nLEN=$\\($r.Content.Length\\)\" } catch { \"ERR: $\\($_.Exception.Message\\)\" })",
+      "PowerShell(Move-Item *)",
+      "PowerShell(dotnet build *)",
+      "PowerShell(dotnet test *)"
     ]
   }
 }

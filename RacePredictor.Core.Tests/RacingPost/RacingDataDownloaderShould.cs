@@ -27,15 +27,15 @@ public class RacingDataDownloaderShould
     {
         var htmlLoader = Substitute.For<IHtmlLoader>();
         htmlLoader
-            .GetHtmlResponseFrom("https://www.racingpost.com/racecards/2022-06-28")
-            .Returns(ResourceLoader.ReadRacingPostExampleResource("daily_racecards_20220628.html"));
+            .GetHtmlResponseFrom("https://www.racingpost.com/racecards/time-order/2026-05-20")
+            .Returns(ResourceLoader.ReadRacingPostExampleResource("daily_racecards_timeorder_20260520.html"));
         var clock = Substitute.For<IClock>();
         var downloader = new RacingDataDownloader(htmlLoader, clock);
-        var startDate = new DateOnly(2022, 06, 28);
+        var startDate = new DateOnly(2026, 05, 20);
 
         var urls = await downloader.GetRaceCardUrls(startDate, startDate).ToListAsync();
 
-        urls.Count.Should().Be(44);
-        urls[0].Should().Be("https://www.racingpost.com/racecards/22/hamilton/2022-06-28/813803");
+        urls.Count.Should().Be(50);
+        urls[0].Should().Be("https://www.racingpost.com/racecards/396/happy-valley/2026-05-20/920859/");
     }
 }
