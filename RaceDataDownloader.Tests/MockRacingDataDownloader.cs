@@ -6,24 +6,24 @@ namespace RaceDataDownloader.Tests;
 
 internal static class MockRacingDataDownloader
 {
-    private const string HamiltonRaceCardUrl = "https://www.racingpost.com/racecards/22/hamilton/2022-06-28/813803";
+    private const string HappyValleyRaceCardUrl = "https://www.racingpost.com/racecards/396/happy-valley/2026-05-20/920859";
     private const string RaceResultUrl = "https://www.racingpost.com/results/2022-05-11";
 
     public static IRacingDataDownloader New() => Substitute.For<IRacingDataDownloader>();
 
-    public static IRacingDataDownloader MockReturnHamiltonRaceCardUrls(this IRacingDataDownloader downloader)
+    public static IRacingDataDownloader MockReturnHappyValleyRaceCardUrls(this IRacingDataDownloader downloader)
     {
-        var mockRaceCardUrls = new[] { HamiltonRaceCardUrl };
+        var mockRaceCardUrls = new[] { HappyValleyRaceCardUrl };
         downloader
             .GetRaceCardUrls(Arg.Any<DateOnly>(), Arg.Any<DateOnly>())
             .Returns(mockRaceCardUrls.ToAsyncEnumerable());
         return downloader;
     }
 
-    public static IRacingDataDownloader MockReturnHamiltonRaceCard(this IRacingDataDownloader downloader)
+    public static IRacingDataDownloader MockReturnHappyValleyRaceCard(this IRacingDataDownloader downloader)
     {
-        var mockRaceCard = new RaceCardParser().Parse(FakeData.HamiltonRaceCardFor1315RaceOn20220628);
-        downloader.DownloadRaceCard(HamiltonRaceCardUrl).Returns(mockRaceCard);
+        var mockRaceCard = new RaceCardParser().Parse(FakeData.HappyValleyRaceCardFor1140RaceOn20260520);
+        downloader.DownloadRaceCard(HappyValleyRaceCardUrl).Returns(mockRaceCard);
         return downloader;
     }
 

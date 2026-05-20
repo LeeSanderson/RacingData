@@ -32,7 +32,7 @@ internal partial class RaceCardRunnerParser : RunnerParser
                 continue;
             }
 
-            var horse = AnchorNodeToEntity(horseAnchor);
+            var horse = AnchorToNamedEntity(horseAnchor);
             if (!seenHorseIds.Add(horse.Id))
             {
                 continue;
@@ -63,10 +63,22 @@ internal partial class RaceCardRunnerParser : RunnerParser
         }
     }
 
-    private RaceEntity ResolveEntity(HtmlNodeFinder rowFind, string testId, RaceEntity fallback)
+    private static RaceEntity ResolveEntity(HtmlNodeFinder rowFind, string testId, RaceEntity fallback)
     {
         var node = rowFind.Optional().Anchor().WithAttribute("data-testid", testId).GetNode();
-        return node != null ? AnchorNodeToEntity(node) : fallback;
+        return node != null ? AnchorToNamedEntity(node) : fallback;
+    }
+
+    private static RaceEntity AnchorToNamedEntity(HtmlNode anchor)
+    {
+        // Race-card anchors wrap the name in <span> elements and may also contain <sup> badges
+        // (jockey booking count, trainer win-rate). Take only the span content as the name.
+        var id = @"/(\d+)/".GetMatch(anchor.GetAttributeValue("href", string.Empty)).AsInt();
+        var spans = anchor.SelectNodes(".//span");
+        var name = spans is null
+            ? anchor.InnerText.TrimAllWhiteSpace()
+            : string.Join(' ', spans.Select(s => s.InnerText.TrimAllWhiteSpace()).Where(t => t.Length > 0));
+        return new RaceEntity(id, name);
     }
 
     private static (int cardNumber, int? draw, bool isNonRunner) GetCardNumberAndDraw(HtmlNodeFinder rowFind)

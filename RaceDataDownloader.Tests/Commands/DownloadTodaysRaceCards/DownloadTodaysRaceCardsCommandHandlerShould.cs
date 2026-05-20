@@ -8,18 +8,18 @@ namespace RaceDataDownloader.Tests.Commands.DownloadTodaysRaceCards;
 
 public class DownloadTodaysRaceCardsCommandHandlerShould(ITestOutputHelper output)
 {
-    [Fact(Skip = "Uses legacy 2022 Hamilton race-card fixture (RC-* markup) that no longer parses; regenerate fixture and Verify snapshot before re-enabling.")]
+    [Fact]
     public async Task DownloadRaceCardsAndSaveToExpectedLocation()
     {
         var mockFileSystemBuilder = new MockFileSystemBuilder();
         var mockRacingDataDownloader = MockRacingDataDownloader
             .New()
-            .MockReturnHamiltonRaceCardUrls()
-            .MockReturnHamiltonRaceCard();
+            .MockReturnHappyValleyRaceCardUrls()
+            .MockReturnHappyValleyRaceCard();
         var clock = Substitute.For<IClock>();
-        clock.Today.Returns(new DateOnly(2022, 06, 28));
+        clock.Today.Returns(new DateOnly(2026, 05, 20));
         var logger = new OutputLogger<DownloadTodaysRaceCardsCommandHandler>(output);
-        
+
         var handler = new DownloadTodaysRaceCardsCommandHandler(mockFileSystemBuilder.FileSystem, mockRacingDataDownloader, clock, logger);
         var options = new DownloadTodaysRaceCardsOptions { DataDirectory = MockFileSystemBuilder.OutputDirectory };
         var result = await handler.RunAsync(options);
