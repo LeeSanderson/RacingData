@@ -1,4 +1,17 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+10,False,16/1,17,CompletedRace,918817,3,Ayr,05/20/2026 14:12:00,7250639,Canaria Sun
+2,False,11/10F,2.1,CompletedRace,918815,3,Ayr,05/20/2026 15:12:00,5973427,Thunderstorm Katie
+6,False,6/1,7,CompletedRace,918816,3,Ayr,05/20/2026 17:15:00,5048133,Evelyn's Phoenix FR
+5,False,6/4F,2.5,CompletedRace,918667,1212,Ffos Las,05/20/2026 14:50:00,5864584,Lemon Leaf IRE
+0,False,3/1,4,UnseatedRider,918664,1212,Ffos Las,05/20/2026 16:20:00,5708463,Jack's Jury IRE
+3,False,5/1,6,CompletedRace,918668,1212,Ffos Las,05/20/2026 17:22:00,5326979,Jlow IRE
+1,True,2/1,3,CompletedRace,920764,184,Gowran Park,05/20/2026 19:20:00,9217607,Sparan Nua
+2,False,9/2,5.5,CompletedRace,918672,85,Warwick,05/20/2026 14:30:00,8940301,Royal Rocket IRE
+2,False,11/2,6.5,CompletedRace,918670,85,Warwick,05/20/2026 15:30:00,3309352,King Of The Story IRE
+1,True,3/1F,4,CompletedRace,918671,85,Warwick,05/20/2026 16:00:00,4189542,Il Va De Soi FR
+6,False,7/1,8,CompletedRace,918669,85,Warwick,05/20/2026 17:00:00,3093706,Kingston Sunflower FR
+3,False,5/1,6,CompletedRace,918821,104,Yarmouth,05/20/2026 18:40:00,4175185,Law Supreme FR
+5,False,11/2,6.5,CompletedRace,918823,104,Yarmouth,05/20/2026 19:40:00,7355920,Havana Tobouggaloo
 7,False,9/1,10,CompletedRace,920755,596,Cork,05/19/2026 19:12:00,5829362,Usuario Amigo right
 2,False,5/1,6,CompletedRace,918650,25,Hexham,05/19/2026 18:20:00,5376170,Diamond Mix right
 0,False,SP,,NonRunner,918652,25,Hexham,05/19/2026 19:20:00,5740910,Milan Milos right
