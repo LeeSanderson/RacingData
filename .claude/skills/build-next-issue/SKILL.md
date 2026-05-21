@@ -59,18 +59,19 @@ dotnet build && dotnet test
 python -m pytest Data/utils/
 ```
 
-## 6. Commit
+## 6. Close the issue
+
+- If complete: move the issue file to `issues/done/`.
+- If incomplete: append a note to the issue file describing what was done and what's left.
+
+
+## 7. Commit
 
 Make one git commit. The message must include:
 
 1. Key decisions made
 2. Files changed
 3. Blockers or notes for the next iteration
-
-## 7. Close the issue
-
-- If complete: move the issue file to `issues/done/`.
-- If incomplete: append a note to the issue file describing what was done and what's left.
 
 ## Rules
 
