@@ -56,7 +56,7 @@ dotnet build && dotnet test
 
 ### After Python utility changes
 ```powershell
-python -m pytest Data/utils/
+python -m pytest Data/utils/ Data/algorithms/
 ```
 
 ## 6. Close the issue
