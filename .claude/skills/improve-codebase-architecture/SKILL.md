@@ -5,9 +5,18 @@ description: Explore a codebase to find opportunities for architectural improvem
 
 # Improve Codebase Architecture
 
-Explore a codebase like an AI would, surface architectural friction, discover opportunities for improving testability, and propose module-deepening refactors as GitHub issue RFCs.
+Explore this codebase like an AI would, surface architectural friction, discover opportunities for improving testability, and propose module-deepening refactors as local issue RFCs under `issues/`.
 
 A **deep module** (John Ousterhout, "A Philosophy of Software Design") has a small interface hiding a large implementation. Deep modules are more testable, more AI-navigable, and let you test at the boundary instead of inside.
+
+## Project shape
+
+The codebase has two halves connected by CSV files:
+
+- **C# pipeline** — `RacePredictor.Core` (domain types + `RacingPost/` parsers and downloader) and `RaceDataDownloader` (CLI verb handlers under `Commands/`). Tested in `RacePredictor.Core.Tests` and `RaceDataDownloader.Tests`.
+- **Python ML stage** — `Data/*.py` (notebook-derived scripts: `FeatureAnalysis`, `HorseStatsBuilder`, `JockeyStatsBuilder`, `LinearRegressionPredictor`). Read CSVs produced by the C# stage, write feature/prediction CSVs.
+
+These are usually deepened separately. Cross-stage changes are coordinated through the CSV schema (e.g. `Results_YYYYMM.csv`, `Race_Features.csv`).
 
 ## Process
 
@@ -15,11 +24,11 @@ A **deep module** (John Ousterhout, "A Philosophy of Software Design") has a sma
 
 Use the Agent tool with subagent_type=Explore to navigate the codebase naturally. Do NOT follow rigid heuristics — explore organically and note where you experience friction:
 
-- Where does understanding one concept require bouncing between many small files?
-- Where are modules so shallow that the interface is nearly as complex as the implementation?
-- Where have pure functions been extracted just for testability, but the real bugs hide in how they're called?
-- Where do tightly-coupled modules create integration risk in the seams between them?
-- Which parts of the codebase are untested, or hard to test?
+- Where does understanding one concept require bouncing between many small files? (e.g. a `*ParserShould` test that pulls in five `HtmlNode*` helpers)
+- Where are modules so shallow that the interface is nearly as complex as the implementation? (e.g. a one-method extension class used in one place)
+- Where have pure functions been extracted just for testability, but the real bugs hide in how they're called? (e.g. a parser helper that's well-tested but is called wrongly inside the downloader)
+- Where do tightly-coupled modules create integration risk in the seams between them? (e.g. CSV schema mismatches between the C# writer and the Python reader)
+- Which parts of the codebase are untested, or hard to test? (Python `Data/*.py` is the obvious gap; some `Commands/` may be too.)
 
 The friction you encounter IS the signal.
 
@@ -27,7 +36,7 @@ The friction you encounter IS the signal.
 
 Present a numbered list of deepening opportunities. For each candidate, show:
 
-- **Cluster**: Which modules/concepts are involved
+- **Cluster**: Which modules/concepts are involved (e.g. `HtmlNodeFinder + RaceCardRunnerParser + RaceCardParser`)
 - **Why they're coupled**: Shared types, call patterns, co-ownership of a concept
 - **Dependency category**: See [REFERENCE.md](REFERENCE.md) for the four categories
 - **Test impact**: What existing tests would be replaced by boundary tests
@@ -40,7 +49,7 @@ Do NOT propose interfaces yet. Ask the user: "Which of these would you like to e
 
 Before spawning sub-agents, write a user-facing explanation of the problem space for the chosen candidate:
 
-- The constraints any new interface would need to satisfy
+- The constraints any new interface would need to satisfy (e.g. must still expose `IAsyncEnumerable<string>` for URL streaming, must keep `IFileSystem`-injectability)
 - The dependencies it would need to rely on
 - A rough illustrative code sketch to make the constraints concrete — this is not a proposal, just a way to ground the constraints
 
@@ -59,8 +68,8 @@ Prompt each sub-agent with a separate technical brief (file paths, coupling deta
 
 Each sub-agent outputs:
 
-1. Interface signature (types, methods, params)
-2. Usage example showing how callers use it
+1. Interface signature (types, methods, params) — C# `interface` declarations or Python ABCs as appropriate
+2. Usage example showing how callers use it (e.g. how `UpdateResultsCommandHandler` would consume it)
 3. What complexity it hides internally
 4. Dependency strategy (how deps are handled — see [REFERENCE.md](REFERENCE.md))
 5. Trade-offs
@@ -73,4 +82,4 @@ After comparing, give your own recommendation: which design you think is stronge
 
 ### 7. Write issue file
 
-Write the refactor RFC as a local markdown file in `issues/` using the template in [REFERENCE.md](REFERENCE.md). Do NOT ask the user to review before writing — just write it and share the path.
+Write the refactor RFC as a local markdown file in `issues/` (numbered `NNN-short-title.md`, continuing from the highest existing number) using the template in [REFERENCE.md](REFERENCE.md). Do NOT ask the user to review before writing — just write it and share the path. Do NOT call `gh issue create` or any GitHub CLI command.
