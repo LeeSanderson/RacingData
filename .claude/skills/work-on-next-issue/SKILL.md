@@ -1,9 +1,9 @@
 ---
-name: build-next-issue
-description: Pick the next AFK issue from issues/ and implement it end-to-end via TDD, then commit. Use when the user wants to advance the ralph queue, asks to "build the next issue", or runs this in a /loop.
+name: work-on-next-issue
+description: Pick the next AFK issue from issues/ and implement it end-to-end via TDD, then commit. Use when the user wants to advance the ralph queue, asks to "work on the next issue", or runs this in a /loop.
 ---
 
-# Build Next Issue
+# Work On The Next Issue
 
 Work on a single AFK issue: pick it, implement it via TDD, run the feedback loops, commit, and close it. 
 
