@@ -31,6 +31,7 @@ from utils.data_analysis import (
 )
 from utils.scoring import accuracy, roi
 from algorithms import ALGORITHMS
+from algorithms.market_favourite import MarketFavouriteBaseline
 
 
 _DEFAULT_FOLDS = 14
@@ -181,6 +182,8 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
     algo_names = [type(a).__name__ for a in ALGORITHMS]
     all_preds = {n: [] for n in algo_names}
     all_results_store = {n: [] for n in algo_names}
+    all_fav_preds = {n: [] for n in algo_names}
+    baseline = MarketFavouriteBaseline()
 
     for fold_date in fold_dates:
         print(f"\n--- Fold: {fold_date} ---")
@@ -209,24 +212,31 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
             preds = algo.predict(card, horse_stats, jockey_stats)
             acc = accuracy(preds, results_df)
             r = roi(preds, results_df)
-            print(f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)}")
+            fav_preds = baseline.predict(preds["RaceId"], results_df)
+            fav_acc = accuracy(fav_preds, results_df)
+            fav_r = roi(fav_preds, results_df)
+            print(f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)} | favourite: accuracy={fav_acc:.3f}, roi={fav_r:.3f}, races={len(fav_preds)}")
             all_preds[name].append(preds)
             all_results_store[name].append(results_df)
+            all_fav_preds[name].append(fav_preds)
 
         gc.collect()
 
     print("\n=== Summary ===")
-    print(f"{'Algorithm':<40} {'Accuracy':>10} {'ROI':>10} {'Races':>8}")
-    print("-" * 72)
+    print(f"{'Algorithm':<40} {'Accuracy':>10} {'ROI':>10} {'Races':>8} {'Fav Accuracy':>14} {'Fav ROI':>10}")
+    print("-" * 98)
     for name in algo_names:
         if not all_preds[name]:
-            print(f"  {name:<40} {'N/A':>10} {'N/A':>10} {'0':>8}")
+            print(f"  {name:<40} {'N/A':>10} {'N/A':>10} {'0':>8} {'N/A':>14} {'N/A':>10}")
             continue
         combined_preds = pd.concat(all_preds[name]).reset_index(drop=True)
         combined_results = pd.concat(all_results_store[name]).reset_index(drop=True)
         acc = accuracy(combined_preds, combined_results)
         r = roi(combined_preds, combined_results)
-        print(f"  {name:<40} {acc:>10.3f} {r:>10.3f} {len(combined_preds):>8}")
+        combined_fav_preds = pd.concat(all_fav_preds[name]).reset_index(drop=True)
+        fav_acc = accuracy(combined_fav_preds, combined_results)
+        fav_r = roi(combined_fav_preds, combined_results)
+        print(f"  {name:<40} {acc:>10.3f} {r:>10.3f} {len(combined_preds):>8} {fav_acc:>14.3f} {fav_r:>10.3f}")
 
 
 if __name__ == "__main__":

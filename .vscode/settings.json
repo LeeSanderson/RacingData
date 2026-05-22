@@ -1,14 +1,15 @@
 {
     "cSpell.words": [
-        "Ballinrobe",
-        "Benter",
-        "dropna",
-        "iloc",
-        "isin",
-        "jockies",
-        "nunique",
-        "sklearn",
-        "todays"
+      "Ballinrobe",
+      "Benter",
+      "dropna",
+      "Favourite",
+      "iloc",
+      "isin",
+      "jockies",
+      "nunique",
+      "sklearn",
+      "todays"
     ],
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
