@@ -45,6 +45,7 @@ try {
     Invoke-NativeCommand python -m pip install matplotlib --quiet
     Invoke-NativeCommand python -m pip install scikit-learn --quiet
     Invoke-NativeCommand python -m pip install ipywidgets --quiet
+    Invoke-NativeCommand python -m pip install xgboost --quiet
 
     Set-Location $RaceDataPath
     Invoke-NativeCommand python -m nbconvert --to script "FeatureAnalysis.ipynb"
@@ -56,8 +57,7 @@ try {
     Invoke-NativeCommand python -m nbconvert --to script "JockeyStatsBuilder.ipynb"
     Invoke-NativeCommand python "JockeyStatsBuilder.py"
 
-    Invoke-NativeCommand python -m nbconvert --to script "LinearRegressionPredictor.ipynb"
-    Invoke-NativeCommand python "LinearRegressionPredictor.py"
+    Invoke-NativeCommand python scripts\predict.py
 } finally {
     Set-Location $InitialPath
 }
