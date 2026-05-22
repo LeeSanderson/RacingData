@@ -19,4 +19,4 @@ def roi(predictions: pd.DataFrame, results: pd.DataFrame) -> float:
         return 0.0
     total_stakes = len(valid)
     winnings = valid.loc[valid["FinishingPosition"] == 1, "DecimalOdds"].sum()
-    return (winnings - total_stakes) / total_stakes
+    return winnings - total_stakes
