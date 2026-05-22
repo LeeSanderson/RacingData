@@ -5,6 +5,7 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.dirname(_SCRIPTS_DIR)
 sys.path.insert(0, _DATA_DIR)
 
+import argparse
 import gc
 import glob
 import pandas as pd
@@ -32,8 +33,8 @@ from utils.scoring import accuracy, roi
 from algorithms import ALGORITHMS
 
 
-_EVAL_DAYS = 14
-_TRAINING_MONTHS = 7
+_DEFAULT_FOLDS = 14
+_DEFAULT_TRAINING_MONTHS = 7
 
 
 def _extract_known_races(fold_df: pd.DataFrame) -> pd.DataFrame:
@@ -98,22 +99,22 @@ def _compute_jockey_stats(train_df: pd.DataFrame) -> pd.DataFrame:
     ]].rename(columns={"Off": "LastOff"})
 
 
-def _fold_dates() -> list:
+def _fold_dates(folds: int) -> list:
     yesterday = date.today() - timedelta(days=1)
-    return [yesterday - timedelta(days=i) for i in range(_EVAL_DAYS)]
+    return [yesterday - timedelta(days=i) for i in range(folds)]
 
 
 _MAX_MONTHLY_FILES = 9  # 7 months can straddle up to 8 files; 9 gives a safe margin
 
 
-def _load_window(fold_date: date) -> pd.DataFrame:
-    """Load 7 months of completed races up to and including fold_date.
+def _load_window(fold_date: date, training_months: int) -> pd.DataFrame:
+    """Load training_months of completed races up to and including fold_date.
 
     Reads the _MAX_MONTHLY_FILES most-recent Results_*.csv files (sorted
     descending by name so newest are first, matching FeatureAnalysis.py),
-    then date-filters to the exact 7-month window.
+    then date-filters to the exact window.
     """
-    start = fold_date - relativedelta(months=_TRAINING_MONTHS)
+    start = fold_date - relativedelta(months=training_months)
     recent_files = sorted(
         glob.glob(os.path.join(_DATA_DIR, "Results_*.csv")), reverse=True
     )[:_MAX_MONTHLY_FILES]
@@ -175,15 +176,15 @@ def _results(fold_df: pd.DataFrame) -> pd.DataFrame:
     return fold_df[["RaceId", "HorseId", "FinishingPosition", "DecimalOdds", "ResultStatus"]].copy()
 
 
-def evaluate() -> None:
-    folds = _fold_dates()
+def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINING_MONTHS) -> None:
+    fold_dates = _fold_dates(folds)
     algo_names = [type(a).__name__ for a in ALGORITHMS]
     all_preds = {n: [] for n in algo_names}
     all_results_store = {n: [] for n in algo_names}
 
-    for fold_date in folds:
+    for fold_date in fold_dates:
         print(f"\n--- Fold: {fold_date} ---")
-        raw = _load_window(fold_date)
+        raw = _load_window(fold_date, training_months)
         if raw.empty:
             print("  No data, skipping")
             continue
@@ -229,4 +230,21 @@ def evaluate() -> None:
 
 
 if __name__ == "__main__":
-    evaluate()
+    # Usage:
+    #   python evaluate.py                          # full run: 14 folds, 7 months training
+    #   python evaluate.py --folds 14 --training-months 7
+    #
+    # Quick integration test (fast):
+    #   python evaluate.py --folds 2 --training-months 2
+    parser = argparse.ArgumentParser(description="Walk-forward evaluation of racing algorithms.")
+    parser.add_argument(
+        "--folds", type=int, default=_DEFAULT_FOLDS,
+        help=f"Number of daily evaluation folds (default: {_DEFAULT_FOLDS})",
+    )
+    parser.add_argument(
+        "--training-months", type=int, default=_DEFAULT_TRAINING_MONTHS,
+        dest="training_months",
+        help=f"Months of history used to train each fold (default: {_DEFAULT_TRAINING_MONTHS})",
+    )
+    args = parser.parse_args()
+    evaluate(folds=args.folds, training_months=args.training_months)
