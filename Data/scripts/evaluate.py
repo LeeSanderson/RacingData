@@ -177,6 +177,21 @@ def _results(fold_df: pd.DataFrame) -> pd.DataFrame:
     return fold_df[["RaceId", "HorseId", "FinishingPosition", "DecimalOdds", "ResultStatus"]].copy()
 
 
+def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:
+    if preds.empty:
+        return
+    info = known_fold[["RaceId", "HorseId", "HorseName", "Off", "FinishingPosition", "DecimalOdds"]].copy()
+    merged = preds.merge(info, on=["RaceId", "HorseId"], how="left").sort_values("Off")
+    for _, row in merged.iterrows():
+        won = row["FinishingPosition"] == 1
+        pos = int(row["FinishingPosition"]) if pd.notna(row["FinishingPosition"]) else "?"
+        odds = f"{row['DecimalOdds']:.2f}" if pd.notna(row["DecimalOdds"]) else "N/A"
+        icon = "+" if won else "-"
+        time_str = row["Off"].strftime("%H:%M") if pd.notna(row["Off"]) else "?"
+        horse = str(row.get("HorseName", "Unknown"))[:30]
+        print(f"      {icon} {time_str}  {horse:<30}  pos={pos}  odds={odds}")
+
+
 def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINING_MONTHS) -> None:
     fold_dates = _fold_dates(folds)
     algo_names = [type(a).__name__ for a in ALGORITHMS]
@@ -191,7 +206,7 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
         if raw.empty:
             print("  No data, skipping")
             continue
-
+        print(f"  Loaded {len(raw)} rows — engineering features:")
         races = _engineer_features(raw)
         train_df = races[races["Off"].dt.date < fold_date].copy()
         fold_df = races[races["Off"].dt.date == fold_date].copy()
@@ -208,6 +223,7 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
 
         for algo in ALGORITHMS:
             name = type(algo).__name__
+            print(f"  Fitting {name}...", flush=True)
             algo.fit(train_df)
             preds = algo.predict(card, horse_stats, jockey_stats)
             acc = accuracy(preds, results_df)
@@ -216,6 +232,7 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
             fav_acc = accuracy(fav_preds, results_df)
             fav_r = roi(fav_preds, results_df)
             print(f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)} | favourite: accuracy={fav_acc:.3f}, roi={fav_r:.3f}, races={len(fav_preds)}")
+            _print_race_results(preds, known_fold)
             all_preds[name].append(preds)
             all_results_store[name].append(results_df)
             all_fav_preds[name].append(fav_preds)

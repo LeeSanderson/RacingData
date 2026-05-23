@@ -2,8 +2,6 @@ import math
 from typing import Any
 import pandas as pd
 import numpy as np
-from ipywidgets import IntProgress
-from IPython.display import display
 from datetime import timedelta
 from abc import ABC
 
@@ -41,8 +39,9 @@ class RaceDataProcessor(ABC):
         df_end = df["Off"].max().date() + timedelta(days=1)
 
         days = (df_end - slice_start).days
-        f = IntProgress(min=0, max=days)  # instantiate the bar
-        display(f)
+        label = type(self).__name__
+        day_num = 0
+        print(f"    {label}: 0/{days} days", end="\r", flush=True)
 
         self.before_process_data(df)
         while slice_start < df_end:
@@ -54,7 +53,9 @@ class RaceDataProcessor(ABC):
             if len(daily_slice) > 0:
                 self.update(df, history, daily_slice)
             slice_start = slice_end
-            f.value += 1
+            day_num += 1
+            print(f"    {label}: {day_num}/{days} days", end="\r", flush=True)
+        print(f"    {label}: {days}/{days} days")
 
 
 # ================================================================
