@@ -29,35 +29,25 @@ $RaceDownloaderPath = Join-Path $InitialPath "RaceDataDownloader\bin\Debug\net9.
 $RaceDownloaderExe = Join-Path $RaceDownloaderPath "RaceDataDownloader.exe"
 $RaceDataPath = Resolve-Path ".\Data"
 
-try {
-    Invoke-NativeCommand dotnet build
-    Invoke-NativeCommand dotnet test
-    ## Invoke-NativeCommand $RaceDownloaderExe deduperesults --output $RaceDataPath
-    ## Invoke-NativeCommand $RaceDownloaderExe fixraceids --output $RaceDataPath
-    Invoke-NativeCommand $RaceDownloaderExe updateresults --output $RaceDataPath --period 365
-    Invoke-NativeCommand $RaceDownloaderExe validate --output $RaceDataPath
-    Invoke-NativeCommand $RaceDownloaderExe todaysracecards --output $RaceDataPath
+Invoke-NativeCommand dotnet build
+Invoke-NativeCommand dotnet test
+## Invoke-NativeCommand $RaceDownloaderExe deduperesults --output $RaceDataPath
+## Invoke-NativeCommand $RaceDownloaderExe fixraceids --output $RaceDataPath
+Invoke-NativeCommand $RaceDownloaderExe updateresults --output $RaceDataPath --period 365
+Invoke-NativeCommand $RaceDownloaderExe validate --output $RaceDataPath
+Invoke-NativeCommand $RaceDownloaderExe todaysracecards --output $RaceDataPath
 
-    Invoke-NativeCommand python -m pip install nbconvert --quiet
-    Invoke-NativeCommand python -m pip install ipykernel --quiet
-    Invoke-NativeCommand python -m pip install numpy --quiet
-    Invoke-NativeCommand python -m pip install Pandas --quiet
-    Invoke-NativeCommand python -m pip install matplotlib --quiet
-    Invoke-NativeCommand python -m pip install scikit-learn --quiet
-    Invoke-NativeCommand python -m pip install ipywidgets --quiet
-    Invoke-NativeCommand python -m pip install xgboost --quiet
+Invoke-NativeCommand python -m pip install -e . --quiet
 
-    Set-Location $RaceDataPath
-    Invoke-NativeCommand python -m nbconvert --to script "FeatureAnalysis.ipynb"
-    Invoke-NativeCommand python "FeatureAnalysis.py"
+$env:RACE_DATA_PATH = $RaceDataPath
 
-    Invoke-NativeCommand python -m nbconvert --to script "HorseStatsBuilder.ipynb"
-    Invoke-NativeCommand python "HorseStatsBuilder.py"
+Invoke-NativeCommand python -m nbconvert --to script "race_analytics/notebooks/FeatureAnalysis.ipynb"
+Invoke-NativeCommand python "race_analytics/notebooks/FeatureAnalysis.py"
 
-    Invoke-NativeCommand python -m nbconvert --to script "JockeyStatsBuilder.ipynb"
-    Invoke-NativeCommand python "JockeyStatsBuilder.py"
+Invoke-NativeCommand python -m nbconvert --to script "race_analytics/notebooks/HorseStatsBuilder.ipynb"
+Invoke-NativeCommand python "race_analytics/notebooks/HorseStatsBuilder.py"
 
-    Invoke-NativeCommand python scripts\predict.py
-} finally {
-    Set-Location $InitialPath
-}
+Invoke-NativeCommand python -m nbconvert --to script "race_analytics/notebooks/JockeyStatsBuilder.ipynb"
+Invoke-NativeCommand python "race_analytics/notebooks/JockeyStatsBuilder.py"
+
+Invoke-NativeCommand python -m race_analytics.scripts.predict --data $RaceDataPath
