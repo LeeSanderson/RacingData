@@ -356,6 +356,7 @@ MigrationBackup/
 Data/Race_Features.csv
 Data/Clean_Race_Features.csv
 Data/*.py
+race_analytics/notebooks/*.py
 
 .pytest_cache/
 *.egg-info/
