@@ -10,5 +10,3 @@ Ask the questions one at a time.
 If a question can be answered by exploring the codebase, explore the codebase instead.
 
 When all questions are resolved, summarize the final plan back to me and ask if I want to proceed with it.
-
-After the session completes successfully, review our conversation. If a new constraint, preference, or architectural decision was made, reflect on it and propose an update to the rules in agents.md. Wait for my approval before saving.

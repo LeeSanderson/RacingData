@@ -123,7 +123,9 @@ one-hot going vector. Do not change this default without re-evaluating model per
 the model was trained on data where going was always known.
 
 ### Testing
-Tests in `Data/utils/` follow the pattern in `test_data_analysis.py`: construct a small in-memory DataFrame, call the function, assert on output. Run with `pytest`.
+Tests live in a top-level `tests/` directory that mirrors the package structure (e.g. `tests/utils/test_scoring.py`, `tests/algorithms/test_ridge_regression.py`). Follow the pattern in `test_data_analysis.py`: construct a small in-memory DataFrame, call the function, assert on output. Run with `python -m pytest tests/`.
+
+**Note:** Pre-migration tests still live co-located in `Data/utils/`, `Data/algorithms/`, `Data/scripts/`. The `tests/` layout applies after the `race_analytics/` restructure.
 
 ## Evaluation Pipeline Design
 Key decisions:

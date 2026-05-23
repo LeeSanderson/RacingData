@@ -7,6 +7,10 @@ Please review the current AGENTS.md file. Remove any redundant or overly vague r
 
 Specifically ensure that any deterministic guardrails are updated to ensure they continue to be effective in guiding the model's behavior.
 
+If a conversation has just completed successfully, review our agreed outcomes. If a new constraint, preference, or architectural decision was made, reflect on it and propose an update to the rules in agents.md. 
+
+Always wait for my approval before saving.
+
 ## Best practices for reviewing AGENTS.md:
 
 - Put commands early: Put relevant executable commands in an early section: npm test, npm run build, pytest -v. Include flags and options, not just tool names. Your agent will reference these often.
