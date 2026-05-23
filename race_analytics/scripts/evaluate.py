@@ -189,9 +189,24 @@ def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:
         print(f"      {icon} {time_str}  {course:<20}  {horse:<30}  pos={pos}  odds={odds}")
 
 
-def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINING_MONTHS) -> None:
+def _resolve_algorithms(names: list[str] | None) -> list:
+    """Return algorithm instances to run, or raise SystemExit on unknown names."""
+    algo_map = {type(a).__name__: a for a in ALGORITHMS}
+    if not names:
+        return list(ALGORITHMS)
+    unknown = [n for n in names if n not in algo_map]
+    if unknown:
+        available = ", ".join(algo_map)
+        raise SystemExit(
+            f"Unknown algorithm(s): {', '.join(unknown)}\nAvailable: {available}"
+        )
+    return [algo_map[n] for n in names]
+
+
+def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINING_MONTHS, algorithms: list[str] | None = None) -> None:
     fold_dates = _fold_dates(folds)
-    algo_names = [type(a).__name__ for a in ALGORITHMS]
+    selected_algos = _resolve_algorithms(algorithms)
+    algo_names = [type(a).__name__ for a in selected_algos]
     all_preds = {n: [] for n in algo_names}
     all_results_store = {n: [] for n in algo_names}
     all_fav_preds = {n: [] for n in algo_names}
@@ -218,7 +233,7 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
         card = _race_card(known_fold)
         results_df = _results(known_fold)
 
-        for algo in ALGORITHMS:
+        for algo in selected_algos:
             name = type(algo).__name__
             print(f"  Fitting {name}...", flush=True)
             algo.fit(train_df)
@@ -257,6 +272,7 @@ if __name__ == "__main__":
     # Usage:
     #   python -m race_analytics.scripts.evaluate
     #   python -m race_analytics.scripts.evaluate --folds 14 --training-months 7
+    #   python -m race_analytics.scripts.evaluate --algorithms RidgeRegressionAlgorithm
     #
     # Quick integration test (fast):
     #   python -m race_analytics.scripts.evaluate --folds 2 --training-months 2
@@ -270,5 +286,10 @@ if __name__ == "__main__":
         dest="training_months",
         help=f"Months of history used to train each fold (default: {_DEFAULT_TRAINING_MONTHS})",
     )
+    parser.add_argument(
+        "--algorithms", type=lambda s: [x.strip() for x in s.split(",")],
+        default=None,
+        help="Comma-separated list of algorithm class names to run (default: all registered algorithms)",
+    )
     args = parser.parse_args()
-    evaluate(folds=args.folds, training_months=args.training_months)
+    evaluate(folds=args.folds, training_months=args.training_months, algorithms=args.algorithms)
