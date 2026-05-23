@@ -132,7 +132,7 @@ def _load_window(fold_date: date, training_months: int) -> pd.DataFrame:
 
 
 _KEEP_COLS = [
-    "RaceId", "CourseId", "RaceType", "Off", "DecimalOdds",
+    "RaceId", "CourseId", "CourseName", "RaceType", "Off", "DecimalOdds",
     "OfficialRating", "RacingPostRating", "TopSpeedRating",
     "DistanceInMeters", "Going", "Surface",
     "HorseId", "HorseName", "JockeyId", "JockeyName",
@@ -176,7 +176,7 @@ def _results(fold_df: pd.DataFrame) -> pd.DataFrame:
 def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:
     if preds.empty:
         return
-    info = known_fold[["RaceId", "HorseId", "HorseName", "Off", "FinishingPosition", "DecimalOdds"]].copy()
+    info = known_fold[["RaceId", "HorseId", "HorseName", "CourseName", "Off", "FinishingPosition", "DecimalOdds"]].copy()
     merged = preds.merge(info, on=["RaceId", "HorseId"], how="left").sort_values("Off")
     for _, row in merged.iterrows():
         won = row["FinishingPosition"] == 1
@@ -185,7 +185,8 @@ def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:
         icon = "+" if won else "-"
         time_str = row["Off"].strftime("%H:%M") if pd.notna(row["Off"]) else "?"
         horse = str(row.get("HorseName", "Unknown"))[:30]
-        print(f"      {icon} {time_str}  {horse:<30}  pos={pos}  odds={odds}")
+        course = str(row.get("CourseName", "Unknown"))[:20]
+        print(f"      {icon} {time_str}  {course:<20}  {horse:<30}  pos={pos}  odds={odds}")
 
 
 def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINING_MONTHS) -> None:
