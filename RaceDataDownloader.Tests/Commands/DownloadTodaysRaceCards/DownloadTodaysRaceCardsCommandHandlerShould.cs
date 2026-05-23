@@ -9,6 +9,25 @@ namespace RaceDataDownloader.Tests.Commands.DownloadTodaysRaceCards;
 public class DownloadTodaysRaceCardsCommandHandlerShould(ITestOutputHelper output)
 {
     [Fact]
+    public async Task FailWhenNoRaceCardsHaveGoingInformation()
+    {
+        var mockFileSystemBuilder = new MockFileSystemBuilder();
+        var mockRacingDataDownloader = MockRacingDataDownloader
+            .New()
+            .MockReturnHappyValleyRaceCardUrls()
+            .MockReturnHappyValleyRaceCardWithNoGoing();
+        var clock = Substitute.For<IClock>();
+        clock.Today.Returns(new DateOnly(2026, 05, 20));
+        var logger = new OutputLogger<DownloadTodaysRaceCardsCommandHandler>(output);
+
+        var handler = new DownloadTodaysRaceCardsCommandHandler(mockFileSystemBuilder.FileSystem, mockRacingDataDownloader, clock, logger);
+        var options = new DownloadTodaysRaceCardsOptions { DataDirectory = MockFileSystemBuilder.OutputDirectory };
+        var result = await handler.RunAsync(options);
+
+        result.Should().Be(ExitCodes.Error);
+    }
+
+    [Fact]
     public async Task DownloadRaceCardsAndSaveToExpectedLocation()
     {
         var mockFileSystemBuilder = new MockFileSystemBuilder();

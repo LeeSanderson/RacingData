@@ -128,6 +128,16 @@ public class RaceCardParserShould
     }
 
     [Fact]
+    public async Task FallBackToEmptyGoingWhenGoingLinkMissing()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_yarmouth_20260520_1910.html");
+        var modified = RemoveGoingLink(html);
+
+        var card = await new RaceCardParser().Parse(modified);
+        card.Attributes.Going.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task FallBackToZeroWeightWhenWeightDigitsMissing()
     {
         // Synthesise a missing-weight row by emptying the digits inside the first runner's
@@ -161,6 +171,10 @@ public class RaceCardParserShould
         var replacement = $"{match.Groups[1].Value}R{match.Groups[2].Value}{match.Groups[3].Value}";
         return html[..match.Index] + replacement + html[(match.Index + match.Length)..];
     }
+
+    private static string RemoveGoingLink(string html) =>
+        html.Replace("data-testid=\"Link__Going\"", "data-testid=\"Link__GoingRemoved\"",
+            StringComparison.Ordinal);
 
     private static string RemoveFirstRunnerJockey(string html)
     {

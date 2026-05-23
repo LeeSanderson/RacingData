@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+1,True,8/13F,1.6153846153846154,CompletedRace,918866,5,Bath,05/22/2026 14:43:00,8309326,Supplicate
+1,True,11/2,6.5,CompletedRace,918865,5,Bath,05/22/2026 15:53:00,5884206,Toolatetonegotiate
+2,False,11/4,3.75,CompletedRace,918880,21,Goodwood,05/22/2026 13:57:00,9189209,Love Is IRE
+2,False,2/1F,3,CompletedRace,918881,21,Goodwood,05/22/2026 15:07:00,6442171,St Mawes IRE
+10,False,10/1,11,CompletedRace,918876,46,Pontefract,05/22/2026 19:22:00,5947085,Lucius Aurelius
+3,False,3/1,4,CompletedRace,918678,101,Worcester,05/22/2026 16:57:00,5034916,Electric Eddy
+1,True,11/1,12,CompletedRace,918676,101,Worcester,05/22/2026 17:32:00,6121065,Karnaval Point FR
 2,False,5/4F,2.25,CompletedRace,918824,10,Catterick,05/21/2026 15:40:00,6595660,Nightsinwhitesatin
 1,True,EvensF,2,CompletedRace,918827,10,Catterick,05/21/2026 17:27:00,7947736,Velvet Rhythm
 2,False,5/1,6,CompletedRace,918833,12,Chepstow,05/21/2026 18:05:00,5441313,El Bufalo

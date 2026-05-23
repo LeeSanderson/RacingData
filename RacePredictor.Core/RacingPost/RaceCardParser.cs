@@ -124,7 +124,7 @@ public partial class RaceCardParser : RaceParser
     }
 
     private string GetGoing() =>
-        _find.Anchor().WithAttribute("data-testid", "Link__Going").GetText();
+        _find.Optional().Anchor().WithAttribute("data-testid", "Link__Going").GetText() ?? string.Empty;
 
     private int GetNumberOfRunners() =>
         @"Runners:\s*(\d+)"

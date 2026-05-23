@@ -5,6 +5,7 @@ import utils.test_data as td
 from utils.data_transforms import (
     encode_surfaces,
     encode_going,
+    going_categories,
     calculate_speed,
     clean_weight,
     calculate_horse_count,
@@ -245,6 +246,26 @@ def test_encode_going_handles_unknown_conditions():
         sum(going_values) == 1.0
     ), "Exactly one going column should be 1.0 for valid going"
     assert result.iloc[1]["Going_Good"] == 1.0, "Good going should set Going_Good = 1.0"
+
+
+def test_encode_going_defaults_empty_going_to_good():
+    """Test that empty or null going defaults to Good"""
+    data = [
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, ""
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"
+        ),
+    ]
+    df = pd.DataFrame(data)
+
+    result = encode_going(df)
+
+    assert result.iloc[0]["Going_Good"] == 1.0, "Empty going should default to Going_Good"
+    for col in going_categories:
+        if col != "Going_Good":
+            assert result.iloc[0][col] == 0.0, f"Empty going should leave {col} = 0.0"
 
 
 # --- calculate_speed ---

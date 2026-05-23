@@ -12,10 +12,10 @@ A .NET 9.0 + Python ML pipeline: C# extracts horse racing data from racingpost.c
 **Python pipeline scripts (in execution order):**
 - `FeatureAnalysis.py` — encodes categoricals, calculates speed → `Race_Features.csv`
 - `HorseStatsBuilder.py` / `JockeyStatsBuilder.py` → `Horse_Stats.csv`, `Jockey_Stats.csv`
-- `predict.py` *(replacing `LinearRegressionPredictor` notebook)* — reads pre-computed feature files, calls active algorithm, writes `TodaysPredictions.csv`
+- `predict.py` — reads pre-computed feature files, calls active algorithm, writes `TodaysPredictions.csv`
 - `evaluate.py` *(standalone)* — 14-fold walk-forward evaluation; reads raw `Results_YYYYMM.csv` per fold; writes nothing to disk
 
-**Algorithm registry** (`Data/algorithms/__init__.py`): Central list of instantiated algorithm objects; one marked "active" for production use by `predict.py`. Full design spec: `issues/prd.md`.
+**Algorithm registry** (`Data/algorithms/__init__.py`): Central list of instantiated algorithm objects; one marked "active" for production use by `predict.py`.
 
 ## Verification & Feedback Loops
 
@@ -26,7 +26,7 @@ dotnet build && dotnet test
 
 ### After Python utility changes
 ```powershell
-python -m pytest Data/utils/
+python -m pytest Data/utils/ Data/algorithms/
 ```
 
 ### After changes to a specific Python script
@@ -38,7 +38,7 @@ Check console output for errors; each script prints progress as it runs.
 
 ### After algorithm changes — verify the contract
 - `fit(train_df)` must not throw on well-formed input and must return `None`
-- `predict(races, horse_stats, jockey_stats)` must return exactly one `{RaceId, HorseId}` row per race, no duplicates, no missing races
+- `predict(races, horse_stats, jockey_stats)` must return at most one `{RaceId, HorseId}` row per qualifying race, no duplicates; races exceeding `max_horses` or with any null predictors are silently excluded
 - `max_horses` filter must exclude races whose runner count exceeds the configured limit
 
 ### Full pipeline integration
@@ -79,6 +79,27 @@ public class UpdateResultsCommandHandler : FileCommandHandlerBase<UpdateResultsC
 }
 ```
 
+### HTML parser — optional fields
+`HtmlNodeFinder.GetNode()` / `GetText()` throw when the element is absent.
+Use `.Optional()` when a field may legitimately be missing on some race pages:
+```csharp
+// throws if absent — only use when the element is guaranteed present
+_find.Anchor().WithAttribute("data-testid", "Link__Horse").GetText();
+
+// returns null/empty when absent — use for optional fields
+_find.Optional().Anchor().WithAttribute("data-testid", "Link__Going").GetText();
+```
+
+### Guard method naming
+Methods that throw if a precondition isn't met should be named `EnsureXxx`
+(e.g., `EnsureGoingDataIsPresent`). This mirrors .NET's own `EnsureSuccessStatusCode` convention.
+
+### Data quality gates after scraping
+Validation that detects a likely site structure change (e.g., all downloaded cards
+missing a field that should always be present) must throw `ValidationException`,
+not log a warning. A thrown exception causes `run.ps1` to halt visibly; a warning
+is easy to miss in the log stream.
+
 ### Testing
 - Snapshot tests use the Verify framework (`.verified.txt` files checked into source control)
 - Test names: `{Class}Should.{Behavior}` (e.g., `UpdateResultsCommandHandlerShould.BackFillDataForMissingDays`)
@@ -95,11 +116,17 @@ class Algorithm:
     # predict must return one row per race: columns {RaceId, HorseId}
 ```
 
+### Going encoding default
+`encode_going()` in `Data/utils/data_transforms.py` defaults empty or null `Going`
+values to `"Good"` before mapping. This ensures the model always receives a valid
+one-hot going vector. Do not change this default without re-evaluating model performance —
+the model was trained on data where going was always known.
+
 ### Testing
 Tests in `Data/utils/` follow the pattern in `test_data_analysis.py`: construct a small in-memory DataFrame, call the function, assert on output. Run with `pytest`.
 
 ## Evaluation Pipeline Design
-Full spec: `issues/prd.md`. Key decisions:
+Key decisions:
 - `evaluate.py` loads raw `Results_YYYYMM.csv` per fold — does **not** read `Race_Features.csv`
 - `predict.py` reads pre-computed feature files; still writes `TodaysPredictions.csv` for the downstream `validate` CLI step
 - `KnownHorseAndJockey == True` filter applied by the pipeline before any algorithm sees data

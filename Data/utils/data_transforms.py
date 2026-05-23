@@ -55,7 +55,8 @@ def encode_going(races: pd.DataFrame) -> pd.DataFrame:
         "Frozen": "Heavy",
     }
 
-    races["NormGoing"] = races["Going"].map(norm_map)
+    # Empty or null going defaults to "Good" — the most common condition for UK racing.
+    races["NormGoing"] = races["Going"].fillna("Good").replace("", "Good").map(norm_map)
     races = races.drop(going_categories, axis=1, errors="ignore")
     races = pd.get_dummies(races, prefix="Going", columns=["NormGoing"], dtype=float)
     for col in going_categories:
