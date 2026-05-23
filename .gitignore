@@ -358,3 +358,4 @@ Data/Clean_Race_Features.csv
 Data/*.py
 
 .pytest_cache/
+*.egg-info/
