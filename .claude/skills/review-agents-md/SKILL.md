@@ -24,3 +24,5 @@ Always wait for my approval before saving.
 - Cover six core areas: Hitting these areas puts you in the top tier: commands, testing, project structure, code style, git workflow, and boundaries. 
 
 - Aim for a maximum of 150 lines of instructions: Long enough to be specific, but short enough to be read and followed. If you need more, consider using progressive disclosure and link to separate files for detailed guidelines thereby keeping AGENTS.md focused on the most critical rules and examples.
+
+- Do not reference in flight work in the current issues/PRD.md or issues/NNN-some-issue.md files. AGENTS.md should contain timeless rules and examples that are not tied to specific in-flight work. Avoid mentioning specific issue numbers, PRDs, or temporary architectural decisions that may change frequently. Focus on general principles and practices that will remain relevant over time.
