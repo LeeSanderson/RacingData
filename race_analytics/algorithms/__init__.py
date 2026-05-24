@@ -1,6 +1,9 @@
 from race_analytics.algorithms.ridge_regression import RidgeRegressionAlgorithm
 from race_analytics.algorithms.xgboost_algorithm import XGBoostAlgorithm
-from race_analytics.algorithms.ratings_xgboost import RatingsXGBoostAlgorithm, RatingsXGBoostUngatedAlgorithm
+from race_analytics.algorithms.ratings_xgboost import (
+    RatingsXGBoostAlgorithm,
+    RatingsXGBoostUngatedAlgorithm,
+)
 
 ALGORITHMS = [
     RidgeRegressionAlgorithm(max_horses=10),

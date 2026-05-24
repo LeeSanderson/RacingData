@@ -63,9 +63,15 @@ def _compute_horse_stats(train_df: pd.DataFrame) -> pd.DataFrame:
         **{r: f"LastRace{r}" for r in race_type_categories},
     }
     cols = [
-        "HorseId", "Off", "DistanceInMeters", "WeightInPounds", "Speed",
+        "HorseId",
+        "Off",
+        "DistanceInMeters",
+        "WeightInPounds",
+        "Speed",
         "LastRaceAvgRelFinishingPosition",
-        *surface_categories, *going_categories, *race_type_categories,
+        *surface_categories,
+        *going_categories,
+        *race_type_categories,
     ]
     return last[[c for c in cols if c in last.columns]].rename(columns=rename)
 
@@ -80,8 +86,12 @@ def _compute_jockey_stats(train_df: pd.DataFrame) -> pd.DataFrame:
         .reset_index()
     )
     prior = last["JockeyNumberOfPriorRaces"].fillna(0)
-    wins = last["JockeyWinPercentage"].fillna(0) * prior + (last["FinishingPosition"] == 1).astype(float)
-    top3 = last["JockeyTop3Percentage"].fillna(0) * prior + (last["FinishingPosition"] < 4).astype(float)
+    wins = last["JockeyWinPercentage"].fillna(0) * prior + (
+        last["FinishingPosition"] == 1
+    ).astype(float)
+    top3 = last["JockeyTop3Percentage"].fillna(0) * prior + (
+        last["FinishingPosition"] < 4
+    ).astype(float)
     avg_pos = (
         last["JockeyAvgRelFinishingPosition"].fillna(0) * prior
         + last["FinishingPosition"] / last["HorseCount"]
@@ -90,10 +100,16 @@ def _compute_jockey_stats(train_df: pd.DataFrame) -> pd.DataFrame:
     last["JockeyWinPercentage"] = wins / last["JockeyNumberOfPriorRaces"]
     last["JockeyTop3Percentage"] = top3 / last["JockeyNumberOfPriorRaces"]
     last["JockeyAvgRelFinishingPosition"] = avg_pos
-    return last[[
-        "JockeyId", "Off", "JockeyNumberOfPriorRaces",
-        "JockeyWinPercentage", "JockeyTop3Percentage", "JockeyAvgRelFinishingPosition",
-    ]].rename(columns={"Off": "LastOff"})
+    return last[
+        [
+            "JockeyId",
+            "Off",
+            "JockeyNumberOfPriorRaces",
+            "JockeyWinPercentage",
+            "JockeyTop3Percentage",
+            "JockeyAvgRelFinishingPosition",
+        ]
+    ].rename(columns={"Off": "LastOff"})
 
 
 def _fold_dates(folds: int) -> list:
@@ -132,13 +148,32 @@ def _load_window(fold_date: date, training_months: int) -> pd.DataFrame:
 
 
 _KEEP_COLS = [
-    "RaceId", "CourseId", "CourseName", "RaceType", "Off", "DecimalOdds",
-    "OfficialRating", "RacingPostRating", "TopSpeedRating",
-    "DistanceInMeters", "Going", "Surface",
-    "HorseId", "HorseName", "JockeyId", "JockeyName",
-    "TrainerId", "TrainerName", "Age", "HeadGear",
-    "RaceCardNumber", "StallNumber", "WeightInPounds",
-    "FinishingPosition", "OverallBeatenDistance", "RaceTimeInSeconds",
+    "RaceId",
+    "CourseId",
+    "CourseName",
+    "RaceType",
+    "Off",
+    "DecimalOdds",
+    "OfficialRating",
+    "RacingPostRating",
+    "TopSpeedRating",
+    "DistanceInMeters",
+    "Going",
+    "Surface",
+    "HorseId",
+    "HorseName",
+    "JockeyId",
+    "JockeyName",
+    "TrainerId",
+    "TrainerName",
+    "Age",
+    "HeadGear",
+    "RaceCardNumber",
+    "StallNumber",
+    "WeightInPounds",
+    "FinishingPosition",
+    "OverallBeatenDistance",
+    "RaceTimeInSeconds",
     "ResultStatus",
 ]
 
@@ -164,30 +199,56 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
 
 def _race_card(fold_df: pd.DataFrame) -> pd.DataFrame:
     """Raw race card columns needed by predict() — it re-encodes Surface/Going/RaceType."""
-    cols = ["RaceId", "HorseId", "JockeyId", "Surface", "Going", "RaceType",
-            "DistanceInMeters", "WeightInPounds",
-            "OfficialRating", "RacingPostRating", "TopSpeedRating"]
+    cols = [
+        "RaceId",
+        "HorseId",
+        "JockeyId",
+        "Surface",
+        "Going",
+        "RaceType",
+        "DistanceInMeters",
+        "WeightInPounds",
+        "OfficialRating",
+        "RacingPostRating",
+        "TopSpeedRating",
+    ]
     return fold_df[[c for c in cols if c in fold_df.columns]].copy()
 
 
 def _results(fold_df: pd.DataFrame) -> pd.DataFrame:
-    return fold_df[["RaceId", "HorseId", "FinishingPosition", "DecimalOdds", "ResultStatus"]].copy()
+    return fold_df[
+        ["RaceId", "HorseId", "FinishingPosition", "DecimalOdds", "ResultStatus"]
+    ].copy()
 
 
 def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:
     if preds.empty:
         return
-    info = known_fold[["RaceId", "HorseId", "HorseName", "CourseName", "Off", "FinishingPosition", "DecimalOdds"]].copy()
+    info = known_fold[
+        [
+            "RaceId",
+            "HorseId",
+            "HorseName",
+            "CourseName",
+            "Off",
+            "FinishingPosition",
+            "DecimalOdds",
+        ]
+    ].copy()
     merged = preds.merge(info, on=["RaceId", "HorseId"], how="left").sort_values("Off")
     for _, row in merged.iterrows():
         won = row["FinishingPosition"] == 1
-        pos = int(row["FinishingPosition"]) if pd.notna(row["FinishingPosition"]) else "?"
+        pos = (
+            int(row["FinishingPosition"]) if pd.notna(row["FinishingPosition"]) else "?"
+        )
         odds = f"{row['DecimalOdds']:.2f}" if pd.notna(row["DecimalOdds"]) else "N/A"
         icon = "+" if won else "-"
         time_str = row["Off"].strftime("%H:%M") if pd.notna(row["Off"]) else "?"
         horse = str(row.get("HorseName", "Unknown"))[:30]
         course = str(row.get("CourseName", "Unknown"))[:20]
-        print(f"      {icon} {time_str}  {course:<20}  {horse:<30}  pos={pos}  odds={odds}")
+        print(
+            f"      {icon} {time_str}  {course:<20}  {horse:<30}  pos={pos}  odds={odds}"
+        )
 
 
 def _resolve_algorithms(names: list[str] | None) -> list:
@@ -204,7 +265,11 @@ def _resolve_algorithms(names: list[str] | None) -> list:
     return [algo_map[n] for n in names]
 
 
-def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINING_MONTHS, algorithms: list[str] | None = None) -> None:
+def evaluate(
+    folds: int = _DEFAULT_FOLDS,
+    training_months: int = _DEFAULT_TRAINING_MONTHS,
+    algorithms: list[str] | None = None,
+) -> None:
     fold_dates = _fold_dates(folds)
     selected_algos = _resolve_algorithms(algorithms)
     algo_names = [type(a).__name__ for a in selected_algos]
@@ -244,7 +309,9 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
             fav_preds = baseline.predict(preds["RaceId"], results_df)
             fav_acc = accuracy(fav_preds, results_df)
             fav_r = roi(fav_preds, results_df)
-            print(f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)} | favourite: accuracy={fav_acc:.3f}, roi={fav_r:.3f}, races={len(fav_preds)}")
+            print(
+                f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)} | favourite: accuracy={fav_acc:.3f}, roi={fav_r:.3f}, races={len(fav_preds)}"
+            )
             _print_race_results(preds, known_fold)
             all_preds[name].append(preds)
             all_results_store[name].append(results_df)
@@ -253,11 +320,15 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
         gc.collect()
 
     print("\n=== Summary ===")
-    print(f"{'Algorithm':<40} {'Accuracy':>10} {'ROI':>10} {'Races':>8} {'Fav Accuracy':>14} {'Fav ROI':>10}")
+    print(
+        f"{'Algorithm':<40} {'Accuracy':>10} {'ROI':>10} {'Races':>8} {'Fav Accuracy':>14} {'Fav ROI':>10}"
+    )
     print("-" * 98)
     for name in algo_names:
         if not all_preds[name]:
-            print(f"  {name:<40} {'N/A':>10} {'N/A':>10} {'0':>8} {'N/A':>14} {'N/A':>10}")
+            print(
+                f"  {name:<40} {'N/A':>10} {'N/A':>10} {'0':>8} {'N/A':>14} {'N/A':>10}"
+            )
             continue
         combined_preds = pd.concat(all_preds[name]).reset_index(drop=True)
         combined_results = pd.concat(all_results_store[name]).reset_index(drop=True)
@@ -266,7 +337,9 @@ def evaluate(folds: int = _DEFAULT_FOLDS, training_months: int = _DEFAULT_TRAINI
         combined_fav_preds = pd.concat(all_fav_preds[name]).reset_index(drop=True)
         fav_acc = accuracy(combined_fav_preds, combined_results)
         fav_r = roi(combined_fav_preds, combined_results)
-        print(f"  {name:<40} {acc:>10.3f} {r:>10.3f} {len(combined_preds):>8} {fav_acc:>14.3f} {fav_r:>10.3f}")
+        print(
+            f"  {name:<40} {acc:>10.3f} {r:>10.3f} {len(combined_preds):>8} {fav_acc:>14.3f} {fav_r:>10.3f}"
+        )
 
 
 if __name__ == "__main__":
@@ -277,20 +350,31 @@ if __name__ == "__main__":
     #
     # Quick integration test (fast):
     #   python -m race_analytics.scripts.evaluate --folds 2 --training-months 2
-    parser = argparse.ArgumentParser(description="Walk-forward evaluation of racing algorithms.")
+    parser = argparse.ArgumentParser(
+        description="Walk-forward evaluation of racing algorithms."
+    )
     parser.add_argument(
-        "--folds", type=int, default=_DEFAULT_FOLDS,
+        "--folds",
+        type=int,
+        default=_DEFAULT_FOLDS,
         help=f"Number of daily evaluation folds (default: {_DEFAULT_FOLDS})",
     )
     parser.add_argument(
-        "--training-months", type=int, default=_DEFAULT_TRAINING_MONTHS,
+        "--training-months",
+        type=int,
+        default=_DEFAULT_TRAINING_MONTHS,
         dest="training_months",
         help=f"Months of history used to train each fold (default: {_DEFAULT_TRAINING_MONTHS})",
     )
     parser.add_argument(
-        "--algorithms", type=lambda s: [x.strip() for x in s.split(",")],
+        "--algorithms",
+        type=lambda s: [x.strip() for x in s.split(",")],
         default=None,
         help="Comma-separated list of algorithm class names to run (default: all registered algorithms)",
     )
     args = parser.parse_args()
-    evaluate(folds=args.folds, training_months=args.training_months, algorithms=args.algorithms)
+    evaluate(
+        folds=args.folds,
+        training_months=args.training_months,
+        algorithms=args.algorithms,
+    )
