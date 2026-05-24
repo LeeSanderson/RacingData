@@ -165,7 +165,8 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
 def _race_card(fold_df: pd.DataFrame) -> pd.DataFrame:
     """Raw race card columns needed by predict() — it re-encodes Surface/Going/RaceType."""
     cols = ["RaceId", "HorseId", "JockeyId", "Surface", "Going", "RaceType",
-            "DistanceInMeters", "WeightInPounds"]
+            "DistanceInMeters", "WeightInPounds",
+            "OfficialRating", "RacingPostRating", "TopSpeedRating"]
     return fold_df[[c for c in cols if c in fold_df.columns]].copy()
 
 

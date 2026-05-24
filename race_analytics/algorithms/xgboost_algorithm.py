@@ -1,7 +1,5 @@
 from xgboost import XGBRegressor
 
-from xgboost import XGBRegressor
-
 from race_analytics.algorithms.base import BaseAlgorithm
 
 
