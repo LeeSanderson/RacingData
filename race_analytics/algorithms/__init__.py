@@ -4,7 +4,10 @@ from race_analytics.algorithms.ratings_xgboost import (
     RatingsXGBoostAlgorithm,
     RatingsXGBoostUngatedAlgorithm,
 )
-from race_analytics.algorithms.proxy_tsr_xgboost import ProxyTSRXGBoostAlgorithm
+from race_analytics.algorithms.proxy_tsr_xgboost import (
+    ProxyTSRXGBoostAlgorithm,
+    TunedProxyTSRXGBoostAlgorithm,
+)
 
 ALGORITHMS = [
     RidgeRegressionAlgorithm(max_horses=10),
@@ -12,6 +15,7 @@ ALGORITHMS = [
     RatingsXGBoostAlgorithm(max_horses=10),
     RatingsXGBoostUngatedAlgorithm(max_horses=10),
     ProxyTSRXGBoostAlgorithm(max_horses=10),
+    TunedProxyTSRXGBoostAlgorithm(max_horses=10),
 ]
 
 ACTIVE_ALGORITHM = ALGORITHMS[2]  # RatingsXGBoostAlgorithm (TSR-gated)
