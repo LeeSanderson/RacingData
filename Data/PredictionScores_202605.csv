@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+0,False,22/1,23,PulledUp,918702,20,Fontwell,05/24/2026 14:35:00,6397985,Whatcombe IRE
+4,False,11/2,6.5,CompletedRace,918698,20,Fontwell,05/24/2026 15:10:00,4189552,Unspeakable IRE
+2,False,15/8F,2.875,CompletedRace,918703,27,Kelso,05/24/2026 15:03:00,3004020,Wise Eagle IRE
+2,False,100/30,4.333333333333334,CompletedRace,918705,27,Kelso,05/24/2026 16:12:00,4497046,Royal Deeside
+4,False,7/2,4.5,CompletedRace,918715,84,Uttoxeter,05/24/2026 14:52:00,5214259,Izzy's Grey IRE
 5,False,4/1,5,CompletedRace,918682,4,Bangor-on-Dee,05/23/2026 16:10:00,3892998,Cruz Control FR
 5,False,6/1,7,CompletedRace,918687,4,Bangor-on-Dee,05/23/2026 16:45:00,6868954,La Cantate FR
 2,False,4/1,5,CompletedRace,918692,9,Cartmel,05/23/2026 14:10:00,7395204,Zahra Dodville FR
