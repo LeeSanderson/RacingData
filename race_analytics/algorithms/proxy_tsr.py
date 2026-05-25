@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import RandomizedSearchCV
 from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBRegressor
 
@@ -51,6 +52,43 @@ class ProxyTSRModel:
         return df["CourseName"].fillna("Unknown").apply(
             lambda x: int(self._course_encoder.transform([x])[0]) if x in known else -1
         )
+
+    def tune(self, train_df: pd.DataFrame, n_iter: int = 20, cv: int = 3,
+             random_state: int = 42) -> None:
+        """Search for better XGBRegressor hyperparameters using RandomizedSearchCV.
+
+        Call before fit(). Updates self._regressor with an unfitted instance using
+        the best found parameters. Silently skips if there are fewer than cv*2 labelled rows.
+        """
+        labelled = train_df[train_df["TopSpeedRating"].notna()].copy()
+        if len(labelled) < cv * 2:
+            return
+
+        self._course_encoder.fit(train_df["CourseName"].fillna("Unknown"))
+        labelled["CourseNameEncoded"] = self._encode_courses(labelled)
+        feature_cols = [f for f in PROXY_TSR_FEATURES if f in labelled.columns]
+        data = labelled[feature_cols + ["TopSpeedRating"]].dropna(subset=["TopSpeedRating"])
+        if len(data) < cv * 2:
+            return
+
+        param_dist = {
+            "n_estimators": [100, 200, 300, 500],
+            "max_depth": [3, 4, 5, 6, 8],
+            "learning_rate": [0.01, 0.03, 0.05, 0.1, 0.2],
+            "subsample": [0.6, 0.7, 0.8, 0.9, 1.0],
+            "colsample_bytree": [0.6, 0.7, 0.8, 0.9, 1.0],
+        }
+        search = RandomizedSearchCV(
+            XGBRegressor(random_state=42, verbosity=0),
+            param_distributions=param_dist,
+            n_iter=n_iter,
+            cv=cv,
+            scoring="neg_mean_squared_error",
+            random_state=random_state,
+            n_jobs=-1,
+        )
+        search.fit(data[feature_cols], data["TopSpeedRating"])
+        self._regressor = XGBRegressor(**search.best_params_, random_state=42, verbosity=0)
 
     def fit(self, train_df: pd.DataFrame) -> None:
         labelled = train_df[train_df["TopSpeedRating"].notna()].copy()

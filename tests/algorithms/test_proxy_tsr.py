@@ -173,3 +173,38 @@ def test_fit_raises_when_no_labelled_rows():
     ]
     with pytest.raises(ValueError):
         ProxyTSRModel().fit(pd.DataFrame(rows))
+
+
+# ── 8. tune completes without error ───────────────────────────────────────────
+
+
+def test_tune_completes_without_error(basic_train_df):
+    model = ProxyTSRModel()
+    model.tune(basic_train_df, n_iter=2, cv=2)  # must not raise
+
+
+# ── 9. fit works correctly after tune ────────────────────────────────────────
+
+
+def test_fit_works_after_tune(basic_train_df):
+    model = ProxyTSRModel()
+    model.tune(basic_train_df, n_iter=2, cv=2)
+    model.fit(basic_train_df)
+    result = model.compute_horse_proxy_tsr(basic_train_df)
+
+    assert list(result.columns) == ["HorseId", "PeakProxyTSR", "LastProxyTSR", "Best5ProxyTSR"]
+    assert len(result) == 3  # 3 horses in basic_train_df
+    # Tuned model still satisfies the basic invariant
+    non_nan = result.dropna(subset=["PeakProxyTSR", "Best5ProxyTSR"])
+    assert (non_nan["Best5ProxyTSR"] <= non_nan["PeakProxyTSR"] + 1e-9).all()
+
+
+# ── 10. tune silently skips when data is too small ───────────────────────────
+
+
+def test_tune_skips_gracefully_on_insufficient_data():
+    rows = [_row(1, 101, D1, tsr=90.0)]  # only 1 row — below cv*2=4 threshold
+    model = ProxyTSRModel()
+    model.tune(pd.DataFrame(rows), n_iter=2, cv=2)  # must not raise
+    # Regressor remains the default (unfitted) instance — fit() still usable
+    model.fit(pd.DataFrame(rows))  # also must not raise

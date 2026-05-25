@@ -30,15 +30,27 @@ class ProxyTSRXGBoostAlgorithm(BaseAlgorithm):
     No TSR gating is applied — all KnownHorseAndJockey races are predicted.
     """
 
-    def __init__(self, max_horses: int = 10):
+    def __init__(
+        self,
+        max_horses: int = 10,
+        n_estimators: int = 200,
+        learning_rate: float = 0.05,
+        max_depth: int = 4,
+        subsample: float = 1.0,
+        colsample_bytree: float = 1.0,
+        tune_proxy: bool = False,
+    ):
         self._classifier = XGBClassifier(
-            n_estimators=200,
-            learning_rate=0.05,
-            max_depth=4,
+            n_estimators=n_estimators,
+            learning_rate=learning_rate,
+            max_depth=max_depth,
+            subsample=subsample,
+            colsample_bytree=colsample_bytree,
             random_state=42,
             verbosity=0,
             eval_metric="logloss",
         )
+        self._tune_proxy = tune_proxy
         self._proxy_model = ProxyTSRModel()
         self._horse_proxy_tsr: pd.DataFrame = pd.DataFrame()
         self._feature_cols: list[str] = []
@@ -48,6 +60,8 @@ class ProxyTSRXGBoostAlgorithm(BaseAlgorithm):
         return self._classifier
 
     def fit(self, train_df: pd.DataFrame) -> None:
+        if self._tune_proxy:
+            self._proxy_model.tune(train_df)
         self._proxy_model.fit(train_df)
         self._horse_proxy_tsr = self._proxy_model.compute_horse_proxy_tsr(train_df)
 

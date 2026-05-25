@@ -114,10 +114,39 @@ See `RatingsXGBoostAlgorithm` in `race_analytics/algorithms/ratings_xgboost.py`.
 
 ---
 
+## ProxyTSRXGBoostAlgorithm
+
+### Design
+
+- **ProxyTSRModel**: XGBoost regressor trained to predict `TopSpeedRating` from per-race outcome data (speed, conditions, finishing position, beaten distance, course). Aggregates per-horse into `PeakProxyTSR`, `LastProxyTSR`, `Best5ProxyTSR`.
+- **ProxyTSRXGBoostAlgorithm**: Uses `ProxyTSRModel` as a first stage. Feeds 6 proxy TSR features (3 absolute + 3 relative vs field) alongside real TSR (NaN-tolerant) into an `XGBClassifier`. **No TSR gating** — predicts on all `KnownHorseAndJockey` races.
+
+### 60-fold results (951 races)
+
+| Algorithm | Accuracy | ROI | Races | ROI/race |
+|---|---|---|---|---|
+| RidgeRegressionAlgorithm | 0.242 | +59.60 | 951 | +0.06 |
+| XGBoostAlgorithm | 0.237 | -61.11 | 951 | -0.06 |
+| **RatingsXGBoostAlgorithm (TSR-gated)** | **0.602** | **+313.12** | **93** | **+3.37** |
+| RatingsXGBoostUngatedAlgorithm | 0.313 | +265.80 | 951 | +0.28 |
+| **ProxyTSRXGBoostAlgorithm** | **0.301** | **+240.61** | **951** | **+0.25** |
+| Market Favourite (full pop) | 0.366 | -19.24 | 951 | — |
+| Market Favourite (gated races) | 0.290 | -11.91 | 93 | — |
+
+Key observations:
+- Proxy TSR achieves strongly positive ROI (+241) across the full race population — well ahead of Ridge (+60) and XGBoost (-61)
+- Slightly behind `RatingsXGBoostUngatedAlgorithm` (+266, 0.313 accuracy): proxy TSR adds signal but does not fully replicate real TSR
+- ROI/race (+0.25) matches ungated (+0.28) — proxy TSR is not hurting; the alpha from real TSR is still captured when available
+- The TSR-gated algorithm retains its dominant edge (+3.37 ROI/race): all the high-confidence alpha remains concentrated in TSR-complete races
+
+See `ProxyTSRModel` in `race_analytics/algorithms/proxy_tsr.py` and `ProxyTSRXGBoostAlgorithm` in `race_analytics/algorithms/proxy_tsr_xgboost.py`.
+
+---
+
 ## Outstanding Work / Next Steps
 
-1. **Computed speed figures**: TSR is unavailable for most races. A computed speed rating — normalising `Speed = DistanceInMeters / RaceTimeInSeconds` for going, surface, and distance using historical par times — could provide consistent TSR-like coverage across all races. This is the most impactful pending improvement.
+1. **Hyperparameter tuning**: Both `ProxyTSRModel` (XGBRegressor) and `ProxyTSRXGBoostAlgorithm` (XGBClassifier) use default XGBoost settings (200 trees, lr=0.05, depth=4, no subsampling). `ProxyTSRModel.tune()` runs `RandomizedSearchCV` over n_estimators, max_depth, learning_rate, subsample, colsample_bytree. `ProxyTSRXGBoostAlgorithm` exposes these as constructor params and accepts `tune_proxy=True` to trigger proxy model tuning during `fit()`.
 
-2. **Hyperparameter tuning**: `RatingsXGBoostAlgorithm` uses default XGBoost settings (200 trees, lr=0.05, depth=4). Systematic tuning (n_estimators, max_depth, subsample, colsample_bytree) may improve performance further.
+2. **Extended backtest**: 60 folds covers ~2 months. A 180–365 fold backtest would give more statistically robust ROI estimates.
 
-3. **Extended backtest**: 60 folds covers ~2 months. A 180–365 fold backtest would give more statistically robust ROI estimates.
+3. **TSR-gated vs proxy-gated strategy**: Investigate whether gating `ProxyTSRXGBoostAlgorithm` on proxy TSR confidence (e.g. horse has ≥ N historical races) improves ROI/race while maintaining better volume than the real-TSR gate.
