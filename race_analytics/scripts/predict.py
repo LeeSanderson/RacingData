@@ -9,6 +9,7 @@ _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 _RACE_CARD_COLS = [
     "RaceId", "HorseId", "JockeyId", "Surface", "Going", "RaceType",
     "DistanceInMeters", "WeightInPounds",
+    "OfficialRating", "RacingPostRating", "TopSpeedRating",
 ]
 _OUTPUT_COLS = ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName"]
 
