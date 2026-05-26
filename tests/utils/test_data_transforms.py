@@ -2,7 +2,7 @@ import pytest
 import pandas as pd
 import tests.utils.test_data as td
 
-from race_analytics.utils.data_transforms import (
+from race_analytics.features.transforms import (
     encode_surfaces,
     encode_going,
     going_categories,

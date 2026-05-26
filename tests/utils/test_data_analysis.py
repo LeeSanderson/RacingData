@@ -9,7 +9,7 @@ from race_analytics.utils.data_analysis import (
     CalculateJockeyStats,
     CalculateTrainerStats,
 )
-from race_analytics.utils.data_transforms import encode_surfaces, encode_going, encode_race_type
+from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
 
 # ================================================================

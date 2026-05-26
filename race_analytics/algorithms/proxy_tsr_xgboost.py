@@ -6,7 +6,7 @@ from xgboost import XGBClassifier
 
 from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS
 from race_analytics.algorithms.proxy_tsr import ProxyTSRModel
-from race_analytics.utils.data_transforms import encode_surfaces, encode_going, encode_race_type
+from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
 RATING_COLS = ["OfficialRating", "RacingPostRating", "TopSpeedRating"]
 PROXY_TSR_COLS = ["PeakProxyTSR", "LastProxyTSR", "Best5ProxyTSR"]

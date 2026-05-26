@@ -4,7 +4,7 @@ from typing import Any, Protocol
 import numpy as np
 import pandas as pd
 
-from race_analytics.utils.data_transforms import encode_surfaces, encode_going, encode_race_type
+from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
 
 class _Estimator(Protocol):

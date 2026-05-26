@@ -7,7 +7,7 @@ import numpy as np
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
-from race_analytics.utils.data_transforms import (
+from race_analytics.features.transforms import (
     encode_surfaces,
     encode_going,
     encode_race_type,

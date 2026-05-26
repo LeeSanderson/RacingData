@@ -5,7 +5,7 @@ import numpy as np
 from datetime import timedelta
 from abc import ABC
 
-from race_analytics.utils.data_transforms import (
+from race_analytics.features.transforms import (
     surface_categories,
     going_categories,
     race_type_categories,
