@@ -14,15 +14,10 @@ from race_analytics.features.transforms import (
     calculate_speed,
     clean_weight,
     calculate_horse_count,
-    surface_categories,
-    going_categories,
-    race_type_categories,
 )
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
-from race_analytics.utils.data_analysis import (
-    CalculateHorsesStats,
-    CalculateJockeyStats,
-)
+from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
+from race_analytics.features.jockey_stats import CalculateJockeyStats, extract_jockey_stats
 from race_analytics.utils.scoring import accuracy, roi
 from race_analytics.algorithms import ALGORITHMS
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
@@ -39,77 +34,6 @@ def _extract_known_races(fold_df: pd.DataFrame) -> pd.DataFrame:
     return fold_df[fold_df["KnownHorseAndJockey"] == True].copy()
 
 
-def _compute_horse_stats(train_df: pd.DataFrame) -> pd.DataFrame:
-    """One row per horse: stats from most recent training race, for use in predict()."""
-    last = (
-        train_df.sort_values(["HorseId", "Off"], ascending=[True, False])
-        .groupby("HorseId")
-        .first()
-        .reset_index()
-    )
-    n = last["NumberOfPriorRaces"].fillna(0)
-    last["LastRaceAvgRelFinishingPosition"] = (
-        (last["LastRaceAvgRelFinishingPosition"].fillna(0) * n)
-        + (last["FinishingPosition"] / last["HorseCount"])
-    ) / (n + 1)
-
-    rename = {
-        "Off": "LastOff",
-        "DistanceInMeters": "LastRaceDistanceInMeters",
-        "WeightInPounds": "LastRaceWeightInPounds",
-        "Speed": "LastRaceSpeed",
-        **{s: f"LastRace{s}" for s in surface_categories},
-        **{g: f"LastRace{g}" for g in going_categories},
-        **{r: f"LastRace{r}" for r in race_type_categories},
-    }
-    cols = [
-        "HorseId",
-        "Off",
-        "DistanceInMeters",
-        "WeightInPounds",
-        "Speed",
-        "LastRaceAvgRelFinishingPosition",
-        *surface_categories,
-        *going_categories,
-        *race_type_categories,
-    ]
-    return last[[c for c in cols if c in last.columns]].rename(columns=rename)
-
-
-def _compute_jockey_stats(train_df: pd.DataFrame) -> pd.DataFrame:
-    """One row per jockey: stats from most recent training race, for use in predict()."""
-    last = (
-        train_df[train_df["JockeyId"] > 0]
-        .sort_values(["JockeyId", "Off"], ascending=[True, False])
-        .groupby("JockeyId")
-        .first()
-        .reset_index()
-    )
-    prior = last["JockeyNumberOfPriorRaces"].fillna(0)
-    wins = last["JockeyWinPercentage"].fillna(0) * prior + (
-        last["FinishingPosition"] == 1
-    ).astype(float)
-    top3 = last["JockeyTop3Percentage"].fillna(0) * prior + (
-        last["FinishingPosition"] < 4
-    ).astype(float)
-    avg_pos = (
-        last["JockeyAvgRelFinishingPosition"].fillna(0) * prior
-        + last["FinishingPosition"] / last["HorseCount"]
-    ) / (prior + 1)
-    last["JockeyNumberOfPriorRaces"] = prior + 1
-    last["JockeyWinPercentage"] = wins / last["JockeyNumberOfPriorRaces"]
-    last["JockeyTop3Percentage"] = top3 / last["JockeyNumberOfPriorRaces"]
-    last["JockeyAvgRelFinishingPosition"] = avg_pos
-    return last[
-        [
-            "JockeyId",
-            "Off",
-            "JockeyNumberOfPriorRaces",
-            "JockeyWinPercentage",
-            "JockeyTop3Percentage",
-            "JockeyAvgRelFinishingPosition",
-        ]
-    ].rename(columns={"Off": "LastOff"})
 
 
 def _fold_dates(folds: int) -> list:
@@ -294,8 +218,8 @@ def evaluate(
             print("  No known races, skipping")
             continue
 
-        horse_stats = _compute_horse_stats(train_df)
-        jockey_stats = _compute_jockey_stats(train_df)
+        horse_stats = extract_horse_stats(train_df)
+        jockey_stats = extract_jockey_stats(train_df)
         card = _race_card(known_fold)
         results_df = _results(known_fold)
 

@@ -2,7 +2,9 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from race_analytics.scripts.evaluate import _extract_known_races, _compute_horse_stats, _compute_jockey_stats
+from race_analytics.scripts.evaluate import _extract_known_races
+from race_analytics.features.horse_stats import extract_horse_stats as _compute_horse_stats
+from race_analytics.features.jockey_stats import extract_jockey_stats as _compute_jockey_stats
 
 
 # ================================================================
