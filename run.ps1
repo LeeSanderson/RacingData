@@ -41,13 +41,6 @@ Invoke-NativeCommand python -m pip install -e . --quiet
 
 $env:RACE_DATA_PATH = $RaceDataPath
 
-Invoke-NativeCommand python -m nbconvert --to script "race_analytics/notebooks/FeatureAnalysis.ipynb"
-Invoke-NativeCommand python "race_analytics/notebooks/FeatureAnalysis.py"
-
-Invoke-NativeCommand python -m nbconvert --to script "race_analytics/notebooks/HorseStatsBuilder.ipynb"
-Invoke-NativeCommand python "race_analytics/notebooks/HorseStatsBuilder.py"
-
-Invoke-NativeCommand python -m nbconvert --to script "race_analytics/notebooks/JockeyStatsBuilder.ipynb"
-Invoke-NativeCommand python "race_analytics/notebooks/JockeyStatsBuilder.py"
+Invoke-NativeCommand python -m race_analytics.scripts.build_features --data $RaceDataPath
 
 Invoke-NativeCommand python -m race_analytics.scripts.predict --data $RaceDataPath
