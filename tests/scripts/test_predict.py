@@ -15,7 +15,7 @@ class _FakeAlgo:
     def fit(self, train_df: pd.DataFrame) -> None:
         pass
 
-    def predict(self, races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame) -> pd.DataFrame:
+    def predict(self, races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame, trainer_stats: pd.DataFrame | None = None) -> pd.DataFrame:
         if races.empty:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
         return races.groupby("RaceId").first().reset_index()[["RaceId", "HorseId"]]
@@ -40,6 +40,16 @@ def _write_jockey_stats(path: str) -> None:
     )
 
 
+def _write_trainer_stats(path: str) -> None:
+    pd.DataFrame([{
+        "TrainerId": 301,
+        "TrainerNumberOfPriorRaces": 5.0,
+        "TrainerWinPercentage": 0.2,
+        "TrainerTop3Percentage": 0.6,
+        "TrainerAvgRelFinishingPosition": 0.4,
+    }]).to_csv(os.path.join(path, "Trainer_Stats.csv"), index=False)
+
+
 def _write_race_cards(path: str, rows: list | None = None) -> None:
     if rows is None:
         rows = [{
@@ -58,6 +68,7 @@ def data_dir(tmp_path):
     _write_race_features(str(tmp_path))
     _write_horse_stats(str(tmp_path))
     _write_jockey_stats(str(tmp_path))
+    _write_trainer_stats(str(tmp_path))
     _write_race_cards(str(tmp_path))
     return str(tmp_path)
 
@@ -106,6 +117,7 @@ def test_predict_output_is_sorted_by_coursename_off(tmp_path):
     _write_race_features(str(tmp_path))
     _write_horse_stats(str(tmp_path))
     _write_jockey_stats(str(tmp_path))
+    _write_trainer_stats(str(tmp_path))
     _write_race_cards(str(tmp_path), rows=rows)
 
     predict(data_path=str(tmp_path), algorithm=_FakeAlgo())
@@ -122,8 +134,29 @@ def test_predict_output_is_sorted_by_coursename_off(tmp_path):
 class _EmptyAlgo:
     max_horses = 99
     def fit(self, train_df): pass
-    def predict(self, races, horse_stats, jockey_stats):
+    def predict(self, races, horse_stats, jockey_stats, trainer_stats=None):
         return pd.DataFrame(columns=["RaceId", "HorseId"])
+
+
+# ================================================================
+# test 5 — trainer stats are loaded and passed to the algorithm
+# ================================================================
+
+class _TrainerCapturingAlgo:
+    max_horses = 99
+    captured_trainer_stats = None
+
+    def fit(self, train_df): pass
+
+    def predict(self, races, horse_stats, jockey_stats, trainer_stats=None):
+        _TrainerCapturingAlgo.captured_trainer_stats = trainer_stats
+        return pd.DataFrame(columns=["RaceId", "HorseId"])
+
+
+def test_predict_passes_trainer_stats_to_algorithm(data_dir):
+    predict(data_path=data_dir, algorithm=_TrainerCapturingAlgo())
+    assert _TrainerCapturingAlgo.captured_trainer_stats is not None
+    assert "TrainerId" in _TrainerCapturingAlgo.captured_trainer_stats.columns
 
 
 def test_predict_empty_winners_writes_empty_csv(data_dir):

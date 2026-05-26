@@ -7,7 +7,7 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 
 _RACE_CARD_COLS = [
-    "RaceId", "HorseId", "JockeyId", "Surface", "Going", "RaceType",
+    "RaceId", "HorseId", "JockeyId", "TrainerId", "Surface", "Going", "RaceType",
     "DistanceInMeters", "WeightInPounds",
     "OfficialRating", "RacingPostRating", "TopSpeedRating",
 ]
@@ -23,12 +23,13 @@ def predict(data_path: str = None, algorithm=None) -> pd.DataFrame:
     race_features = pd.read_csv(os.path.join(data_path, "Race_Features.csv"))
     horse_stats = pd.read_csv(os.path.join(data_path, "Horse_Stats.csv"))
     jockey_stats = pd.read_csv(os.path.join(data_path, "Jockey_Stats.csv"))
+    trainer_stats = pd.read_csv(os.path.join(data_path, "Trainer_Stats.csv"))
     race_cards = pd.read_csv(os.path.join(data_path, "TodaysRaceCards.csv"))
     race_cards["Off"] = pd.to_datetime(race_cards["Off"], format="%m/%d/%Y %H:%M:%S")
 
     algorithm.fit(race_features)
     card = race_cards[[c for c in _RACE_CARD_COLS if c in race_cards.columns]].copy()
-    winners = algorithm.predict(card, horse_stats, jockey_stats)
+    winners = algorithm.predict(card, horse_stats, jockey_stats, trainer_stats)
 
     output_path = os.path.join(data_path, "TodaysPredictions.csv")
 

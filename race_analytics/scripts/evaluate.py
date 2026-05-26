@@ -18,6 +18,7 @@ from race_analytics.features.transforms import (
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
 from race_analytics.features.jockey_stats import CalculateJockeyStats, extract_jockey_stats
+from race_analytics.features.trainer_stats import CalculateTrainerStats, extract_trainer_stats
 from race_analytics.utils.scoring import accuracy, roi
 from race_analytics.algorithms import ALGORITHMS
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
@@ -118,6 +119,8 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
     gc.collect()
     CalculateJockeyStats().process_race_data(races)
     gc.collect()
+    CalculateTrainerStats().process_race_data(races)
+    gc.collect()
     return races
 
 
@@ -127,6 +130,7 @@ def _race_card(fold_df: pd.DataFrame) -> pd.DataFrame:
         "RaceId",
         "HorseId",
         "JockeyId",
+        "TrainerId",
         "Surface",
         "Going",
         "RaceType",
@@ -220,6 +224,7 @@ def evaluate(
 
         horse_stats = extract_horse_stats(train_df)
         jockey_stats = extract_jockey_stats(train_df)
+        trainer_stats = extract_trainer_stats(train_df)
         card = _race_card(known_fold)
         results_df = _results(known_fold)
 
@@ -227,7 +232,7 @@ def evaluate(
             name = type(algo).__name__
             print(f"  Fitting {name}...", flush=True)
             algo.fit(train_df)
-            preds = algo.predict(card, horse_stats, jockey_stats)
+            preds = algo.predict(card, horse_stats, jockey_stats, trainer_stats)
             acc = accuracy(preds, results_df)
             r = roi(preds, results_df)
             fav_preds = baseline.predict(preds["RaceId"], results_df)

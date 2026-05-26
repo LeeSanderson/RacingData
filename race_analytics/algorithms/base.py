@@ -50,6 +50,13 @@ PREDICTORS = [
     "JockeyWinPercentage",
     "JockeyTop3Percentage",
     "JockeyAvgRelFinishingPosition",
+    "Last3RaceAvgSpeed",
+    "Last3RaceSpeedTrend",
+    "Last3AvgRelFinishingPosition",
+    "TrainerNumberOfPriorRaces",
+    "TrainerWinPercentage",
+    "TrainerTop3Percentage",
+    "TrainerAvgRelFinishingPosition",
 ]
 
 
@@ -57,22 +64,25 @@ class BaseAlgorithm(ABC):
     def __init__(self, max_horses: int = 10):
         self.max_horses = max_horses
         self._model: _Estimator = self._create_model()
+        self._fitted_predictors: list[str] = list(PREDICTORS)
 
     @abstractmethod
     def _create_model(self) -> _Estimator:
         ...
 
     def fit(self, train_df: pd.DataFrame) -> None:
-        data = train_df[PREDICTORS + ["Speed"]].dropna().copy()
+        self._fitted_predictors = [c for c in PREDICTORS if c in train_df.columns]
+        data = train_df[self._fitted_predictors + ["Speed"]].dropna().copy()
         data.loc[data["DaysRested"] > 10, "DaysRested"] = 10
         data.loc[data["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
-        self._model.fit(data[PREDICTORS], data["Speed"])
+        self._model.fit(data[self._fitted_predictors], data["Speed"])
 
     def predict(
         self,
         races: pd.DataFrame,
         horse_stats: pd.DataFrame,
         jockey_stats: pd.DataFrame,
+        trainer_stats: pd.DataFrame | None = None,
     ) -> pd.DataFrame:
         today = np.datetime64(datetime.today())
         one_day = np.timedelta64(1, "D")
@@ -91,11 +101,14 @@ class BaseAlgorithm(ABC):
         merged.loc[merged["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
         merged = merged.drop("LastOff", axis=1, errors="ignore")
 
+        if trainer_stats is not None:
+            merged = pd.merge(merged, trainer_stats, how="left", on=["TrainerId"])
+
         merged = encode_surfaces(merged)
         merged = encode_going(merged)
         merged = encode_race_type(merged)
 
-        predictable = merged[["RaceId", "HorseId"] + PREDICTORS].dropna().copy()
+        predictable = merged[["RaceId", "HorseId"] + self._fitted_predictors].dropna().copy()
         if len(predictable) == 0:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
 
@@ -120,7 +133,7 @@ class BaseAlgorithm(ABC):
         if len(predictable) == 0:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
 
-        predictable["PredictedSpeed"] = self._model.predict(predictable[PREDICTORS])
+        predictable["PredictedSpeed"] = self._model.predict(predictable[self._fitted_predictors])
         predictable["PredictedRank"] = predictable.groupby("RaceId")[
             "PredictedSpeed"
         ].rank(method="dense", ascending=False)
