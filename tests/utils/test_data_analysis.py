@@ -2,14 +2,16 @@ import pytest
 import pandas as pd
 import tests.utils.test_data as td
 
-from race_analytics.utils.data_analysis import (
+from race_analytics.features.transforms import (
     calculateHorsesPerRace,
-    CalculateTrainerStats,
+    encode_surfaces,
+    encode_going,
+    encode_race_type,
 )
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.horse_stats import CalculateHorsesStats
 from race_analytics.features.jockey_stats import CalculateJockeyStats
-from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
+from race_analytics.features.trainer_stats import CalculateTrainerStats
 
 
 # ================================================================

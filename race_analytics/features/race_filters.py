@@ -1,6 +1,6 @@
 import pandas as pd
 
-from race_analytics.utils.data_analysis import RaceDataProcessor
+from race_analytics.features.base import RaceDataProcessor
 
 
 class CalculateRacesWithKnownHorsesAndJockeys(RaceDataProcessor):

@@ -3,7 +3,7 @@ import pandas as pd
 import tests.utils.test_data as td
 
 from race_analytics.features.jockey_stats import CalculateJockeyStats
-from race_analytics.utils.data_analysis import calculateHorsesPerRace
+from race_analytics.features.transforms import calculateHorsesPerRace
 
 
 def _paul_town_on(df, race):

@@ -4,7 +4,7 @@ import numpy as np
 import tests.utils.test_data as td
 
 from race_analytics.features.horse_stats import CalculateHorsesStats
-from race_analytics.utils.data_analysis import calculateHorsesPerRace
+from race_analytics.features.transforms import calculateHorsesPerRace
 from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
 
