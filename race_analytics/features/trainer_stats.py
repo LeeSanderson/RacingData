@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 from race_analytics.features.base import RaceDataProcessor
@@ -10,13 +11,15 @@ class CalculateTrainerStats(RaceDataProcessor):
     AVG_RELATIVE_FINISHING_POSITION = "TrainerAvgRelFinishingPosition"
 
     def before_process_data(self, df: pd.DataFrame) -> None:
-        df.loc[:, self.NUMBER_OF_PRIOR_RACES] = 1.0
         self.new_column_names = [
             self.NUMBER_OF_PRIOR_RACES,
             self.WIN_PERCENTAGE,
             self.TOP_THREE_FINISH_PERCENTAGE,
             self.AVG_RELATIVE_FINISHING_POSITION,
         ]
+        for col in self.new_column_names:
+            df[col] = np.nan
+        df[self.NUMBER_OF_PRIOR_RACES] = 1.0
 
     def update(
         self, df: pd.DataFrame, history: pd.DataFrame, daily_slice: pd.DataFrame
@@ -54,3 +57,38 @@ class CalculateTrainerStats(RaceDataProcessor):
             self.AVG_RELATIVE_FINISHING_POSITION: average_position,
         }
         return pd.Series(new_columns, index=self.new_column_names)
+
+
+def extract_trainer_stats(races: pd.DataFrame) -> pd.DataFrame:
+    """One row per trainer with stats updated through the most recent race, for use in predict()."""
+    last = (
+        races[races["TrainerId"] > 0]
+        .sort_values(["TrainerId", "Off"], ascending=[True, False])
+        .groupby("TrainerId")
+        .first()
+        .reset_index()
+    )
+    prior = last["TrainerNumberOfPriorRaces"].fillna(0)
+    wins = last["TrainerWinPercentage"].fillna(0) * prior + (
+        last["FinishingPosition"] == 1
+    ).astype(float)
+    top3 = last["TrainerTop3Percentage"].fillna(0) * prior + (
+        last["FinishingPosition"] < 4
+    ).astype(float)
+    avg_pos = (
+        last["TrainerAvgRelFinishingPosition"].fillna(0) * prior
+        + last["FinishingPosition"] / last["HorseCount"]
+    ) / (prior + 1)
+    last["TrainerNumberOfPriorRaces"] = prior + 1
+    last["TrainerWinPercentage"] = wins / last["TrainerNumberOfPriorRaces"]
+    last["TrainerTop3Percentage"] = top3 / last["TrainerNumberOfPriorRaces"]
+    last["TrainerAvgRelFinishingPosition"] = avg_pos
+    return last[
+        [
+            "TrainerId",
+            "TrainerNumberOfPriorRaces",
+            "TrainerWinPercentage",
+            "TrainerTop3Percentage",
+            "TrainerAvgRelFinishingPosition",
+        ]
+    ]

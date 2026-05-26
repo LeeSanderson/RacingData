@@ -14,7 +14,6 @@ class CalculateJockeyStats(RaceDataProcessor):
     ONE_DAY = np.timedelta64(1, "D")
 
     def before_process_data(self, df: pd.DataFrame) -> None:
-        df.loc[:, self.NUMBER_OF_PRIOR_RACES] = 1.0
         self.new_column_names = [
             self.NUMBER_OF_PRIOR_RACES,
             self.DAYS_SINCE_LAST_RACE,
@@ -22,6 +21,9 @@ class CalculateJockeyStats(RaceDataProcessor):
             self.TOP_THREE_FINISH_PERCENTAGE,
             self.AVG_RELATIVE_FINISHING_POSITION,
         ]
+        for col in self.new_column_names:
+            df[col] = np.nan
+        df[self.NUMBER_OF_PRIOR_RACES] = 1.0
 
     def update(
         self, df: pd.DataFrame, history: pd.DataFrame, daily_slice: pd.DataFrame
