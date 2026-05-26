@@ -18,8 +18,8 @@ from race_analytics.features.transforms import (
     going_categories,
     race_type_categories,
 )
+from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.utils.data_analysis import (
-    CalculateRacesWithKnownHorsesAndJockeys,
     CalculateHorsesStats,
     CalculateJockeyStats,
 )

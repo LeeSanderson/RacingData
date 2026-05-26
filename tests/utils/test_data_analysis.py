@@ -4,11 +4,11 @@ import tests.utils.test_data as td
 
 from race_analytics.utils.data_analysis import (
     calculateHorsesPerRace,
-    CalculateRacesWithKnownHorsesAndJockeys,
     CalculateHorsesStats,
     CalculateJockeyStats,
     CalculateTrainerStats,
 )
+from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
 
