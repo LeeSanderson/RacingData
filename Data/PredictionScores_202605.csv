@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+4,False,6/1,7,CompletedRace,918718,9,Cartmel,05/25/2026 15:58:00,2663619,My Bobby Dazzler
+4,False,7/1,8,CompletedRace,918719,9,Cartmel,05/25/2026 17:11:00,2396289,Arthur's Quay IRE
+1,True,11/4,3.75,CompletedRace,918726,26,Huntingdon,05/25/2026 12:30:00,3333288,The Wise Traveller IRE
+4,False,11/2,6.5,CompletedRace,918921,30,Leicester,05/25/2026 16:15:00,7988031,Alta Rica
+1,True,12/1,13,CompletedRace,918938,47,Redcar,05/25/2026 15:32:00,7878373,Brain Freeze IRE
 0,False,22/1,23,PulledUp,918702,20,Fontwell,05/24/2026 14:35:00,6397985,Whatcombe IRE
 4,False,11/2,6.5,CompletedRace,918698,20,Fontwell,05/24/2026 15:10:00,4189552,Unspeakable IRE
 2,False,15/8F,2.875,CompletedRace,918703,27,Kelso,05/24/2026 15:03:00,3004020,Wise Eagle IRE
