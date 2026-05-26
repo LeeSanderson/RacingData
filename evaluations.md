@@ -133,13 +133,27 @@ See `RatingsXGBoostAlgorithm` in `race_analytics/algorithms/ratings_xgboost.py`.
 | Market Favourite (full pop) | 0.366 | -19.24 | 951 | — |
 | Market Favourite (gated races) | 0.290 | -11.91 | 93 | — |
 
-Key observations:
-- Proxy TSR achieves strongly positive ROI (+241) across the full race population — well ahead of Ridge (+60) and XGBoost (-61)
-- Slightly behind `RatingsXGBoostUngatedAlgorithm` (+266, 0.313 accuracy): proxy TSR adds signal but does not fully replicate real TSR
-- ROI/race (+0.25) matches ungated (+0.28) — proxy TSR is not hurting; the alpha from real TSR is still captured when available
-- The TSR-gated algorithm retains its dominant edge (+3.37 ROI/race): all the high-confidence alpha remains concentrated in TSR-complete races
+### 180-fold results (2,475 races) — statistically robust
 
-See `ProxyTSRModel` in `race_analytics/algorithms/proxy_tsr.py` and `ProxyTSRXGBoostAlgorithm` in `race_analytics/algorithms/proxy_tsr_xgboost.py`.
+| Algorithm | Accuracy | ROI | Races | ROI/race |
+|---|---|---|---|---|
+| RidgeRegressionAlgorithm | 0.235 | -127.15 | 2,475 | -0.05 |
+| XGBoostAlgorithm | 0.247 | -72.46 | 2,475 | -0.03 |
+| **RatingsXGBoostAlgorithm (TSR-gated)** | **0.783** | **+3,406** | **981** | **+3.47** |
+| RatingsXGBoostUngatedAlgorithm | 0.532 | +4,250 | 2,475 | +1.72 |
+| ProxyTSRXGBoostAlgorithm | 0.509 | +3,573 | 2,475 | +1.44 |
+| **TunedProxyTSRXGBoostAlgorithm** | **0.515** | **+3,740** | **2,475** | **+1.51** |
+| Market Favourite (full pop) | 0.387 | +77.60 | 2,475 | — |
+| Market Favourite (gated races) | 0.402 | +80.41 | 981 | — |
+
+Key observations:
+- **Tuning works**: TunedProxyTSR beats default ProxyTSR (+3,740 vs +3,573 ROI, 0.515 vs 0.509 accuracy)
+- **Dramatic improvement vs 60-fold**: ratings-based algorithms all improve sharply. The gated algorithm jumped 0.602→0.783 accuracy, +313→+3,406 ROI. This confirms 60 folds covered a harder recent period; 180 folds is the more representative estimate across racing seasons
+- **Ungated now beats gated in total ROI** (+4,250 vs +3,406) due to 2.5× more races at a strong +1.72 ROI/race — volume is genuinely valuable
+- **ProxyTSR gap to ungated is modest**: 0.509 vs 0.532 accuracy, +3,573 vs +4,250 ROI — proxy features add real signal but do not fully close the gap to real TSR availability
+- **Gated per-race ROI remains dominant** (+3.47) — all the high-confidence alpha is still concentrated in TSR-complete races
+
+See `ProxyTSRModel` in `race_analytics/algorithms/proxy_tsr.py`, `ProxyTSRXGBoostAlgorithm` and `TunedProxyTSRXGBoostAlgorithm` in `race_analytics/algorithms/proxy_tsr_xgboost.py`.
 
 ---
 
