@@ -189,12 +189,16 @@ def extract_horse_stats(races: pd.DataFrame) -> pd.DataFrame:
         "DistanceInMeters": "LastRaceDistanceInMeters",
         "WeightInPounds": "LastRaceWeightInPounds",
         "Speed": "LastRaceSpeed",
+        "OfficialRating": "LastRaceOfficialRating",
+        "RacingPostRating": "LastRaceRacingPostRating",
+        "TopSpeedRating": "LastRaceTopSpeedRating",
         **{s: f"LastRace{s}" for s in surface_categories},
         **{g: f"LastRace{g}" for g in going_categories},
         **{r: f"LastRace{r}" for r in race_type_categories},
     }
     cols = [
         "HorseId", "Off", "DistanceInMeters", "WeightInPounds", "Speed",
+        "OfficialRating", "RacingPostRating", "TopSpeedRating",
         "LastRaceAvgRelFinishingPosition",
         *surface_categories, *going_categories, *race_type_categories,
     ]

@@ -110,6 +110,38 @@ def test_extract_horse_stats_exports_last3_over_most_recent_races(four_day_df):
     assert row["Last3AvgRelFinishingPosition"] == pytest.approx((0.5 + 1 / 3 + 0.5) / 3)
 
 
+@pytest.fixture
+def rating_df():
+    """SecretSecret races twice; the most recent race (Chelmsford, July 21) has
+    ratings distinct from the earlier race (Ballinrobe, July 20)."""
+    return _make_processed_df(
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown,
+            FinishingPosition=2,
+            OfficialRating=70.0, RacingPostRating=88.0, TopSpeedRating=75.0,
+        ),
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=1),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown,
+            FinishingPosition=1,
+            OfficialRating=92.0, RacingPostRating=110.0, TopSpeedRating=101.0,
+        ),
+    )
+
+
+def test_extract_horse_stats_carries_previous_race_ratings(rating_df):
+    CalculateHorsesStats().process_race_data(rating_df)
+    stats = extract_horse_stats(rating_df)
+    assert "LastRaceOfficialRating" in stats.columns
+    assert "LastRaceRacingPostRating" in stats.columns
+    assert "LastRaceTopSpeedRating" in stats.columns
+    row = stats[stats["HorseId"] == td.SecretSecret.HorseId].iloc[0]
+    # Most-recent completed race for SecretSecret is Chelmsford (July 21).
+    assert row["LastRaceOfficialRating"] == pytest.approx(92.0)
+    assert row["LastRaceRacingPostRating"] == pytest.approx(110.0)
+    assert row["LastRaceTopSpeedRating"] == pytest.approx(101.0)
+
+
 def test_extract_horse_stats_last3_nan_with_fewer_than_3_races(two_day_df):
     CalculateHorsesStats().process_race_data(two_day_df)
     stats = extract_horse_stats(two_day_df)
