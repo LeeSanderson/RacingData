@@ -7,18 +7,28 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 
 _RACE_CARD_COLS = [
-    "RaceId", "HorseId", "JockeyId", "TrainerId", "Surface", "Going", "RaceType",
-    "DistanceInMeters", "WeightInPounds",
-    "OfficialRating", "RacingPostRating", "TopSpeedRating",
+    "RaceId",
+    "HorseId",
+    "JockeyId",
+    "TrainerId",
+    "Surface",
+    "Going",
+    "RaceType",
+    "DistanceInMeters",
+    "WeightInPounds",
+    "OfficialRating",
+    "RacingPostRating",
+    "TopSpeedRating",
 ]
 _OUTPUT_COLS = ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName"]
 
 
-def predict(data_path: str = None, algorithm=None) -> pd.DataFrame:
+def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
     if data_path is None:
         data_path = _DATA_DIR
     if algorithm is None:
         algorithm = ACTIVE_ALGORITHM
+    print(f"Using algorithm: {type(algorithm).__name__}")
 
     race_features = pd.read_csv(os.path.join(data_path, "Race_Features.csv"))
     horse_stats = pd.read_csv(os.path.join(data_path, "Horse_Stats.csv"))
@@ -38,9 +48,13 @@ def predict(data_path: str = None, algorithm=None) -> pd.DataFrame:
         empty.to_csv(output_path, index=False)
         return empty
 
-    meta = race_cards[["RaceId", "HorseId", "CourseId", "CourseName", "Off", "HorseName"]].copy()
+    meta = race_cards[
+        ["RaceId", "HorseId", "CourseId", "CourseName", "Off", "HorseName"]
+    ].copy()
     predictions = pd.merge(winners, meta, on=["RaceId", "HorseId"], how="left")
-    predictions = predictions.sort_values(["CourseName", "Off"])[_OUTPUT_COLS].reset_index(drop=True)
+    predictions = predictions.sort_values(["CourseName", "Off"])[
+        _OUTPUT_COLS
+    ].reset_index(drop=True)
     predictions.to_csv(output_path, index=False)
     return predictions
 
