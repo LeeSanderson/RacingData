@@ -6,6 +6,8 @@ from race_analytics.algorithms import ACTIVE_ALGORITHM
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 
+# No rating columns: ratings reach the algorithms only through the per-horse
+# stats join (previous-race LastRace* ratings), never the card — see issues/prd.md.
 _RACE_CARD_COLS = [
     "RaceId",
     "HorseId",
@@ -16,9 +18,6 @@ _RACE_CARD_COLS = [
     "RaceType",
     "DistanceInMeters",
     "WeightInPounds",
-    "OfficialRating",
-    "RacingPostRating",
-    "TopSpeedRating",
 ]
 _OUTPUT_COLS = ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName"]
 

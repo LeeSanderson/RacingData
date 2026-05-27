@@ -164,3 +164,45 @@ def test_predict_empty_winners_writes_empty_csv(data_dir):
     result = pd.read_csv(os.path.join(data_dir, "TodaysPredictions.csv"))
     assert list(result.columns) == ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName"]
     assert len(result) == 0
+
+
+# ================================================================
+# test 6 — the built card carries no rating columns (ratings come
+#          only from the per-horse stats join), predictions still produced
+# ================================================================
+
+class _CardCapturingAlgo:
+    max_horses = 99
+    captured_card = None
+
+    def fit(self, train_df): pass
+
+    def predict(self, races, horse_stats, jockey_stats, trainer_stats=None):
+        _CardCapturingAlgo.captured_card = races
+        if races.empty:
+            return pd.DataFrame(columns=["RaceId", "HorseId"])
+        return races.groupby("RaceId").first().reset_index()[["RaceId", "HorseId"]]
+
+
+def test_predict_card_drops_rating_columns_and_still_predicts(tmp_path):
+    # Source race cards DO carry ratings — the built card must strip them.
+    rows = [{
+        "RaceId": 10, "HorseId": 101, "JockeyId": 201,
+        "CourseId": 5, "CourseName": "Ascot",
+        "Off": "05/21/2026 14:30:00", "HorseName": "Thunderbolt",
+        "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
+        "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
+        "OfficialRating": 80.0, "RacingPostRating": 100.0, "TopSpeedRating": 90.0,
+    }]
+    _write_race_features(str(tmp_path))
+    _write_horse_stats(str(tmp_path))
+    _write_jockey_stats(str(tmp_path))
+    _write_trainer_stats(str(tmp_path))
+    _write_race_cards(str(tmp_path), rows=rows)
+
+    result = predict(data_path=str(tmp_path), algorithm=_CardCapturingAlgo())
+
+    card = _CardCapturingAlgo.captured_card
+    for col in ["OfficialRating", "RacingPostRating", "TopSpeedRating"]:
+        assert col not in card.columns, f"rating column leaked into the card: {col}"
+    assert len(result) == 1  # prediction still produced

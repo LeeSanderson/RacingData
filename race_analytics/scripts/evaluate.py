@@ -125,7 +125,11 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
 
 
 def _race_card(fold_df: pd.DataFrame) -> pd.DataFrame:
-    """Raw race card columns needed by predict() — it re-encodes Surface/Going/RaceType."""
+    """Raw race card columns needed by predict() — it re-encodes Surface/Going/RaceType.
+
+    No rating columns: ratings reach the algorithms only through the per-horse
+    stats join (previous-race LastRace* ratings), never the card — see issues/prd.md.
+    """
     cols = [
         "RaceId",
         "HorseId",
@@ -136,9 +140,6 @@ def _race_card(fold_df: pd.DataFrame) -> pd.DataFrame:
         "RaceType",
         "DistanceInMeters",
         "WeightInPounds",
-        "OfficialRating",
-        "RacingPostRating",
-        "TopSpeedRating",
     ]
     return fold_df[[c for c in cols if c in fold_df.columns]].copy()
 

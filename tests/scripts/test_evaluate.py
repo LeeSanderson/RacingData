@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from race_analytics.scripts.evaluate import _extract_known_races
+from race_analytics.scripts.evaluate import _extract_known_races, _race_card
 from race_analytics.features.horse_stats import extract_horse_stats as _compute_horse_stats
 from race_analytics.features.jockey_stats import extract_jockey_stats as _compute_jockey_stats
 
@@ -37,6 +37,25 @@ def test_extract_known_races_returns_empty_when_none_known():
         {"RaceId": 1, "HorseId": 10, "KnownHorseAndJockey": False},
     ])
     assert _extract_known_races(df).empty
+
+
+# ================================================================
+# _race_card — ratings flow only through the per-horse stats join
+# ================================================================
+
+def test_race_card_drops_rating_columns():
+    fold_df = pd.DataFrame([{
+        "RaceId": 1, "HorseId": 10, "JockeyId": 100, "TrainerId": 1000,
+        "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
+        "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
+        "OfficialRating": 80.0, "RacingPostRating": 100.0, "TopSpeedRating": 90.0,
+    }])
+    card = _race_card(fold_df)
+    for col in ["OfficialRating", "RacingPostRating", "TopSpeedRating"]:
+        assert col not in card.columns, f"rating column leaked into the card: {col}"
+    # essentials the algorithm re-encodes are still carried
+    for col in ["RaceId", "HorseId", "JockeyId", "Surface", "Going", "RaceType"]:
+        assert col in card.columns
 
 
 # ================================================================
