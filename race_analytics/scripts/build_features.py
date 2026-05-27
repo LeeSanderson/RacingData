@@ -7,13 +7,19 @@ from race_analytics.features.pipeline import FeaturePipeline
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 
+# Limit to the current month plus the previous 6 months. Loading the full
+# history is unnecessary for feature building and is much slower.
+_TRAINING_MONTHS = 7
 
-def build_features(data_path: str = None) -> None:
+
+def build_features(
+    data_path: str | None = None, months: int = _TRAINING_MONTHS
+) -> None:
     if data_path is None:
         data_path = _DATA_DIR
 
-    print("Loading results...")
-    results = load_results(data_path)
+    print(f"Loading results (last {months} months)...")
+    results = load_results(data_path, months=months)
     print(f"  Loaded {len(results)} rows")
 
     print("Processing features...")
@@ -33,5 +39,11 @@ if __name__ == "__main__":
         description="Build feature CSVs from historical race results."
     )
     parser.add_argument("--data", default=None, help="Path to data directory")
+    parser.add_argument(
+        "--months",
+        type=int,
+        default=_TRAINING_MONTHS,
+        help="Number of most-recent monthly Results files to load",
+    )
     args = parser.parse_args()
-    build_features(args.data)
+    build_features(args.data, months=args.months)

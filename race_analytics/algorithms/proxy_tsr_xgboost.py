@@ -86,6 +86,7 @@ class ProxyTSRXGBoostAlgorithm(BaseAlgorithm):
         races: pd.DataFrame,
         horse_stats: pd.DataFrame,
         jockey_stats: pd.DataFrame,
+        trainer_stats: pd.DataFrame | None = None,
     ) -> pd.DataFrame:
         if not self._feature_cols:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
@@ -104,6 +105,9 @@ class ProxyTSRXGBoostAlgorithm(BaseAlgorithm):
         )
         merged.loc[merged["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
         merged = merged.drop("LastOff", axis=1, errors="ignore")
+
+        if trainer_stats is not None:
+            merged = pd.merge(merged, trainer_stats, how="left", on=["TrainerId"])
 
         if not self._horse_proxy_tsr.empty:
             merged = pd.merge(merged, self._horse_proxy_tsr, on="HorseId", how="left")

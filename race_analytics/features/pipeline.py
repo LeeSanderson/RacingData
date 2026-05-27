@@ -26,6 +26,7 @@ class FeaturePipeline:
         batch_id = self._batch_counter
 
         df = df.copy()
+        df["Wins"] = (df["FinishingPosition"] == 1).astype(int)
         df = encode_surfaces(df)
         df = encode_going(df)
         df = encode_race_type(df)

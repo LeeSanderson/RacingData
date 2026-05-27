@@ -39,6 +39,16 @@ def test_process_returns_expected_stat_columns():
         assert col in result.columns, f"Missing column: {col}"
 
 
+def test_process_adds_wins_column_from_finishing_position():
+    pipeline = FeaturePipeline()
+    result = pipeline.process(_batch1())
+    assert "Wins" in result.columns
+    winner = result[result["FinishingPosition"] == 1].iloc[0]
+    loser = result[result["FinishingPosition"] == 2].iloc[0]
+    assert winner["Wins"] == 1
+    assert loser["Wins"] == 0
+
+
 def test_state_accumulates_across_calls():
     pipeline = FeaturePipeline()
     pipeline.process(_batch1())

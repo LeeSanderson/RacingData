@@ -68,6 +68,32 @@ def test_load_results_raises_when_no_files(tmp_path):
         load_results(tmp_path)
 
 
+def test_load_results_months_limits_to_most_recent_files(tmp_path):
+    # Three monthly files; months=2 should drop the oldest (Jan).
+    _write_results_csv(tmp_path / "Results_202601.csv", [
+        _race_row(1, "01/10/2026 14:00:00"),
+    ])
+    _write_results_csv(tmp_path / "Results_202602.csv", [
+        _race_row(2, "02/05/2026 13:00:00"),
+    ])
+    _write_results_csv(tmp_path / "Results_202603.csv", [
+        _race_row(3, "03/05/2026 13:00:00"),
+    ])
+    df = load_results(tmp_path, months=2)
+    assert set(df["RaceId"]) == {2, 3}
+
+
+def test_load_results_months_none_loads_all_files(tmp_path):
+    _write_results_csv(tmp_path / "Results_202601.csv", [
+        _race_row(1, "01/10/2026 14:00:00"),
+    ])
+    _write_results_csv(tmp_path / "Results_202602.csv", [
+        _race_row(2, "02/05/2026 13:00:00"),
+    ])
+    df = load_results(tmp_path, months=None)
+    assert set(df["RaceId"]) == {1, 2}
+
+
 # ---------------------------------------------------------------------------
 # load_race_cards
 # ---------------------------------------------------------------------------

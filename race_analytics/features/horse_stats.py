@@ -135,6 +135,41 @@ class CalculateHorsesStats(RaceDataProcessor):
         return pd.Series(new_columns, index=self.new_column_names)
 
 
+def _extract_last3_stats(races: pd.DataFrame) -> pd.DataFrame:
+    """Per-horse Last-3 aggregates over the 3 most recent races, inclusive of
+    the latest. Mirrors CalculateHorsesStats but rolls the most recent race in,
+    consistent with how extract_horse_stats uses the horse's actual most recent
+    race for the other LastRace* columns."""
+    recent = (
+        races.sort_values(["HorseId", "Off"], ascending=[True, False])
+        .groupby("HorseId")
+        .head(3)
+        .copy()
+    )
+    recent["_RelPos"] = recent["FinishingPosition"] / recent["HorseCount"]
+
+    def _agg(g: pd.DataFrame) -> pd.Series:
+        speeds = g["Speed"].dropna()
+        if len(speeds) >= 3:
+            avg_speed = speeds.mean()
+            trend = g.iloc[0]["Speed"] - avg_speed
+        else:
+            avg_speed = np.nan
+            trend = np.nan
+        rel_pos = g["_RelPos"].mean() if len(g) >= 3 else np.nan
+        return pd.Series(
+            {
+                "Last3RaceAvgSpeed": avg_speed,
+                "Last3RaceSpeedTrend": trend,
+                "Last3AvgRelFinishingPosition": rel_pos,
+            }
+        )
+
+    return (
+        recent.groupby("HorseId").apply(_agg, include_groups=False).reset_index()
+    )
+
+
 def extract_horse_stats(races: pd.DataFrame) -> pd.DataFrame:
     """One row per horse with stats updated through the most recent race, for use in predict()."""
     last = (
@@ -163,4 +198,5 @@ def extract_horse_stats(races: pd.DataFrame) -> pd.DataFrame:
         "LastRaceAvgRelFinishingPosition",
         *surface_categories, *going_categories, *race_type_categories,
     ]
-    return last[[c for c in cols if c in last.columns]].rename(columns=rename)
+    out = last[[c for c in cols if c in last.columns]].rename(columns=rename)
+    return out.merge(_extract_last3_stats(races), on="HorseId", how="left")

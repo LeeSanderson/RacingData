@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import tests.utils.test_data as td
 
-from race_analytics.features.horse_stats import CalculateHorsesStats
+from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
 from race_analytics.features.transforms import calculateHorsesPerRace
 from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
@@ -94,6 +94,29 @@ def test_horse_with_3_prior_races_has_all_features(four_day_df):
     assert row["Last3RaceSpeedTrend"] == pytest.approx(1.0)
     # rel pos: day3=1/3, day2=1/2, day1=2/2 → mean ≈ 0.611
     assert row["Last3AvgRelFinishingPosition"] == pytest.approx((1/3 + 1/2 + 1.0) / 3, rel=1e-4)
+
+
+def test_extract_horse_stats_exports_last3_over_most_recent_races(four_day_df):
+    CalculateHorsesStats().process_race_data(four_day_df)
+    stats = extract_horse_stats(four_day_df)
+    row = stats[stats["HorseId"] == td.SecretSecret.HorseId].iloc[0]
+    # 3 most recent races (incl. latest): Wolverhampton 15.5, Nottingham 15.0,
+    # Chelmsford 14.0 -> avg = 14.8333; trend = lastSpeed(15.5) - avg.
+    expected_avg = (15.5 + 15.0 + 14.0) / 3
+    assert "Last3RaceAvgSpeed" in stats.columns
+    assert row["Last3RaceAvgSpeed"] == pytest.approx(expected_avg)
+    assert row["Last3RaceSpeedTrend"] == pytest.approx(15.5 - expected_avg)
+    # rel pos: Wolverhampton 1/2, Nottingham 1/3, Chelmsford 1/2.
+    assert row["Last3AvgRelFinishingPosition"] == pytest.approx((0.5 + 1 / 3 + 0.5) / 3)
+
+
+def test_extract_horse_stats_last3_nan_with_fewer_than_3_races(two_day_df):
+    CalculateHorsesStats().process_race_data(two_day_df)
+    stats = extract_horse_stats(two_day_df)
+    row = stats[stats["HorseId"] == td.SecretSecret.HorseId].iloc[0]
+    assert pd.isna(row["Last3RaceAvgSpeed"])
+    assert pd.isna(row["Last3RaceSpeedTrend"])
+    assert pd.isna(row["Last3AvgRelFinishingPosition"])
 
 
 def test_incremental_processing_updates_stats_across_days(four_day_df):
