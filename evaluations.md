@@ -1,5 +1,29 @@
 # Algorithm Evaluation Findings
 
+> **⚠ LEAKAGE WARNING — the numbers below are inflated and must not be trusted.**
+>
+> Every result on this page that involves `RacingPostRating` or `TopSpeedRating`
+> (RPR/TSR) is corrupted by **post-race leakage**. Racing Post assigns RPR and TSR
+> *from the run itself*, so within a race they all but reproduce the finishing order
+> (within-race Spearman ≈ −0.88 / −0.86 vs finishing position — see the table in
+> `issues/prd.md`). Because `Horse_Stats.csv` historically carried no rating columns,
+> these post-race figures reached the model **only through the race-day row**: in
+> `evaluate.py` the fold's card is built from that day's *results*, handing the model
+> near-oracle ratings, whereas `predict.py` in production sees only the weak pre-race
+> form values. That train/serve skew massively flatters the evaluation.
+>
+> **Reality check:** across the 2026 `PredictionScores_*.csv` logs (514 completed bets)
+> the real production accuracy was **~0.265**, versus the **~0.78** the TSR-gated
+> `RatingsXGBoostAlgorithm` claims below — roughly **3× inflation**. The "TopSpeedRating
+> is the key driver" and TSR-gated headline results are artefacts of this leak, not a
+> real edge.
+>
+> These figures are being replaced by a clean, leak-free re-evaluation (switching every
+> rating feature to its previous-race value). The fix is tracked by `issues/prd.md`; the
+> rewrite of this document with honest numbers is
+> `issues/007-rewrite-evaluations-and-review-active-algorithm.md`. Until then, treat
+> everything below as untrustworthy.
+
 ## Baseline Results (14 folds, 194 races)
 
 | Algorithm | Accuracy | ROI |
