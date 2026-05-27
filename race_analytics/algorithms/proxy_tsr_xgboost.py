@@ -8,8 +8,17 @@ from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS
 from race_analytics.algorithms.proxy_tsr import ProxyTSRModel
 from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
-RATING_COLS = ["OfficialRating", "RacingPostRating", "TopSpeedRating"]
-PROXY_TSR_COLS = ["PeakProxyTSR", "LastProxyTSR", "Best5ProxyTSR"]
+# Previous-race ratings sourced from the per-horse stats join (leak-free); the
+# current-race OfficialRating/RacingPostRating/TopSpeedRating are post-race
+# figures and must never enter the model — see issues/prd.md.
+RATING_COLS = [
+    "LastRaceOfficialRating",
+    "LastRaceRacingPostRating",
+    "LastRaceTopSpeedRating",
+]
+# Single as-of-date proxy: the horse's last prior proxy TSR (no whole-window
+# Peak/Best5 aggregate, which let a training row see the horse's future races).
+PROXY_TSR_COLS = ["LastProxyTSR"]
 
 
 def _add_race_context(df: pd.DataFrame) -> pd.DataFrame:
@@ -63,9 +72,13 @@ class ProxyTSRXGBoostAlgorithm(BaseAlgorithm):
         if self._tune_proxy:
             self._proxy_model.tune(train_df)
         self._proxy_model.fit(train_df)
+        # Serving-side proxy (most-recent race per horse), merged in predict().
         self._horse_proxy_tsr = self._proxy_model.compute_horse_proxy_tsr(train_df)
 
-        df = train_df.merge(self._horse_proxy_tsr, on="HorseId", how="left")
+        # Training-side proxy is the per-row as-of-date "last prior proxy": each
+        # row sees only the horse's earlier races, so no future race leaks in.
+        df = train_df.copy()
+        df["LastProxyTSR"] = self._proxy_model.compute_as_of_proxy(train_df)
         df = _add_race_context(df)
 
         abs_cols = [c for c in RATING_COLS + PROXY_TSR_COLS if c in df.columns]

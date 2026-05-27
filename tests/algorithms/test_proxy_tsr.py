@@ -1,4 +1,3 @@
-import math
 import pytest
 import pandas as pd
 import numpy as np
@@ -78,39 +77,8 @@ def test_compute_horse_proxy_tsr_returns_required_columns(basic_train_df):
     model.fit(basic_train_df)
     result = model.compute_horse_proxy_tsr(basic_train_df)
 
-    assert list(result.columns) == ["HorseId", "PeakProxyTSR", "LastProxyTSR", "Best5ProxyTSR"]
-
-
-# ── 3. Horses below min_races threshold get NaN ───────────────────────────────
-
-
-def test_horses_below_min_races_get_nan():
-    rows = [
-        _row(1, 101, D1, tsr=90.0),
-        _row(1, 102, D2, tsr=88.0),
-        _row(2, 103, D1, tsr=85.0),   # only 1 race
-    ]
-    df = pd.DataFrame(rows)
-    model = ProxyTSRModel(min_races=2)
-    model.fit(df)
-    result = model.compute_horse_proxy_tsr(df)
-
-    horse2 = result[result["HorseId"] == 2].iloc[0]
-    assert math.isnan(horse2["PeakProxyTSR"])
-    assert math.isnan(horse2["LastProxyTSR"])
-    assert math.isnan(horse2["Best5ProxyTSR"])
-
-
-# ── 4. Best5ProxyTSR <= PeakProxyTSR ─────────────────────────────────────────
-
-
-def test_best5_proxy_tsr_never_exceeds_peak(basic_train_df):
-    model = ProxyTSRModel()
-    model.fit(basic_train_df)
-    result = model.compute_horse_proxy_tsr(basic_train_df)
-
-    non_nan = result.dropna(subset=["PeakProxyTSR", "Best5ProxyTSR"])
-    assert (non_nan["Best5ProxyTSR"] <= non_nan["PeakProxyTSR"] + 1e-9).all()
+    assert list(result.columns) == ["HorseId", "LastProxyTSR"]
+    assert result["HorseId"].nunique() == len(result)  # one row per horse
 
 
 # ── 5. LastProxyTSR comes from most recent race ───────────────────────────────
@@ -128,15 +96,9 @@ def test_last_proxy_tsr_reflects_most_recent_race():
     result = model.compute_horse_proxy_tsr(df)
 
     horse1 = result[result["HorseId"] == 1].iloc[0]
-    peak = horse1["PeakProxyTSR"]
     last = horse1["LastProxyTSR"]
-    # Model is trained only on this horse with increasing TSR, so the most
-    # recent prediction should be >= the oldest prediction.
-    assert last >= horse1["LastProxyTSR"] - 1e-9   # LastProxyTSR is self-consistent
-    # The oldest race has a lower true TSR label; the regressor should predict
-    # a higher value for the most-recent (highest-TSR) row than for the oldest.
-    # We verify indirectly: LastProxyTSR is computed from the D3 row, not D1.
-    # We confirm by checking that computing on a reversed-date copy gives the same result.
+    # LastProxyTSR is computed from the most-recent (D3) row regardless of row
+    # order — computing on a reversed-date copy gives the same result.
     rows_reversed = [
         _row(1, 103, D3, tsr=90.0),
         _row(1, 102, D2, tsr=80.0),
@@ -145,6 +107,31 @@ def test_last_proxy_tsr_reflects_most_recent_race():
     result2 = model.compute_horse_proxy_tsr(pd.DataFrame(rows_reversed))
     horse1_r = result2[result2["HorseId"] == 1].iloc[0]
     assert abs(horse1_r["LastProxyTSR"] - last) < 1e-6
+
+
+# ── 5b. As-of-date proxy depends only on a horse's PRIOR races ───────────────
+
+
+def test_as_of_proxy_ignores_future_races(basic_train_df):
+    """A training row's proxy must come only from that horse's earlier races, so
+    adding a later (future) race cannot change an earlier row's proxy."""
+    model = ProxyTSRModel()
+    model.fit(basic_train_df)
+
+    two = pd.DataFrame([_row(1, 101, D1, tsr=85.0), _row(1, 102, D2, tsr=90.0)])
+    with_future = pd.DataFrame([
+        _row(1, 101, D1, tsr=85.0),
+        _row(1, 102, D2, tsr=90.0),
+        _row(1, 103, D3, tsr=88.0),  # a later race for the same horse
+    ])
+
+    proxy_two = model.compute_as_of_proxy(two)
+    proxy_future = model.compute_as_of_proxy(with_future)
+
+    # The D2 row (index 1 in both frames) sees only the D1 race either way.
+    assert proxy_two.loc[1] == pytest.approx(proxy_future.loc[1])
+    # The horse's first race (D1, index 0) has no prior race -> NaN.
+    assert pd.isna(proxy_two.loc[0])
 
 
 # ── 6. Unseen CourseName does not raise ───────────────────────────────────────
@@ -192,11 +179,8 @@ def test_fit_works_after_tune(basic_train_df):
     model.fit(basic_train_df)
     result = model.compute_horse_proxy_tsr(basic_train_df)
 
-    assert list(result.columns) == ["HorseId", "PeakProxyTSR", "LastProxyTSR", "Best5ProxyTSR"]
+    assert list(result.columns) == ["HorseId", "LastProxyTSR"]
     assert len(result) == 3  # 3 horses in basic_train_df
-    # Tuned model still satisfies the basic invariant
-    non_nan = result.dropna(subset=["PeakProxyTSR", "Best5ProxyTSR"])
-    assert (non_nan["Best5ProxyTSR"] <= non_nan["PeakProxyTSR"] + 1e-9).all()
 
 
 # ── 10. tune silently skips when data is too small ───────────────────────────

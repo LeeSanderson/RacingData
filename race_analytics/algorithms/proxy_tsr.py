@@ -31,12 +31,17 @@ PROXY_TSR_FEATURES = [
 class ProxyTSRModel:
     """XGBoost regressor that predicts Racing Post TopSpeedRating from race outcomes.
 
-    After fitting, compute_horse_proxy_tsr aggregates per-race predictions into
-    three per-horse summary statistics: PeakProxyTSR, LastProxyTSR, Best5ProxyTSR.
+    The regressor is fitted only on rows that have a real TopSpeedRating. From its
+    per-race predictions two leak-free proxy views are derived:
+
+    * ``compute_as_of_proxy`` — per-row "last prior proxy": each row gets the proxy
+      of that horse's most recent race *strictly before* it (NaN for the first
+      race). Used for training, so a row never sees its own or future races.
+    * ``compute_horse_proxy_tsr`` — per-horse "last proxy" as of today: the proxy of
+      the horse's most recent race. Used for serving.
     """
 
-    def __init__(self, min_races: int = 1):
-        self._min_races = min_races
+    def __init__(self):
         self._regressor = XGBRegressor(
             n_estimators=200,
             learning_rate=0.05,
@@ -102,30 +107,45 @@ class ProxyTSRModel:
         data = labelled[self._feature_cols + ["TopSpeedRating"]].copy()
         self._regressor.fit(data[self._feature_cols], data["TopSpeedRating"])
 
-    def compute_horse_proxy_tsr(self, train_df: pd.DataFrame) -> pd.DataFrame:
-        df = train_df.copy()
+    def _predict_proxy(self, df: pd.DataFrame) -> np.ndarray:
+        """Per-race proxy TSR for every row of df."""
+        df = df.copy()
         df["CourseNameEncoded"] = self._encode_courses(df)
-
         for col in self._feature_cols:
             if col not in df.columns:
                 df[col] = np.nan
+        return self._regressor.predict(df[self._feature_cols])
 
-        df["_ProxyTSR"] = self._regressor.predict(df[self._feature_cols])
+    def compute_as_of_proxy(self, df: pd.DataFrame) -> pd.Series:
+        """Per-row as-of-date proxy, aligned to df.index.
 
-        def _agg(g: pd.DataFrame) -> pd.Series:
-            g = g.sort_values("Off")
-            if len(g) < self._min_races:
-                return pd.Series({"PeakProxyTSR": np.nan, "LastProxyTSR": np.nan, "Best5ProxyTSR": np.nan})
-            return pd.Series({
-                "PeakProxyTSR": g["_ProxyTSR"].max(),
-                "LastProxyTSR": g["_ProxyTSR"].iloc[-1],
-                "Best5ProxyTSR": g["_ProxyTSR"].tail(5).max(),
-            })
-
-        result = (
-            df[["HorseId", "Off", "_ProxyTSR"]]
-            .groupby("HorseId")
-            .apply(_agg, include_groups=False)
-            .reset_index()
+        Each row gets the proxy of that horse's most recent race STRICTLY BEFORE
+        it (NaN for the horse's first race). This is leak-free: a training row can
+        never see its own or the horse's future races.
+        """
+        work = pd.DataFrame(
+            {"HorseId": df["HorseId"].values, "Off": df["Off"].values,
+             "_ProxyTSR": self._predict_proxy(df)},
+            index=df.index,
         )
-        return result[["HorseId", "PeakProxyTSR", "LastProxyTSR", "Best5ProxyTSR"]]
+        work = work.sort_values(["HorseId", "Off"], kind="stable")
+        work["LastProxyTSR"] = work.groupby("HorseId")["_ProxyTSR"].shift(1)
+        return work["LastProxyTSR"].reindex(df.index)
+
+    def compute_horse_proxy_tsr(self, train_df: pd.DataFrame) -> pd.DataFrame:
+        """Per-horse proxy as of today: the proxy of the horse's most recent race.
+
+        One row per horse with column ``LastProxyTSR`` — the as-of-"today" value
+        serving uses for prediction.
+        """
+        work = pd.DataFrame(
+            {"HorseId": train_df["HorseId"].values, "Off": train_df["Off"].values,
+             "_ProxyTSR": self._predict_proxy(train_df)}
+        )
+        work = work.sort_values(["HorseId", "Off"], kind="stable")
+        last = work.groupby("HorseId", as_index=False).tail(1)
+        return (
+            last[["HorseId", "_ProxyTSR"]]
+            .rename(columns={"_ProxyTSR": "LastProxyTSR"})
+            .reset_index(drop=True)
+        )

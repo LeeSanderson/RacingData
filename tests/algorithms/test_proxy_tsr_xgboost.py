@@ -19,7 +19,11 @@ def _train_row(horse_id: int, race_id: int, off: datetime = D1, wins: int = 0,
         "CourseName": "Newmarket",
         "Speed": 16.0, "FinishingPosition": 2, "OverallBeatenDistance": 2.0,
         "HorseCount": 8,
+        # current-race (post-race) ratings — must NOT be used as classifier features
         "OfficialRating": 80.0, "RacingPostRating": 100.0, "TopSpeedRating": tsr,
+        # previous-race ratings — the leak-free signal sourced from the stats join
+        "LastRaceOfficialRating": 70.0, "LastRaceRacingPostRating": 95.0,
+        "LastRaceTopSpeedRating": 92.0,
         "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
         "Surface_AllWeather": 0.0, "Surface_Dirt": 0.0, "Surface_Turf": 1.0,
         "Going_Firm": 0.0, "Going_Good": 1.0, "Going_Good_To_Firm": 0.0,
@@ -55,6 +59,8 @@ def _horse_stat(horse_id: int) -> dict:
         "HorseId": horse_id, "LastOff": _LONG_AGO,
         "LastRaceDistanceInMeters": 1600.0, "LastRaceWeightInPounds": 126.0,
         "LastRaceAvgRelFinishingPosition": 0.5, "LastRaceSpeed": 16.0,
+        "LastRaceOfficialRating": 70.0, "LastRaceRacingPostRating": 95.0,
+        "LastRaceTopSpeedRating": 92.0,
         "LastRaceSurface_AllWeather": 0.0, "LastRaceSurface_Dirt": 0.0, "LastRaceSurface_Turf": 1.0,
         "LastRaceGoing_Firm": 0.0, "LastRaceGoing_Good": 1.0,
         "LastRaceGoing_Good_To_Firm": 0.0, "LastRaceGoing_Good_To_Soft": 0.0,
@@ -97,6 +103,26 @@ def trained_algo() -> ProxyTSRXGBoostAlgorithm:
 def test_fit_completes_without_error():
     algo = ProxyTSRXGBoostAlgorithm(max_horses=10)
     algo.fit(_make_train_df())  # must not raise
+
+
+# ── 1b. feature set drops raw ratings, uses LastRace* + as-of proxy ───────────
+
+
+def test_feature_set_drops_raw_ratings_and_uses_lastrace_plus_proxy():
+    algo = ProxyTSRXGBoostAlgorithm(max_horses=10)
+    algo.fit(_make_train_df())
+    feats = algo._feature_cols
+    # primary leak gone: no raw current-race RPR/TSR (nor OfficialRating)
+    for col in ["OfficialRating", "RacingPostRating", "TopSpeedRating"]:
+        assert col not in feats, f"raw current-race rating leaked into features: {col}"
+        assert f"Rel{col}" not in feats
+    # previous-race ratings (absolute + relative) are used instead
+    for col in ["LastRaceOfficialRating", "LastRaceRacingPostRating", "LastRaceTopSpeedRating"]:
+        assert col in feats, f"missing previous-race rating feature: {col}"
+        assert f"Rel{col}" in feats
+    # the as-of-date proxy feature is present
+    assert "LastProxyTSR" in feats
+    assert "RelLastProxyTSR" in feats
 
 
 # ── 2. predict returns correct columns ───────────────────────────────────────
