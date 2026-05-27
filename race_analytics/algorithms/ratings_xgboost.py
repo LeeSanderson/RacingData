@@ -6,7 +6,14 @@ from xgboost import XGBClassifier
 from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS
 from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
-RATING_COLS = ["OfficialRating", "RacingPostRating", "TopSpeedRating"]
+# Previous-race ratings sourced from the per-horse stats join (leak-free).
+# The current-race OfficialRating/RacingPostRating/TopSpeedRating are post-race
+# figures and must never enter the model — see issues/prd.md.
+RATING_COLS = [
+    "LastRaceOfficialRating",
+    "LastRaceRacingPostRating",
+    "LastRaceTopSpeedRating",
+]
 
 
 def _add_race_context(df: pd.DataFrame) -> pd.DataFrame:
@@ -107,10 +114,10 @@ class RatingsXGBoostAlgorithm(BaseAlgorithm):
             & (predictable["OriginalCount"] <= self.max_horses)
         ].copy()
 
-        if self._require_tsr and "TopSpeedRating" in predictable.columns:
-            tsr_complete = predictable.groupby("RaceId")["TopSpeedRating"].transform(
-                lambda x: x.notna().all()
-            )
+        if self._require_tsr and "LastRaceTopSpeedRating" in predictable.columns:
+            tsr_complete = predictable.groupby("RaceId")[
+                "LastRaceTopSpeedRating"
+            ].transform(lambda x: x.notna().all())
             predictable = predictable[tsr_complete].copy()
 
         if len(predictable) == 0:
