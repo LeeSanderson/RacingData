@@ -1,9 +1,9 @@
 from xgboost import XGBRegressor
 
-from race_analytics.algorithms.base import BaseAlgorithm
+from race_analytics.algorithms.regressor import RegressorAlgorithm
 
 
-class XGBoostAlgorithm(BaseAlgorithm):
+class XGBoostAlgorithm(RegressorAlgorithm):
     def _create_model(self) -> XGBRegressor:
         return XGBRegressor(
             n_estimators=100,

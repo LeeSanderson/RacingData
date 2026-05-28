@@ -4,10 +4,10 @@ from sklearn.pipeline import make_pipeline
 
 from sklearn.pipeline import Pipeline
 
-from race_analytics.algorithms.base import BaseAlgorithm
+from race_analytics.algorithms.regressor import RegressorAlgorithm
 
 
-class RidgeRegressionAlgorithm(BaseAlgorithm):
+class RidgeRegressionAlgorithm(RegressorAlgorithm):
     def _create_model(self) -> Pipeline:
         return make_pipeline(
             StandardScaler(),
