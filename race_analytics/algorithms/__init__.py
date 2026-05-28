@@ -18,4 +18,4 @@ ALGORITHMS = [
     TunedProxyTSRXGBoostAlgorithm(max_horses=10),
 ]
 
-ACTIVE_ALGORITHM = ALGORITHMS[2]  # RatingsXGBoostAlgorithm (TSR-gated)
+ACTIVE_ALGORITHM = ALGORITHMS[4]  # ProxyTSRXGBoostAlgorithm — see evaluations.md

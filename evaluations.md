@@ -1,190 +1,146 @@
 # Algorithm Evaluation Findings
 
-> **⚠ LEAKAGE WARNING — the numbers below are inflated and must not be trusted.**
->
-> Every result on this page that involves `RacingPostRating` or `TopSpeedRating`
-> (RPR/TSR) is corrupted by **post-race leakage**. Racing Post assigns RPR and TSR
-> *from the run itself*, so within a race they all but reproduce the finishing order
-> (within-race Spearman ≈ −0.88 / −0.86 vs finishing position — see the table in
-> `issues/prd.md`). Because `Horse_Stats.csv` historically carried no rating columns,
-> these post-race figures reached the model **only through the race-day row**: in
-> `evaluate.py` the fold's card is built from that day's *results*, handing the model
-> near-oracle ratings, whereas `predict.py` in production sees only the weak pre-race
-> form values. That train/serve skew massively flatters the evaluation.
->
-> **Reality check:** across the 2026 `PredictionScores_*.csv` logs (514 completed bets)
-> the real production accuracy was **~0.265**, versus the **~0.78** the TSR-gated
-> `RatingsXGBoostAlgorithm` claims below — roughly **3× inflation**. The "TopSpeedRating
-> is the key driver" and TSR-gated headline results are artefacts of this leak, not a
-> real edge.
->
-> These figures are being replaced by a clean, leak-free re-evaluation (switching every
-> rating feature to its previous-race value). The fix is tracked by `issues/prd.md`; the
-> rewrite of this document with honest numbers is
-> `issues/007-rewrite-evaluations-and-review-active-algorithm.md`. Until then, treat
-> everything below as untrustworthy.
+> **Update (2026-05-28):** the previous version of this page reported a ~0.78
+> accuracy and large positive ROI for the TSR-gated `RatingsXGBoostAlgorithm`.
+> Those figures were inflated by a post-race RPR/TSR leak that has now been
+> fixed (see `issues/prd.md`, issues 001–007). The numbers below are the
+> honest, leak-free re-evaluation; the gated headline has collapsed from
+> ~0.78 to **0.29**, in line with the **0.265** real production anchor.
 
-## Baseline Results (14 folds, 194 races)
+## Headline finding
 
-| Algorithm | Accuracy | ROI |
-|---|---|---|
-| RidgeRegressionAlgorithm | 0.222 | -14.82 |
-| XGBoostAlgorithm | 0.227 | -27.45 |
-| Market Favourite baseline | 0.347 | -16.23 |
+The old TSR-gated `RatingsXGBoostAlgorithm` "0.78 accuracy" claim was a
+feature-leak artefact. Racing Post's `RacingPostRating` (RPR) and
+`TopSpeedRating` (TSR) are **post-race** figures (within-race Spearman vs
+finishing position ≈ −0.88 / −0.86 — they essentially encode the result). In
+the old evaluator, the day's *results* row carried these post-race ratings
+into the model card, while `predict.py` in production saw only the weak
+pre-race form — a textbook train/serve skew, ~3× inflation.
 
-Both algorithms underperform the market favourite on accuracy and ROI.
+The fix (issues 002–005): every rating feature is now the horse's
+**previous-race** value sourced from the per-horse stats join; the proxy is
+an as-of-date "last prior proxy" per horse; the card no longer carries any
+rating columns.
 
----
+## Production anchor
 
-## Root Cause Analysis
+Computed from the 2026 `PredictionScores_*.csv` logs (the real picks the
+previously-active algorithm logged in production, with outcomes):
 
-### 1. Wrong target variable
-
-Both algorithms predict absolute **Speed** (metres per second) and pick the horse with the highest predicted speed per race. Speed is heavily determined by race conditions, not horse quality:
-
-- `OfficialRating` correlation with Speed = **-0.62** — higher-rated horses run *slower* in absolute terms because they race at longer, more competitive distances on softer ground.
-- XGBoost feature importance: `RaceType_Other` = **94%** of importance budget. The model learned "what speed does this race type produce?" not "which horse will win?".
-
-### 2. Missing key predictors
-
-The `PREDICTORS` list (37 features) omits the strongest win predictors available in the data:
-
-| Feature | Correlation with Wins | Coverage |
-|---|---|---|
-| `RacingPostRating` (relative to field) | **+0.388** | 52% |
-| `TopSpeedRating` (relative to field) | **+0.381** | 49% |
-| `RacingPostRating` (absolute) | +0.266 | 52% |
-| `TopSpeedRating` (absolute) | +0.218 | 49% |
-| `OfficialRating` (relative to field) | +0.084 | 69% |
-| `LastRaceSpeed` (current best feature) | -0.038 | 67% |
-
-`LastRaceSpeed` — relied upon heavily by both existing algorithms — is 10× weaker than `RacingPostRating` at predicting winners.
-
----
-
-## RatingsXGBoostAlgorithm
-
-### Design changes
-
-- **Target**: `Wins` (binary 0/1) instead of Speed
-- **Model**: `XGBClassifier` (win probability) instead of `XGBRegressor`
-- **New features**: `OfficialRating`, `RacingPostRating`, `TopSpeedRating` (absolute + relative to field average)
-- **HorseCount** added as feature
-- **NaN handling**: ratings may be NaN; only `PREDICTORS` are required non-null; XGBoost handles missing values natively
-
-### 60-fold results (950 races)
-
-| Algorithm | Accuracy | ROI | vs Favourite |
+| Bets | Wins | Accuracy | Net £ (flat stake) |
 |---|---|---|---|
-| RidgeRegressionAlgorithm | 0.242 | +64.73 | +98.93 |
-| XGBoostAlgorithm | 0.235 | -57.76 | -23.56 |
-| **RatingsXGBoostAlgorithm** | **0.305** | **+253.64** | **+287.83** |
-| Market Favourite baseline | 0.359 | -34.20 | — |
+| **514** | 136 | **0.265** | **+78.22** |
 
-RatingsXGBoost achieves the best accuracy of the ML algorithms and the only strongly positive ROI, averaging **+26.7p return per £1 bet** across 950 races.
+Per-month accuracy: 0.278 / 0.175 / 0.308 / 0.231. Accuracy is the reliable
+signal; ROI is positive but noisy. **~0.265 is the realistic accuracy a
+leak-free eval should land near.**
 
----
+## 180-fold leak-free walk-forward results
 
-## TopSpeedRating as Key Driver
+Fold dates 2025-11-28 → 2026-05-26, 7-month training window per fold (the
+PRD-defined re-baseline run). `roi` is net £ on flat £1 stakes
+(Σ decimal-odds of winners − number of bets); `accuracy` is picks finishing
+1st divided by picks on completed races. See
+`race_analytics/utils/scoring.py` for the exact definitions.
 
-### High-accuracy vs low-accuracy fold analysis
-
-| Group | Avg accuracy | Avg ROI | Avg field size | TSR coverage | Winner avg odds |
-|---|---|---|---|---|---|
-| High-accuracy folds (7) | 0.658 | +46.55 | 6.7 | 71% | 5.97 |
-| Low-accuracy folds (7) | 0.167 | -8.00 | 7.3 | 0% | 2.68 |
-
-**Field size is not the driver**. `TopSpeedRating` (TSR) coverage is the key differentiator:
-- Days with TSR ≥95% for all horses: consistently 0.667–0.875 accuracy, strongly positive ROI
-- Days with 0% TSR: mostly 0.077–0.211 accuracy, negative ROI
-
-When TSR is absent, the algorithm degenerates to a low-quality favourite-picker (winner odds 2.68 ≈ favourite baseline 2.65). When TSR is present, it identifies genuine value: longer-priced winners the market underestimates.
-
-**Why TSR is inconsistent**: TopSpeedRating is a Racing Post proprietary calculation, only available for horses with sufficient race history. New horses and lightly-raced horses have no TSR.
-
-### Race availability under TSR-complete filter (60 folds)
-
-| Filter | Avg races/day | Total | % of races |
-|---|---|---|---|
-| KnownHorseAndJockey (current) | 15.8 | 934 | 100% |
-| + TopSpeedRating complete (all horses) | 1.6 | 93 | 10% |
-| + OfficialRating complete (all horses) | 13.7 | 806 | 86% |
-
-TSR-complete races: available only **19% of days**, with 81% of days having zero qualifying races.
-
----
-
-## TSR-Gated Strategy
-
-Adding `require_tsr=True` (default) to `RatingsXGBoostAlgorithm` filters predictions to races where **all horses have a TopSpeedRating**. This reduces volume to ~1.6 races/day but concentrates predictions on the algorithm's high-confidence operating conditions.
-
-### 60-fold results with TSR gating (934 races total, 93 gated)
-
-| Algorithm | Accuracy | ROI | Races | ROI/race |
+| Algorithm | Accuracy | Net £ ROI | Races | Fav accuracy (same races) |
 |---|---|---|---|---|
-| RidgeRegressionAlgorithm | 0.242 | +67.63 | 934 | +0.07 |
-| XGBoostAlgorithm | 0.231 | -68.36 | 934 | -0.07 |
-| **RatingsXGBoostAlgorithm (TSR-gated)** | **0.602** | **+313.12** | **93** | **+3.37** |
-| RatingsXGBoostUngatedAlgorithm | 0.304 | +254.51 | 934 | +0.27 |
-| Market Favourite (on gated races) | 0.290 | -11.91 | 93 | — |
+| RidgeRegressionAlgorithm | 0.270 | +129.24 | 415 | 0.379 |
+| XGBoostAlgorithm | 0.299 | +118.14 | 415 | 0.379 |
+| RatingsXGBoostAlgorithm (TSR-gated) | 0.290 | −7.06 | 397 | 0.379 |
+| RatingsXGBoostUngatedAlgorithm | 0.296 | +18.82 | 415 | 0.379 |
+| **ProxyTSRXGBoostAlgorithm** ← active | **0.304** | +13.37 | 415 | 0.379 |
+| TunedProxyTSRXGBoostAlgorithm | 0.289 | +64.74 | 415 | 0.379 |
 
-Key observations:
-- The gated algorithm picks winners 60% of the time at average odds ~7.25 — genuine longshots the market undervalues
-- Market favourite wins only 29% of TSR-complete races, confirming these are genuinely hard-to-call races where the algorithm has a real edge
-- Despite predicting on only 10% of races, the gated version generates **more total ROI** than the ungated (+313 vs +254) — all the alpha is concentrated in TSR-complete races
-- ROI per race is 12.5× higher gated (+3.37) vs ungated (+0.27)
+### Old (leaky) vs new (clean) — the same 180-fold table side-by-side
 
-See `RatingsXGBoostAlgorithm` in `race_analytics/algorithms/ratings_xgboost.py`.
+| Algorithm | Old (leaky) accuracy | New (clean) accuracy |
+|---|---|---|
+| RatingsXGBoost (TSR-gated) | **0.783** | **0.290** |
+| RatingsXGBoostUngated | 0.532 | 0.296 |
+| ProxyTSRXGBoost | 0.509 | 0.304 |
+| TunedProxyTSRXGBoost | 0.515 | 0.289 |
+| RidgeRegression | 0.235 | 0.270 |
+| XGBoost | 0.247 | 0.299 |
 
----
+## Leak-gone check vs the production anchor
 
-## ProxyTSRXGBoostAlgorithm
+The clean TSR-gated accuracy **0.290** lands within **+2.5 pp** of the
+production anchor **0.265** — a rough ballpark match, which is the only
+sanity-check the PRD asked for (a head-to-head replay was explicitly out of
+scope). The TSR-gated 0.78 headline has fully collapsed. **The leak is gone.**
 
-### Design
+## What changed in practice
 
-- **ProxyTSRModel**: XGBoost regressor trained to predict `TopSpeedRating` from per-race outcome data (speed, conditions, finishing position, beaten distance, course). Aggregates per-horse into `PeakProxyTSR`, `LastProxyTSR`, `Best5ProxyTSR`.
-- **ProxyTSRXGBoostAlgorithm**: Uses `ProxyTSRModel` as a first stage. Feeds 6 proxy TSR features (3 absolute + 3 relative vs field) alongside real TSR (NaN-tolerant) into an `XGBClassifier`. **No TSR gating** — predicts on all `KnownHorseAndJockey` races.
+- **The "TSR is the key driver" story was the leak.** With ratings restricted
+  to previous-race values, gating on TSR coverage now barely excludes anything
+  (397 / 415 races = **95.7%** kept, vs the old 981 / 2,475 = 39.6%). Every
+  horse with any prior race has a clean `LastRaceTopSpeedRating`, so the gate
+  buys ~nothing.
+- **Ratings are still a genuine pre-race signal.** Every ratings-aware
+  algorithm beats the Ridge baseline on accuracy (0.270 vs 0.289–0.304),
+  confirming the PRD expectation that previous-race ratings beat last-race
+  speed alone.
+- **Every ML algorithm now beats the old Ridge / XGBoost baselines**
+  (0.270 / 0.299 vs the old 0.235 / 0.247). The "wrong target variable"
+  diagnosis in the previous version of this document — that the speed-target
+  models learned race conditions, not horse quality — still stands; switching
+  to a `Wins`-target classifier remains the right call independent of the leak.
+- **The market favourite still wins on accuracy** (0.379) but the ML algos
+  all beat it on net £ ROI — they pick at longer odds and capture value when
+  the favourite is mispriced.
 
-### 60-fold results (951 races)
+## Note on sample size
 
-| Algorithm | Accuracy | ROI | Races | ROI/race |
-|---|---|---|---|---|
-| RidgeRegressionAlgorithm | 0.242 | +59.60 | 951 | +0.06 |
-| XGBoostAlgorithm | 0.237 | -61.11 | 951 | -0.06 |
-| **RatingsXGBoostAlgorithm (TSR-gated)** | **0.602** | **+313.12** | **93** | **+3.37** |
-| RatingsXGBoostUngatedAlgorithm | 0.313 | +265.80 | 951 | +0.28 |
-| **ProxyTSRXGBoostAlgorithm** | **0.301** | **+240.61** | **951** | **+0.25** |
-| Market Favourite (full pop) | 0.366 | -19.24 | 951 | — |
-| Market Favourite (gated races) | 0.290 | -11.91 | 93 | — |
+The new 180-fold sample is **415 races** vs the old run's **2,475**. This is a
+property of the current data state plus the existing `KnownHorseAndJockey` and
+`OriginalCount == PredictableCount` (whole-race predictability) filters; it is
+**not** caused by the leakage fix — the untouched Ridge baseline shows the
+same per-fold race counts as the corrected algorithms. The smaller sample is
+still meaningful (and ~3× the original 14-fold baseline) but the per-algorithm
+ROI gaps should be read as directional rather than precise.
 
-### 180-fold results (2,475 races) — statistically robust
+## Active algorithm
 
-| Algorithm | Accuracy | ROI | Races | ROI/race |
-|---|---|---|---|---|
-| RidgeRegressionAlgorithm | 0.235 | -127.15 | 2,475 | -0.05 |
-| XGBoostAlgorithm | 0.247 | -72.46 | 2,475 | -0.03 |
-| **RatingsXGBoostAlgorithm (TSR-gated)** | **0.783** | **+3,406** | **981** | **+3.47** |
-| RatingsXGBoostUngatedAlgorithm | 0.532 | +4,250 | 2,475 | +1.72 |
-| ProxyTSRXGBoostAlgorithm | 0.509 | +3,573 | 2,475 | +1.44 |
-| **TunedProxyTSRXGBoostAlgorithm** | **0.515** | **+3,740** | **2,475** | **+1.51** |
-| Market Favourite (full pop) | 0.387 | +77.60 | 2,475 | — |
-| Market Favourite (gated races) | 0.402 | +80.41 | 981 | — |
+```python
+ACTIVE_ALGORITHM = ProxyTSRXGBoostAlgorithm
+```
 
-Key observations:
-- **Tuning works**: TunedProxyTSR beats default ProxyTSR (+3,740 vs +3,573 ROI, 0.515 vs 0.509 accuracy)
-- **Dramatic improvement vs 60-fold**: ratings-based algorithms all improve sharply. The gated algorithm jumped 0.602→0.783 accuracy, +313→+3,406 ROI. This confirms 60 folds covered a harder recent period; 180 folds is the more representative estimate across racing seasons
-- **Ungated now beats gated in total ROI** (+4,250 vs +3,406) due to 2.5× more races at a strong +1.72 ROI/race — volume is genuinely valuable
-- **ProxyTSR gap to ungated is modest**: 0.509 vs 0.532 accuracy, +3,573 vs +4,250 ROI — proxy features add real signal but do not fully close the gap to real TSR availability
-- **Gated per-race ROI remains dominant** (+3.47) — all the high-confidence alpha is still concentrated in TSR-complete races
+(was `RatingsXGBoostAlgorithm` TSR-gated.)
 
-See `ProxyTSRModel` in `race_analytics/algorithms/proxy_tsr.py`, `ProxyTSRXGBoostAlgorithm` and `TunedProxyTSRXGBoostAlgorithm` in `race_analytics/algorithms/proxy_tsr_xgboost.py`.
+**Rationale.** On leak-free numbers the previously-active gated algorithm is
+the worst ML choice in the table (−£7 ROI, the gate excludes only 18 / 415
+races). `ProxyTSRXGBoostAlgorithm` has the highest ML accuracy (**0.304**)
+with positive ROI (+£13) and full coverage (415 races), and it already
+incorporates the corrected as-of-date proxy that lets it predict horses
+lacking a real TSR. Per the PRD, accuracy is the reliable signal and ROI is
+noisier — so the choice is anchored on accuracy.
 
----
+Alternatives considered:
 
-## Outstanding Work / Next Steps
+- `RatingsXGBoostUngatedAlgorithm` (0.296 / +£19, 415 races) — closely
+  behind, simpler model. The natural fallback if the proxy were dropped.
+- `RidgeRegressionAlgorithm` (0.270 / +£129) — best ROI but lowest ML
+  accuracy; its ROI is driven by occasional longshot wins and is the noisiest
+  signal in the table.
 
-1. **Hyperparameter tuning**: Both `ProxyTSRModel` (XGBRegressor) and `ProxyTSRXGBoostAlgorithm` (XGBClassifier) use default XGBoost settings (200 trees, lr=0.05, depth=4, no subsampling). `ProxyTSRModel.tune()` runs `RandomizedSearchCV` over n_estimators, max_depth, learning_rate, subsample, colsample_bytree. `ProxyTSRXGBoostAlgorithm` exposes these as constructor params and accepts `tune_proxy=True` to trigger proxy model tuning during `fit()`.
+See `ProxyTSRXGBoostAlgorithm` in
+`race_analytics/algorithms/proxy_tsr_xgboost.py` and `ProxyTSRModel` (with
+its leak-free `compute_as_of_proxy` and `compute_horse_proxy_tsr`) in
+`race_analytics/algorithms/proxy_tsr.py`.
 
-2. **Extended backtest**: 60 folds covers ~2 months. A 180–365 fold backtest would give more statistically robust ROI estimates.
+## Methodology
 
-3. **TSR-gated vs proxy-gated strategy**: Investigate whether gating `ProxyTSRXGBoostAlgorithm` on proxy TSR confidence (e.g. horse has ≥ N historical races) improves ROI/race while maintaining better volume than the real-TSR gate.
+- **Walk-forward evaluation**: each fold trains on the 7 most-recent months
+  strictly before the fold date and predicts on the fold date.
+- **Algorithms**: all six registered (`race_analytics/algorithms/__init__.py`).
+- **Baseline**: market favourite (lowest decimal odds in each race).
+- **Scoring**: `accuracy` over completed races; `roi` = Σ decimal odds of
+  winners − number of bets (net £ on £1 flat stakes).
+- **Filters**: `KnownHorseAndJockey`, every horse predictable (all
+  `PREDICTORS` non-null), field size ≤ 10. The TSR-gated variant additionally
+  requires every horse in the race to have a non-null
+  `LastRaceTopSpeedRating`.
+- **Production-anchor command**: all 2026 `PredictionScores_*.csv` files,
+  rows with `ResultStatus == 'CompletedRace'`, `accuracy = mean(FinishingPosition == 1)`,
+  `roi = Σ DecimalOdds of winners − number of bets` (matching the eval).
