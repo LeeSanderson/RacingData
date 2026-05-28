@@ -90,15 +90,38 @@ scope). The TSR-gated 0.78 headline has fully collapsed. **The leak is gone.**
   all beat it on net £ ROI — they pick at longer odds and capture value when
   the favourite is mispriced.
 
-## Note on sample size
+## Why the race count is much lower than the old 180-fold run
 
-The new 180-fold sample is **415 races** vs the old run's **2,475**. This is a
-property of the current data state plus the existing `KnownHorseAndJockey` and
-`OriginalCount == PredictableCount` (whole-race predictability) filters; it is
-**not** caused by the leakage fix — the untouched Ridge baseline shows the
-same per-fold race counts as the corrected algorithms. The smaller sample is
-still meaningful (and ~3× the original 14-fold baseline) but the per-algorithm
-ROI gaps should be read as directional rather than precise.
+The new 180-fold sample is **415 races**, the old run reported **2,475** —
+~6× fewer. This is **not** caused by the leakage fix. It is caused by the
+prior PRD's expansion of `PREDICTORS`:
+
+- The old 180-fold table was committed at **03:56 on 2026-05-26** (`16daab9`).
+- At **20:30 the same day** commit `1f8c709`
+  ("Issue 009: Extend PREDICTORS and wire trainer stats into predict/evaluate")
+  added 7 columns to `PREDICTORS`:
+  `Last3RaceAvgSpeed`, `Last3RaceSpeedTrend`, `Last3AvgRelFinishingPosition`,
+  `TrainerNumberOfPriorRaces`, `TrainerWinPercentage`,
+  `TrainerTop3Percentage`, `TrainerAvgRelFinishingPosition`.
+- Each algorithm's `predict()` keeps only races where **every** horse has
+  **every** `PREDICTOR` non-null (the
+  `OriginalCount == PredictableCount` filter). `Last3*` are NaN for any
+  horse with fewer than 3 prior races; `Trainer*` are NaN for unknown or
+  TrainerId=0 trainers. Adding seven such columns sharply tightens whole-race
+  predictability.
+
+The same effect hits the untouched `RidgeRegressionAlgorithm` and
+`XGBoostAlgorithm` baselines (their per-fold race counts match the corrected
+algorithms exactly), confirming the cause is the PREDICTORS expansion, not
+anything in the leakage-fix change set.
+
+The same filter applies in production (`predict.py` uses the same
+`_fitted_predictors` intersection), so the 415-race window the eval samples
+is the **right** order of magnitude for what `predict --data Data` actually
+operates on day-to-day — the 2,475 figure was from before that production
+filter tightened. The clean accuracy / anchor comparison above is therefore
+the realistic comparison, but per-algorithm ROI gaps over 415 races should
+still be read as directional rather than precise.
 
 ## Active algorithm
 
