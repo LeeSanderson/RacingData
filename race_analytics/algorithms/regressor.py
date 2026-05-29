@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
-from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS, _Estimator
+from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS, REQUIRED_PREDICTORS, _Estimator
 from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
 
 
@@ -19,10 +19,14 @@ class RegressorAlgorithm(BaseAlgorithm):
         ...
 
     def fit(self, train_df: pd.DataFrame) -> None:
-        self._fitted_predictors = [c for c in PREDICTORS if c in train_df.columns]
-        data = train_df[self._fitted_predictors + ["Speed"]].dropna().copy()
-        data.loc[data["DaysRested"] > 10, "DaysRested"] = 10
-        data.loc[data["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
+        required = [c for c in REQUIRED_PREDICTORS if c in train_df.columns]
+        tolerated = [c for c in self.nan_tolerant_predictors if c in train_df.columns]
+        self._fitted_predictors = required + tolerated
+        data = train_df[self._fitted_predictors + ["Speed"]].dropna(subset=required + ["Speed"]).copy()
+        if "DaysRested" in data.columns:
+            data.loc[data["DaysRested"] > 10, "DaysRested"] = 10
+        if "DaysSinceJockeyLastRaced" in data.columns:
+            data.loc[data["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
         self._model.fit(data[self._fitted_predictors], data["Speed"])
 
     def predict(
@@ -56,7 +60,8 @@ class RegressorAlgorithm(BaseAlgorithm):
         merged = encode_going(merged)
         merged = encode_race_type(merged)
 
-        predictable = merged[["RaceId", "HorseId"] + self._fitted_predictors].dropna().copy()
+        required_fitted = [c for c in REQUIRED_PREDICTORS if c in self._fitted_predictors]
+        predictable = merged[["RaceId", "HorseId"] + self._fitted_predictors].dropna(subset=required_fitted).copy()
         if len(predictable) == 0:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
 

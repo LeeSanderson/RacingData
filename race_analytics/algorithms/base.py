@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Protocol
+from typing import Any, ClassVar, Protocol
 import numpy as np
 import pandas as pd
 
@@ -8,7 +8,7 @@ class _Estimator(Protocol):
     def fit(self, X: Any, y: Any) -> Any: ...
     def predict(self, X: Any) -> np.ndarray: ...
 
-PREDICTORS = [
+REQUIRED_PREDICTORS = [
     "DistanceInMeters",
     "WeightInPounds",
     "Surface_AllWeather",
@@ -47,17 +47,24 @@ PREDICTORS = [
     "JockeyWinPercentage",
     "JockeyTop3Percentage",
     "JockeyAvgRelFinishingPosition",
-    "Last3RaceAvgSpeed",
-    "Last3RaceSpeedTrend",
-    "Last3AvgRelFinishingPosition",
     "TrainerNumberOfPriorRaces",
     "TrainerWinPercentage",
     "TrainerTop3Percentage",
     "TrainerAvgRelFinishingPosition",
 ]
 
+OPTIONAL_PREDICTORS = [
+    "Last3RaceAvgSpeed",
+    "Last3RaceSpeedTrend",
+    "Last3AvgRelFinishingPosition",
+]
+
+PREDICTORS = REQUIRED_PREDICTORS + OPTIONAL_PREDICTORS
+
 
 class BaseAlgorithm(ABC):
+    nan_tolerant_predictors: ClassVar[list[str]] = []
+
     def __init__(self, max_horses: int = 10):
         self.max_horses = max_horses
 
