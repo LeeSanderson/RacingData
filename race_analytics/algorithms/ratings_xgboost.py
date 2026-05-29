@@ -3,6 +3,7 @@ from typing import ClassVar
 import pandas as pd
 from xgboost import XGBClassifier
 
+from race_analytics.algorithms.base import OPTIONAL_PREDICTORS
 from race_analytics.algorithms.binary_win_classifier import BinaryWinClassifierAlgorithm
 
 # Previous-race ratings sourced from the per-horse stats join (leak-free).
@@ -16,6 +17,7 @@ RATING_COLS = [
 
 
 class RatingsXGBoostAlgorithm(BinaryWinClassifierAlgorithm):
+    nan_tolerant_predictors = OPTIONAL_PREDICTORS
     extra_nan_tolerant_features: ClassVar[list[str]] = RATING_COLS
 
     def __init__(self, max_horses: int = 10):

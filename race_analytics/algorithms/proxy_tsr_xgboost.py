@@ -3,6 +3,7 @@ from typing import ClassVar
 import pandas as pd
 from xgboost import XGBClassifier
 
+from race_analytics.algorithms.base import OPTIONAL_PREDICTORS
 from race_analytics.algorithms.binary_win_classifier import BinaryWinClassifierAlgorithm
 from race_analytics.algorithms.proxy_tsr import ProxyTSRModel
 
@@ -27,6 +28,7 @@ class ProxyTSRXGBoostAlgorithm(BinaryWinClassifierAlgorithm):
     No TSR gating is applied — all KnownHorseAndJockey races are predicted.
     """
 
+    nan_tolerant_predictors = OPTIONAL_PREDICTORS
     extra_nan_tolerant_features: ClassVar[list[str]] = RATING_COLS + PROXY_TSR_COLS
 
     def __init__(

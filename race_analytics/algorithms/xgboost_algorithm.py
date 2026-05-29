@@ -1,9 +1,11 @@
 from xgboost import XGBRegressor
 
+from race_analytics.algorithms.base import OPTIONAL_PREDICTORS
 from race_analytics.algorithms.regressor import RegressorAlgorithm
 
 
 class XGBoostAlgorithm(RegressorAlgorithm):
+    nan_tolerant_predictors = OPTIONAL_PREDICTORS
     def _create_model(self) -> XGBRegressor:
         return XGBRegressor(
             n_estimators=100,
