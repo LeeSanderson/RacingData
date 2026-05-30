@@ -2,6 +2,7 @@ import os
 import argparse
 import gc
 import glob
+import time
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
@@ -28,6 +29,10 @@ _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 
 _DEFAULT_FOLDS = 14
 _DEFAULT_TRAINING_MONTHS = 7
+
+
+def _format_timing(fit_time: float, predict_time: float) -> str:
+    return f"| fit={fit_time:.3f}s, predict={predict_time:.3f}s"
 
 
 def _extract_known_races(fold_df: pd.DataFrame) -> pd.DataFrame:
@@ -198,13 +203,15 @@ def evaluate(
     folds: int = _DEFAULT_FOLDS,
     training_months: int = _DEFAULT_TRAINING_MONTHS,
     algorithms: list[str] | None = None,
-) -> None:
+) -> dict:
     fold_dates = _fold_dates(folds)
     selected_algos = _resolve_algorithms(algorithms)
     algo_names = [type(a).__name__ for a in selected_algos]
     all_preds = {n: [] for n in algo_names}
     all_results_store = {n: [] for n in algo_names}
     all_fav_preds = {n: [] for n in algo_names}
+    all_fit_times: dict[str, list[float]] = {n: [] for n in algo_names}
+    all_predict_times: dict[str, list[float]] = {n: [] for n in algo_names}
     baseline = MarketFavouriteBaseline()
 
     for fold_date in fold_dates:
@@ -232,20 +239,28 @@ def evaluate(
         for algo in selected_algos:
             name = type(algo).__name__
             print(f"  Fitting {name}...", flush=True)
+            t0 = time.perf_counter()
             algo.fit(train_df)
+            fit_time = time.perf_counter() - t0
+
+            t0 = time.perf_counter()
             preds = algo.predict(card, horse_stats, jockey_stats, trainer_stats)
+            predict_time = time.perf_counter() - t0
+
             acc = accuracy(preds, results_df)
             r = roi(preds, results_df)
             fav_preds = baseline.predict(preds["RaceId"], results_df)
             fav_acc = accuracy(fav_preds, results_df)
             fav_r = roi(fav_preds, results_df)
             print(
-                f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)} | favourite: accuracy={fav_acc:.3f}, roi={fav_r:.3f}, races={len(fav_preds)}"
+                f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)} | favourite: accuracy={fav_acc:.3f}, roi={fav_r:.3f}, races={len(fav_preds)} {_format_timing(fit_time, predict_time)}"
             )
             _print_race_results(preds, known_fold)
             all_preds[name].append(preds)
             all_results_store[name].append(results_df)
             all_fav_preds[name].append(fav_preds)
+            all_fit_times[name].append(fit_time)
+            all_predict_times[name].append(predict_time)
 
         gc.collect()
 
@@ -270,6 +285,8 @@ def evaluate(
         print(
             f"  {name:<40} {acc:>10.3f} {r:>10.3f} {len(combined_preds):>8} {fav_acc:>14.3f} {fav_r:>10.3f}"
         )
+
+    return {"fit_times": all_fit_times, "predict_times": all_predict_times}
 
 
 if __name__ == "__main__":

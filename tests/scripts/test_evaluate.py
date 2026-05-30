@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import pytest
+from datetime import date, timedelta
+from unittest.mock import patch
 
 from race_analytics.scripts.evaluate import _extract_known_races, _race_card
 from race_analytics.features.horse_stats import extract_horse_stats as _compute_horse_stats
@@ -178,3 +180,80 @@ def test_jockey_stats_uses_most_recent_race_as_last_off():
     ]
     result = _compute_jockey_stats(pd.DataFrame(rows))
     assert result[result["JockeyId"] == 10].iloc[0]["LastOff"] == pd.Timestamp("2026-03-01")
+
+
+# ================================================================
+# _format_timing
+# ================================================================
+
+def test_format_timing_returns_pipe_prefixed_string():
+    from race_analytics.scripts.evaluate import _format_timing
+    assert _format_timing(1.234, 0.056) == "| fit=1.234s, predict=0.056s"
+
+
+def test_format_timing_three_decimal_places():
+    from race_analytics.scripts.evaluate import _format_timing
+    result = _format_timing(0.1, 0.001)
+    assert "fit=0.100s" in result
+    assert "predict=0.001s" in result
+
+
+# ================================================================
+# evaluate() — timing accumulation
+# ================================================================
+
+def _make_fold_races(fold_date):
+    """Minimal two-row DataFrame: one training row + one known fold row."""
+    train_date = fold_date - timedelta(days=1)
+    return pd.DataFrame([
+        {
+            "Off": pd.Timestamp(train_date), "KnownHorseAndJockey": False,
+            "RaceId": 1, "HorseId": 10, "JockeyId": 100, "TrainerId": 1000,
+            "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
+            "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
+            "FinishingPosition": 2, "DecimalOdds": 3.5, "ResultStatus": "CompletedRace",
+            "HorseName": "TrainHorse", "CourseName": "Cheltenham",
+        },
+        {
+            "Off": pd.Timestamp(fold_date), "KnownHorseAndJockey": True,
+            "RaceId": 2, "HorseId": 20, "JockeyId": 200, "TrainerId": 2000,
+            "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
+            "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
+            "FinishingPosition": 1, "DecimalOdds": 3.5, "ResultStatus": "CompletedRace",
+            "HorseName": "FoldHorse", "CourseName": "Ascot",
+        },
+    ])
+
+
+class _StubAlgo:
+    def fit(self, _train_df):
+        pass
+
+    def predict(self, card, *_args):
+        if card.empty:
+            return pd.DataFrame(columns=["RaceId", "HorseId"])
+        return pd.DataFrame([{"RaceId": int(card["RaceId"].iloc[0]), "HorseId": int(card["HorseId"].iloc[0])}])
+
+
+def test_evaluate_timing_accumulators_have_one_entry_per_completed_fold():
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    stub_algo = _StubAlgo()
+
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
+    ):
+        timing = evaluate(folds=1)
+
+    name = "_StubAlgo"
+    assert name in timing["fit_times"], f"Expected '{name}' key; got {list(timing['fit_times'])}"
+    assert len(timing["fit_times"][name]) == 1
+    assert len(timing["predict_times"][name]) == 1
+    assert timing["fit_times"][name][0] >= 0.0
+    assert timing["predict_times"][name][0] >= 0.0
