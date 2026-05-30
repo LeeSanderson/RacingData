@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+0,False,9/1,10,PulledUp,918736,39,Newton Abbot,05/27/2026 15:53:00,2369721,Moroder IRE
+3,False,9/2,5.5,CompletedRace,920919,39,Newton Abbot,05/27/2026 17:30:00,4994488,Renoir
 2,False,7/4,2.75,CompletedRace,921550,175,Ballinrobe,05/26/2026 17:30:00,6541707,Munsif
 2,False,100/30,4.333333333333334,CompletedRace,920504,5,Bath,05/26/2026 14:30:00,4534414,Nammos
 0,False,SP,,NonRunner,920509,5,Bath,05/26/2026 16:00:00,4336793,Danger Alert
