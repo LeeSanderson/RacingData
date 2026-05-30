@@ -41,6 +41,49 @@ def _aggregate_times(times: list[float]) -> tuple[float, float] | None:
     return float(np.mean(times)), float(np.std(times))
 
 
+_CSV_COLUMNS = [
+    "FoldDate", "Algorithm", "RaceId", "HorseId", "CourseName",
+    "Surface", "Going", "RaceType", "DistanceInMeters",
+    "FinishingPosition", "DecimalOdds", "PredictedScore",
+]
+
+
+def _build_csv_rows(
+    fold_date: date,
+    algo_name: str,
+    preds: pd.DataFrame,
+    known_fold: pd.DataFrame,
+    results_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """One CSV row per predicted race for a single algorithm+fold."""
+    if preds.empty:
+        return pd.DataFrame(columns=_CSV_COLUMNS)
+
+    working = preds.copy().reset_index(drop=True)
+    if "PredictedSpeed" in working.columns:
+        working = working.rename(columns={"PredictedSpeed": "PredictedScore"})
+    else:
+        working["PredictedScore"] = pd.NA
+    working = working[["RaceId", "HorseId", "PredictedScore"]]
+
+    meta_cols = ["RaceId", "HorseId", "CourseName", "Surface", "Going", "RaceType", "DistanceInMeters"]
+    meta = known_fold[[c for c in meta_cols if c in known_fold.columns]].copy()
+
+    result_cols = ["RaceId", "HorseId", "FinishingPosition", "DecimalOdds"]
+    result_info = results_df[[c for c in result_cols if c in results_df.columns]].copy()
+
+    merged = working.merge(meta, on=["RaceId", "HorseId"], how="left")
+    merged = merged.merge(result_info, on=["RaceId", "HorseId"], how="left")
+    merged["FoldDate"] = fold_date
+    merged["Algorithm"] = algo_name
+
+    return merged[_CSV_COLUMNS]
+
+
+def _default_csv_path() -> str:
+    return f"evaluation_results_{date.today().strftime('%Y%m%d')}.csv"
+
+
 def _extract_known_races(fold_df: pd.DataFrame) -> pd.DataFrame:
     """Return only races where every horse and jockey is known from training history."""
     return fold_df[fold_df["KnownHorseAndJockey"] == True].copy()
@@ -209,6 +252,8 @@ def evaluate(
     folds: int = _DEFAULT_FOLDS,
     training_months: int = _DEFAULT_TRAINING_MONTHS,
     algorithms: list[str] | None = None,
+    save_results: bool = False,
+    results_file: str | None = None,
 ) -> dict:
     fold_dates = _fold_dates(folds)
     selected_algos = _resolve_algorithms(algorithms)
@@ -218,6 +263,7 @@ def evaluate(
     all_fav_preds = {n: [] for n in algo_names}
     all_fit_times: dict[str, list[float]] = {n: [] for n in algo_names}
     all_predict_times: dict[str, list[float]] = {n: [] for n in algo_names}
+    csv_rows: list[pd.DataFrame] = []
     baseline = MarketFavouriteBaseline()
 
     for fold_date in fold_dates:
@@ -267,6 +313,7 @@ def evaluate(
             all_fav_preds[name].append(fav_preds)
             all_fit_times[name].append(fit_time)
             all_predict_times[name].append(predict_time)
+            csv_rows.append(_build_csv_rows(fold_date, name, preds, known_fold, results_df))
 
         gc.collect()
 
@@ -305,6 +352,11 @@ def evaluate(
             pred_avg, pred_std = pred_agg
             print(f"  {name:<40} {fit_avg:>10.3f} {fit_std:>10.3f} {pred_avg:>10.3f} {pred_std:>10.3f}")
 
+    should_save = save_results or results_file is not None
+    if should_save and csv_rows:
+        path = results_file or _default_csv_path()
+        pd.concat(csv_rows, ignore_index=True).to_csv(path, index=False)
+
     return {"fit_times": all_fit_times, "predict_times": all_predict_times}
 
 
@@ -338,9 +390,25 @@ if __name__ == "__main__":
         default=None,
         help="Comma-separated list of algorithm class names to run (default: all registered algorithms)",
     )
+    parser.add_argument(
+        "--save-results",
+        action="store_true",
+        default=False,
+        dest="save_results",
+        help="Write evaluation results to a CSV file (default filename: evaluation_results_YYYYMMDD.csv)",
+    )
+    parser.add_argument(
+        "--results-file",
+        type=str,
+        default=None,
+        dest="results_file",
+        help="Path for the results CSV; implies --save-results when provided",
+    )
     args = parser.parse_args()
     evaluate(
         folds=args.folds,
         training_months=args.training_months,
         algorithms=args.algorithms,
+        save_results=args.save_results,
+        results_file=args.results_file,
     )

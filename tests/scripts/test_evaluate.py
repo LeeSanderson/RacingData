@@ -298,6 +298,144 @@ def test_evaluate_timing_summary_shows_na_for_skipped_algorithms(capsys):
     assert "N/A" in out
 
 
+# ================================================================
+# _build_csv_rows
+# ================================================================
+
+_CSV_COLUMNS = [
+    "FoldDate", "Algorithm", "RaceId", "HorseId", "CourseName",
+    "Surface", "Going", "RaceType", "DistanceInMeters",
+    "FinishingPosition", "DecimalOdds", "PredictedScore",
+]
+
+
+def _minimal_preds(race_id=2, horse_id=20):
+    return pd.DataFrame([{"RaceId": race_id, "HorseId": horse_id}])
+
+
+def _minimal_known_fold(race_id=2, horse_id=20):
+    return pd.DataFrame([{
+        "RaceId": race_id, "HorseId": horse_id,
+        "CourseName": "Ascot", "Surface": "Turf", "Going": "Good",
+        "RaceType": "Flat", "DistanceInMeters": 1600.0,
+    }])
+
+
+def _minimal_results(race_id=2, horse_id=20):
+    return pd.DataFrame([{
+        "RaceId": race_id, "HorseId": horse_id,
+        "FinishingPosition": 1, "DecimalOdds": 3.5,
+        "ResultStatus": "CompletedRace",
+    }])
+
+
+def test_build_csv_rows_has_required_columns():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        _minimal_preds(), _minimal_known_fold(), _minimal_results(),
+    )
+    assert list(rows.columns) == _CSV_COLUMNS
+
+
+def test_build_csv_rows_surface_going_racetype_are_raw_strings():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        _minimal_preds(), _minimal_known_fold(), _minimal_results(),
+    )
+    assert rows.iloc[0]["Surface"] == "Turf"
+    assert rows.iloc[0]["Going"] == "Good"
+    assert rows.iloc[0]["RaceType"] == "Flat"
+
+
+def test_build_csv_rows_predicted_score_from_predicted_speed():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    preds = pd.DataFrame([{"RaceId": 2, "HorseId": 20, "PredictedSpeed": 17.5}])
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        preds, _minimal_known_fold(), _minimal_results(),
+    )
+    assert rows.iloc[0]["PredictedScore"] == pytest.approx(17.5)
+
+
+def test_build_csv_rows_predicted_score_null_when_no_predicted_speed():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        _minimal_preds(), _minimal_known_fold(), _minimal_results(),
+    )
+    assert pd.isna(rows.iloc[0]["PredictedScore"])
+
+
+def test_build_csv_rows_empty_preds_returns_empty_frame():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        pd.DataFrame(columns=["RaceId", "HorseId"]),
+        _minimal_known_fold(), _minimal_results(),
+    )
+    assert rows.empty
+    assert list(rows.columns) == _CSV_COLUMNS
+
+
+# ================================================================
+# evaluate() — CSV export
+# ================================================================
+
+def _eval_patches(fold_date):
+    """Return the standard mock context for a 1-fold evaluate() run."""
+    return [
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
+    ]
+
+
+def test_evaluate_no_flags_writes_no_file(tmp_path):
+    from race_analytics.scripts.evaluate import evaluate
+    fold_date = date.today() - timedelta(days=1)
+    with patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame()):
+        evaluate(folds=1)
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_evaluate_save_results_writes_csv_with_correct_schema(tmp_path):
+    from race_analytics.scripts.evaluate import evaluate
+    fold_date = date.today() - timedelta(days=1)
+    out_path = str(tmp_path / "results.csv")
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
+    ):
+        evaluate(folds=1, save_results=True, results_file=out_path)
+    df = pd.read_csv(out_path)
+    assert list(df.columns) == _CSV_COLUMNS
+
+
+def test_evaluate_results_file_without_save_results_still_writes(tmp_path):
+    from race_analytics.scripts.evaluate import evaluate
+    fold_date = date.today() - timedelta(days=1)
+    out_path = str(tmp_path / "results.csv")
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
+    ):
+        evaluate(folds=1, results_file=out_path)
+    assert (tmp_path / "results.csv").exists()
+
+
 def test_evaluate_timing_accumulators_have_one_entry_per_completed_fold():
     from race_analytics.scripts.evaluate import evaluate
 
