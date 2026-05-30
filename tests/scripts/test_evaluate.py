@@ -199,6 +199,29 @@ def test_format_timing_three_decimal_places():
 
 
 # ================================================================
+# _aggregate_times
+# ================================================================
+
+def test_aggregate_times_returns_mean_and_std():
+    from race_analytics.scripts.evaluate import _aggregate_times
+    mean, std = _aggregate_times([1.0, 2.0, 3.0])
+    assert mean == pytest.approx(2.0)
+    assert std == pytest.approx(np.std([1.0, 2.0, 3.0]))
+
+
+def test_aggregate_times_single_value_has_zero_std():
+    from race_analytics.scripts.evaluate import _aggregate_times
+    mean, std = _aggregate_times([5.0])
+    assert mean == pytest.approx(5.0)
+    assert std == pytest.approx(0.0)
+
+
+def test_aggregate_times_empty_returns_none():
+    from race_analytics.scripts.evaluate import _aggregate_times
+    assert _aggregate_times([]) is None
+
+
+# ================================================================
 # evaluate() — timing accumulation
 # ================================================================
 
@@ -233,6 +256,46 @@ class _StubAlgo:
         if card.empty:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
         return pd.DataFrame([{"RaceId": int(card["RaceId"].iloc[0]), "HorseId": int(card["HorseId"].iloc[0])}])
+
+
+def test_evaluate_timing_summary_printed_after_accuracy_summary(capsys):
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    stub_algo = _StubAlgo()
+
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
+    ):
+        evaluate(folds=1)
+
+    out = capsys.readouterr().out
+    assert "=== Timing Summary ===" in out
+    summary_pos = out.index("=== Summary ===")
+    timing_pos = out.index("=== Timing Summary ===")
+    assert timing_pos > summary_pos, "Timing summary must appear after accuracy summary"
+    assert "Fit(avg)" in out
+    assert "Pred(std)" in out
+
+
+def test_evaluate_timing_summary_shows_na_for_skipped_algorithms(capsys):
+    from race_analytics.scripts.evaluate import evaluate
+
+    # Return empty raw data so all folds are skipped (no known races)
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
+    ):
+        evaluate(folds=1)
+
+    out = capsys.readouterr().out
+    assert "=== Timing Summary ===" in out
+    assert "N/A" in out
 
 
 def test_evaluate_timing_accumulators_have_one_entry_per_completed_fold():

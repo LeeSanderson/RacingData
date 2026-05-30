@@ -35,6 +35,12 @@ def _format_timing(fit_time: float, predict_time: float) -> str:
     return f"| fit={fit_time:.3f}s, predict={predict_time:.3f}s"
 
 
+def _aggregate_times(times: list[float]) -> tuple[float, float] | None:
+    if not times:
+        return None
+    return float(np.mean(times)), float(np.std(times))
+
+
 def _extract_known_races(fold_df: pd.DataFrame) -> pd.DataFrame:
     """Return only races where every horse and jockey is known from training history."""
     return fold_df[fold_df["KnownHorseAndJockey"] == True].copy()
@@ -285,6 +291,19 @@ def evaluate(
         print(
             f"  {name:<40} {acc:>10.3f} {r:>10.3f} {len(combined_preds):>8} {fav_acc:>14.3f} {fav_r:>10.3f}"
         )
+
+    print("\n=== Timing Summary ===")
+    print(f"{'Algorithm':<40} {'Fit(avg)':>10} {'Fit(std)':>10} {'Pred(avg)':>10} {'Pred(std)':>10}")
+    print("-" * 86)
+    for name in algo_names:
+        fit_agg = _aggregate_times(all_fit_times[name])
+        pred_agg = _aggregate_times(all_predict_times[name])
+        if fit_agg is None or pred_agg is None:
+            print(f"  {name:<40} {'N/A':>10} {'N/A':>10} {'N/A':>10} {'N/A':>10}")
+        else:
+            fit_avg, fit_std = fit_agg
+            pred_avg, pred_std = pred_agg
+            print(f"  {name:<40} {fit_avg:>10.3f} {fit_std:>10.3f} {pred_avg:>10.3f} {pred_std:>10.3f}")
 
     return {"fit_times": all_fit_times, "predict_times": all_predict_times}
 
