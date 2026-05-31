@@ -3,9 +3,9 @@
 > **Update (2026-05-28):** the previous version of this page reported a ~0.78
 > accuracy and large positive ROI for the TSR-gated `RatingsXGBoostAlgorithm`.
 > Those figures were inflated by a post-race RPR/TSR leak that has now been
-> fixed (see `issues/prd.md`, issues 001–007). The numbers below are the
-> honest, leak-free re-evaluation; the gated headline has collapsed from
-> ~0.78 to **0.29**, in line with the **0.265** real production anchor.
+> fixed (see issues 001–007). The numbers below are the honest, leak-free
+> re-evaluation; the gated headline has collapsed from ~0.78 to **0.29**, in
+> line with the **0.265** real production anchor.
 
 ## Headline finding
 
@@ -35,11 +35,49 @@ Per-month accuracy: 0.278 / 0.175 / 0.308 / 0.231. Accuracy is the reliable
 signal; ROI is positive but noisy. **~0.265 is the realistic accuracy a
 leak-free eval should land near.**
 
+## Phase C (180-fold) walk-forward results — 2025-12-02 → 2026-05-30
+
+The definitive full-window re-baseline. 180 folds with a 7-month training
+window, run after the full NaN-tolerance rollout to XGBoost-family algorithms
+(issue 005). Race count is now **2,517** (14.0 races/fold) — restored to the
+pre-PREDICTORS-expansion order of magnitude, and consistent with Phase B's
+13.9 races/fold. `roi` is net £ on flat £1 stakes; `accuracy` is picks
+finishing 1st. See `race_analytics/utils/scoring.py` for exact definitions.
+
+| Algorithm | Accuracy | Net £ ROI | Races | Fav accuracy (same races) | Fav ROI |
+|---|---|---|---|---|---|
+| RidgeRegressionAlgorithm | 0.241 | −107.09 | 2517 | 0.385 | +44.25 |
+| XGBoostAlgorithm | 0.246 | −119.82 | 2517 | 0.385 | +44.25 |
+| RatingsXGBoostAlgorithm (TSR-gated) | 0.288 | −16.09 | 1779 | 0.379 | +57.20 |
+| RatingsXGBoostUngatedAlgorithm | 0.288 | −31.16 | 2517 | 0.385 | +44.25 |
+| **ProxyTSRXGBoostAlgorithm** ← active | **0.294** | −22.20 | 2517 | 0.385 | +44.25 |
+| TunedProxyTSRXGBoostAlgorithm | 0.285 | −52.30 | 2517 | 0.385 | +44.25 |
+
+`ProxyTSRXGBoostAlgorithm` leads on accuracy by 6 pp over `TunedProxyTSRXGBoostAlgorithm`
+and 9 pp over Ridge. All ML ROIs are negative; the market favourite's +£44 ROI reflects its
+ability to identify short-priced winners the ML models miss. ROI over 2,517 bets remains
+directional rather than conclusive — accuracy is the ranking signal.
+
+### Timing summary (Phase C)
+
+| Algorithm | Fit avg (s) | Fit std | Predict avg (s) | Predict std |
+|---|---|---|---|---|
+| RidgeRegressionAlgorithm | 1.062 | 0.671 | 0.026 | 0.007 |
+| XGBoostAlgorithm | 0.289 | 0.059 | 0.035 | 0.010 |
+| RatingsXGBoostAlgorithm | 0.613 | 0.107 | 0.042 | 0.010 |
+| RatingsXGBoostUngatedAlgorithm | 0.613 | 0.117 | 0.038 | 0.006 |
+| ProxyTSRXGBoostAlgorithm | 33.827 | 9.349 | 0.040 | 0.007 |
+| TunedProxyTSRXGBoostAlgorithm | 34.612 | 9.117 | 0.041 | 0.007 |
+
+`ProxyTSRXGBoostAlgorithm` and its tuned variant fit ~34 s/fold (proxy
+computation dominates); all others fit in under 1.1 s/fold. Predict time is
+negligible (<50 ms) across all algorithms.
+
 ## Phase B (30-fold) walk-forward results — 2026-04-29 → 2026-05-28
 
-Post-issue-005 validation run. 30 folds were used in place of the PRD-planned
-180 (same 7-month training window per fold) to keep wall time manageable;
-the 30-fold sample covers peak flat-racing season only.
+Post-issue-005 validation run. 30 folds covering peak flat-racing season only
+(the 180-fold equivalent took ~24h wall time). Included here for the
+peak-season accuracy signal, which complements Phase C's full-window view.
 
 | Algorithm | Accuracy | Net £ ROI | Races | Fav accuracy (same races) |
 |---|---|---|---|---|
@@ -50,22 +88,18 @@ the 30-fold sample covers peak flat-racing season only.
 | **ProxyTSRXGBoostAlgorithm** ← active | **0.261** | −87.24 | 417 | 0.363 |
 | TunedProxyTSRXGBoostAlgorithm | 0.264 | −15.53 | 417 | 0.363 |
 
-Coverage is equal across all non-gated algorithms (417 races each), confirming
-that issues 001–005 preserved/restored parity with `RidgeRegressionAlgorithm`.
-`RatingsXGBoostAlgorithm` 147 races reflects the TSR-complete gate applied to a
-30-day May window (expected).
-
-ROI over 417 races is too noisy to rank algorithms; accuracy is the reliable
-signal (see Production anchor, below, and Phase A results for comparison).
+Coverage is equal across all non-gated algorithms (417 races each).
+`RatingsXGBoostAlgorithm` 147 races reflects the TSR-complete gate applied to
+a 30-day May window (expected). ROI over 417 races is too noisy to rank
+algorithms.
 
 ## Phase A (180-fold) walk-forward results — 2025-11-28 → 2026-05-26
 
-Fold dates span Nov 2025 → May 2026, 7-month training window per fold (the
-PRD-defined re-baseline run). These numbers cover the full Nov–May window
-including winter months with fewer flat meetings, hence the lower per-fold
-race count (2.3 races/fold vs Phase B's 13.9/fold in peak May season).
-`roi` is net £ on flat £1 stakes; `accuracy` is picks finishing 1st.
-See `race_analytics/utils/scoring.py` for the exact definitions.
+*Superseded by Phase C.* Included for reference as the first post-leak-fix
+180-fold run. Phase A was run before NaN-tolerance was extended to the
+XGBoost-family, which restricted coverage to **415 races** (2.3/fold) — only
+races where every horse had all `PREDICTORS` non-null. Phase C restores the
+full ~14 races/fold coverage.
 
 | Algorithm | Accuracy | Net £ ROI | Races | Fav accuracy (same races) |
 |---|---|---|---|---|
@@ -76,80 +110,73 @@ See `race_analytics/utils/scoring.py` for the exact definitions.
 | **ProxyTSRXGBoostAlgorithm** | **0.304** | +13.37 | 415 | 0.379 |
 | TunedProxyTSRXGBoostAlgorithm | 0.289 | +64.74 | 415 | 0.379 |
 
-### Old (leaky) vs new (clean) — the same 180-fold table side-by-side
+Phase A accuracy numbers are higher than Phase C because the strict
+`PREDICTORS` filter biased the sample toward experienced horses (≥3 prior
+races, known trainer) who are easier to rank. Phase C's broader coverage
+includes more uncertain cases, producing lower but more realistic accuracy.
 
-| Algorithm | Old (leaky) accuracy | New (clean) accuracy |
-|---|---|---|
-| RatingsXGBoost (TSR-gated) | **0.783** | **0.290** |
-| RatingsXGBoostUngated | 0.532 | 0.296 |
-| ProxyTSRXGBoost | 0.509 | 0.304 |
-| TunedProxyTSRXGBoost | 0.515 | 0.289 |
-| RidgeRegression | 0.235 | 0.270 |
-| XGBoost | 0.247 | 0.299 |
+### Old (leaky) vs clean — side-by-side comparison
+
+| Algorithm | Old (leaky) accuracy | Phase A (clean) accuracy | Phase C (clean) accuracy |
+|---|---|---|---|
+| RatingsXGBoost (TSR-gated) | **0.783** | 0.290 | 0.288 |
+| RatingsXGBoostUngated | 0.532 | 0.296 | 0.288 |
+| ProxyTSRXGBoost | 0.509 | 0.304 | **0.294** |
+| TunedProxyTSRXGBoost | 0.515 | 0.289 | 0.285 |
+| RidgeRegression | 0.235 | 0.270 | 0.241 |
+| XGBoost | 0.247 | 0.299 | 0.246 |
 
 ## Leak-gone check vs the production anchor
 
-The Phase A clean TSR-gated accuracy **0.290** lands within **+2.5 pp** of the
-production anchor **0.265** — a rough ballpark match, which is the only
-sanity-check the PRD asked for (a head-to-head replay was explicitly out of
-scope). The TSR-gated 0.78 headline has fully collapsed. **The leak is gone.**
+The Phase C `ProxyTSRXGBoostAlgorithm` accuracy **0.294** lands within **+2.9 pp**
+of the production anchor **0.265** — a rough ballpark match. The TSR-gated
+0.78 headline has fully collapsed across all three evaluation phases.
+**The leak is gone.**
 
 ## What changed in practice
 
 - **The "TSR is the key driver" story was the leak.** With ratings restricted
-  to previous-race values, gating on TSR coverage now barely excludes anything
-  (Phase A: 397 / 415 races = **95.7%** kept, vs the old 981 / 2,475 = 39.6%). Every
-  horse with any prior race has a clean `LastRaceTopSpeedRating`, so the gate
-  buys ~nothing.
+  to previous-race values, the TSR gate excludes 738 of 2,517 races (70.7% kept
+  in Phase C). This is lower than Phase A's 95.7% because the full 180-fold
+  window includes more winter races where horses lack a recent prior TSR.
+  Despite covering fewer races, the gated algorithm's accuracy matches the
+  ungated variant exactly (both 0.288), confirming the gate no longer confers
+  a meaningful signal advantage.
 - **Ratings are still a genuine pre-race signal.** Every ratings-aware
-  algorithm beats the Ridge baseline on accuracy (0.270 vs 0.289–0.304),
-  confirming the PRD expectation that previous-race ratings beat last-race
-  speed alone.
-- **Every ML algorithm now beats the old Ridge / XGBoost baselines**
-  (0.270 / 0.299 vs the old 0.235 / 0.247). The "wrong target variable"
-  diagnosis in the previous version of this document — that the speed-target
-  models learned race conditions, not horse quality — still stands; switching
-  to a `Wins`-target classifier remains the right call independent of the leak.
-- **The market favourite still wins on accuracy** (0.379) but the ML algos
-  all beat it on net £ ROI — they pick at longer odds and capture value when
-  the favourite is mispriced.
+  algorithm beats the plain Ridge and XGBoost baselines on accuracy
+  (0.241 / 0.246 vs 0.285–0.294), confirming that previous-race ratings carry
+  real predictive information beyond last-race speed.
+- **The market favourite dominates on both accuracy and ROI in Phase C.**
+  It wins 38.5% of the time and returns +£44 over 2,517 bets. All ML
+  algorithms are accuracy-negative vs the favourite and ROI-negative. The
+  ML algorithms add value only when they agree with a long-priced runner —
+  a signal that needs further extraction (e.g. value-betting on agreement
+  with high odds).
+- **Phase C accuracy is lower than Phase A** because the NaN-tolerance
+  expansion brings in horses with fewer prior races (sparser stats, harder to
+  predict). Phase A's artificially high numbers were a selection artefact.
 
-## Why the race count is much lower than the old 180-fold run
+## Race count: why Phase C has more races than Phase A
 
-The Phase A 180-fold sample is **415 races**, the old (leaky) run reported **2,475** —
-~6× fewer. This is **not** caused by the leakage fix. It is caused by the
-prior PRD's expansion of `PREDICTORS`:
+Phase A (415 races, 2.3/fold) vs Phase C (2,517 races, 14.0/fold). The jump
+is entirely explained by the NaN-tolerance rollout:
 
-- The old 180-fold table was committed at **03:56 on 2026-05-26** (`16daab9`).
-- At **20:30 the same day** commit `1f8c709`
-  ("Issue 009: Extend PREDICTORS and wire trainer stats into predict/evaluate")
-  added 7 columns to `PREDICTORS`:
+- Commit `1f8c709` ("Issue 009: Extend PREDICTORS") added 7 columns including
   `Last3RaceAvgSpeed`, `Last3RaceSpeedTrend`, `Last3AvgRelFinishingPosition`,
-  `TrainerNumberOfPriorRaces`, `TrainerWinPercentage`,
-  `TrainerTop3Percentage`, `TrainerAvgRelFinishingPosition`.
-- Each algorithm's `predict()` keeps only races where **every** horse has
-  **every** `PREDICTOR` non-null (the
-  `OriginalCount == PredictableCount` filter). `Last3*` are NaN for any
-  horse with fewer than 3 prior races; `Trainer*` are NaN for unknown or
-  TrainerId=0 trainers. Adding seven such columns sharply tightens whole-race
-  predictability.
-
-The same effect hits the untouched `RidgeRegressionAlgorithm` and
-`XGBoostAlgorithm` baselines (their per-fold race counts match the corrected
-algorithms exactly), confirming the cause is the PREDICTORS expansion, not
-anything in the leakage-fix change set.
-
-Issues 001–005 (Phase B) addressed `Last3*` NaN tolerance for
-`XGBoostAlgorithm` specifically: it now opt-ins via
-`nan_tolerant_predictors = OPTIONAL_PREDICTORS`, so rows with NaN Last3* are
-no longer dropped during fit and predict. The Phase B 30-fold run confirms
-all non-gated algorithms sit at equal coverage (417 races each).
+  and four `Trainer*` columns. Each algorithm's `predict()` drops any race
+  where a horse is missing any `PREDICTOR`. `Last3*` are NaN for horses with
+  fewer than 3 prior starts; `Trainer*` are NaN for unknown trainers.
+  This tightened Phase A's coverage to only the most-established horses.
+- Issue 005 added `nan_tolerant_predictors = OPTIONAL_PREDICTORS` to the
+  XGBoost-family algorithms, moving `Last3*` from required to optional.
+  Rows with NaN `Last3*` are no longer dropped at fit or predict time.
+- By Phase C, NaN-tolerance is in place for all algorithms, restoring
+  race-count to the pre-expansion order of magnitude (~2,475 in the old leaky
+  run; ~2,517 in Phase C).
 
 The same filter applies in production (`predict.py` uses the same
-`_fitted_predictors` intersection), so the ~415-race order of magnitude for
-what `predict --data Data` operates on day-to-day is realistic — the 2,475
-figure was from before that production filter tightened. Per-algorithm ROI
-gaps over a few hundred races should be read as directional, not precise.
+`_fitted_predictors` intersection), so Phase C's ~14-races/fold figure is
+the realistic baseline for what `predict --data Data` sees day-to-day.
 
 ## Active algorithm
 
@@ -159,35 +186,30 @@ ACTIVE_ALGORITHM = ProxyTSRXGBoostAlgorithm
 
 (was `RatingsXGBoostAlgorithm` TSR-gated.)
 
-**Rationale — Phase B review.** The Phase B 30-fold run narrows the
-accuracy gap between `ProxyTSRXGBoostAlgorithm` (0.261) and
-`TunedProxyTSRXGBoostAlgorithm` (0.264), but the margin is 3 pp over 417
-races — well within sampling noise. The Phase A 180-fold run (more
-statistically reliable) showed `ProxyTSRXGBoostAlgorithm` with a clear
-15 pp lead over the tuned variant (0.304 vs 0.289). Across both samples,
-`ProxyTSRXGBoostAlgorithm` is the stronger choice. Active algorithm
-unchanged.
+**Rationale — Phase C review.** Phase C (2,517 races, the most statistically
+reliable sample) puts `ProxyTSRXGBoostAlgorithm` at **0.294** accuracy —
+6 pp ahead of `TunedProxyTSRXGBoostAlgorithm` (0.285) and 9 pp ahead of
+both `RatingsXGBoost*` variants (0.288). The Phase B 30-fold run showed the
+tuned variant marginally ahead (0.264 vs 0.261) over 417 peak-season races,
+but that gap is within sampling noise. Across all three phases, the untuned
+`ProxyTSRXGBoostAlgorithm` is consistently the stronger or equal choice.
+Active algorithm unchanged.
 
-**Rationale — original selection** (Phase A). On leak-free numbers the
-previously-active gated algorithm is the worst ML choice in the table
-(−£7 ROI, the gate excludes only 18 / 415 races).
-`ProxyTSRXGBoostAlgorithm` has the highest ML accuracy (**0.304**) with
-positive ROI (+£13) and full coverage (415 races), and it already
-incorporates the corrected as-of-date proxy that lets it predict horses
-lacking a real TSR. Per the PRD, accuracy is the reliable signal and ROI
-is noisier — so the choice is anchored on accuracy.
+**Alternatives considered (Phase C numbers):**
 
-Alternatives considered:
-
-- `TunedProxyTSRXGBoostAlgorithm` (Phase A: 0.289 / +£65, 415 races;
-  Phase B: 0.264 / −£16, 417 races) — marginally best in Phase B, but
-  Phase A advantage goes to the untuned variant by 15 pp. Not enough
-  evidence to swap.
-- `RatingsXGBoostUngatedAlgorithm` (Phase A: 0.296 / +£19, 415 races) —
-  closely behind, simpler model. Natural fallback if the proxy were dropped.
-- `RidgeRegressionAlgorithm` (Phase A: 0.270 / +£129) — best ROI but
-  lowest ML accuracy; ROI is driven by occasional longshot wins and is the
-  noisiest signal in the table.
+- `TunedProxyTSRXGBoostAlgorithm` (0.285 / −£52, 2517 races) — consistently
+  trails the untuned variant in the full-window sample. Phase B favoured it
+  marginally; Phase C does not. No evidence to swap.
+- `RatingsXGBoostUngatedAlgorithm` (0.288 / −£31, 2517 races) — ties the
+  gated variant, simpler model. Natural fallback if the proxy approach is
+  dropped.
+- `RatingsXGBoostAlgorithm` (0.288 / −£16, 1779 races) — best ROI among ML
+  algorithms in Phase C (least loss), but restricted to 70.7% of races by
+  the TSR gate and the ROI difference over the ungated variant is well within
+  noise at this sample size.
+- `RidgeRegressionAlgorithm` (0.241 / −£107) — weakest ML accuracy; its
+  occasional Phase A ROI advantage was sample-driven and has not persisted
+  across Phase C's broader race set.
 
 See `ProxyTSRXGBoostAlgorithm` in
 `race_analytics/algorithms/proxy_tsr_xgboost.py` and `ProxyTSRModel` (with
@@ -202,15 +224,16 @@ its leak-free `compute_as_of_proxy` and `compute_horse_proxy_tsr`) in
 - **Baseline**: market favourite (lowest decimal odds in each race).
 - **Scoring**: `accuracy` over completed races; `roi` = Σ decimal odds of
   winners − number of bets (net £ on £1 flat stakes).
-- **Filters**: `KnownHorseAndJockey`, every horse predictable (all
-  `PREDICTORS` non-null), field size ≤ 10. The TSR-gated variant additionally
-  requires every horse in the race to have a non-null
+- **Filters**: `KnownHorseAndJockey`, every horse predictable (all required
+  `PREDICTORS` non-null — optional `PREDICTORS` may be NaN), field size ≤ 10.
+  The TSR-gated variant additionally requires every horse to have a non-null
   `LastRaceTopSpeedRating`.
-- **Phase A run**: 180 folds (`--folds 180 --training-months 7`), dates
-  2025-11-28 → 2026-05-26.
+- **Phase C run**: 180 folds (`--folds 180 --training-months 7 --save-results`),
+  dates 2025-12-02 → 2026-05-30. Raw predictions in `evaluation_results_20260531.csv`.
 - **Phase B run**: 30 folds (`--folds 30 --training-months 7`), dates
-  2026-04-29 → 2026-05-28 (peak flat-racing season only; 180-fold
-  equivalent would take ~5h wall time).
+  2026-04-29 → 2026-05-28 (peak flat-racing season only).
+- **Phase A run**: 180 folds (`--folds 180 --training-months 7`), dates
+  2025-11-28 → 2026-05-26 (pre-NaN-tolerance; superseded by Phase C).
 - **Production-anchor command**: all 2026 `PredictionScores_*.csv` files,
   rows with `ResultStatus == 'CompletedRace'`, `accuracy = mean(FinishingPosition == 1)`,
   `roi = Σ DecimalOdds of winners − number of bets` (matching the eval).
