@@ -14,6 +14,13 @@ from race_analytics.features.transforms import (
     calculate_surface_switch,
     calculate_code_switch,
     calculate_horse_count,
+    calculate_race_class,
+    calculate_age_features,
+    calculate_draw_features,
+    encode_pattern,
+    calculate_is_handicap,
+    encode_age_band,
+    encode_sex_restriction,
 )
 
 
@@ -74,6 +81,13 @@ class RegressorAlgorithm(BaseAlgorithm):
         merged = calculate_code_switch(merged)
         if "HorseCount" not in merged.columns:
             merged = calculate_horse_count(merged)
+        merged = calculate_race_class(merged)
+        merged = calculate_age_features(merged)
+        merged = encode_pattern(merged)
+        merged = calculate_is_handicap(merged)
+        merged = encode_age_band(merged)
+        merged = encode_sex_restriction(merged)
+        merged = calculate_draw_features(merged)
 
         required_fitted = [c for c in REQUIRED_PREDICTORS if c in self._fitted_predictors]
         predictable = merged[["RaceId", "HorseId"] + self._fitted_predictors].dropna(subset=required_fitted).copy()

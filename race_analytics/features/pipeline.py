@@ -12,6 +12,13 @@ from race_analytics.features.transforms import (
     calculate_distance_change,
     calculate_surface_switch,
     calculate_code_switch,
+    calculate_race_class,
+    calculate_age_features,
+    calculate_draw_features,
+    encode_pattern,
+    calculate_is_handicap,
+    encode_age_band,
+    encode_sex_restriction,
 )
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
@@ -56,6 +63,13 @@ class FeaturePipeline:
         combined = calculate_distance_change(combined)
         combined = calculate_surface_switch(combined)
         combined = calculate_code_switch(combined)
+        combined = calculate_race_class(combined)
+        combined = calculate_age_features(combined)
+        combined = encode_pattern(combined)
+        combined = calculate_is_handicap(combined)
+        combined = encode_age_band(combined)
+        combined = encode_sex_restriction(combined)
+        combined = calculate_draw_features(combined)
         CalculateJockeyStats().process_race_data(combined)
         gc.collect()
         CalculateTrainerStats().process_race_data(combined)

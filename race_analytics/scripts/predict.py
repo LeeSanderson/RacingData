@@ -18,6 +18,13 @@ _RACE_CARD_COLS = [
     "RaceType",
     "DistanceInMeters",
     "WeightInPounds",
+    "Class",
+    "Age",
+    "StallNumber",
+    "Pattern",
+    "RatingBand",
+    "AgeBand",
+    "SexRestriction",
 ]
 _OUTPUT_COLS = ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName"]
 

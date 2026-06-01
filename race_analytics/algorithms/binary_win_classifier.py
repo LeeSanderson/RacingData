@@ -17,6 +17,13 @@ from race_analytics.features.transforms import (
     calculate_distance_change,
     calculate_surface_switch,
     calculate_code_switch,
+    calculate_race_class,
+    calculate_age_features,
+    calculate_draw_features,
+    encode_pattern,
+    calculate_is_handicap,
+    encode_age_band,
+    encode_sex_restriction,
 )
 
 
@@ -102,8 +109,15 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
         merged = calculate_distance_change(merged)
         merged = calculate_surface_switch(merged)
         merged = calculate_code_switch(merged)
+        merged = calculate_race_class(merged)
+        merged = calculate_age_features(merged)
+        merged = encode_pattern(merged)
+        merged = calculate_is_handicap(merged)
+        merged = encode_age_band(merged)
+        merged = encode_sex_restriction(merged)
         merged = self._prepare_prediction_df(merged)
         merged = _add_race_context(merged, self.extra_nan_tolerant_features)
+        merged = calculate_draw_features(merged)
 
         available = [c for c in self._feature_cols if c in merged.columns]
         required = [c for c in REQUIRED_PREDICTORS if c in available]

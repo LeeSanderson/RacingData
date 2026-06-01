@@ -1,11 +1,15 @@
 import pytest
 import pandas as pd
+import numpy as np
 import tests.utils.test_data as td
 
 from race_analytics.features.transforms import (
     surface_categories,
     going_categories,
     race_type_categories,
+    pattern_categories,
+    age_band_categories,
+    sex_restriction_categories,
     encode_surfaces,
     encode_going,
     encode_race_type,
@@ -16,6 +20,13 @@ from race_analytics.features.transforms import (
     calculate_distance_change,
     calculate_surface_switch,
     calculate_code_switch,
+    calculate_race_class,
+    calculate_age_features,
+    calculate_draw_features,
+    encode_pattern,
+    calculate_is_handicap,
+    encode_age_band,
+    encode_sex_restriction,
 )
 
 
@@ -380,3 +391,234 @@ def test_calculate_code_switch_jumps_to_jumps_is_zero(code_switch_dataframe):
 def test_calculate_code_switch_is_nan_when_no_prior_race(code_switch_dataframe):
     result = calculate_code_switch(code_switch_dataframe)
     assert pd.isna(result.iloc[4]["CodeSwitch"])
+
+
+# --- calculate_race_class ---
+
+
+def test_calculate_race_class_numeric_class_is_encoded_as_float():
+    df = pd.DataFrame({"Class": ["3"]})
+    result = calculate_race_class(df)
+    assert result.iloc[0]["RaceClass"] == pytest.approx(3.0)
+
+
+def test_calculate_race_class_blank_class_gives_zero():
+    df = pd.DataFrame({"Class": ["", None]})
+    result = calculate_race_class(df)
+    assert result.iloc[0]["RaceClass"] == pytest.approx(0.0)
+    assert result.iloc[1]["RaceClass"] == pytest.approx(0.0)
+
+
+def test_calculate_race_class_non_numeric_gives_zero():
+    df = pd.DataFrame({"Class": ["Listed", "Novice"]})
+    result = calculate_race_class(df)
+    assert result.iloc[0]["RaceClass"] == pytest.approx(0.0)
+    assert result.iloc[1]["RaceClass"] == pytest.approx(0.0)
+
+
+def test_calculate_race_class_out_of_range_gives_zero():
+    df = pd.DataFrame({"Class": ["0", "8"]})
+    result = calculate_race_class(df)
+    assert result.iloc[0]["RaceClass"] == pytest.approx(0.0)
+    assert result.iloc[1]["RaceClass"] == pytest.approx(0.0)
+
+
+def test_calculate_race_class_missing_column_gives_nan():
+    df = pd.DataFrame({"Other": [1, 2]})
+    result = calculate_race_class(df)
+    assert pd.isna(result.iloc[0]["RaceClass"])
+
+
+# --- calculate_age_features ---
+
+
+def test_calculate_age_features_adds_relage_column():
+    df = pd.DataFrame({"RaceId": [1, 1], "Age": [3, 5]})
+    result = calculate_age_features(df)
+    assert "RelAge" in result.columns
+
+
+def test_calculate_age_features_relage_is_zero_for_uniform_field():
+    df = pd.DataFrame({"RaceId": [1, 1, 1], "Age": [3, 3, 3]})
+    result = calculate_age_features(df)
+    assert result["RelAge"].tolist() == pytest.approx([0.0, 0.0, 0.0])
+
+
+def test_calculate_age_features_relage_correct():
+    df = pd.DataFrame({"RaceId": [1, 1], "Age": [3, 4]})
+    result = calculate_age_features(df)
+    assert result.iloc[0]["RelAge"] == pytest.approx(-0.5)
+    assert result.iloc[1]["RelAge"] == pytest.approx(0.5)
+
+
+def test_calculate_age_features_nan_age_propagates():
+    df = pd.DataFrame({"RaceId": [1, 1], "Age": [3, float("nan")]})
+    result = calculate_age_features(df)
+    assert pd.isna(result.iloc[1]["RelAge"])
+
+
+def test_calculate_age_features_missing_column_gives_nan():
+    df = pd.DataFrame({"RaceId": [1, 2], "Other": [3, 4]})
+    result = calculate_age_features(df)
+    assert pd.isna(result.iloc[0]["RelAge"])
+
+
+# --- calculate_draw_features ---
+
+
+@pytest.fixture
+def draw_dataframe():
+    # Row 0: flat, stall 2 of 8 horses → DrawPct 0.25
+    # Row 1: flat, stall 6 of 8 horses → DrawPct 0.75
+    # Row 2: jumps race → NaN
+    # Row 3: flat, null stall → NaN
+    return pd.DataFrame({
+        "RaceType_Flat": [1.0, 1.0, 0.0, 1.0],
+        "StallNumber":   [2.0, 6.0, 3.0, float("nan")],
+        "HorseCount":    [8.0, 8.0, 8.0, 8.0],
+    })
+
+
+def test_calculate_draw_features_flat_race_computes_draw_pct(draw_dataframe):
+    result = calculate_draw_features(draw_dataframe)
+    assert result.iloc[0]["DrawPct"] == pytest.approx(0.25)
+
+
+def test_calculate_draw_features_reldraw_is_centered(draw_dataframe):
+    result = calculate_draw_features(draw_dataframe)
+    assert result.iloc[0]["RelDraw"] == pytest.approx(-0.25)
+    assert result.iloc[1]["RelDraw"] == pytest.approx(0.25)
+
+
+def test_calculate_draw_features_jumps_race_gives_nan(draw_dataframe):
+    result = calculate_draw_features(draw_dataframe)
+    assert pd.isna(result.iloc[2]["DrawPct"])
+    assert pd.isna(result.iloc[2]["RelDraw"])
+
+
+def test_calculate_draw_features_null_stall_gives_nan(draw_dataframe):
+    result = calculate_draw_features(draw_dataframe)
+    assert pd.isna(result.iloc[3]["DrawPct"])
+    assert pd.isna(result.iloc[3]["RelDraw"])
+
+
+def test_calculate_draw_features_missing_stall_column_gives_nan():
+    df = pd.DataFrame({"RaceType_Flat": [1.0], "HorseCount": [8.0]})
+    result = calculate_draw_features(df)
+    assert pd.isna(result.iloc[0]["DrawPct"])
+    assert pd.isna(result.iloc[0]["RelDraw"])
+
+
+# --- encode_pattern ---
+
+
+def test_encode_pattern_group1_is_encoded():
+    df = pd.DataFrame({"Pattern": ["Group 1", "G1", "Grade 1"]})
+    result = encode_pattern(df)
+    assert result.iloc[0]["Pattern_Group1"] == pytest.approx(1.0)
+    assert result.iloc[1]["Pattern_Group1"] == pytest.approx(1.0)
+    assert result.iloc[2]["Pattern_Group1"] == pytest.approx(1.0)
+
+
+def test_encode_pattern_blank_gives_none_category():
+    df = pd.DataFrame({"Pattern": ["", None]})
+    result = encode_pattern(df)
+    assert result.iloc[0]["Pattern_None"] == pytest.approx(1.0)
+    assert result.iloc[1]["Pattern_None"] == pytest.approx(1.0)
+
+
+def test_encode_pattern_unknown_gives_none_category():
+    df = pd.DataFrame({"Pattern": ["Bumper", "Unknown"]})
+    result = encode_pattern(df)
+    assert result.iloc[0]["Pattern_None"] == pytest.approx(1.0)
+
+
+def test_encode_pattern_all_categories_present():
+    df = pd.DataFrame({"Pattern": ["Group 1"]})
+    result = encode_pattern(df)
+    for col in pattern_categories:
+        assert col in result.columns
+
+
+def test_encode_pattern_missing_column_all_zeros():
+    df = pd.DataFrame({"Other": [1, 2]})
+    result = encode_pattern(df)
+    for col in pattern_categories:
+        assert col in result.columns
+        assert result.iloc[0][col] == pytest.approx(0.0)
+
+
+# --- calculate_is_handicap ---
+
+
+def test_calculate_is_handicap_non_empty_gives_one():
+    df = pd.DataFrame({"RatingBand": ["0-70", "71-90"]})
+    result = calculate_is_handicap(df)
+    assert result.iloc[0]["IsHandicap"] == pytest.approx(1.0)
+    assert result.iloc[1]["IsHandicap"] == pytest.approx(1.0)
+
+
+def test_calculate_is_handicap_empty_string_gives_zero():
+    df = pd.DataFrame({"RatingBand": [""]})
+    result = calculate_is_handicap(df)
+    assert result.iloc[0]["IsHandicap"] == pytest.approx(0.0)
+
+
+def test_calculate_is_handicap_nan_gives_zero():
+    df = pd.DataFrame({"RatingBand": [None]})
+    result = calculate_is_handicap(df)
+    assert result.iloc[0]["IsHandicap"] == pytest.approx(0.0)
+
+
+def test_calculate_is_handicap_missing_column_gives_nan():
+    df = pd.DataFrame({"Other": [1]})
+    result = calculate_is_handicap(df)
+    assert pd.isna(result.iloc[0]["IsHandicap"])
+
+
+# --- encode_age_band ---
+
+
+def test_encode_age_band_2yo_is_encoded():
+    df = pd.DataFrame({"AgeBand": ["2yo"]})
+    result = encode_age_band(df)
+    assert result.iloc[0]["AgeBand_2yo"] == pytest.approx(1.0)
+    assert result.iloc[0]["AgeBand_None"] == pytest.approx(0.0)
+
+
+def test_encode_age_band_blank_gives_none_category():
+    df = pd.DataFrame({"AgeBand": ["", None]})
+    result = encode_age_band(df)
+    assert result.iloc[0]["AgeBand_None"] == pytest.approx(1.0)
+    assert result.iloc[1]["AgeBand_None"] == pytest.approx(1.0)
+
+
+def test_encode_age_band_all_categories_present():
+    df = pd.DataFrame({"AgeBand": ["3yo+"]})
+    result = encode_age_band(df)
+    for col in age_band_categories:
+        assert col in result.columns
+
+
+# --- encode_sex_restriction ---
+
+
+def test_encode_sex_restriction_fillies_is_encoded():
+    df = pd.DataFrame({"SexRestriction": ["F", "Fillies"]})
+    result = encode_sex_restriction(df)
+    assert result.iloc[0]["SexRestriction_F"] == pytest.approx(1.0)
+    assert result.iloc[1]["SexRestriction_F"] == pytest.approx(1.0)
+
+
+def test_encode_sex_restriction_blank_gives_open_category():
+    df = pd.DataFrame({"SexRestriction": ["", None]})
+    result = encode_sex_restriction(df)
+    assert result.iloc[0]["SexRestriction_Open"] == pytest.approx(1.0)
+    assert result.iloc[1]["SexRestriction_Open"] == pytest.approx(1.0)
+
+
+def test_encode_sex_restriction_all_categories_present():
+    df = pd.DataFrame({"SexRestriction": ["F&M"]})
+    result = encode_sex_restriction(df)
+    for col in sex_restriction_categories:
+        assert col in result.columns

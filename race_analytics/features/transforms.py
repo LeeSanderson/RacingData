@@ -148,3 +148,171 @@ def calculate_code_switch(races: pd.DataFrame) -> pd.DataFrame:
     switch = (current_is_flat ^ last_is_flat).astype(float)
     races["CodeSwitch"] = np.where(has_last, switch, np.nan)
     return races
+
+
+pattern_categories = [
+    "Pattern_Group1",
+    "Pattern_Group2",
+    "Pattern_Group3",
+    "Pattern_Listed",
+    "Pattern_None",
+]
+
+age_band_categories = [
+    "AgeBand_2yo",
+    "AgeBand_3yo",
+    "AgeBand_3yoPlus",
+    "AgeBand_4yoPlus",
+    "AgeBand_None",
+]
+
+sex_restriction_categories = [
+    "SexRestriction_F",
+    "SexRestriction_FM",
+    "SexRestriction_Open",
+]
+
+
+def calculate_race_class(races: pd.DataFrame) -> pd.DataFrame:
+    if "Class" not in races.columns:
+        races["RaceClass"] = np.nan
+        return races
+
+    def _parse(v):
+        try:
+            i = int(str(v).strip())
+            return float(i) if 1 <= i <= 7 else 0.0
+        except (ValueError, TypeError):
+            return 0.0
+
+    races["RaceClass"] = races["Class"].apply(_parse)
+    return races
+
+
+def calculate_age_features(races: pd.DataFrame) -> pd.DataFrame:
+    if "Age" not in races.columns:
+        races["Age"] = np.nan
+        races["RelAge"] = np.nan
+        return races
+    ages = pd.to_numeric(races["Age"], errors="coerce")
+    races["Age"] = ages
+    if "RaceId" in races.columns:
+        mean_age = races.groupby("RaceId")["Age"].transform("mean")
+        races["RelAge"] = ages - mean_age
+    else:
+        races["RelAge"] = np.nan
+    return races
+
+
+def calculate_draw_features(races: pd.DataFrame) -> pd.DataFrame:
+    if "StallNumber" not in races.columns or "HorseCount" not in races.columns:
+        races["DrawPct"] = np.nan
+        races["RelDraw"] = np.nan
+        return races
+    stall = pd.to_numeric(races["StallNumber"], errors="coerce")
+    is_flat = (
+        races["RaceType_Flat"] == 1.0
+        if "RaceType_Flat" in races.columns
+        else pd.Series(False, index=races.index)
+    )
+    count = races["HorseCount"]
+    valid = is_flat & stall.notna() & (count > 0)
+    draw_pct = pd.Series(np.nan, index=races.index, dtype=float)
+    draw_pct[valid] = stall[valid] / count[valid]
+    races["DrawPct"] = draw_pct
+    races["RelDraw"] = draw_pct - 0.5
+    return races
+
+
+def encode_pattern(races: pd.DataFrame) -> pd.DataFrame:
+    races = races.drop(pattern_categories, axis=1, errors="ignore")
+    if "Pattern" not in races.columns:
+        for col in pattern_categories:
+            races[col] = 0.0
+        return races
+    _norm = {
+        "Group 1": "Group1", "G1": "Group1", "Grade 1": "Group1",
+        "Group 2": "Group2", "G2": "Group2", "Grade 2": "Group2",
+        "Group 3": "Group3", "G3": "Group3", "Grade 3": "Group3",
+        "Listed": "Listed", "L": "Listed",
+    }
+    normalized = (
+        races["Pattern"].fillna("").astype(str).str.strip()
+        .map(_norm).fillna("None")
+    )
+    dummies = pd.get_dummies(
+        pd.DataFrame({"PatternTemp": normalized}),
+        prefix="Pattern",
+        columns=["PatternTemp"],
+        dtype=float,
+    )
+    for col in pattern_categories:
+        races[col] = dummies.get(col, pd.Series(0.0, index=races.index))
+    return races
+
+
+def calculate_is_handicap(races: pd.DataFrame) -> pd.DataFrame:
+    if "RatingBand" not in races.columns:
+        races["IsHandicap"] = np.nan
+        return races
+    has_band = races["RatingBand"].notna() & (
+        races["RatingBand"].astype(str).str.strip() != ""
+    )
+    races["IsHandicap"] = has_band.astype(float)
+    return races
+
+
+def encode_age_band(races: pd.DataFrame) -> pd.DataFrame:
+    races = races.drop(age_band_categories, axis=1, errors="ignore")
+    if "AgeBand" not in races.columns:
+        for col in age_band_categories:
+            races[col] = 0.0
+        races["AgeBand_None"] = 1.0
+        return races
+    _norm = {
+        "2yo": "2yo",
+        "3yo": "3yo",
+        "3yo+": "3yoPlus", "3+": "3yoPlus", "3yo -": "3yoPlus",
+        "4yo+": "4yoPlus", "4+": "4yoPlus",
+        "5yo+": "4yoPlus", "5+": "4yoPlus", "6yo+": "4yoPlus",
+    }
+    normalized = (
+        races["AgeBand"].fillna("").astype(str).str.strip()
+        .map(_norm).fillna("None")
+    )
+    dummies = pd.get_dummies(
+        pd.DataFrame({"AgeBandTemp": normalized}),
+        prefix="AgeBand",
+        columns=["AgeBandTemp"],
+        dtype=float,
+    )
+    for col in age_band_categories:
+        races[col] = dummies.get(col, pd.Series(0.0, index=races.index))
+    return races
+
+
+def encode_sex_restriction(races: pd.DataFrame) -> pd.DataFrame:
+    races = races.drop(sex_restriction_categories, axis=1, errors="ignore")
+    if "SexRestriction" not in races.columns:
+        for col in sex_restriction_categories:
+            races[col] = 0.0
+        races["SexRestriction_Open"] = 1.0
+        return races
+    _norm = {
+        "F": "F", "Fillies": "F", "Fillies Only": "F",
+        "M": "FM", "Mares": "FM", "Mares Only": "FM",
+        "F&M": "FM", "Fillies & Mares": "FM", "Fillies and Mares": "FM",
+    }
+    normalized = (
+        races["SexRestriction"].fillna("").astype(str).str.strip()
+        .map(_norm).fillna("Open")
+    )
+    dummies = pd.get_dummies(
+        pd.DataFrame({"SexTemp": normalized}),
+        prefix="SexRestriction",
+        columns=["SexTemp"],
+        dtype=float,
+    )
+    for col in sex_restriction_categories:
+        races[col] = dummies.get(col, pd.Series(0.0, index=races.index))
+    return races

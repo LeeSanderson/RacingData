@@ -15,6 +15,13 @@ from race_analytics.features.transforms import (
     calculate_speed,
     clean_weight,
     calculate_horse_count,
+    calculate_race_class,
+    calculate_age_features,
+    calculate_draw_features,
+    encode_pattern,
+    calculate_is_handicap,
+    encode_age_band,
+    encode_sex_restriction,
 )
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
@@ -260,6 +267,10 @@ _KEEP_COLS = [
     "RaceCardNumber",
     "StallNumber",
     "WeightInPounds",
+    "Pattern",
+    "RatingBand",
+    "AgeBand",
+    "SexRestriction",
     "FinishingPosition",
     "OverallBeatenDistance",
     "RaceTimeInSeconds",
@@ -285,6 +296,13 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
     gc.collect()
     CalculateTrainerStats().process_race_data(races)
     gc.collect()
+    races = calculate_race_class(races)
+    races = calculate_age_features(races)
+    races = encode_pattern(races)
+    races = calculate_is_handicap(races)
+    races = encode_age_band(races)
+    races = encode_sex_restriction(races)
+    races = calculate_draw_features(races)
     return races
 
 
@@ -304,6 +322,13 @@ def _race_card(fold_df: pd.DataFrame) -> pd.DataFrame:
         "RaceType",
         "DistanceInMeters",
         "WeightInPounds",
+        "Class",
+        "Age",
+        "StallNumber",
+        "Pattern",
+        "RatingBand",
+        "AgeBand",
+        "SexRestriction",
     ]
     return fold_df[[c for c in cols if c in fold_df.columns]].copy()
 

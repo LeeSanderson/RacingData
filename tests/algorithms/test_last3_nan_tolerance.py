@@ -46,6 +46,14 @@ def _train_row(
         "JockeyAvgRelFinishingPosition": 0.4,
         "WeightChange": 2.0, "DistanceChange": 0.0,
         "SurfaceSwitch": 0.0, "CodeSwitch": 0.0,
+        # Tier-1 new optional predictors
+        "RaceClass": 3.0, "Age": 4.0, "RelAge": 0.0,
+        "DrawPct": 0.5, "RelDraw": 0.0, "IsHandicap": 1.0,
+        "Pattern_Group1": 0.0, "Pattern_Group2": 0.0, "Pattern_Group3": 0.0,
+        "Pattern_Listed": 0.0, "Pattern_None": 1.0,
+        "AgeBand_2yo": 0.0, "AgeBand_3yo": 0.0, "AgeBand_3yoPlus": 0.0,
+        "AgeBand_4yoPlus": 1.0, "AgeBand_None": 0.0,
+        "SexRestriction_F": 0.0, "SexRestriction_FM": 0.0, "SexRestriction_Open": 1.0,
     }
 
 
