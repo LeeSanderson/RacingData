@@ -45,6 +45,7 @@ _CSV_COLUMNS = [
     "FoldDate", "Algorithm", "RaceId", "HorseId", "CourseName",
     "Surface", "Going", "RaceType", "DistanceInMeters",
     "FinishingPosition", "DecimalOdds", "PredictedScore",
+    "WinProbability", "FieldSize", "RaceClass",
 ]
 
 
@@ -55,7 +56,7 @@ def _build_csv_rows(
     known_fold: pd.DataFrame,
     results_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """One CSV row per predicted race for a single algorithm+fold."""
+    """One CSV row per predicted horse for a single algorithm+fold."""
     if preds.empty:
         return pd.DataFrame(columns=_CSV_COLUMNS)
 
@@ -64,7 +65,11 @@ def _build_csv_rows(
         working = working.rename(columns={"PredictedSpeed": "PredictedScore"})
     else:
         working["PredictedScore"] = pd.NA
-    working = working[["RaceId", "HorseId", "PredictedScore"]]
+
+    carry_cols = ["RaceId", "HorseId", "PredictedScore"]
+    if "WinProbability" in working.columns:
+        carry_cols.append("WinProbability")
+    working = working[carry_cols]
 
     meta_cols = ["RaceId", "HorseId", "CourseName", "Surface", "Going", "RaceType", "DistanceInMeters"]
     meta = known_fold[[c for c in meta_cols if c in known_fold.columns]].copy()
@@ -72,8 +77,30 @@ def _build_csv_rows(
     result_cols = ["RaceId", "HorseId", "FinishingPosition", "DecimalOdds"]
     result_info = results_df[[c for c in result_cols if c in results_df.columns]].copy()
 
+    field_sizes = (
+        known_fold.groupby("RaceId")["HorseId"].count().reset_index()
+        .rename(columns={"HorseId": "FieldSize"})
+    )
+
+    if "Class" in known_fold.columns:
+        race_class = (
+            known_fold.groupby("RaceId")["Class"].first().reset_index()
+            .rename(columns={"Class": "RaceClass"})
+        )
+    else:
+        race_class = None
+
     merged = working.merge(meta, on=["RaceId", "HorseId"], how="left")
     merged = merged.merge(result_info, on=["RaceId", "HorseId"], how="left")
+    merged = merged.merge(field_sizes, on="RaceId", how="left")
+    if race_class is not None:
+        merged = merged.merge(race_class, on="RaceId", how="left")
+    else:
+        merged["RaceClass"] = pd.NA
+
+    if "WinProbability" not in merged.columns:
+        merged["WinProbability"] = pd.NA
+
     merged["FoldDate"] = fold_date
     merged["Algorithm"] = algo_name
 
@@ -131,6 +158,7 @@ _KEEP_COLS = [
     "CourseId",
     "CourseName",
     "RaceType",
+    "Class",
     "Off",
     "DecimalOdds",
     "OfficialRating",
@@ -313,7 +341,11 @@ def evaluate(
             all_fav_preds[name].append(fav_preds)
             all_fit_times[name].append(fit_time)
             all_predict_times[name].append(predict_time)
-            csv_rows.append(_build_csv_rows(fold_date, name, preds, known_fold, results_df))
+            if hasattr(algo, "predict_field"):
+                field_preds = algo.predict_field(card, horse_stats, jockey_stats, trainer_stats)
+            else:
+                field_preds = preds
+            csv_rows.append(_build_csv_rows(fold_date, name, field_preds, known_fold, results_df))
 
         gc.collect()
 

@@ -60,13 +60,14 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
         self._feature_cols = available
         self._classifier.fit(data[available], data["Wins"])
 
-    def predict(
+    def _run_prediction(
         self,
         races: pd.DataFrame,
         horse_stats: pd.DataFrame,
         jockey_stats: pd.DataFrame,
         trainer_stats: pd.DataFrame | None = None,
     ) -> pd.DataFrame:
+        """Returns full predictable field scored with WinProbability and PredictedRank."""
         if not self._feature_cols:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
 
@@ -128,8 +129,30 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
             method="dense", ascending=False
         )
 
+        return predictable
+
+    def predict(
+        self,
+        races: pd.DataFrame,
+        horse_stats: pd.DataFrame,
+        jockey_stats: pd.DataFrame,
+        trainer_stats: pd.DataFrame | None = None,
+    ) -> pd.DataFrame:
+        field = self._run_prediction(races, horse_stats, jockey_stats, trainer_stats)
+        if field.empty or "PredictedRank" not in field.columns:
+            return pd.DataFrame(columns=["RaceId", "HorseId"])
         return (
-            predictable[predictable["PredictedRank"] == 1][["RaceId", "HorseId"]]
+            field[field["PredictedRank"] == 1][["RaceId", "HorseId"]]
             .drop_duplicates(subset=["RaceId"])
             .reset_index(drop=True)
         )
+
+    def predict_field(
+        self,
+        races: pd.DataFrame,
+        horse_stats: pd.DataFrame,
+        jockey_stats: pd.DataFrame,
+        trainer_stats: pd.DataFrame | None = None,
+    ) -> pd.DataFrame:
+        """Returns all horses in predictable races with WinProbability and PredictedRank."""
+        return self._run_prediction(races, horse_stats, jockey_stats, trainer_stats)

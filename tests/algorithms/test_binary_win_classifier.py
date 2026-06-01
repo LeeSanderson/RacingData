@@ -165,3 +165,42 @@ def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped():
     assert len(spy._mock.fit_X) == 4            # horse 30 dropped; others kept
     assert "SomeRatingCol" in spy._mock.fit_X.columns
     assert spy._mock.fit_X["SomeRatingCol"].isna().sum() == 1  # horse 20's NaN survived
+
+
+# ── predict_field() ───────────────────────────────────────────────────────────
+
+
+def test_predict_field_returns_empty_before_fit():
+    spy = _SpyAlgo()
+    races, horse_stats, jockey_stats = _make_predict_fixtures()
+    result = spy.predict_field(races, horse_stats, jockey_stats)
+    assert result.empty
+
+
+def test_predict_field_returns_all_horses_not_only_rank1():
+    spy = _SpyAlgo()
+    spy.fit(_make_train_df())
+    races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)
+    result = spy.predict_field(races, horse_stats, jockey_stats)
+    assert len(result) == 3, f"Expected 3 horses, got {len(result)}"
+    assert set(result["HorseId"]) == {0, 1, 2}
+
+
+def test_predict_field_has_win_probability_and_predicted_rank():
+    spy = _SpyAlgo()
+    spy.fit(_make_train_df())
+    races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)
+    result = spy.predict_field(races, horse_stats, jockey_stats)
+    assert "WinProbability" in result.columns
+    assert "PredictedRank" in result.columns
+    assert result["WinProbability"].notna().all()
+    assert result["PredictedRank"].notna().all()
+
+
+def test_predict_still_returns_only_rank1_pick():
+    spy = _SpyAlgo()
+    spy.fit(_make_train_df())
+    races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)
+    preds = spy.predict(races, horse_stats, jockey_stats)
+    assert len(preds) == 1
+    assert list(preds.columns) == ["RaceId", "HorseId"]

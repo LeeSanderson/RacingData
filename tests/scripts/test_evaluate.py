@@ -306,6 +306,7 @@ _CSV_COLUMNS = [
     "FoldDate", "Algorithm", "RaceId", "HorseId", "CourseName",
     "Surface", "Going", "RaceType", "DistanceInMeters",
     "FinishingPosition", "DecimalOdds", "PredictedScore",
+    "WinProbability", "FieldSize", "RaceClass",
 ]
 
 
@@ -377,6 +378,133 @@ def test_build_csv_rows_empty_preds_returns_empty_frame():
     )
     assert rows.empty
     assert list(rows.columns) == _CSV_COLUMNS
+
+
+def test_build_csv_rows_carries_win_probability_when_present():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    preds = pd.DataFrame([{"RaceId": 2, "HorseId": 20, "WinProbability": 0.42}])
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        preds, _minimal_known_fold(), _minimal_results(),
+    )
+    assert rows.iloc[0]["WinProbability"] == pytest.approx(0.42)
+
+
+def test_build_csv_rows_win_probability_na_when_absent():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        _minimal_preds(), _minimal_known_fold(), _minimal_results(),
+    )
+    assert pd.isna(rows.iloc[0]["WinProbability"])
+
+
+def test_build_csv_rows_field_size_equals_horses_in_race():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    known_fold = pd.DataFrame([
+        {"RaceId": 2, "HorseId": 20, "CourseName": "Ascot", "Surface": "Turf",
+         "Going": "Good", "RaceType": "Flat", "DistanceInMeters": 1600.0},
+        {"RaceId": 2, "HorseId": 21, "CourseName": "Ascot", "Surface": "Turf",
+         "Going": "Good", "RaceType": "Flat", "DistanceInMeters": 1600.0},
+        {"RaceId": 2, "HorseId": 22, "CourseName": "Ascot", "Surface": "Turf",
+         "Going": "Good", "RaceType": "Flat", "DistanceInMeters": 1600.0},
+        {"RaceId": 2, "HorseId": 23, "CourseName": "Ascot", "Surface": "Turf",
+         "Going": "Good", "RaceType": "Flat", "DistanceInMeters": 1600.0},
+    ])
+    results = pd.DataFrame([
+        {"RaceId": 2, "HorseId": 20, "FinishingPosition": 1, "DecimalOdds": 3.5,
+         "ResultStatus": "CompletedRace"},
+    ])
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        _minimal_preds(), known_fold, results,
+    )
+    assert rows.iloc[0]["FieldSize"] == 4
+
+
+def test_build_csv_rows_race_class_from_class_column():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    known_fold = pd.DataFrame([{
+        "RaceId": 2, "HorseId": 20,
+        "CourseName": "Ascot", "Surface": "Turf", "Going": "Good",
+        "RaceType": "Flat", "DistanceInMeters": 1600.0,
+        "Class": "Class 3",
+    }])
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        _minimal_preds(), known_fold, _minimal_results(),
+    )
+    assert rows.iloc[0]["RaceClass"] == "Class 3"
+
+
+def test_build_csv_rows_race_class_na_when_no_class_column():
+    from race_analytics.scripts.evaluate import _build_csv_rows
+    rows = _build_csv_rows(
+        date(2026, 5, 29), "_StubAlgo",
+        _minimal_preds(), _minimal_known_fold(), _minimal_results(),
+    )
+    assert pd.isna(rows.iloc[0]["RaceClass"])
+
+
+# ================================================================
+# evaluate() — predict_field() integration
+# ================================================================
+
+
+class _FieldAlgo:
+    """Stub that also exposes predict_field() returning per-horse WinProbability."""
+
+    def fit(self, _train_df):
+        pass
+
+    def predict(self, card, *_args):
+        if card.empty:
+            return pd.DataFrame(columns=["RaceId", "HorseId"])
+        return pd.DataFrame([{"RaceId": int(card["RaceId"].iloc[0]), "HorseId": int(card["HorseId"].iloc[0])}])
+
+    def predict_field(self, card, *_args):
+        if card.empty:
+            return pd.DataFrame(columns=["RaceId", "HorseId", "WinProbability", "PredictedRank"])
+        return pd.DataFrame([{
+            "RaceId": int(card["RaceId"].iloc[0]),
+            "HorseId": int(card["HorseId"].iloc[0]),
+            "WinProbability": 0.75,
+            "PredictedRank": 1.0,
+        }])
+
+
+def test_evaluate_csv_carries_win_probability_for_predict_field_algo(tmp_path):
+    from race_analytics.scripts.evaluate import evaluate
+    fold_date = date.today() - timedelta(days=1)
+    out_path = str(tmp_path / "results.csv")
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_FieldAlgo()]),
+    ):
+        evaluate(folds=1, save_results=True, results_file=out_path)
+    df = pd.read_csv(out_path)
+    assert df.iloc[0]["WinProbability"] == pytest.approx(0.75)
+
+
+def test_evaluate_csv_win_probability_na_for_non_field_algo(tmp_path):
+    from race_analytics.scripts.evaluate import evaluate
+    fold_date = date.today() - timedelta(days=1)
+    out_path = str(tmp_path / "results.csv")
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
+    ):
+        evaluate(folds=1, save_results=True, results_file=out_path)
+    df = pd.read_csv(out_path)
+    assert df["WinProbability"].isna().all()
 
 
 # ================================================================
