@@ -299,6 +299,125 @@ def test_evaluate_timing_summary_shows_na_for_skipped_algorithms(capsys):
 
 
 # ================================================================
+# _roi_coverage_frontier
+# ================================================================
+
+def _make_field_preds(races_horses: list[tuple[int, list[tuple[int, float]]]]) -> pd.DataFrame:
+    """Build synthetic field-predictions DataFrame.
+    races_horses: [(race_id, [(horse_id, win_prob), ...]), ...]
+    PredictedRank=1 is assigned to the highest-probability horse per race.
+    """
+    rows = []
+    for race_id, horses in races_horses:
+        sorted_h = sorted(horses, key=lambda x: x[1], reverse=True)
+        for rank, (horse_id, prob) in enumerate(sorted_h, start=1):
+            rows.append({
+                "RaceId": race_id,
+                "HorseId": horse_id,
+                "WinProbability": prob,
+                "PredictedRank": rank,
+            })
+    return pd.DataFrame(rows)
+
+
+def _make_results(picks: list[tuple[int, int, int, float]]) -> pd.DataFrame:
+    """(race_id, horse_id, finishing_pos, decimal_odds)"""
+    return pd.DataFrame(
+        [{"RaceId": r, "HorseId": h, "FinishingPosition": p, "DecimalOdds": o,
+          "ResultStatus": "CompletedRace"}
+         for r, h, p, o in picks]
+    )
+
+
+def test_roi_coverage_frontier_returns_expected_columns():
+    from race_analytics.scripts.evaluate import _roi_coverage_frontier
+    from race_analytics.algorithms.confidence_gate import ConfidenceGate
+
+    gate = ConfidenceGate("top_prob")
+    gate.calibrate([0.7, 0.6, 0.5, 0.4], coverage=1.0)
+
+    field = _make_field_preds([
+        (1, [(10, 0.7), (11, 0.2), (12, 0.1)]),
+        (2, [(20, 0.6), (21, 0.3), (22, 0.1)]),
+    ])
+    results = _make_results([(1, 10, 1, 3.0), (1, 11, 2, 5.0), (1, 12, 3, 2.0),
+                              (2, 20, 2, 4.0), (2, 21, 1, 6.0), (2, 22, 3, 2.0)])
+    df = _roi_coverage_frontier(field, results, gate)
+    assert set(df.columns) >= {"coverage_target", "actual_coverage", "roi", "races"}
+
+
+def test_roi_coverage_frontier_full_coverage_keeps_all_races():
+    from race_analytics.scripts.evaluate import _roi_coverage_frontier
+    from race_analytics.algorithms.confidence_gate import ConfidenceGate
+
+    gate = ConfidenceGate("top_prob")
+    gate.calibrate([0.5, 0.6, 0.7, 0.8], coverage=1.0)
+
+    field = _make_field_preds([
+        (1, [(10, 0.8), (11, 0.2)]),
+        (2, [(20, 0.6), (21, 0.4)]),
+        (3, [(30, 0.5), (31, 0.5)]),
+    ])
+    results = _make_results([
+        (1, 10, 1, 3.0), (1, 11, 2, 2.0),
+        (2, 20, 2, 4.0), (2, 21, 1, 5.0),
+        (3, 30, 1, 2.0), (3, 31, 2, 3.0),
+    ])
+    df = _roi_coverage_frontier(field, results, gate, coverages=[1.0])
+    row = df[df["coverage_target"] == 1.0].iloc[0]
+    assert row["races"] == 3
+
+
+def test_roi_coverage_frontier_tighter_coverage_fewer_races():
+    from race_analytics.scripts.evaluate import _roi_coverage_frontier
+    from race_analytics.algorithms.confidence_gate import ConfidenceGate
+
+    gate = ConfidenceGate("top_prob")
+    gate.calibrate([0.5, 0.6, 0.7, 0.8], coverage=1.0)
+
+    field = _make_field_preds([
+        (1, [(10, 0.8), (11, 0.2)]),
+        (2, [(20, 0.6), (21, 0.4)]),
+        (3, [(30, 0.5), (31, 0.5)]),
+        (4, [(40, 0.4), (41, 0.6)]),
+    ])
+    results = _make_results([
+        (1, 10, 1, 3.0), (1, 11, 2, 2.0),
+        (2, 20, 2, 4.0), (2, 21, 1, 5.0),
+        (3, 30, 1, 2.0), (3, 31, 2, 3.0),
+        (4, 40, 2, 2.0), (4, 41, 1, 3.0),
+    ])
+    df = _roi_coverage_frontier(field, results, gate, coverages=[1.0, 0.5])
+    races_full = df[df["coverage_target"] == 1.0]["races"].iloc[0]
+    races_tight = df[df["coverage_target"] == 0.5]["races"].iloc[0]
+    assert races_tight <= races_full
+
+
+# ================================================================
+# _print_early_late_split — structural smoke test
+# ================================================================
+
+def test_early_late_split_printed_in_evaluate_output(capsys):
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    stub_algo = _StubAlgo()
+
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
+    ):
+        evaluate(folds=1)
+
+    out = capsys.readouterr().out
+    assert "=== Early-vs-Late Stability ===" in out
+
+
+# ================================================================
 # _build_csv_rows
 # ================================================================
 

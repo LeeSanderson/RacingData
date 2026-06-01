@@ -8,6 +8,7 @@ from race_analytics.algorithms.proxy_tsr_xgboost import (
     ProxyTSRXGBoostAlgorithm,
     TunedProxyTSRXGBoostAlgorithm,
 )
+from race_analytics.algorithms.abstain_wrapper import AbstainWrapperAlgorithm
 
 ALGORITHMS = [
     RidgeRegressionAlgorithm(max_horses=10),
@@ -16,6 +17,7 @@ ALGORITHMS = [
     RatingsXGBoostUngatedAlgorithm(max_horses=10),
     ProxyTSRXGBoostAlgorithm(max_horses=10),
     TunedProxyTSRXGBoostAlgorithm(max_horses=10),
+    AbstainWrapperAlgorithm(max_horses=10),
 ]
 
 ACTIVE_ALGORITHM = ALGORITHMS[4]  # ProxyTSRXGBoostAlgorithm — see evaluations.md

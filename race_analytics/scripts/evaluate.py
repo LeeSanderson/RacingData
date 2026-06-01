@@ -23,6 +23,7 @@ from race_analytics.features.trainer_stats import CalculateTrainerStats, extract
 from race_analytics.utils.scoring import accuracy, roi
 from race_analytics.algorithms import ALGORITHMS
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
+from race_analytics.algorithms.confidence_gate import ConfidenceGate
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
@@ -109,6 +110,87 @@ def _build_csv_rows(
 
 def _default_csv_path() -> str:
     return f"evaluation_results_{date.today().strftime('%Y%m%d')}.csv"
+
+
+def _roi_coverage_frontier(
+    unfiltered_field: pd.DataFrame,
+    results: pd.DataFrame,
+    gate: ConfidenceGate,
+    coverages: list[float] | None = None,
+) -> pd.DataFrame:
+    """ROI-vs-coverage frontier: sweep confidence thresholds, report ROI/coverage at each level.
+
+    unfiltered_field must contain WinProbability and PredictedRank columns for all horses.
+    Thresholds are derived from gate._calib_scores (training-window calibration scores).
+    """
+    if coverages is None:
+        coverages = [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4]
+    if unfiltered_field.empty or "WinProbability" not in unfiltered_field.columns:
+        return pd.DataFrame(columns=["coverage_target", "actual_coverage", "roi", "races"])
+
+    race_scores = unfiltered_field.groupby("RaceId")["WinProbability"].apply(gate.score)
+    calib = gate._calib_scores
+    total_races = len(race_scores)
+
+    rows = []
+    for cov in coverages:
+        threshold = float(np.quantile(calib, 1.0 - cov)) if calib else 0.0
+        kept = race_scores[race_scores >= threshold].index
+        top_picks = unfiltered_field[
+            unfiltered_field["RaceId"].isin(kept)
+            & (unfiltered_field["PredictedRank"] == 1)
+        ][["RaceId", "HorseId"]]
+        actual_cov = len(kept) / total_races if total_races > 0 else 0.0
+        r = roi(top_picks, results) if not top_picks.empty else 0.0
+        rows.append({
+            "coverage_target": cov,
+            "actual_coverage": round(actual_cov, 3),
+            "roi": round(r, 3),
+            "races": len(top_picks),
+        })
+    return pd.DataFrame(rows)
+
+
+def _print_early_late_split(
+    algo_names: list[str],
+    all_preds: dict,
+    all_results_store: dict,
+    all_total_known: dict,
+) -> None:
+    """Print early-vs-late stability split for all algorithms."""
+    print("\n=== Early-vs-Late Stability ===")
+    print(
+        f"{'Algorithm':<40} {'Period':<8} {'Accuracy':>10} {'ROI':>10}"
+        f" {'Races':>8} {'Coverage':>10}"
+    )
+    print("-" * 96)
+    for name in algo_names:
+        preds_list = all_preds[name]
+        results_list = all_results_store[name]
+        total_list = all_total_known[name]
+        if not preds_list:
+            print(f"  {name:<40} {'N/A'}")
+            continue
+        n = len(preds_list)
+        # fold_dates are most-recent first: preds_list[0] = latest (Late), preds_list[-1] = oldest (Early)
+        late_slice = slice(0, n // 2)
+        early_slice = slice(n // 2, None)
+        for label, sl in [("Early", early_slice), ("Late", late_slice)]:
+            p_l = preds_list[sl]
+            r_l = results_list[sl]
+            t_l = total_list[sl]
+            if not p_l:
+                continue
+            combined_p = pd.concat(p_l)
+            combined_r = pd.concat(r_l)
+            total = sum(t_l)
+            acc = accuracy(combined_p, combined_r)
+            r = roi(combined_p, combined_r)
+            cov = len(combined_p) / total if total > 0 else 0.0
+            print(
+                f"  {name:<40} {label:<8} {acc:>10.3f} {r:>10.3f}"
+                f" {len(combined_p):>8} {cov:>10.3f}"
+            )
 
 
 def _extract_known_races(fold_df: pd.DataFrame) -> pd.DataFrame:
@@ -291,6 +373,8 @@ def evaluate(
     all_fav_preds = {n: [] for n in algo_names}
     all_fit_times: dict[str, list[float]] = {n: [] for n in algo_names}
     all_predict_times: dict[str, list[float]] = {n: [] for n in algo_names}
+    all_total_known: dict[str, list[int]] = {n: [] for n in algo_names}
+    all_unfiltered_preds: dict[str, list[pd.DataFrame]] = {n: [] for n in algo_names}
     csv_rows: list[pd.DataFrame] = []
     baseline = MarketFavouriteBaseline()
 
@@ -341,10 +425,16 @@ def evaluate(
             all_fav_preds[name].append(fav_preds)
             all_fit_times[name].append(fit_time)
             all_predict_times[name].append(predict_time)
+            all_total_known[name].append(known_fold["RaceId"].nunique())
             if hasattr(algo, "predict_field"):
                 field_preds = algo.predict_field(card, horse_stats, jockey_stats, trainer_stats)
             else:
                 field_preds = preds
+            if hasattr(algo, "predict_field_unfiltered"):
+                unfiltered = algo.predict_field_unfiltered(
+                    card, horse_stats, jockey_stats, trainer_stats
+                )
+                all_unfiltered_preds[name].append(unfiltered)
             csv_rows.append(_build_csv_rows(fold_date, name, field_preds, known_fold, results_df))
 
         gc.collect()
@@ -383,6 +473,29 @@ def evaluate(
             fit_avg, fit_std = fit_agg
             pred_avg, pred_std = pred_agg
             print(f"  {name:<40} {fit_avg:>10.3f} {fit_std:>10.3f} {pred_avg:>10.3f} {pred_std:>10.3f}")
+
+    _print_early_late_split(algo_names, all_preds, all_results_store, all_total_known)
+
+    # ROI-vs-coverage frontier for abstain algorithms
+    algo_map = {type(a).__name__: a for a in selected_algos}
+    for name in algo_names:
+        algo = algo_map[name]
+        gate = getattr(algo, "get_confidence_gate", lambda: None)()
+        if gate is None or not all_unfiltered_preds.get(name):
+            continue
+        combined_unfiltered = pd.concat(all_unfiltered_preds[name], ignore_index=True)
+        combined_results = pd.concat(all_results_store[name], ignore_index=True)
+        frontier = _roi_coverage_frontier(combined_unfiltered, combined_results, gate)
+        print(f"\n=== ROI-vs-Coverage Frontier: {name} ===")
+        print(
+            f"{'Coverage Target':>16} {'Actual Coverage':>16} {'ROI':>8} {'Races':>8}"
+        )
+        print("-" * 54)
+        for _, row in frontier.iterrows():
+            print(
+                f"  {row['coverage_target']:>14.2f} {row['actual_coverage']:>16.3f}"
+                f" {row['roi']:>8.3f} {int(row['races']):>8}"
+            )
 
     should_save = save_results or results_file is not None
     if should_save and csv_rows:
