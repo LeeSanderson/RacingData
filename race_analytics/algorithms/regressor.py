@@ -5,7 +5,16 @@ import numpy as np
 import pandas as pd
 
 from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS, REQUIRED_PREDICTORS, _Estimator
-from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
+from race_analytics.features.transforms import (
+    encode_surfaces,
+    encode_going,
+    encode_race_type,
+    calculate_weight_change,
+    calculate_distance_change,
+    calculate_surface_switch,
+    calculate_code_switch,
+    calculate_horse_count,
+)
 
 
 class RegressorAlgorithm(BaseAlgorithm):
@@ -59,6 +68,12 @@ class RegressorAlgorithm(BaseAlgorithm):
         merged = encode_surfaces(merged)
         merged = encode_going(merged)
         merged = encode_race_type(merged)
+        merged = calculate_weight_change(merged)
+        merged = calculate_distance_change(merged)
+        merged = calculate_surface_switch(merged)
+        merged = calculate_code_switch(merged)
+        if "HorseCount" not in merged.columns:
+            merged = calculate_horse_count(merged)
 
         required_fitted = [c for c in REQUIRED_PREDICTORS if c in self._fitted_predictors]
         predictable = merged[["RaceId", "HorseId"] + self._fitted_predictors].dropna(subset=required_fitted).copy()

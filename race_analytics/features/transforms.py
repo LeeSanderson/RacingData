@@ -107,12 +107,44 @@ calculateHorsesPerRace = calculate_horse_count
 
 
 def calculate_weight_change(races: pd.DataFrame) -> pd.DataFrame:
+    if "WeightInPounds" not in races.columns or "LastRaceWeightInPounds" not in races.columns:
+        races["WeightChange"] = np.nan
+        return races
     races["WeightChange"] = races["WeightInPounds"] - races["LastRaceWeightInPounds"]
     return races
 
 
 def calculate_distance_change(races: pd.DataFrame) -> pd.DataFrame:
+    if "DistanceInMeters" not in races.columns or "LastRaceDistanceInMeters" not in races.columns:
+        races["DistanceChange"] = np.nan
+        return races
     races["DistanceChange"] = (
         races["DistanceInMeters"] - races["LastRaceDistanceInMeters"]
     )
+    return races
+
+
+def calculate_surface_switch(races: pd.DataFrame) -> pd.DataFrame:
+    last_cols = [f"LastRace{c}" for c in surface_categories]
+    if not all(c in races.columns for c in last_cols):
+        races["SurfaceSwitch"] = np.nan
+        return races
+    has_last = races[last_cols].notna().any(axis=1)
+    current = races[[c for c in surface_categories]].fillna(0.0).values
+    last = races[last_cols].fillna(0.0).values
+    same = (current * last).sum(axis=1)
+    races["SurfaceSwitch"] = np.where(has_last, 1.0 - same, np.nan)
+    return races
+
+
+def calculate_code_switch(races: pd.DataFrame) -> pd.DataFrame:
+    last_rt_cols = [f"LastRace{c}" for c in race_type_categories]
+    if not all(c in races.columns for c in last_rt_cols):
+        races["CodeSwitch"] = np.nan
+        return races
+    has_last = races[last_rt_cols].notna().any(axis=1)
+    current_is_flat = races["RaceType_Flat"] == 1.0
+    last_is_flat = races["LastRaceRaceType_Flat"] == 1.0
+    switch = (current_is_flat ^ last_is_flat).astype(float)
+    races["CodeSwitch"] = np.where(has_last, switch, np.nan)
     return races

@@ -14,6 +14,8 @@ from race_analytics.features.transforms import (
     calculate_horse_count,
     calculate_weight_change,
     calculate_distance_change,
+    calculate_surface_switch,
+    calculate_code_switch,
 )
 
 
@@ -286,3 +288,95 @@ def test_calculate_distance_change_computes_correctly(distance_change_dataframe)
 def test_calculate_distance_change_is_nan_when_last_distance_is_nan(distance_change_dataframe):
     result = calculate_distance_change(distance_change_dataframe)
     assert pd.isna(result.iloc[2]["DistanceChange"])
+
+
+# --- calculate_surface_switch ---
+
+
+@pytest.fixture
+def surface_switch_dataframe():
+    # Row 0: Turf → Turf (same surface)
+    # Row 1: Turf → AllWeather (surface switch)
+    # Row 2: AllWeather → AllWeather (same surface)
+    # Row 3: no prior race (all LastRaceSurface_* are NaN)
+    return pd.DataFrame({
+        "Surface_AllWeather": [0.0, 0.0, 1.0, 0.0],
+        "Surface_Dirt":       [0.0, 0.0, 0.0, 0.0],
+        "Surface_Turf":       [1.0, 1.0, 0.0, 1.0],
+        "LastRaceSurface_AllWeather": [0.0, 1.0, 1.0, float("nan")],
+        "LastRaceSurface_Dirt":       [0.0, 0.0, 0.0, float("nan")],
+        "LastRaceSurface_Turf":       [1.0, 0.0, 0.0, float("nan")],
+    })
+
+
+def test_calculate_surface_switch_adds_column(surface_switch_dataframe):
+    result = calculate_surface_switch(surface_switch_dataframe)
+    assert "SurfaceSwitch" in result.columns
+
+
+def test_calculate_surface_switch_same_surface_gives_zero(surface_switch_dataframe):
+    result = calculate_surface_switch(surface_switch_dataframe)
+    assert result.iloc[0]["SurfaceSwitch"] == pytest.approx(0.0)
+    assert result.iloc[2]["SurfaceSwitch"] == pytest.approx(0.0)
+
+
+def test_calculate_surface_switch_different_surface_gives_one(surface_switch_dataframe):
+    result = calculate_surface_switch(surface_switch_dataframe)
+    assert result.iloc[1]["SurfaceSwitch"] == pytest.approx(1.0)
+
+
+def test_calculate_surface_switch_is_nan_when_no_prior_race(surface_switch_dataframe):
+    result = calculate_surface_switch(surface_switch_dataframe)
+    assert pd.isna(result.iloc[3]["SurfaceSwitch"])
+
+
+# --- calculate_code_switch ---
+
+
+@pytest.fixture
+def code_switch_dataframe():
+    # Row 0: Flat → Flat (same code)
+    # Row 1: Flat → Hurdle (code switch: flat to jumps)
+    # Row 2: Hurdle → Flat (code switch: jumps to flat)
+    # Row 3: Hurdle → SteepleChase (both jumps, same code)
+    # Row 4: no prior race (all LastRaceRaceType_* are NaN)
+    return pd.DataFrame({
+        "RaceType_Flat":         [1.0, 1.0, 0.0, 0.0, 1.0],
+        "RaceType_Hurdle":       [0.0, 0.0, 1.0, 1.0, 0.0],
+        "RaceType_SteepleChase": [0.0, 0.0, 0.0, 0.0, 0.0],
+        "RaceType_Other":        [0.0, 0.0, 0.0, 0.0, 0.0],
+        "LastRaceRaceType_Flat":         [1.0, 0.0, 1.0, 0.0, float("nan")],
+        "LastRaceRaceType_Hurdle":       [0.0, 1.0, 0.0, 0.0, float("nan")],
+        "LastRaceRaceType_SteepleChase": [0.0, 0.0, 0.0, 1.0, float("nan")],
+        "LastRaceRaceType_Other":        [0.0, 0.0, 0.0, 0.0, float("nan")],
+    })
+
+
+def test_calculate_code_switch_adds_column(code_switch_dataframe):
+    result = calculate_code_switch(code_switch_dataframe)
+    assert "CodeSwitch" in result.columns
+
+
+def test_calculate_code_switch_flat_to_flat_is_zero(code_switch_dataframe):
+    result = calculate_code_switch(code_switch_dataframe)
+    assert result.iloc[0]["CodeSwitch"] == pytest.approx(0.0)
+
+
+def test_calculate_code_switch_flat_to_jumps_is_one(code_switch_dataframe):
+    result = calculate_code_switch(code_switch_dataframe)
+    assert result.iloc[1]["CodeSwitch"] == pytest.approx(1.0)
+
+
+def test_calculate_code_switch_jumps_to_flat_is_one(code_switch_dataframe):
+    result = calculate_code_switch(code_switch_dataframe)
+    assert result.iloc[2]["CodeSwitch"] == pytest.approx(1.0)
+
+
+def test_calculate_code_switch_jumps_to_jumps_is_zero(code_switch_dataframe):
+    result = calculate_code_switch(code_switch_dataframe)
+    assert result.iloc[3]["CodeSwitch"] == pytest.approx(0.0)
+
+
+def test_calculate_code_switch_is_nan_when_no_prior_race(code_switch_dataframe):
+    result = calculate_code_switch(code_switch_dataframe)
+    assert pd.isna(result.iloc[4]["CodeSwitch"])

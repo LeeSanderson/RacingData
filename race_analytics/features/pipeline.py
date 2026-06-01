@@ -8,6 +8,10 @@ from race_analytics.features.transforms import (
     calculate_speed,
     clean_weight,
     calculate_horse_count,
+    calculate_weight_change,
+    calculate_distance_change,
+    calculate_surface_switch,
+    calculate_code_switch,
 )
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
@@ -48,6 +52,10 @@ class FeaturePipeline:
         gc.collect()
         CalculateHorsesStats().process_race_data(combined)
         gc.collect()
+        combined = calculate_weight_change(combined)
+        combined = calculate_distance_change(combined)
+        combined = calculate_surface_switch(combined)
+        combined = calculate_code_switch(combined)
         CalculateJockeyStats().process_race_data(combined)
         gc.collect()
         CalculateTrainerStats().process_race_data(combined)

@@ -57,6 +57,11 @@ OPTIONAL_PREDICTORS = [
     "Last3RaceAvgSpeed",
     "Last3RaceSpeedTrend",
     "Last3AvgRelFinishingPosition",
+    "WeightChange",
+    "DistanceChange",
+    "HorseCount",
+    "SurfaceSwitch",
+    "CodeSwitch",
 ]
 
 PREDICTORS = REQUIRED_PREDICTORS + OPTIONAL_PREDICTORS

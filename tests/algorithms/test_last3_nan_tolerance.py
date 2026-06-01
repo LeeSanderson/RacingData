@@ -44,6 +44,8 @@ def _train_row(
         "JockeyNumberOfPriorRaces": 10.0, "DaysSinceJockeyLastRaced": 3.0,
         "JockeyWinPercentage": 0.2, "JockeyTop3Percentage": 0.5,
         "JockeyAvgRelFinishingPosition": 0.4,
+        "WeightChange": 2.0, "DistanceChange": 0.0,
+        "SurfaceSwitch": 0.0, "CodeSwitch": 0.0,
     }
 
 

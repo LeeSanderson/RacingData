@@ -9,7 +9,15 @@ from race_analytics.algorithms.base import (
     REQUIRED_PREDICTORS,
     OPTIONAL_PREDICTORS,
 )
-from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
+from race_analytics.features.transforms import (
+    encode_surfaces,
+    encode_going,
+    encode_race_type,
+    calculate_weight_change,
+    calculate_distance_change,
+    calculate_surface_switch,
+    calculate_code_switch,
+)
 
 
 def _add_race_context(df: pd.DataFrame, extra_cols: list[str]) -> pd.DataFrame:
@@ -45,9 +53,7 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
 
         extra = self.extra_nan_tolerant_features
         rel_extra = [f"Rel{c}" for c in extra if f"Rel{c}" in df.columns]
-        feature_cols = (
-            REQUIRED_PREDICTORS + OPTIONAL_PREDICTORS + extra + rel_extra + ["HorseCount"]
-        )
+        feature_cols = REQUIRED_PREDICTORS + OPTIONAL_PREDICTORS + extra + rel_extra
         available = [c for c in feature_cols if c in df.columns]
         required = [c for c in REQUIRED_PREDICTORS if c in df.columns] + ["Wins"]
 
@@ -92,6 +98,10 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
         merged = encode_surfaces(merged)
         merged = encode_going(merged)
         merged = encode_race_type(merged)
+        merged = calculate_weight_change(merged)
+        merged = calculate_distance_change(merged)
+        merged = calculate_surface_switch(merged)
+        merged = calculate_code_switch(merged)
         merged = self._prepare_prediction_df(merged)
         merged = _add_race_context(merged, self.extra_nan_tolerant_features)
 

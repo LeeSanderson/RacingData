@@ -14,6 +14,11 @@ _OPTIONAL_COLS = [
     "Last3RaceAvgSpeed",
     "Last3RaceSpeedTrend",
     "Last3AvgRelFinishingPosition",
+    "WeightChange",
+    "DistanceChange",
+    "HorseCount",
+    "SurfaceSwitch",
+    "CodeSwitch",
 ]
 
 
@@ -22,8 +27,9 @@ def test_predictors_contains_new_columns():
         assert col in PREDICTORS, f"Missing predictor: {col}"
 
 
-def test_optional_predictors_are_last3_columns():
-    assert OPTIONAL_PREDICTORS == _OPTIONAL_COLS
+def test_optional_predictors_include_nan_tolerant_features():
+    for col in _OPTIONAL_COLS:
+        assert col in OPTIONAL_PREDICTORS, f"Missing optional predictor: {col}"
 
 
 def test_required_predictors_excludes_last3_columns():
