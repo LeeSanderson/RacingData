@@ -1,0 +1,9 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+5,False,12/1,13,CompletedRace,921809,184,Gowran Park,06/01/2026 15:09:00,5357864,Pink Oxalis
+2,False,7/2,4.5,CompletedRace,919958,31,Lingfield,06/01/2026 16:27:00,7020324,Chasse Patate IRE
+3,False,3/1,4,CompletedRace,920250,393,Lingfield (AW),06/01/2026 15:17:00,7020211,Astrological
+0,False,12/1,13,RefusedToRace,921815,190,Listowel,06/01/2026 14:22:00,5504679,Western Princess
+2,False,11/2,6.5,CompletedRace,921816,190,Listowel,06/01/2026 14:57:00,6473499,Becasse
+2,False,7/2,4.5,CompletedRace,921818,190,Listowel,06/01/2026 16:07:00,4241537,Blood Destiny FR
+5,False,13/2,7.5,CompletedRace,919965,36,Newbury,06/01/2026 16:00:00,6314162,Hint Of Humour
+6,False,15/2,8.5,CompletedRace,919960,36,Newbury,06/01/2026 16:35:00,4570893,Vaguely Royal IRE
