@@ -1,0 +1,262 @@
+FoldDate,Algorithm,RaceId,HorseId,CourseName,Surface,Going,RaceType,DistanceInMeters,FinishingPosition,DecimalOdds,PredictedScore,WinProbability,FieldSize,RaceClass
+2026-06-01,ProxyTSRXGBoostAlgorithm,921809,5353795,Gowran Park (IRE),Turf,Yielding,Other,1910,1,9.5,,0.15608707,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921809,6754624,Gowran Park (IRE),Turf,Yielding,Other,1910,2,7.5,,0.08456777,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921809,6233837,Gowran Park (IRE),Turf,Yielding,Other,1910,3,5.0,,0.120279945,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921809,7793572,Gowran Park (IRE),Turf,Yielding,Other,1910,4,4.5,,0.072502635,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921809,5357864,Gowran Park (IRE),Turf,Yielding,Other,1910,5,13.0,,0.17848542,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921809,5048231,Gowran Park (IRE),Turf,Yielding,Other,1910,6,15.0,,0.04982126,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921809,5134076,Gowran Park (IRE),Turf,Yielding,Other,1910,7,4.333333333333334,,0.15986216,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921809,5812356,Gowran Park (IRE),Turf,Yielding,Other,1910,8,7.5,,0.043182783,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,920250,8678960,Lingfield (AW),AllWeather,Standard,Other,2412,1,2.1,,0.2546107,5,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,920250,8124820,Lingfield (AW),AllWeather,Standard,Other,2412,2,9.5,,0.1543067,5,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,920250,7020211,Lingfield (AW),AllWeather,Standard,Other,2412,3,4.0,,0.30331776,5,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,920250,7852216,Lingfield (AW),AllWeather,Standard,Other,2412,4,7.5,,0.16997442,5,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,920250,8120584,Lingfield (AW),AllWeather,Standard,Other,2412,5,7.0,,0.17063253,5,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919958,8214889,Lingfield,Turf,Good,Other,1407,1,5.5,,0.17065522,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919958,7020324,Lingfield,Turf,Good,Other,1407,2,4.5,,0.21503815,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919958,8313782,Lingfield,Turf,Good,Other,1407,3,26.0,,0.058606558,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919958,9088392,Lingfield,Turf,Good,Other,1407,4,12.0,,0.109819464,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919958,7020258,Lingfield,Turf,Good,Other,1407,5,5.0,,0.110669985,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919958,7784905,Lingfield,Turf,Good,Other,1407,6,2.625,,0.14979552,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919958,8844521,Lingfield,Turf,Good,Other,1407,7,29.0,,0.02676653,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,921816,3861045,Listowel (IRE),Turf,Yielding,Hurdle,3217,1,9.5,,0.09778155,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921816,6473499,Listowel (IRE),Turf,Yielding,Hurdle,3217,2,6.5,,0.26529685,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921816,5746471,Listowel (IRE),Turf,Yielding,Hurdle,3217,3,4.2,,0.16939896,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921816,4808606,Listowel (IRE),Turf,Yielding,Hurdle,3217,4,21.0,,0.08528316,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921816,6763599,Listowel (IRE),Turf,Yielding,Hurdle,3217,5,4.5,,0.09393552,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921816,4538575,Listowel (IRE),Turf,Yielding,Hurdle,3217,6,8.0,,0.053767342,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921816,5092885,Listowel (IRE),Turf,Yielding,Hurdle,3217,7,9.0,,0.07878309,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921816,5490473,Listowel (IRE),Turf,Yielding,Hurdle,3217,8,6.5,,0.20797592,8,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921817,5045967,Listowel (IRE),Turf,Yielding,SteepleChase,3820,1,13.0,,0.08661754,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921817,5048029,Listowel (IRE),Turf,Yielding,SteepleChase,3820,2,5.0,,0.100906916,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921817,7334537,Listowel (IRE),Turf,Yielding,SteepleChase,3820,3,1.6666666666666663,,0.30321297,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921817,4982082,Listowel (IRE),Turf,Yielding,SteepleChase,3820,4,7.0,,0.08246845,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921817,5884338,Listowel (IRE),Turf,Yielding,SteepleChase,3820,5,15.0,,0.11958172,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921817,4893367,Listowel (IRE),Turf,Yielding,SteepleChase,3820,6,29.0,,0.1122212,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921818,3087843,Listowel (IRE),Turf,Yielding,SteepleChase,3820,1,2.75,,0.16157812,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921818,4241537,Listowel (IRE),Turf,Yielding,SteepleChase,3820,2,4.5,,0.16558704,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921818,3056495,Listowel (IRE),Turf,Yielding,SteepleChase,3820,3,9.5,,0.098597124,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921818,4189575,Listowel (IRE),Turf,Yielding,SteepleChase,3820,4,23.0,,0.1546247,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921818,4994572,Listowel (IRE),Turf,Yielding,SteepleChase,3820,5,23.0,,0.062874936,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,921818,5141705,Listowel (IRE),Turf,Yielding,SteepleChase,3820,6,2.875,,0.24371806,6,
+2026-06-01,ProxyTSRXGBoostAlgorithm,919965,4642821,Newbury,Turf,Good To Firm,Other,1005,1,3.75,,0.17291884,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919965,5102058,Newbury,Turf,Good To Firm,Other,1005,2,9.0,,0.21629235,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919965,2645551,Newbury,Turf,Good To Firm,Other,1005,3,2.5,,0.16837539,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919965,4369773,Newbury,Turf,Good To Firm,Other,1005,4,13.0,,0.06644324,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919965,6314162,Newbury,Turf,Good To Firm,Other,1005,5,7.5,,0.23086782,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919965,58956167,Newbury,Turf,Good To Firm,Other,1005,6,29.0,,0.08752592,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919965,2996619,Newbury,Turf,Good To Firm,Other,1005,7,8.5,,0.034872413,7,Class 5
+2026-06-01,ProxyTSRXGBoostAlgorithm,919960,7020716,Newbury,Turf,Good To Firm,Other,3217,1,2.25,,0.28514308,8,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919960,4757705,Newbury,Turf,Good To Firm,Other,3217,2,19.0,,0.09531651,8,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919960,6102214,Newbury,Turf,Good To Firm,Other,3217,3,6.0,,0.13134408,8,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919960,5242271,Newbury,Turf,Good To Firm,Other,3217,4,5.5,,0.19911496,8,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919960,8520787,Newbury,Turf,Good To Firm,Other,3217,5,34.0,,0.12684244,8,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919960,4570893,Newbury,Turf,Good To Firm,Other,3217,6,8.5,,0.18541966,8,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919960,8124710,Newbury,Turf,Good To Firm,Other,3217,7,7.5,,0.22650008,8,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919960,2951760,Newbury,Turf,Good To Firm,Other,3217,8,34.0,,0.15746237,8,Class 4
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,7762488,Windsor,Turf,Good To Firm,Other,2010,1,2.5,,0.1873118,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,8137387,Windsor,Turf,Good To Firm,Other,2010,2,34.0,,0.04761126,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,8157637,Windsor,Turf,Good To Firm,Other,2010,3,23.0,,0.08123109,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,7020505,Windsor,Turf,Good To Firm,Other,2010,4,3.0,,0.13843465,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,7891677,Windsor,Turf,Good To Firm,Other,2010,5,15.0,,0.14707299,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,8678962,Windsor,Turf,Good To Firm,Other,2010,6,41.0,,0.09305287,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,8268261,Windsor,Turf,Good To Firm,Other,2010,7,11.0,,0.07248001,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,8157636,Windsor,Turf,Good To Firm,Other,2010,8,11.0,,0.056000203,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,7020652,Windsor,Turf,Good To Firm,Other,2010,9,17.0,,0.13103728,10,Class 6
+2026-06-01,ProxyTSRXGBoostAlgorithm,919972,8821443,Windsor,Turf,Good To Firm,Other,2010,10,17.0,,0.06973682,10,Class 6
+2026-06-01,AbstainWrapperAlgorithm,921809,5353795,Gowran Park (IRE),Turf,Yielding,Other,1910,1,9.5,,0.15608707,8,
+2026-06-01,AbstainWrapperAlgorithm,921809,6754624,Gowran Park (IRE),Turf,Yielding,Other,1910,2,7.5,,0.08456777,8,
+2026-06-01,AbstainWrapperAlgorithm,921809,6233837,Gowran Park (IRE),Turf,Yielding,Other,1910,3,5.0,,0.120279945,8,
+2026-06-01,AbstainWrapperAlgorithm,921809,7793572,Gowran Park (IRE),Turf,Yielding,Other,1910,4,4.5,,0.072502635,8,
+2026-06-01,AbstainWrapperAlgorithm,921809,5357864,Gowran Park (IRE),Turf,Yielding,Other,1910,5,13.0,,0.17848542,8,
+2026-06-01,AbstainWrapperAlgorithm,921809,5048231,Gowran Park (IRE),Turf,Yielding,Other,1910,6,15.0,,0.04982126,8,
+2026-06-01,AbstainWrapperAlgorithm,921809,5134076,Gowran Park (IRE),Turf,Yielding,Other,1910,7,4.333333333333334,,0.15986216,8,
+2026-06-01,AbstainWrapperAlgorithm,921809,5812356,Gowran Park (IRE),Turf,Yielding,Other,1910,8,7.5,,0.043182783,8,
+2026-06-01,AbstainWrapperAlgorithm,920250,8678960,Lingfield (AW),AllWeather,Standard,Other,2412,1,2.1,,0.2546107,5,Class 4
+2026-06-01,AbstainWrapperAlgorithm,920250,8124820,Lingfield (AW),AllWeather,Standard,Other,2412,2,9.5,,0.1543067,5,Class 4
+2026-06-01,AbstainWrapperAlgorithm,920250,7020211,Lingfield (AW),AllWeather,Standard,Other,2412,3,4.0,,0.30331776,5,Class 4
+2026-06-01,AbstainWrapperAlgorithm,920250,7852216,Lingfield (AW),AllWeather,Standard,Other,2412,4,7.5,,0.16997442,5,Class 4
+2026-06-01,AbstainWrapperAlgorithm,920250,8120584,Lingfield (AW),AllWeather,Standard,Other,2412,5,7.0,,0.17063253,5,Class 4
+2026-06-01,AbstainWrapperAlgorithm,919958,8214889,Lingfield,Turf,Good,Other,1407,1,5.5,,0.17065522,7,Class 5
+2026-06-01,AbstainWrapperAlgorithm,919958,7020324,Lingfield,Turf,Good,Other,1407,2,4.5,,0.21503815,7,Class 5
+2026-06-01,AbstainWrapperAlgorithm,919958,8313782,Lingfield,Turf,Good,Other,1407,3,26.0,,0.058606558,7,Class 5
+2026-06-01,AbstainWrapperAlgorithm,919958,9088392,Lingfield,Turf,Good,Other,1407,4,12.0,,0.109819464,7,Class 5
+2026-06-01,AbstainWrapperAlgorithm,919958,7020258,Lingfield,Turf,Good,Other,1407,5,5.0,,0.110669985,7,Class 5
+2026-06-01,AbstainWrapperAlgorithm,919958,7784905,Lingfield,Turf,Good,Other,1407,6,2.625,,0.14979552,7,Class 5
+2026-06-01,AbstainWrapperAlgorithm,919958,8844521,Lingfield,Turf,Good,Other,1407,7,29.0,,0.02676653,7,Class 5
+2026-06-01,AbstainWrapperAlgorithm,921816,3861045,Listowel (IRE),Turf,Yielding,Hurdle,3217,1,9.5,,0.09778155,8,
+2026-06-01,AbstainWrapperAlgorithm,921816,6473499,Listowel (IRE),Turf,Yielding,Hurdle,3217,2,6.5,,0.26529685,8,
+2026-06-01,AbstainWrapperAlgorithm,921816,5746471,Listowel (IRE),Turf,Yielding,Hurdle,3217,3,4.2,,0.16939896,8,
+2026-06-01,AbstainWrapperAlgorithm,921816,4808606,Listowel (IRE),Turf,Yielding,Hurdle,3217,4,21.0,,0.08528316,8,
+2026-06-01,AbstainWrapperAlgorithm,921816,6763599,Listowel (IRE),Turf,Yielding,Hurdle,3217,5,4.5,,0.09393552,8,
+2026-06-01,AbstainWrapperAlgorithm,921816,4538575,Listowel (IRE),Turf,Yielding,Hurdle,3217,6,8.0,,0.053767342,8,
+2026-06-01,AbstainWrapperAlgorithm,921816,5092885,Listowel (IRE),Turf,Yielding,Hurdle,3217,7,9.0,,0.07878309,8,
+2026-06-01,AbstainWrapperAlgorithm,921816,5490473,Listowel (IRE),Turf,Yielding,Hurdle,3217,8,6.5,,0.20797592,8,
+2026-06-01,AbstainWrapperAlgorithm,921817,5045967,Listowel (IRE),Turf,Yielding,SteepleChase,3820,1,13.0,,0.08661754,6,
+2026-06-01,AbstainWrapperAlgorithm,921817,5048029,Listowel (IRE),Turf,Yielding,SteepleChase,3820,2,5.0,,0.100906916,6,
+2026-06-01,AbstainWrapperAlgorithm,921817,7334537,Listowel (IRE),Turf,Yielding,SteepleChase,3820,3,1.6666666666666663,,0.30321297,6,
+2026-06-01,AbstainWrapperAlgorithm,921817,4982082,Listowel (IRE),Turf,Yielding,SteepleChase,3820,4,7.0,,0.08246845,6,
+2026-06-01,AbstainWrapperAlgorithm,921817,5884338,Listowel (IRE),Turf,Yielding,SteepleChase,3820,5,15.0,,0.11958172,6,
+2026-06-01,AbstainWrapperAlgorithm,921817,4893367,Listowel (IRE),Turf,Yielding,SteepleChase,3820,6,29.0,,0.1122212,6,
+2026-06-01,AbstainWrapperAlgorithm,921818,3087843,Listowel (IRE),Turf,Yielding,SteepleChase,3820,1,2.75,,0.16157812,6,
+2026-06-01,AbstainWrapperAlgorithm,921818,4241537,Listowel (IRE),Turf,Yielding,SteepleChase,3820,2,4.5,,0.16558704,6,
+2026-06-01,AbstainWrapperAlgorithm,921818,3056495,Listowel (IRE),Turf,Yielding,SteepleChase,3820,3,9.5,,0.098597124,6,
+2026-06-01,AbstainWrapperAlgorithm,921818,4189575,Listowel (IRE),Turf,Yielding,SteepleChase,3820,4,23.0,,0.1546247,6,
+2026-06-01,AbstainWrapperAlgorithm,921818,4994572,Listowel (IRE),Turf,Yielding,SteepleChase,3820,5,23.0,,0.062874936,6,
+2026-06-01,AbstainWrapperAlgorithm,921818,5141705,Listowel (IRE),Turf,Yielding,SteepleChase,3820,6,2.875,,0.24371806,6,
+2026-06-01,AbstainWrapperAlgorithm,919960,7020716,Newbury,Turf,Good To Firm,Other,3217,1,2.25,,0.28514308,8,Class 4
+2026-06-01,AbstainWrapperAlgorithm,919960,4757705,Newbury,Turf,Good To Firm,Other,3217,2,19.0,,0.09531651,8,Class 4
+2026-06-01,AbstainWrapperAlgorithm,919960,6102214,Newbury,Turf,Good To Firm,Other,3217,3,6.0,,0.13134408,8,Class 4
+2026-06-01,AbstainWrapperAlgorithm,919960,5242271,Newbury,Turf,Good To Firm,Other,3217,4,5.5,,0.19911496,8,Class 4
+2026-06-01,AbstainWrapperAlgorithm,919960,8520787,Newbury,Turf,Good To Firm,Other,3217,5,34.0,,0.12684244,8,Class 4
+2026-06-01,AbstainWrapperAlgorithm,919960,4570893,Newbury,Turf,Good To Firm,Other,3217,6,8.5,,0.18541966,8,Class 4
+2026-06-01,AbstainWrapperAlgorithm,919960,8124710,Newbury,Turf,Good To Firm,Other,3217,7,7.5,,0.22650008,8,Class 4
+2026-06-01,AbstainWrapperAlgorithm,919960,2951760,Newbury,Turf,Good To Firm,Other,3217,8,34.0,,0.15746237,8,Class 4
+2026-05-31,ProxyTSRXGBoostAlgorithm,918771,6130423,Fakenham,Turf,Good,Hurdle,4725,1,1.8333333333333333,,0.33292773,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,918771,7426990,Fakenham,Turf,Good,Hurdle,4725,2,13.0,,0.2405287,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,918771,7588032,Fakenham,Turf,Good,Hurdle,4725,3,4.333333333333334,,0.26442817,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,918770,4628823,Fakenham,Turf,Good,SteepleChase,3317,1,9.5,,0.104066186,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,918770,2922345,Fakenham,Turf,Good,SteepleChase,3317,2,2.375,,0.309504,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,918770,6005948,Fakenham,Turf,Good,SteepleChase,3317,3,6.5,,0.30319056,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,918768,6260980,Fakenham,Turf,Good,Hurdle,3217,1,5.0,,0.40342522,4,Class 4
+2026-05-31,ProxyTSRXGBoostAlgorithm,918768,5320931,Fakenham,Turf,Good,Hurdle,3217,2,2.0,,0.46584818,4,Class 4
+2026-05-31,ProxyTSRXGBoostAlgorithm,918768,4001991,Fakenham,Turf,Good,Hurdle,3217,3,3.75,,0.28971353,4,Class 4
+2026-05-31,ProxyTSRXGBoostAlgorithm,918768,6130360,Fakenham,Turf,Good,Hurdle,3217,4,8.5,,0.32591546,4,Class 4
+2026-05-31,ProxyTSRXGBoostAlgorithm,918767,4719430,Fakenham,Turf,Good,SteepleChase,4222,1,3.2,,0.3174052,4,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,918767,3223907,Fakenham,Turf,Good,SteepleChase,4222,2,5.0,,0.18240286,4,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,918767,4261324,Fakenham,Turf,Good,SteepleChase,4222,3,12.0,,0.17211762,4,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,918767,4159569,Fakenham,Turf,Good,SteepleChase,4222,4,6.0,,0.2804822,4,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,918772,4440454,Fakenham,Turf,Good,Hurdle,4021,1,6.5,,0.28685638,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,918772,4728070,Fakenham,Turf,Good,Hurdle,4021,2,3.0,,0.30704764,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,918772,8481037,Fakenham,Turf,Good,Hurdle,4021,3,5.0,,0.08827347,3,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,921721,8720928,Kilbeggan (IRE),Turf,Good To Yielding,Hurdle,4825,1,2.25,,0.4235088,3,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921721,8991546,Kilbeggan (IRE),Turf,Good To Yielding,Hurdle,4825,2,13.0,,0.14409557,3,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921721,7339086,Kilbeggan (IRE),Turf,Good To Yielding,Hurdle,4825,3,8.5,,0.25576395,3,
+2026-05-31,ProxyTSRXGBoostAlgorithm,919060,7547294,Nottingham,Turf,Good,Other,1709,1,4.5,,0.22093615,7,Class 6
+2026-05-31,ProxyTSRXGBoostAlgorithm,919060,7784971,Nottingham,Turf,Good,Other,1709,2,2.2,,0.23459283,7,Class 6
+2026-05-31,ProxyTSRXGBoostAlgorithm,919060,8589414,Nottingham,Turf,Good,Other,1709,3,7.0,,0.112658046,7,Class 6
+2026-05-31,ProxyTSRXGBoostAlgorithm,919060,8313781,Nottingham,Turf,Good,Other,1709,4,6.5,,0.19800796,7,Class 6
+2026-05-31,ProxyTSRXGBoostAlgorithm,919060,7722815,Nottingham,Turf,Good,Other,1709,5,13.0,,0.057959184,7,Class 6
+2026-05-31,ProxyTSRXGBoostAlgorithm,919060,8313799,Nottingham,Turf,Good,Other,1709,6,51.0,,0.037515324,7,Class 6
+2026-05-31,ProxyTSRXGBoostAlgorithm,919060,7493125,Nottingham,Turf,Good,Other,1709,7,15.0,,0.16620612,7,Class 6
+2026-05-31,ProxyTSRXGBoostAlgorithm,919057,7609870,Nottingham,Turf,Good,Other,2815,1,4.0,,0.18593813,7,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,919057,2864381,Nottingham,Turf,Good,Other,2815,2,8.0,,0.09040744,7,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,919057,7922017,Nottingham,Turf,Good,Other,2815,3,2.75,,0.16362458,7,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,919057,5008005,Nottingham,Turf,Good,Other,2815,4,6.0,,0.1292783,7,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,919057,2996571,Nottingham,Turf,Good,Other,2815,5,11.0,,0.060418174,7,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,919057,4922365,Nottingham,Turf,Good,Other,2815,6,15.0,,0.044907156,7,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,919057,4597235,Nottingham,Turf,Good,Other,2815,7,11.0,,0.06292119,7,Class 5
+2026-05-31,ProxyTSRXGBoostAlgorithm,919055,7613483,Nottingham,Turf,Good,Other,2010,1,2.5,,0.23493679,7,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,919055,7627175,Nottingham,Turf,Good,Other,2010,2,3.75,,0.20597951,7,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,919055,5733262,Nottingham,Turf,Good,Other,2010,3,10.0,,0.06443755,7,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,919055,7695907,Nottingham,Turf,Good,Other,2010,4,4.5,,0.22402823,7,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,919055,7922023,Nottingham,Turf,Good,Other,2010,5,19.0,,0.19398953,7,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,919055,8313812,Nottingham,Turf,Good,Other,2010,6,13.0,,0.16058858,7,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,919055,8844525,Nottingham,Turf,Good,Other,2010,7,51.0,,0.08648799,7,Class 3
+2026-05-31,ProxyTSRXGBoostAlgorithm,921896,9065289,Chantilly (FR),Turf,Good,Other,2412,1,1.2,,0.35060313,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921896,8144013,Chantilly (FR),Turf,Good,Other,2412,2,5.7,,0.21617132,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921896,8602697,Chantilly (FR),Turf,Good,Other,2412,3,22.0,,0.21276964,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921896,7516445,Chantilly (FR),Turf,Good,Other,2412,4,38.0,,0.11838912,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921896,8236275,Chantilly (FR),Turf,Good,Other,2412,5,15.0,,0.10099656,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921896,8973259,Chantilly (FR),Turf,Good,Other,2412,6,13.0,,0.21579611,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921897,5089307,Chantilly (FR),Turf,Good,Other,2412,1,2.6,,0.35504785,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921897,7453770,Chantilly (FR),Turf,Good,Other,2412,2,9.5,,0.2124349,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921897,6710753,Chantilly (FR),Turf,Good,Other,2412,3,2.1,,0.21174589,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921897,3982403,Chantilly (FR),Turf,Good,Other,2412,4,7.6,,0.1826452,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921897,7355943,Chantilly (FR),Turf,Good,Other,2412,5,34.0,,0.104023516,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921897,7312318,Chantilly (FR),Turf,Good,Other,2412,6,18.0,,0.06408246,6,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,7588000,Chantilly (FR),Turf,Good,Other,1206,1,8.9,,0.17710923,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,9175069,Chantilly (FR),Turf,Good,Other,1206,2,5.3,,0.2693873,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,7427001,Chantilly (FR),Turf,Good,Other,1206,3,3.3,,0.22724566,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,7631396,Chantilly (FR),Turf,Good,Other,1206,4,3.6,,0.22730926,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,7704074,Chantilly (FR),Turf,Good,Other,1206,5,12.0,,0.16233326,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,8476513,Chantilly (FR),Turf,Good,Other,1206,6,13.0,,0.15329368,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,7789323,Chantilly (FR),Turf,Good,Other,1206,7,42.0,,0.03576544,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,8052890,Chantilly (FR),Turf,Good,Other,1206,8,21.0,,0.08865405,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,7930806,Chantilly (FR),Turf,Good,Other,1206,9,20.0,,0.07798733,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921898,7529833,Chantilly (FR),Turf,Good,Other,1206,10,73.0,,0.057936396,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921899,5132147,Chantilly (FR),Turf,Good,Other,1005,1,1.3,,0.33336842,5,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921899,3249734,Chantilly (FR),Turf,Good,Other,1005,2,13.0,,0.11947675,5,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921899,7374075,Chantilly (FR),Turf,Good,Other,1005,3,9.5,,0.2563962,5,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921899,7639523,Chantilly (FR),Turf,Good,Other,1005,4,4.5,,0.32004443,5,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921899,3544380,Chantilly (FR),Turf,Good,Other,1005,5,20.0,,0.123864524,5,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921717,6300664,Santa Anita (USA),Dirt,Fast,Other,1809,1,9.6,,0.23131426,3,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921717,7086977,Santa Anita (USA),Dirt,Fast,Other,1809,2,2.9,,0.64740825,3,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921717,6618001,Santa Anita (USA),Dirt,Fast,Other,1809,3,1.4,,0.20399725,3,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,6868876,Sha Tin (HK),Turf,Good,Other,1608,1,43.0,,0.08814238,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,3358488,Sha Tin (HK),Turf,Good,Other,1608,2,41.0,,0.05409765,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,5492809,Sha Tin (HK),Turf,Good,Other,1608,3,16.0,,0.109113984,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,7006326,Sha Tin (HK),Turf,Good,Other,1608,4,2.1,,0.24307252,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,5708876,Sha Tin (HK),Turf,Good,Other,1608,5,1.9,,0.29733416,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,4998640,Sha Tin (HK),Turf,Good,Other,1608,6,38.0,,0.16379903,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,5104229,Sha Tin (HK),Turf,Good,Other,1608,7,48.0,,0.08010895,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,5050142,Sha Tin (HK),Turf,Good,Other,1608,8,43.0,,0.072962,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921845,5947037,Sha Tin (HK),Turf,Good,Other,1608,9,21.0,,0.08182887,9,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,6706333,Sha Tin (HK),Turf,Good To Firm,Other,1206,1,2.8,,0.17447911,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,5160398,Sha Tin (HK),Turf,Good To Firm,Other,1206,2,10.0,,0.185742,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,5050146,Sha Tin (HK),Turf,Good To Firm,Other,1206,3,15.0,,0.11486968,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,4737848,Sha Tin (HK),Turf,Good To Firm,Other,1206,4,21.0,,0.11717144,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,4782810,Sha Tin (HK),Turf,Good To Firm,Other,1206,5,11.0,,0.11445015,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,6193179,Sha Tin (HK),Turf,Good To Firm,Other,1206,6,5.8,,0.10187475,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,6644989,Sha Tin (HK),Turf,Good To Firm,Other,1206,7,63.0,,0.04340426,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,3607321,Sha Tin (HK),Turf,Good To Firm,Other,1206,8,6.3,,0.056986637,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,5598826,Sha Tin (HK),Turf,Good To Firm,Other,1206,9,11.0,,0.06894817,10,
+2026-05-31,ProxyTSRXGBoostAlgorithm,921847,4628818,Sha Tin (HK),Turf,Good To Firm,Other,1206,10,7.4,,0.084183395,10,
+2026-05-31,AbstainWrapperAlgorithm,918771,6130423,Fakenham,Turf,Good,Hurdle,4725,1,1.8333333333333333,,0.33292773,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,918771,7426990,Fakenham,Turf,Good,Hurdle,4725,2,13.0,,0.2405287,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,918771,7588032,Fakenham,Turf,Good,Hurdle,4725,3,4.333333333333334,,0.26442817,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,918770,4628823,Fakenham,Turf,Good,SteepleChase,3317,1,9.5,,0.104066186,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,918770,2922345,Fakenham,Turf,Good,SteepleChase,3317,2,2.375,,0.309504,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,918770,6005948,Fakenham,Turf,Good,SteepleChase,3317,3,6.5,,0.30319056,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,918768,6260980,Fakenham,Turf,Good,Hurdle,3217,1,5.0,,0.40342522,4,Class 4
+2026-05-31,AbstainWrapperAlgorithm,918768,5320931,Fakenham,Turf,Good,Hurdle,3217,2,2.0,,0.46584818,4,Class 4
+2026-05-31,AbstainWrapperAlgorithm,918768,4001991,Fakenham,Turf,Good,Hurdle,3217,3,3.75,,0.28971353,4,Class 4
+2026-05-31,AbstainWrapperAlgorithm,918768,6130360,Fakenham,Turf,Good,Hurdle,3217,4,8.5,,0.32591546,4,Class 4
+2026-05-31,AbstainWrapperAlgorithm,918767,4719430,Fakenham,Turf,Good,SteepleChase,4222,1,3.2,,0.3174052,4,Class 3
+2026-05-31,AbstainWrapperAlgorithm,918767,3223907,Fakenham,Turf,Good,SteepleChase,4222,2,5.0,,0.18240286,4,Class 3
+2026-05-31,AbstainWrapperAlgorithm,918767,4261324,Fakenham,Turf,Good,SteepleChase,4222,3,12.0,,0.17211762,4,Class 3
+2026-05-31,AbstainWrapperAlgorithm,918767,4159569,Fakenham,Turf,Good,SteepleChase,4222,4,6.0,,0.2804822,4,Class 3
+2026-05-31,AbstainWrapperAlgorithm,918772,4440454,Fakenham,Turf,Good,Hurdle,4021,1,6.5,,0.28685638,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,918772,4728070,Fakenham,Turf,Good,Hurdle,4021,2,3.0,,0.30704764,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,918772,8481037,Fakenham,Turf,Good,Hurdle,4021,3,5.0,,0.08827347,3,Class 5
+2026-05-31,AbstainWrapperAlgorithm,921721,8720928,Kilbeggan (IRE),Turf,Good To Yielding,Hurdle,4825,1,2.25,,0.4235088,3,
+2026-05-31,AbstainWrapperAlgorithm,921721,8991546,Kilbeggan (IRE),Turf,Good To Yielding,Hurdle,4825,2,13.0,,0.14409557,3,
+2026-05-31,AbstainWrapperAlgorithm,921721,7339086,Kilbeggan (IRE),Turf,Good To Yielding,Hurdle,4825,3,8.5,,0.25576395,3,
+2026-05-31,AbstainWrapperAlgorithm,919057,7609870,Nottingham,Turf,Good,Other,2815,1,4.0,,0.18593813,7,Class 5
+2026-05-31,AbstainWrapperAlgorithm,919057,2864381,Nottingham,Turf,Good,Other,2815,2,8.0,,0.09040744,7,Class 5
+2026-05-31,AbstainWrapperAlgorithm,919057,7922017,Nottingham,Turf,Good,Other,2815,3,2.75,,0.16362458,7,Class 5
+2026-05-31,AbstainWrapperAlgorithm,919057,5008005,Nottingham,Turf,Good,Other,2815,4,6.0,,0.1292783,7,Class 5
+2026-05-31,AbstainWrapperAlgorithm,919057,2996571,Nottingham,Turf,Good,Other,2815,5,11.0,,0.060418174,7,Class 5
+2026-05-31,AbstainWrapperAlgorithm,919057,4922365,Nottingham,Turf,Good,Other,2815,6,15.0,,0.044907156,7,Class 5
+2026-05-31,AbstainWrapperAlgorithm,919057,4597235,Nottingham,Turf,Good,Other,2815,7,11.0,,0.06292119,7,Class 5
+2026-05-31,AbstainWrapperAlgorithm,919055,7613483,Nottingham,Turf,Good,Other,2010,1,2.5,,0.23493679,7,Class 3
+2026-05-31,AbstainWrapperAlgorithm,919055,7627175,Nottingham,Turf,Good,Other,2010,2,3.75,,0.20597951,7,Class 3
+2026-05-31,AbstainWrapperAlgorithm,919055,5733262,Nottingham,Turf,Good,Other,2010,3,10.0,,0.06443755,7,Class 3
+2026-05-31,AbstainWrapperAlgorithm,919055,7695907,Nottingham,Turf,Good,Other,2010,4,4.5,,0.22402823,7,Class 3
+2026-05-31,AbstainWrapperAlgorithm,919055,7922023,Nottingham,Turf,Good,Other,2010,5,19.0,,0.19398953,7,Class 3
+2026-05-31,AbstainWrapperAlgorithm,919055,8313812,Nottingham,Turf,Good,Other,2010,6,13.0,,0.16058858,7,Class 3
+2026-05-31,AbstainWrapperAlgorithm,919055,8844525,Nottingham,Turf,Good,Other,2010,7,51.0,,0.08648799,7,Class 3
+2026-05-31,AbstainWrapperAlgorithm,921896,9065289,Chantilly (FR),Turf,Good,Other,2412,1,1.2,,0.35060313,6,
+2026-05-31,AbstainWrapperAlgorithm,921896,8144013,Chantilly (FR),Turf,Good,Other,2412,2,5.7,,0.21617132,6,
+2026-05-31,AbstainWrapperAlgorithm,921896,8602697,Chantilly (FR),Turf,Good,Other,2412,3,22.0,,0.21276964,6,
+2026-05-31,AbstainWrapperAlgorithm,921896,7516445,Chantilly (FR),Turf,Good,Other,2412,4,38.0,,0.11838912,6,
+2026-05-31,AbstainWrapperAlgorithm,921896,8236275,Chantilly (FR),Turf,Good,Other,2412,5,15.0,,0.10099656,6,
+2026-05-31,AbstainWrapperAlgorithm,921896,8973259,Chantilly (FR),Turf,Good,Other,2412,6,13.0,,0.21579611,6,
+2026-05-31,AbstainWrapperAlgorithm,921897,5089307,Chantilly (FR),Turf,Good,Other,2412,1,2.6,,0.35504785,6,
+2026-05-31,AbstainWrapperAlgorithm,921897,7453770,Chantilly (FR),Turf,Good,Other,2412,2,9.5,,0.2124349,6,
+2026-05-31,AbstainWrapperAlgorithm,921897,6710753,Chantilly (FR),Turf,Good,Other,2412,3,2.1,,0.21174589,6,
+2026-05-31,AbstainWrapperAlgorithm,921897,3982403,Chantilly (FR),Turf,Good,Other,2412,4,7.6,,0.1826452,6,
+2026-05-31,AbstainWrapperAlgorithm,921897,7355943,Chantilly (FR),Turf,Good,Other,2412,5,34.0,,0.104023516,6,
+2026-05-31,AbstainWrapperAlgorithm,921897,7312318,Chantilly (FR),Turf,Good,Other,2412,6,18.0,,0.06408246,6,
+2026-05-31,AbstainWrapperAlgorithm,921717,6300664,Santa Anita (USA),Dirt,Fast,Other,1809,1,9.6,,0.23131426,3,
+2026-05-31,AbstainWrapperAlgorithm,921717,7086977,Santa Anita (USA),Dirt,Fast,Other,1809,2,2.9,,0.64740825,3,
+2026-05-31,AbstainWrapperAlgorithm,921717,6618001,Santa Anita (USA),Dirt,Fast,Other,1809,3,1.4,,0.20399725,3,
+2026-05-31,AbstainWrapperAlgorithm,921845,6868876,Sha Tin (HK),Turf,Good,Other,1608,1,43.0,,0.08814238,9,
+2026-05-31,AbstainWrapperAlgorithm,921845,3358488,Sha Tin (HK),Turf,Good,Other,1608,2,41.0,,0.05409765,9,
+2026-05-31,AbstainWrapperAlgorithm,921845,5492809,Sha Tin (HK),Turf,Good,Other,1608,3,16.0,,0.109113984,9,
+2026-05-31,AbstainWrapperAlgorithm,921845,7006326,Sha Tin (HK),Turf,Good,Other,1608,4,2.1,,0.24307252,9,
+2026-05-31,AbstainWrapperAlgorithm,921845,5708876,Sha Tin (HK),Turf,Good,Other,1608,5,1.9,,0.29733416,9,
+2026-05-31,AbstainWrapperAlgorithm,921845,4998640,Sha Tin (HK),Turf,Good,Other,1608,6,38.0,,0.16379903,9,
+2026-05-31,AbstainWrapperAlgorithm,921845,5104229,Sha Tin (HK),Turf,Good,Other,1608,7,48.0,,0.08010895,9,
+2026-05-31,AbstainWrapperAlgorithm,921845,5050142,Sha Tin (HK),Turf,Good,Other,1608,8,43.0,,0.072962,9,
+2026-05-31,AbstainWrapperAlgorithm,921845,5947037,Sha Tin (HK),Turf,Good,Other,1608,9,21.0,,0.08182887,9,

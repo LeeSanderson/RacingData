@@ -91,4 +91,11 @@ The evaluate.py output already includes:
 
 The comparison report is produced by interpreting that output against the baseline from evaluations.md (ProxyTSR: accuracy=0.294, ROI=−22.20, 2517 races) and the production anchor (0.265 / +£78).
 
-A 2-fold demo eval (pipeline smoke test) was also run: `evaluation_comparison_demo_20260602.csv`.
+**2-fold pipeline demo** (`evaluation_comparison_demo_20260602.csv`) completed. Results (noisy, only 25 races — directionally informative only):
+
+| Algorithm | Accuracy | ROI | Races | Coverage |
+|---|---|---|---|---|
+| ProxyTSRXGBoostAlgorithm | 0.400 | −1.367 | 25 | 100% |
+| AbstainWrapperAlgorithm | 0.421 | +0.833 | 19 | 76% |
+
+AbstainWrapper beats baseline on both accuracy and ROI at 76% coverage (above the 50% floor). Early-vs-late (1 fold each, extremely noisy): ProxyTSR Early 0.500/+2.883 vs Late 0.222/−4.250; AbstainWrapper Early 0.583/+5.583 vs Late 0.143/−4.750. The 180-fold run is needed for any conclusions.
