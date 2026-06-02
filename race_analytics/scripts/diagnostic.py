@@ -241,7 +241,7 @@ def _print_candidate_rules(rules: pd.DataFrame) -> None:
         return
     print(
         f"  {'Rule':<40} {'Excluded':>8} {'Coverage':>9}"
-        f" {'WRΔ':>7} {'ROIΔ':>8} {'ROIAfter':>9}"
+        f" {'WRd':>7} {'ROId':>8} {'ROIAfter':>9}"
     )
     print("  " + "-" * 88)
     for _, row in rules.head(20).iterrows():

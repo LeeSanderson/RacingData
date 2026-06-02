@@ -39,12 +39,16 @@ def _train_row(horse_id: int, race_id: int, off: datetime = D1, wins: int = 0,
     }
 
 
-def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
-    return {
+def _race_row(race_id: int, horse_id: int, jockey_id: int,
+              distance_m: float = 1600.0, cls: str | None = None) -> dict:
+    row = {
         "RaceId": race_id, "HorseId": horse_id, "JockeyId": jockey_id,
         "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
-        "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
+        "DistanceInMeters": distance_m, "WeightInPounds": 126.0,
     }
+    if cls is not None:
+        row["Class"] = cls
+    return row
 
 
 def _horse_stat(horse_id: int) -> dict:
@@ -159,3 +163,42 @@ def test_registered_in_algorithms_list():
     from race_analytics.algorithms import ALGORITHMS
     types = [type(a).__name__ for a in ALGORITHMS]
     assert "AbstainWrapperAlgorithm" in types
+
+
+# ── 7. Rules gate: sprint races excluded from predict_field ───────────────────
+
+def test_sprint_race_excluded_from_predict_field(trained_wrapper):
+    sprint_horses = [_race_row(99, h, h, distance_m=1000.0) for h in [901, 902, 903]]
+    non_sprint_horses = [_race_row(10, h, h, distance_m=1600.0) for h in [101, 102, 103]]
+    races = pd.DataFrame(sprint_horses + non_sprint_horses)
+    horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103, 901, 902, 903]])
+    jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 901, 902, 903]])
+
+    result = trained_wrapper.predict_field(races, horse_stats, jockey_stats)
+    assert 99 not in result["RaceId"].values
+
+
+# ── 8. Rules gate: Class 6 races excluded from predict_field ─────────────────
+
+def test_class6_race_excluded_from_predict_field(trained_wrapper):
+    class6_horses = [_race_row(99, h, h, cls="Class 6") for h in [901, 902, 903]]
+    normal_horses = [_race_row(10, h, h) for h in [101, 102, 103]]
+    races = pd.DataFrame(class6_horses + normal_horses)
+    horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103, 901, 902, 903]])
+    jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 901, 902, 903]])
+
+    result = trained_wrapper.predict_field(races, horse_stats, jockey_stats)
+    assert 99 not in result["RaceId"].values
+
+
+# ── 9. predict_field_unfiltered: rules gate still active ─────────────────────
+
+def test_sprint_race_excluded_from_predict_field_unfiltered(trained_wrapper):
+    sprint_horses = [_race_row(99, h, h, distance_m=1000.0) for h in [901, 902, 903]]
+    non_sprint_horses = [_race_row(10, h, h, distance_m=1600.0) for h in [101, 102, 103]]
+    races = pd.DataFrame(sprint_horses + non_sprint_horses)
+    horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103, 901, 902, 903]])
+    jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 901, 902, 903]])
+
+    result = trained_wrapper.predict_field_unfiltered(races, horse_stats, jockey_stats)
+    assert 99 not in result["RaceId"].values

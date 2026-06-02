@@ -4,14 +4,16 @@ from race_analytics.algorithms.base import REQUIRED_PREDICTORS
 from race_analytics.algorithms.binary_win_classifier import _add_race_context
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
 from race_analytics.algorithms.proxy_tsr_xgboost import ProxyTSRXGBoostAlgorithm
+from race_analytics.algorithms.race_rules_gate import RaceRulesGate
 
 
 class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
-    """ProxyTSRXGBoostAlgorithm with a confidence-gate abstain layer.
+    """ProxyTSRXGBoostAlgorithm with confidence-gate + hard-race-rules abstain layer.
 
-    Calibrates from training-window in-sample predictions: threshold set so that
-    `coverage` fraction of training races are kept. The hard-race-rules gate
-    (Filter B, issue 007) is a no-op in this implementation.
+    Filter A (confidence gate): calibrates from training-window in-sample predictions;
+    threshold set so that `coverage` fraction of training races are kept.
+    Filter B (race rules gate): hard exclusions — sprints (<6f) and Class 6 races.
+    A race is bet only if it passes both gates.
     """
 
     def __init__(
@@ -22,6 +24,7 @@ class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
     ):
         super().__init__(**kwargs)
         self._confidence_gate = ConfidenceGate(metric)
+        self._rules_gate = RaceRulesGate()
         self._coverage = coverage
         self._calib_train_df: pd.DataFrame | None = None
 
@@ -68,6 +71,7 @@ class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
         trainer_stats: pd.DataFrame | None = None,
     ) -> pd.DataFrame:
         field = super().predict_field(races, horse_stats, jockey_stats, trainer_stats)
+        field = self._apply_rules_gate(field, races)
         return self._apply_confidence_gate(field)
 
     def predict_field_unfiltered(
@@ -77,10 +81,11 @@ class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
         jockey_stats: pd.DataFrame,
         trainer_stats: pd.DataFrame | None = None,
     ) -> pd.DataFrame:
-        """Full field without confidence gating — for ROI-vs-coverage frontier."""
-        return ProxyTSRXGBoostAlgorithm.predict_field(
+        """Field with rules gate but without confidence gating — for ROI-vs-coverage frontier."""
+        field = ProxyTSRXGBoostAlgorithm.predict_field(
             self, races, horse_stats, jockey_stats, trainer_stats
         )
+        return self._apply_rules_gate(field, races)
 
     def predict(
         self,
@@ -97,6 +102,14 @@ class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
             .drop_duplicates(subset=["RaceId"])
             .reset_index(drop=True)
         )
+
+    def _apply_rules_gate(self, field: pd.DataFrame, races: pd.DataFrame) -> pd.DataFrame:
+        if field.empty:
+            return field
+        excluded = self._rules_gate.excluded_race_ids(races)
+        if not excluded:
+            return field
+        return field[~field["RaceId"].isin(excluded)].copy()
 
     def _apply_confidence_gate(self, field: pd.DataFrame) -> pd.DataFrame:
         if field.empty or "WinProbability" not in field.columns:
