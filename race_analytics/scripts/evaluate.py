@@ -389,8 +389,9 @@ def evaluate(
     algorithms: list[str] | None = None,
     save_results: bool = False,
     results_file: str | None = None,
+    fold_offset: int = 0,
 ) -> dict:
-    fold_dates = _fold_dates(folds)
+    fold_dates = _fold_dates(folds)[fold_offset:]
     selected_algos = _resolve_algorithms(algorithms)
     algo_names = [type(a).__name__ for a in selected_algos]
     all_preds = {n: [] for n in algo_names}
@@ -402,6 +403,8 @@ def evaluate(
     all_unfiltered_preds: dict[str, list[pd.DataFrame]] = {n: [] for n in algo_names}
     csv_rows: list[pd.DataFrame] = []
     baseline = MarketFavouriteBaseline()
+    should_save = save_results or results_file is not None
+    incremental_path = results_file or (_default_csv_path() if should_save else None)
 
     for fold_date in fold_dates:
         print(f"\n--- Fold: {fold_date} ---")
@@ -461,6 +464,12 @@ def evaluate(
                 )
                 all_unfiltered_preds[name].append(unfiltered)
             csv_rows.append(_build_csv_rows(fold_date, name, field_preds, known_fold, results_df))
+
+        # Flush this fold's rows to disk immediately so a crash loses at most one fold
+        if incremental_path and csv_rows:
+            fold_batch = pd.concat(csv_rows[-len(selected_algos):], ignore_index=True)
+            write_header = not os.path.exists(incremental_path)
+            fold_batch.to_csv(incremental_path, mode="a", header=write_header, index=False)
 
         gc.collect()
 
@@ -522,10 +531,7 @@ def evaluate(
                 f" {row['roi']:>8.3f} {int(row['races']):>8}"
             )
 
-    should_save = save_results or results_file is not None
-    if should_save and csv_rows:
-        path = results_file or _default_csv_path()
-        pd.concat(csv_rows, ignore_index=True).to_csv(path, index=False)
+    # CSV already written incrementally per fold above; nothing more to do here.
 
     return {"fit_times": all_fit_times, "predict_times": all_predict_times}
 
@@ -574,6 +580,13 @@ if __name__ == "__main__":
         dest="results_file",
         help="Path for the results CSV; implies --save-results when provided",
     )
+    parser.add_argument(
+        "--fold-offset",
+        type=int,
+        default=0,
+        dest="fold_offset",
+        help="Skip the first N fold dates (use to resume a crashed run)",
+    )
     args = parser.parse_args()
     evaluate(
         folds=args.folds,
@@ -581,4 +594,5 @@ if __name__ == "__main__":
         algorithms=args.algorithms,
         save_results=args.save_results,
         results_file=args.results_file,
+        fold_offset=args.fold_offset,
     )
