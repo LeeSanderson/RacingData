@@ -369,18 +369,41 @@ def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:
         )
 
 
-def _resolve_algorithms(names: list[str] | None) -> list:
-    """Return algorithm instances to run, or raise SystemExit on unknown names."""
-    algo_map = {type(a).__name__: a for a in ALGORITHMS}
+def _resolve_algorithm_classes(names: list[str] | None) -> list:
+    """Return algorithm classes (not instances) for the requested names."""
+    class_map = {type(a).__name__: type(a) for a in ALGORITHMS}
     if not names:
-        return list(ALGORITHMS)
-    unknown = [n for n in names if n not in algo_map]
+        return [type(a) for a in ALGORITHMS]
+    unknown = [n for n in names if n not in class_map]
     if unknown:
-        available = ", ".join(algo_map)
+        available = ", ".join(class_map)
         raise SystemExit(
             f"Unknown algorithm(s): {', '.join(unknown)}\nAvailable: {available}"
         )
-    return [algo_map[n] for n in names]
+    return [class_map[n] for n in names]
+
+
+def _resolve_algorithms(names: list[str] | None) -> list:
+    """Return fresh algorithm instances to run, or raise SystemExit on unknown names.
+
+    Fresh instances are returned on every call so that per-fold re-instantiation
+    prevents XGBoost's C++ memory pool from accumulating across folds.
+    """
+    proto_map = {type(a).__name__: a for a in ALGORITHMS}
+    if not names:
+        selected = list(ALGORITHMS)
+    else:
+        unknown = [n for n in names if n not in proto_map]
+        if unknown:
+            available = ", ".join(proto_map)
+            raise SystemExit(
+                f"Unknown algorithm(s): {', '.join(unknown)}\nAvailable: {available}"
+            )
+        selected = [proto_map[n] for n in names]
+    return [
+        type(a)(max_horses=a.max_horses) if hasattr(a, "max_horses") else type(a)()
+        for a in selected
+    ]
 
 
 def evaluate(
@@ -392,8 +415,7 @@ def evaluate(
     fold_offset: int = 0,
 ) -> dict:
     fold_dates = _fold_dates(folds)[fold_offset:]
-    selected_algos = _resolve_algorithms(algorithms)
-    algo_names = [type(a).__name__ for a in selected_algos]
+    algo_names = [a.__name__ for a in _resolve_algorithm_classes(algorithms)]
     all_preds = {n: [] for n in algo_names}
     all_results_store = {n: [] for n in algo_names}
     all_fav_preds = {n: [] for n in algo_names}
@@ -407,6 +429,9 @@ def evaluate(
     incremental_path = results_file or (_default_csv_path() if should_save else None)
 
     for fold_date in fold_dates:
+        # Fresh instances every fold — prevents XGBoost C++ memory from accumulating
+        # across hundreds of successive fit() calls on the same booster object.
+        selected_algos = _resolve_algorithms(algorithms)
         print(f"\n--- Fold: {fold_date} ---")
         raw = _load_window(fold_date, training_months)
         if raw.empty:

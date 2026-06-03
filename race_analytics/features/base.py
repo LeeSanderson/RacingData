@@ -1,3 +1,4 @@
+import sys
 import pandas as pd
 from datetime import timedelta
 from abc import ABC
@@ -21,7 +22,9 @@ class RaceDataProcessor(ABC):
         days = (df_end - slice_start).days
         label = type(self).__name__
         day_num = 0
-        print(f"    {label}: 0/{days} days", end="\r", flush=True)
+        _tty = sys.stdout.isatty()
+        if _tty:
+            print(f"    {label}: 0/{days} days", end="\r", flush=True)
 
         self.before_process_data(df)
         while slice_start < df_end:
@@ -34,5 +37,7 @@ class RaceDataProcessor(ABC):
                 self.update(df, history, daily_slice)
             slice_start = slice_end
             day_num += 1
-            print(f"    {label}: {day_num}/{days} days", end="\r", flush=True)
-        print(f"    {label}: {days}/{days} days")
+            if _tty:
+                print(f"    {label}: {day_num}/{days} days", end="\r", flush=True)
+        if _tty:
+            print(f"    {label}: {days}/{days} days")
