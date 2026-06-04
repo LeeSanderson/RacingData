@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+1,True,EvensF,2,CompletedRace,919873,39,Newton Abbot,06/03/2026 15:00:00,7051293,Dunkerque DEN
+5,False,5/2F,3.5,CompletedRace,919875,39,Newton Abbot,06/03/2026 15:30:00,5884300,Kenzo Des Bruyeres FR
+0,False,3/1,4,PulledUp,919871,39,Newton Abbot,06/03/2026 16:00:00,5424980,Jena d'Oudairies FR
+1,True,2/1F,3,CompletedRace,919981,40,Nottingham,06/03/2026 16:18:00,4924648,A Major Payne
+2,False,15/8F,2.875,CompletedRace,919984,40,Nottingham,06/03/2026 16:48:00,8455167,Gatehouse IRE
+2,False,100/30F,4.333333333333334,CompletedRace,919989,49,Ripon,06/03/2026 20:12:00,5096521,Canaria Queen
+7,False,6/1,7,CompletedRace,919990,49,Ripon,06/03/2026 20:42:00,7588052,Popty Ping
+2,False,5/2,3.5,CompletedRace,919881,85,Warwick,06/03/2026 19:30:00,8507334,Dream's Ka FR
+0,False,SP,,NonRunner,919879,85,Warwick,06/03/2026 20:00:00,6640606,Thickthorn Tom IRE
+1,True,9/4,3.25,CompletedRace,919878,85,Warwick,06/03/2026 21:00:00,3630330,Theonlywayiswessex FR
 2,False,4/1,5,CompletedRace,920270,1353,Newcastle (AW),06/02/2026 19:15:00,8018255,Pivotal Terms
 3,False,18/1,19,CompletedRace,919973,46,Pontefract,06/02/2026 14:48:00,8075064,Fozzie IRE
 6,False,12/1,13,CompletedRace,919975,46,Pontefract,06/02/2026 15:48:00,5743646,Maris Angel
