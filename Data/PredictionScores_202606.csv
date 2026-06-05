@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+7,False,17/2,9.5,CompletedRace,919995,1212,Ffos Las,06/04/2026 18:20:00,7816040,Tie Fighter IRE
+1,True,16/5,4.2,CompletedRace,919994,1212,Ffos Las,06/04/2026 19:50:00,8039760,Willow Wood IRE
+0,False,SP,,NonRunner,919996,1212,Ffos Las,06/04/2026 20:20:00,7183164,Belle Amie SWE
+3,False,7/4F,2.75,CompletedRace,919992,1212,Ffos Las,06/04/2026 20:50:00,5894810,Ghost Story IRE
+7,False,15/2,8.5,CompletedRace,920001,22,Hamilton,06/04/2026 14:51:00,6287950,Pickersgill IRE
+5,False,7/2,4.5,CompletedRace,919999,22,Hamilton,06/04/2026 15:21:00,3781882,Qitaal
+3,False,3/1,4,CompletedRace,919997,22,Hamilton,06/04/2026 15:51:00,7390860,Altareq
+1,True,1/4F,1.25,CompletedRace,921875,187,Leopardstown,06/04/2026 18:30:00,7801963,Endorsement
+3,False,7/2,4.5,CompletedRace,920422,393,Lingfield (AW),06/04/2026 17:40:00,5982401,Peregrine Falcon IRE
+1,True,100/30,4.333333333333334,CompletedRace,919886,84,Uttoxeter,06/04/2026 15:00:00,2928026,Tiger Orchid IRE
+3,False,100/30,4.333333333333334,CompletedRace,919884,84,Uttoxeter,06/04/2026 15:30:00,5633124,That's Nice IRE
+0,False,SP,,NonRunner,919887,84,Uttoxeter,06/04/2026 16:00:00,6215501,Beorma IRE
+2,False,11/10F,2.1,CompletedRace,919885,84,Uttoxeter,06/04/2026 16:30:00,5845749,Wheresmemoneygone IRE
+4,False,9/2,5.5,CompletedRace,920009,87,Wetherby,06/04/2026 16:12:00,7983209,Dalamara
+6,False,11/1,12,CompletedRace,920008,87,Wetherby,06/04/2026 17:15:00,5809880,Amerjeet
+4,False,9/4F,3.25,CompletedRace,920010,87,Wetherby,06/04/2026 17:50:00,7436440,Northern Tempest
 1,True,EvensF,2,CompletedRace,919873,39,Newton Abbot,06/03/2026 15:00:00,7051293,Dunkerque DEN
 5,False,5/2F,3.5,CompletedRace,919875,39,Newton Abbot,06/03/2026 15:30:00,5884300,Kenzo Des Bruyeres FR
 0,False,3/1,4,PulledUp,919871,39,Newton Abbot,06/03/2026 16:00:00,5424980,Jena d'Oudairies FR
