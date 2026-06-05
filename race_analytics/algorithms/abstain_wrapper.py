@@ -56,8 +56,7 @@ class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
         data = df[["RaceId"] + available].dropna(subset=required).copy()
         if data.empty:
             return
-        probs = self._classifier.predict_proba(data[available])[:, 1]
-        data = data.assign(WinProbability=probs)
+        data = data.assign(WinProbability=self._compute_win_scores(data, available))
         gate = self._confidence_gate
         race_scores = (
             data.groupby("RaceId")["WinProbability"]

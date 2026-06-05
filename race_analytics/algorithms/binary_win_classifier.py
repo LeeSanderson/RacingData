@@ -58,6 +58,9 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
     def _sample_weight(self, data: pd.DataFrame) -> np.ndarray | None:
         return None
 
+    def _compute_win_scores(self, data: pd.DataFrame, feature_cols: list[str]) -> np.ndarray:
+        return self._classifier.predict_proba(data[feature_cols])[:, 1]
+
     def fit(self, train_df: pd.DataFrame) -> None:
         df = self._prepare_training_df(train_df)
         df = _add_race_context(df, self.extra_nan_tolerant_features)
@@ -155,8 +158,7 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
         if len(predictable) == 0:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
 
-        win_probs = self._classifier.predict_proba(predictable[available])[:, 1]
-        predictable["WinProbability"] = win_probs
+        predictable["WinProbability"] = self._compute_win_scores(predictable, available)
         predictable["PredictedRank"] = predictable.groupby("RaceId")["WinProbability"].rank(
             method="dense", ascending=False
         )
