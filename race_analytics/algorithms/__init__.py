@@ -20,4 +20,4 @@ ALGORITHMS = [
     AbstainWrapperAlgorithm(max_horses=10),
 ]
 
-ACTIVE_ALGORITHM = ALGORITHMS[4]  # ProxyTSRXGBoostAlgorithm — see evaluations.md
+ACTIVE_ALGORITHM = ALGORITHMS[6]  # AbstainWrapperAlgorithm — see evaluations.md
