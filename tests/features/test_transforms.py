@@ -10,6 +10,7 @@ from race_analytics.features.transforms import (
     pattern_categories,
     age_band_categories,
     sex_restriction_categories,
+    headgear_columns,
     encode_surfaces,
     encode_going,
     encode_race_type,
@@ -27,6 +28,7 @@ from race_analytics.features.transforms import (
     calculate_is_handicap,
     encode_age_band,
     encode_sex_restriction,
+    encode_headgear,
 )
 
 
@@ -621,4 +623,60 @@ def test_encode_sex_restriction_all_categories_present():
     df = pd.DataFrame({"SexRestriction": ["F&M"]})
     result = encode_sex_restriction(df)
     for col in sex_restriction_categories:
+        assert col in result.columns
+
+
+# --- encode_headgear ---
+
+
+def test_encode_headgear_b1_sets_blinkers_and_first_time():
+    df = pd.DataFrame({"HeadGear": ["b1"]})
+    result = encode_headgear(df)
+    assert result.iloc[0]["HasBlinkers"] == pytest.approx(1.0)
+    assert result.iloc[0]["IsFirstTimeHeadgear"] == pytest.approx(1.0)
+    assert result.iloc[0]["HasCheekpieces"] == pytest.approx(0.0)
+    assert result.iloc[0]["HasTongueTie"] == pytest.approx(0.0)
+    assert result.iloc[0]["HasHood"] == pytest.approx(0.0)
+    assert result.iloc[0]["HasVisor"] == pytest.approx(0.0)
+
+
+def test_encode_headgear_null_gives_all_zeros():
+    df = pd.DataFrame({"HeadGear": [None]})
+    result = encode_headgear(df)
+    for col in headgear_columns:
+        assert result.iloc[0][col] == pytest.approx(0.0)
+
+
+def test_encode_headgear_tp1_sets_tonguetie_cheekpieces_firsttime():
+    df = pd.DataFrame({"HeadGear": ["tp1"]})
+    result = encode_headgear(df)
+    assert result.iloc[0]["HasTongueTie"] == pytest.approx(1.0)
+    assert result.iloc[0]["HasCheekpieces"] == pytest.approx(1.0)
+    assert result.iloc[0]["IsFirstTimeHeadgear"] == pytest.approx(1.0)
+    assert result.iloc[0]["HasBlinkers"] == pytest.approx(0.0)
+
+
+def test_encode_headgear_no_suffix_gives_false_first_time():
+    df = pd.DataFrame({"HeadGear": ["b"]})
+    result = encode_headgear(df)
+    assert result.iloc[0]["HasBlinkers"] == pytest.approx(1.0)
+    assert result.iloc[0]["IsFirstTimeHeadgear"] == pytest.approx(0.0)
+
+
+def test_encode_headgear_changed_true_when_different():
+    df = pd.DataFrame({"HeadGear": ["b"], "LastRaceHeadGear": ["v"]})
+    result = encode_headgear(df)
+    assert result.iloc[0]["HeadGearChanged"] == pytest.approx(1.0)
+
+
+def test_encode_headgear_changed_false_when_both_null():
+    df = pd.DataFrame({"HeadGear": [None], "LastRaceHeadGear": [None]})
+    result = encode_headgear(df)
+    assert result.iloc[0]["HeadGearChanged"] == pytest.approx(0.0)
+
+
+def test_encode_headgear_all_columns_present():
+    df = pd.DataFrame({"HeadGear": ["b1"]})
+    result = encode_headgear(df)
+    for col in headgear_columns:
         assert col in result.columns

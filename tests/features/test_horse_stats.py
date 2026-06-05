@@ -171,3 +171,18 @@ def test_horse_stats_encoded_surface_columns(two_day_df):
     row = _secret_on(two_day_df, td.Chelmsford21stAt1805)
     assert row["LastRaceSurface_Turf"] == 1.0
     assert row["LastRaceSurface_AllWeather"] == 0.0
+
+
+def test_last_race_headgear_reflects_prior_race():
+    """Day-2 row for SecretSecret must carry the HeadGear code from day 1."""
+    df = _make_processed_df(
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2),
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=1),
+        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, FinishingPosition=1),
+    )
+    df.loc[df["RaceId"] == td.Ballinrobe20thAt1515.RaceId, "HeadGear"] = "b1"
+    df.loc[df["RaceId"] == td.Chelmsford21stAt1805.RaceId, "HeadGear"] = "v"
+
+    CalculateHorsesStats().process_race_data(df)
+    row = _secret_on(df, td.Chelmsford21stAt1805)
+    assert row["LastRaceHeadGear"] == "b1"

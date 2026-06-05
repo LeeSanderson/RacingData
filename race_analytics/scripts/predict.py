@@ -25,8 +25,9 @@ _RACE_CARD_COLS = [
     "RatingBand",
     "AgeBand",
     "SexRestriction",
+    "HeadGear",
 ]
-_OUTPUT_COLS = ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName"]
+_OUTPUT_COLS = ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName", "WinProbability"]
 
 
 def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
@@ -45,7 +46,20 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
 
     algorithm.fit(race_features)
     card = race_cards[[c for c in _RACE_CARD_COLS if c in race_cards.columns]].copy()
-    winners = algorithm.predict(card, horse_stats, jockey_stats, trainer_stats)
+
+    # Use predict_field() when available to capture WinProbability for each top pick.
+    if hasattr(algorithm, "predict_field"):
+        field = algorithm.predict_field(card, horse_stats, jockey_stats, trainer_stats)
+        if field.empty or "PredictedRank" not in field.columns:
+            winners = pd.DataFrame(columns=["RaceId", "HorseId"])
+        else:
+            winners = (
+                field[field["PredictedRank"] == 1][["RaceId", "HorseId", "WinProbability"]]
+                .drop_duplicates(subset=["RaceId"])
+                .reset_index(drop=True)
+            )
+    else:
+        winners = algorithm.predict(card, horse_stats, jockey_stats, trainer_stats)
 
     output_path = os.path.join(data_path, "TodaysPredictions.csv")
 
@@ -58,8 +72,9 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
         ["RaceId", "HorseId", "CourseId", "CourseName", "Off", "HorseName"]
     ].copy()
     predictions = pd.merge(winners, meta, on=["RaceId", "HorseId"], how="left")
+    out_cols = [c for c in _OUTPUT_COLS if c in predictions.columns]
     predictions = predictions.sort_values(["CourseName", "Off"])[
-        _OUTPUT_COLS
+        out_cols
     ].reset_index(drop=True)
     predictions.to_csv(output_path, index=False)
     return predictions

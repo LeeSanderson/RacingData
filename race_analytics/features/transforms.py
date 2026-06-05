@@ -291,6 +291,36 @@ def encode_age_band(races: pd.DataFrame) -> pd.DataFrame:
     return races
 
 
+headgear_columns = [
+    "IsFirstTimeHeadgear",
+    "HasBlinkers",
+    "HasCheekpieces",
+    "HasTongueTie",
+    "HasHood",
+    "HasVisor",
+    "HeadGearChanged",
+]
+
+
+def encode_headgear(races: pd.DataFrame) -> pd.DataFrame:
+    races = races.drop(headgear_columns, axis=1, errors="ignore")
+    codes = races["HeadGear"].fillna("").astype(str) if "HeadGear" in races.columns else pd.Series("", index=races.index)
+    races["IsFirstTimeHeadgear"] = codes.str.endswith("1").astype(float)
+    base = codes.str.rstrip("1")
+    races["HasBlinkers"] = base.str.contains("b", regex=False).astype(float)
+    races["HasCheekpieces"] = base.str.contains("p", regex=False).astype(float)
+    races["HasTongueTie"] = base.str.contains("t", regex=False).astype(float)
+    races["HasHood"] = base.str.contains("h", regex=False).astype(float)
+    races["HasVisor"] = base.str.contains("v", regex=False).astype(float)
+    if "LastRaceHeadGear" in races.columns:
+        last = races["LastRaceHeadGear"].fillna("").astype(str)
+        both_empty = (codes == "") & (last == "")
+        races["HeadGearChanged"] = np.where(both_empty, 0.0, (codes != last).astype(float))
+    else:
+        races["HeadGearChanged"] = 0.0
+    return races
+
+
 def encode_sex_restriction(races: pd.DataFrame) -> pd.DataFrame:
     races = races.drop(sex_restriction_categories, axis=1, errors="ignore")
     if "SexRestriction" not in races.columns:

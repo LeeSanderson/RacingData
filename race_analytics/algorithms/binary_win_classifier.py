@@ -24,6 +24,7 @@ from race_analytics.features.transforms import (
     calculate_is_handicap,
     encode_age_band,
     encode_sex_restriction,
+    encode_headgear,
 )
 
 
@@ -115,6 +116,7 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
         merged = calculate_is_handicap(merged)
         merged = encode_age_band(merged)
         merged = encode_sex_restriction(merged)
+        merged = encode_headgear(merged)
         merged = self._prepare_prediction_df(merged)
         merged = _add_race_context(merged, self.extra_nan_tolerant_features)
         merged = calculate_draw_features(merged)

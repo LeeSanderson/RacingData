@@ -23,6 +23,7 @@ class CalculateHorsesStats(RaceDataProcessor):
     LAST_RACE_OFFICIAL_RATING = "LastRaceOfficialRating"
     LAST_RACE_RACING_POST_RATING = "LastRaceRacingPostRating"
     LAST_RACE_TOP_SPEED_RATING = "LastRaceTopSpeedRating"
+    LAST_RACE_HEAD_GEAR = "LastRaceHeadGear"
     AVG_RELATIVE_FINISHING_POSITION = "LastRaceAvgRelFinishingPosition"
     LAST3_AVG_SPEED = "Last3RaceAvgSpeed"
     LAST3_SPEED_TREND = "Last3RaceSpeedTrend"
@@ -47,12 +48,13 @@ class CalculateHorsesStats(RaceDataProcessor):
                 self.LAST3_AVG_SPEED,
                 self.LAST3_SPEED_TREND,
                 self.LAST3_AVG_REL_POS,
+                self.LAST_RACE_HEAD_GEAR,
             ]
             + [f"LastRace{surface}" for surface in surface_categories]
             + [f"LastRace{going}" for going in going_categories]
             + [f"LastRace{rt}" for rt in race_type_categories]
         )
-        string_cols = {self.LAST_RACE_GOING, self.LAST_RACE_SURFACE}
+        string_cols = {self.LAST_RACE_GOING, self.LAST_RACE_SURFACE, self.LAST_RACE_HEAD_GEAR}
         for col in self.new_column_names:
             df[col] = None if col in string_cols else np.nan
         df[self.NUMBER_OF_PRIOR_RACES] = 1.0
@@ -109,6 +111,9 @@ class CalculateHorsesStats(RaceDataProcessor):
         new_columns[self.LAST_RACE_OFFICIAL_RATING] = last_race["OfficialRating"].values[0]
         new_columns[self.LAST_RACE_RACING_POST_RATING] = last_race["RacingPostRating"].values[0]
         new_columns[self.LAST_RACE_TOP_SPEED_RATING] = last_race["TopSpeedRating"].values[0]
+        new_columns[self.LAST_RACE_HEAD_GEAR] = (
+            last_race["HeadGear"].values[0] if "HeadGear" in last_race.columns else None
+        )
         new_columns[self.AVG_RELATIVE_FINISHING_POSITION] = (
             horse_races["FinishingPosition"] / horse_races["HorseCount"]
         ).mean()
@@ -192,6 +197,7 @@ def extract_horse_stats(races: pd.DataFrame) -> pd.DataFrame:
         "OfficialRating": "LastRaceOfficialRating",
         "RacingPostRating": "LastRaceRacingPostRating",
         "TopSpeedRating": "LastRaceTopSpeedRating",
+        "HeadGear": "LastRaceHeadGear",
         **{s: f"LastRace{s}" for s in surface_categories},
         **{g: f"LastRace{g}" for g in going_categories},
         **{r: f"LastRace{r}" for r in race_type_categories},
@@ -199,6 +205,7 @@ def extract_horse_stats(races: pd.DataFrame) -> pd.DataFrame:
     cols = [
         "HorseId", "Off", "DistanceInMeters", "WeightInPounds", "Speed",
         "OfficialRating", "RacingPostRating", "TopSpeedRating",
+        "HeadGear",
         "LastRaceAvgRelFinishingPosition",
         *surface_categories, *going_categories, *race_type_categories,
     ]

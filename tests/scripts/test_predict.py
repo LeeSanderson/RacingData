@@ -162,7 +162,7 @@ def test_predict_passes_trainer_stats_to_algorithm(data_dir):
 def test_predict_empty_winners_writes_empty_csv(data_dir):
     predict(data_path=data_dir, algorithm=_EmptyAlgo())
     result = pd.read_csv(os.path.join(data_dir, "TodaysPredictions.csv"))
-    assert list(result.columns) == ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName"]
+    assert list(result.columns) == ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName", "WinProbability"]
     assert len(result) == 0
 
 

@@ -22,6 +22,7 @@ from race_analytics.features.transforms import (
     calculate_is_handicap,
     encode_age_band,
     encode_sex_restriction,
+    encode_headgear,
 )
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
@@ -292,6 +293,7 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
     gc.collect()
     CalculateHorsesStats().process_race_data(races)
     gc.collect()
+    races = encode_headgear(races)
     CalculateJockeyStats().process_race_data(races)
     gc.collect()
     CalculateTrainerStats().process_race_data(races)
@@ -329,6 +331,7 @@ def _race_card(fold_df: pd.DataFrame) -> pd.DataFrame:
         "RatingBand",
         "AgeBand",
         "SexRestriction",
+        "HeadGear",
     ]
     return fold_df[[c for c in cols if c in fold_df.columns]].copy()
 

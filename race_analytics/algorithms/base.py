@@ -51,6 +51,13 @@ REQUIRED_PREDICTORS = [
     "TrainerWinPercentage",
     "TrainerTop3Percentage",
     "TrainerAvgRelFinishingPosition",
+    "IsFirstTimeHeadgear",
+    "HasBlinkers",
+    "HasCheekpieces",
+    "HasTongueTie",
+    "HasHood",
+    "HasVisor",
+    "HeadGearChanged",
 ]
 
 OPTIONAL_PREDICTORS = [
