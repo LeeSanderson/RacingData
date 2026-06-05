@@ -118,3 +118,15 @@ class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
         race_scores = field.groupby("RaceId")["WinProbability"].apply(gate.score)
         kept = race_scores[race_scores >= gate.threshold].index
         return field[field["RaceId"].isin(kept)].copy()
+
+
+class AbstainWrapperGapAlgorithm(AbstainWrapperAlgorithm):
+    """AbstainWrapperAlgorithm using gap metric (top_prob - second_prob) at 50% coverage.
+
+    A wide gap signals the model sees a clear standout; a narrow gap signals a
+    genuinely contested race. Post-hoc analysis on 2,330-race eval CSV showed gap
+    consistently dominates top_prob at coverage ≤ 65% after the rules gate is applied.
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(metric="gap", coverage=0.5, **kwargs)
