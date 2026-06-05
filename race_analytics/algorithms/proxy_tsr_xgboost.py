@@ -1,5 +1,6 @@
 from typing import ClassVar
 
+import numpy as np
 import pandas as pd
 from xgboost import XGBClassifier
 
@@ -74,6 +75,18 @@ class ProxyTSRXGBoostAlgorithm(BinaryWinClassifierAlgorithm):
         if not self._horse_proxy_tsr.empty:
             merged = pd.merge(merged, self._horse_proxy_tsr, on="HorseId", how="left")
         return merged
+
+
+class WeightedPositionProxyTSRAlgorithm(ProxyTSRXGBoostAlgorithm):
+    """ProxyTSRXGBoostAlgorithm with position-based sample weighting.
+
+    Training samples are weighted by 1/FinishingPosition (winner=1.0, 2nd=0.5, …).
+    """
+
+    def _sample_weight(self, data: pd.DataFrame) -> np.ndarray | None:
+        if "FinishingPosition" not in data.columns:
+            return None
+        return (1.0 / data["FinishingPosition"]).to_numpy()
 
 
 class TunedProxyTSRXGBoostAlgorithm(ProxyTSRXGBoostAlgorithm):

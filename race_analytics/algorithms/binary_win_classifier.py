@@ -55,6 +55,9 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
     def _apply_gate(self, predictable: pd.DataFrame) -> pd.DataFrame:
         return predictable
 
+    def _sample_weight(self, data: pd.DataFrame) -> np.ndarray | None:
+        return None
+
     def fit(self, train_df: pd.DataFrame) -> None:
         df = self._prepare_training_df(train_df)
         df = _add_race_context(df, self.extra_nan_tolerant_features)
@@ -65,14 +68,17 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
         available = [c for c in feature_cols if c in df.columns]
         required = [c for c in REQUIRED_PREDICTORS if c in df.columns] + ["Wins"]
 
-        data = df[available + ["Wins"]].dropna(subset=required).copy()
+        label_cols = ["Wins"] + (["FinishingPosition"] if "FinishingPosition" in df.columns else [])
+        data = df[available + label_cols].dropna(subset=required).copy()
         if "DaysRested" in data.columns:
             data.loc[data["DaysRested"] > 10, "DaysRested"] = 10
         if "DaysSinceJockeyLastRaced" in data.columns:
             data.loc[data["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
 
         self._feature_cols = available
-        self._classifier.fit(data[available], data["Wins"])
+        sw = self._sample_weight(data)
+        fit_kwargs = {"sample_weight": sw} if sw is not None else {}
+        self._classifier.fit(data[available], data["Wins"], **fit_kwargs)
 
     def _run_prediction(
         self,

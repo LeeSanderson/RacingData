@@ -7,10 +7,12 @@ from race_analytics.algorithms.ratings_xgboost import (
 from race_analytics.algorithms.proxy_tsr_xgboost import (
     ProxyTSRXGBoostAlgorithm,
     TunedProxyTSRXGBoostAlgorithm,
+    WeightedPositionProxyTSRAlgorithm,
 )
 from race_analytics.algorithms.abstain_wrapper import (
     AbstainWrapperAlgorithm,
     AbstainWrapperGapAlgorithm,
+    AbstainWeightedPositionAlgorithm,
 )
 
 ALGORITHMS = [
@@ -22,6 +24,8 @@ ALGORITHMS = [
     TunedProxyTSRXGBoostAlgorithm(max_horses=10),
     AbstainWrapperAlgorithm(max_horses=10),
     AbstainWrapperGapAlgorithm(max_horses=10),
+    WeightedPositionProxyTSRAlgorithm(max_horses=10),
+    AbstainWeightedPositionAlgorithm(max_horses=10),
 ]
 
 ACTIVE_ALGORITHM = ALGORITHMS[6]  # AbstainWrapperAlgorithm — see evaluations.md

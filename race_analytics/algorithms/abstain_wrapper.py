@@ -3,7 +3,10 @@ import pandas as pd
 from race_analytics.algorithms.base import REQUIRED_PREDICTORS
 from race_analytics.algorithms.binary_win_classifier import _add_race_context
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
-from race_analytics.algorithms.proxy_tsr_xgboost import ProxyTSRXGBoostAlgorithm
+from race_analytics.algorithms.proxy_tsr_xgboost import (
+    ProxyTSRXGBoostAlgorithm,
+    WeightedPositionProxyTSRAlgorithm,
+)
 from race_analytics.algorithms.race_rules_gate import RaceRulesGate
 
 
@@ -130,3 +133,7 @@ class AbstainWrapperGapAlgorithm(AbstainWrapperAlgorithm):
 
     def __init__(self, **kwargs):
         super().__init__(metric="gap", coverage=0.5, **kwargs)
+
+
+class AbstainWeightedPositionAlgorithm(AbstainWrapperAlgorithm, WeightedPositionProxyTSRAlgorithm):
+    """AbstainWrapperAlgorithm with position-based sample weighting (1/FinishingPosition)."""
