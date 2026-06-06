@@ -34,3 +34,21 @@ Use `--fold-offset` for crash recovery across sessions (~75 hours total). Consid
 
 - User story 13
 - User story 14
+
+## Progress (2026-06-06)
+
+All blockers resolved (issues 013–016 done). 2-fold smoke test (2 months training) completed cleanly:
+- All 6 algorithms ran without errors across both folds.
+- AbstainWrapperSplitAlgorithm is notably slower (~17s fit vs ~6s for others) due to training 3 sub-models.
+- Feature engineering dominates per-fold time; estimated ~5–7 min/fold, so 180 folds ≈ 18–30 hours.
+
+**Full run command (resume with --fold-offset N if interrupted):**
+
+```
+python -m race_analytics.scripts.evaluate `
+  --folds 180 --training-months 7 `
+  --algorithms "AbstainWrapperAlgorithm,AbstainWrapperGapAlgorithm,AbstainWeightedPositionAlgorithm,AbstainWrapperLTRAlgorithm,AbstainWrapperSplitAlgorithm,AbstainRecencyWeightedAlgorithm" `
+  --save-results
+```
+
+Results saved incrementally to `evaluation_results_YYYYMMDD.csv` — each fold is flushed to disk immediately, so `--fold-offset N` can resume from fold N if the run is interrupted.
