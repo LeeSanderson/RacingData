@@ -5,6 +5,7 @@ from race_analytics.algorithms.binary_win_classifier import _add_race_context
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
 from race_analytics.algorithms.proxy_tsr_xgboost import (
     ProxyTSRXGBoostAlgorithm,
+    RecencyWeightedProxyTSRAlgorithm,
     WeightedPositionProxyTSRAlgorithm,
 )
 from race_analytics.algorithms.race_rules_gate import RaceRulesGate
@@ -138,3 +139,9 @@ class AbstainWeightedPositionAlgorithm(
     AbstainWrapperAlgorithm, WeightedPositionProxyTSRAlgorithm
 ):
     """AbstainWrapperAlgorithm with position-based sample weighting (1/FinishingPosition)."""
+
+
+class AbstainRecencyWeightedAlgorithm(
+    AbstainWrapperAlgorithm, RecencyWeightedProxyTSRAlgorithm
+):
+    """AbstainWrapperAlgorithm with exponential decay sample weighting."""
