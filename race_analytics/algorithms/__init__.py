@@ -20,6 +20,10 @@ from race_analytics.algorithms.ltr_proxy_tsr import (
     LTRProxyTSRAlgorithm,
     AbstainWrapperLTRAlgorithm,
 )
+from race_analytics.algorithms.split_race_type import (
+    SplitRaceTypeAlgorithm,
+    AbstainWrapperSplitAlgorithm,
+)
 
 ALGORITHMS = [
     RidgeRegressionAlgorithm(max_horses=10),
@@ -36,6 +40,8 @@ ALGORITHMS = [
     AbstainWrapperLTRAlgorithm(max_horses=10),
     RecencyWeightedProxyTSRAlgorithm(max_horses=10),
     AbstainRecencyWeightedAlgorithm(max_horses=10),
+    SplitRaceTypeAlgorithm(max_horses=10),
+    AbstainWrapperSplitAlgorithm(max_horses=10),
 ]
 
 ACTIVE_ALGORITHM = ALGORITHMS[6]  # AbstainWrapperAlgorithm — see evaluations.md
