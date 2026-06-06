@@ -67,7 +67,7 @@ python -m pytest Data/utils/ Data/algorithms/ Data/scripts/
 
 ## 7. Commit
 
-Make one git commit. The message must include:
+Stage **all** changed files, including the moved issue file (now at `issues/done/<filename>`). Make one git commit. The message must include:
 
 1. Key decisions made
 2. Files changed
