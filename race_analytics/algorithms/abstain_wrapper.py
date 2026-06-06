@@ -59,9 +59,7 @@ class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
         data = data.assign(WinProbability=self._compute_win_scores(data, available))
         gate = self._confidence_gate
         race_scores = (
-            data.groupby("RaceId")["WinProbability"]
-            .apply(gate.score)
-            .tolist()
+            data.groupby("RaceId")["WinProbability"].apply(gate.score).tolist()
         )
         gate.calibrate(race_scores, self._coverage)
 
@@ -105,7 +103,9 @@ class AbstainWrapperAlgorithm(ProxyTSRXGBoostAlgorithm):
             .reset_index(drop=True)
         )
 
-    def _apply_rules_gate(self, field: pd.DataFrame, races: pd.DataFrame) -> pd.DataFrame:
+    def _apply_rules_gate(
+        self, field: pd.DataFrame, races: pd.DataFrame
+    ) -> pd.DataFrame:
         if field.empty:
             return field
         excluded = self._rules_gate.excluded_race_ids(races)
@@ -134,5 +134,7 @@ class AbstainWrapperGapAlgorithm(AbstainWrapperAlgorithm):
         super().__init__(metric="gap", coverage=0.5, **kwargs)
 
 
-class AbstainWeightedPositionAlgorithm(AbstainWrapperAlgorithm, WeightedPositionProxyTSRAlgorithm):
+class AbstainWeightedPositionAlgorithm(
+    AbstainWrapperAlgorithm, WeightedPositionProxyTSRAlgorithm
+):
     """AbstainWrapperAlgorithm with position-based sample weighting (1/FinishingPosition)."""

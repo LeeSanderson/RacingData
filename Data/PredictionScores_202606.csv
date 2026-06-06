@@ -1,4 +1,21 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
+6,False,5/1,6,CompletedRace,920012,5,Bath,06/05/2026 17:00:00,5228807,No More Bolero
+6,False,11/2,6.5,CompletedRace,920017,5,Bath,06/05/2026 19:15:00,4269993,Wedgewood
+5,False,12/1,13,CompletedRace,920014,5,Bath,06/05/2026 21:00:00,2719428,City Escape IRE
+1,True,4/1,5,CompletedRace,920036,15,Doncaster,06/05/2026 17:10:00,7686986,Division Day
+1,True,6/1,7,CompletedRace,920035,15,Doncaster,06/05/2026 20:40:00,7475609,Domination IRE
+9,False,14/1,15,CompletedRace,915536,17,Epsom,06/05/2026 16:00:00,7566150,Venetian Lace IRE
+6,False,EvensF,2,CompletedRace,920046,17,Epsom,06/05/2026 17:15:00,7538895,Stellar Sunrise
+6,False,4/1,5,CompletedRace,920021,21,Goodwood,06/05/2026 17:25:00,6300765,Bizou
+3,False,17/2,9.5,CompletedRace,920022,21,Goodwood,06/05/2026 18:27:00,5900723,Moostar
+3,False,11/4,3.75,CompletedRace,920020,21,Goodwood,06/05/2026 19:37:00,5198118,Asteverdi
+1,True,1/3F,1.3333333333333333,CompletedRace,920059,16,Musselburgh,06/05/2026 13:50:00,6202555,Cascade Hall IRE
+5,False,7/4F,2.75,CompletedRace,920061,16,Musselburgh,06/05/2026 15:00:00,7592682,Sandy Craic IRE
+8,False,9/4,3.25,CompletedRace,920060,16,Musselburgh,06/05/2026 15:40:00,5104236,Starliner IRE
+5,False,13/2,7.5,CompletedRace,920057,16,Musselburgh,06/05/2026 16:15:00,6577905,Tiva IRE
+2,False,87/100F,1.87,CompletedRace,921983,445,Saratoga,06/05/2026 22:08:00,9050928,Always A Runner
+2,False,39/20,2.95,CompletedRace,921986,445,Saratoga,06/05/2026 23:25:00,6582490,Fully Subscribed
+1,True,4/9F,1.4444444444444444,CompletedRace,920024,80,Thirsk,06/05/2026 16:10:00,8062549,King Of Berkshire IRE
 7,False,17/2,9.5,CompletedRace,919995,1212,Ffos Las,06/04/2026 18:20:00,7816040,Tie Fighter IRE
 1,True,16/5,4.2,CompletedRace,919994,1212,Ffos Las,06/04/2026 19:50:00,8039760,Willow Wood IRE
 0,False,SP,,NonRunner,919996,1212,Ffos Las,06/04/2026 20:20:00,7183164,Belle Amie SWE
