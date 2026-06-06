@@ -1,3 +1,5 @@
+using CsvHelper.Configuration.Attributes;
+
 namespace RaceDataDownloader.Models;
 
 public class RaceCardPrediction
@@ -8,4 +10,5 @@ public class RaceCardPrediction
     public DateTime Off { get; set; }
     public int HorseId { get; set; }
     public string HorseName { get; set; } = string.Empty;
+    [Optional] public double? WinProbability { get; set; }
 }

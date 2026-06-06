@@ -90,6 +90,56 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
     }
 
     [Fact]
+    public async Task CarryWinProbabilityThroughToScore()
+    {
+        var predictionWithWinProbability = new List<RaceCardPrediction>
+        {
+            new RaceCardPrediction
+            {
+                RaceId = 1,
+                CourseId = 1,
+                CourseName = "Course1",
+                HorseId = 1,
+                HorseName = "Horse1",
+                Off = new DateTime(2022, 05, 13, 13, 40, 0),
+                WinProbability = 0.4
+            }
+        };
+        _mockFileSystem.File.ReadAllTextAsync(PredictionsFile)
+            .Returns(Task.FromResult(await predictionWithWinProbability.ToCsvString()));
+        _mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
+        string? savedCsv = null;
+        _mockFileSystem.File.WriteAllTextAsync(PredictionsScoresFile, Arg.Do<string>(x => savedCsv = x))
+            .Returns(Task.CompletedTask);
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        var scores = await savedCsv!.FromCsvString<RaceCardPredictionScore>();
+        scores.Single().WinProbability.Should().Be(0.4);
+    }
+
+    [Fact]
+    public async Task HandleLegacyPredictionsFileMissingWinProbabilityWithoutThrowing()
+    {
+        // Simulate a legacy TodaysPredictions.csv that has no WinProbability column
+        var legacyPrediction = new { RaceId = 1, CourseId = 1, CourseName = "Course1", Off = new DateTime(2022, 05, 13, 13, 40, 0), HorseId = 1, HorseName = "Horse1" };
+        var legacyCsv = await new[] { legacyPrediction }.ToCsvString();
+        _mockFileSystem.File.ReadAllTextAsync(PredictionsFile).Returns(Task.FromResult(legacyCsv));
+        _mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
+        string? savedCsv = null;
+        _mockFileSystem.File.WriteAllTextAsync(PredictionsScoresFile, Arg.Do<string>(x => savedCsv = x))
+            .Returns(Task.CompletedTask);
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var scores = await savedCsv!.FromCsvString<RaceCardPredictionScore>();
+        scores.Single().WinProbability.Should().BeNull();
+    }
+
+    [Fact]
     public async Task ScorePredictionThatHorse1WillWinAsWon()
     {
         _mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
