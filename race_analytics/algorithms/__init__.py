@@ -44,4 +44,4 @@ ALGORITHMS = [
     AbstainWrapperSplitAlgorithm(max_horses=10),
 ]
 
-ACTIVE_ALGORITHM = ALGORITHMS[6]  # AbstainWrapperAlgorithm — see evaluations.md
+ACTIVE_ALGORITHM = ALGORITHMS[13]  # AbstainRecencyWeightedAlgorithm — see evaluations.md

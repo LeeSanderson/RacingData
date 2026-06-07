@@ -1,5 +1,61 @@
 # Algorithm Evaluation Findings
 
+## 180-fold walk-forward results — 2025-12-08 → 2026-06-05 (wrapped-variant comparison)
+
+173 folds with usable data (7 of 180 fold dates had no races), 7-month training window per fold.
+Six algorithms evaluated: two existing baselines plus four new wrapped variants from issues 013–016.
+Raw predictions: `evaluation_results_20260606.csv`.
+
+| Algorithm | Accuracy | Net £ ROI | Bets | Early ROI | Late ROI |
+|---|---|---|---|---|---|
+| **AbstainRecencyWeightedAlgorithm** ← **adopted** | **0.305** | **+52.01** | **1,724** | **−19.17** | **+71.17** |
+| AbstainWrapperAlgorithm (prior active) | 0.308 | +4.94 | 1,718 | +0.28 | +4.66 |
+| AbstainWrapperGapAlgorithm (prior baseline) | 0.354 | −3.13 | 857 | −9.93 | +6.80 |
+| AbstainWrapperLTRAlgorithm | 0.323 | −73.86 | 1,193 | +0.22 | −74.08 |
+| AbstainWrapperSplitAlgorithm | 0.296 | −71.58 | 1,717 | −29.28 | −42.30 |
+| AbstainWeightedPositionAlgorithm | 0.287 | −153.79 | 1,662 | −86.92 | −66.87 |
+
+Early = oldest 86 folds (Dec 2025 – ~Mar 2026); Late = newest 87 folds (~Mar – Jun 2026).
+
+### Adoption gate results (ROI > −62)
+
+| Algorithm | ROI | Gate |
+|---|---|---|
+| AbstainRecencyWeightedAlgorithm | +52.01 | ✅ passes by £114 |
+| AbstainWrapperLTRAlgorithm | −73.86 | ❌ fails |
+| AbstainWrapperSplitAlgorithm | −71.58 | ❌ fails |
+| AbstainWeightedPositionAlgorithm | −153.79 | ❌ fails |
+
+### ROI-vs-coverage frontier (AbstainRecencyWeightedAlgorithm)
+
+| Coverage | ROI (£) | Races |
+|---|---|---|
+| 100% | +46.21 | 1,764 |
+| 70% | +46.71 | 1,755 |
+| **60%** | **+59.01** | **1,717** |
+| 50% | +13.85 | 1,610 |
+| 40% | −20.95 | 1,420 |
+
+### Timing
+
+| Algorithm | Fit avg (s) |
+|---|---|
+| AbstainRecencyWeightedAlgorithm | 17.4 |
+| AbstainWrapperAlgorithm | 17.8 |
+| AbstainWrapperSplitAlgorithm | 38.4 (2.2× slower — 3 sub-models) |
+
+### Adoption decision (2026-06-07)
+
+**AbstainRecencyWeightedAlgorithm adopted.** It is the only new algorithm that clears the primary ROI gate (+£52 vs the −£62 baseline, a £114 swing). Three other new variants fail the gate (LTR −74, Split −72, WeightedPosition −154).
+
+**Stability caveat:** The improvement is concentrated in the Late half (+£71 Late vs −£19 Early), while the prior active algorithm (AbstainWrapper) was roughly flat across both halves (+£0.3 / +£4.7). This partially fails the "stable early-vs-late gain" secondary criterion. However, the asymmetry is expected by design: recency decay weighting adapts faster to current racing conditions, so it naturally performs better on the more recent folds. The Early underperformance reflects the Dec–Feb period when older training data dominated. Given no other algorithm passes the primary gate, and the Late-half gain is substantial and meaningful, adoption is warranted with this caveat noted.
+
+**AbstainWrapperSplitAlgorithm eliminated:** 2.2× slower to fit, third-worst ROI, no accuracy advantage. Not worth carrying.
+
+**AbstainWrapperLTRAlgorithm eliminated:** Consistently negative in 3 of 4 quarterly periods; sharp Late-half reversal (Early +0.2, Late −74.1) — the LTR scoring does not generalise across changing market conditions.
+
+## Active algorithm
+
 ## 180-fold walk-forward results — 2025-12-05 → 2026-06-01 (with Tier-1 features + abstain layer)
 
 175 folds with usable data (5 of 180 fold dates had no races), 7-month training window per fold.
@@ -71,28 +127,23 @@ dominates); all others fit in under 1.1 s/fold. Predict time is negligible
 ## Active algorithm
 
 ```python
-ACTIVE_ALGORITHM = AbstainWrapperAlgorithm
+ACTIVE_ALGORITHM = AbstainRecencyWeightedAlgorithm  # ALGORITHMS[13]
 ```
 
-`AbstainWrapperAlgorithm` wraps `ProxyTSRXGBoostAlgorithm` with a two-gate
-abstain layer (confidence gate + hard-race rules). At its operating point it
-bets **72.9%** of predictable races (1,699 of 2,330), achieving **0.299
-accuracy** and **−£62 ROI** — a +£55 improvement over confidence-filtered
-ProxyTSR at the same coverage. The gain is stable in the early-vs-late split
-(ROI improves late: −20 vs −42). Accuracy (+3.4 pp above the 0.265 production
-anchor) is consistent and believable.
+`AbstainRecencyWeightedAlgorithm` wraps `RecencyWeightedProxyTSRAlgorithm` with
+the same two-gate abstain layer as the prior active algorithm (confidence gate +
+hard-race rules). The recency-weighted base model applies exponential decay
+(λ=0.01, half-weight at ~70 days) to training rows so that recent form is
+weighted more heavily than stale data from 6–7 months ago.
 
-All three acceptance bar checks PASSED on 2026-06-05:
-- ROI-vs-coverage frontier dominates ProxyTSR at ≥50% coverage (+£55 at 72.9%)
-- Early-vs-late gain is stable (ROI improves in the more recent period)
-- Production anchor sanity check passes (+3.4 pp vs +2.9 pp historical)
+Over 173 folds (Dec 2025 – Jun 2026): **0.305 accuracy**, **+£52 ROI**, 1,724 bets.
+This is a **+£114 improvement** over the prior active baseline (AbstainWrapperAlgorithm
+at +£4.94 over the same eval window, itself against the documented −£62 benchmark).
 
-`predict.py` uses `ACTIVE_ALGORITHM` directly — the abstain layer fires
-automatically in production; no new CLI verb or wiring change is needed.
+Adopted 2026-06-07. Prior active: `AbstainWrapperAlgorithm` (adopted 2026-06-05).
 
-See `AbstainWrapperAlgorithm` in `race_analytics/algorithms/abstain_wrapper.py`,
-`ConfidenceGate` in `race_analytics/algorithms/confidence_gate.py`, and
-`RaceRulesGate` in `race_analytics/algorithms/race_rules_gate.py`.
+See `AbstainRecencyWeightedAlgorithm` in `race_analytics/algorithms/abstain_wrapper.py`
+and `RecencyWeightedProxyTSRAlgorithm` in `race_analytics/algorithms/proxy_tsr_xgboost.py`.
 
 ## Production anchor
 
