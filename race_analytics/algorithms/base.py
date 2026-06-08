@@ -1,12 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Protocol
-import numpy as np
+from typing import ClassVar
 import pandas as pd
-
-
-class _Estimator(Protocol):
-    def fit(self, X: Any, y: Any) -> Any: ...
-    def predict(self, X: Any) -> np.ndarray: ...
 
 REQUIRED_PREDICTORS = [
     "DistanceInMeters",
@@ -100,8 +94,7 @@ class BaseAlgorithm(ABC):
         self.max_horses = max_horses
 
     @abstractmethod
-    def fit(self, train_df: pd.DataFrame) -> None:
-        ...
+    def fit(self, train_df: pd.DataFrame) -> None: ...
 
     @abstractmethod
     def predict(
@@ -110,5 +103,37 @@ class BaseAlgorithm(ABC):
         horse_stats: pd.DataFrame,
         jockey_stats: pd.DataFrame,
         trainer_stats: pd.DataFrame | None = None,
+    ) -> pd.DataFrame: ...
+
+
+class FieldPredictorBaseAlgorithm(BaseAlgorithm):
+    """
+    Extension of BaseAlgorithm for algorithms that can produce a prediction field with WinProbability and PredictedRank
+    for each horse in each race. This allows for more nuanced predictions and the ability to apply gating strategies based
+    on confidence or other criteria.
+    """
+
+    @abstractmethod
+    def predict_field(
+        self,
+        races: pd.DataFrame,
+        horse_stats: pd.DataFrame,
+        jockey_stats: pd.DataFrame,
+        trainer_stats: pd.DataFrame | None = None,
+    ) -> pd.DataFrame: ...
+
+    def predict(
+        self,
+        races: pd.DataFrame,
+        horse_stats: pd.DataFrame,
+        jockey_stats: pd.DataFrame,
+        trainer_stats: pd.DataFrame | None = None,
     ) -> pd.DataFrame:
-        ...
+        field = self.predict_field(races, horse_stats, jockey_stats, trainer_stats)
+        if field.empty or "PredictedRank" not in field.columns:
+            return pd.DataFrame(columns=["RaceId", "HorseId"])
+        return (
+            field[field["PredictedRank"] == 1][["RaceId", "HorseId"]]
+            .drop_duplicates(subset=["RaceId"])
+            .reset_index(drop=True)
+        )
