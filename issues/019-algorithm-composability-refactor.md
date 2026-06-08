@@ -23,8 +23,19 @@ Review `race_analytics/algorithms/abstain_wrapper.py`, `split_race_type.py`, and
 
 ## Acceptance criteria
 
-- [ ] Human has reviewed the current algorithm hierarchy and decided on a refactor strategy (or explicitly decided to leave it as-is).
-- [ ] If proceeding: a follow-up AFK issue is written with a concrete plan before any code changes.
+- [x] Human has reviewed the current algorithm hierarchy and decided on a refactor strategy (or explicitly decided to leave it as-is).
+- [x] If proceeding: a follow-up AFK issue is written with a concrete plan before any code changes.
+
+## Outcome
+
+Decided to proceed with a full composability refactor. See `issues/020-algorithm-composability-implementation.md` for the concrete implementation plan. Key decisions:
+
+- Replace MRO-based composition with a true `GatedClassifier(inner)` decorator.
+- Change `fit()` to receive `race_history` (enriched DataFrame); wrapper decomposes it via `decompose_race_history()` to call `predict_field()` for calibration — no shared private state.
+- Rename all algorithms to descriptive-intent names (`WinClassifier`, `RecencyWeightedWinClassifier`, `GatedRecencyWeightedWinClassifier`, etc.).
+- One substantive file per algorithm; thin registry subclasses in `__init__.py`.
+- `SplitDisciplineWinClassifier` accepts `inner_class` parameter for cross-axis composition.
+- Eval CSVs and `evaluations.md` to be updated with new names.
 
 ## Blocked by
 

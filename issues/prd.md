@@ -194,6 +194,26 @@ be implemented first. The five algorithm variants are then implemented and evalu
   `TodaysPredictions.csv` contains a `WinProbability` column, the scored output carries it
   through; and when the column is absent, the output writes empty/null without throwing.
 
+### Algorithm composability refactor
+
+- Replace the MRO-based multiple-inheritance pattern with a true decorator `GatedClassifier(inner: BaseAlgorithm)`.
+- `GatedClassifier.fit(race_history)` calls `inner.fit(race_history)`, decomposes the history via
+  `decompose_race_history()` (new utility in `race_analytics/features/race_history.py`), then calls
+  `inner.predict_field(races, horse_stats, jockey_stats, trainer_stats)` for confidence-gate
+  calibration. No shared private state between wrapper and inner.
+- `decompose_race_history()` composes `race_card()` (moved from `evaluate.py`) with the existing
+  `extract_horse_stats/jockey_stats/trainer_stats` functions.
+- Rename all algorithms to descriptive-intent names — see rename map in
+  `issues/020-algorithm-composability-implementation.md`.
+- One file per substantive algorithm; thin one-liner named subclasses kept in `__init__.py` for
+  the registry (so results CSVs and eval pipeline need no schema changes).
+- `SplitDisciplineWinClassifier` accepts `inner_class=WinClassifier` constructor parameter,
+  enabling cross-axis combinations (e.g. split + recency-weighted) without new classes.
+- `_prepare_training_df()` and `_prepare_prediction_df()` hooks retained inside `WinClassifier`
+  hierarchy for proxy TSR injection — invisible to `GatedClassifier`.
+- Eval CSVs and `evaluations.md` updated to use new algorithm names.
+- See `issues/020-algorithm-composability-implementation.md` for full implementation plan.
+
 ## Out of Scope
 
 - Course-specific features: horse-course win rates are too sparse (88.9% of horse-course pairs
