@@ -5,7 +5,7 @@ import pandas as pd
 from race_analytics.algorithms.xgboost_algorithm import XGBoostAlgorithm
 from race_analytics.algorithms.ridge_regression import RidgeRegressionAlgorithm
 from race_analytics.algorithms.ratings_xgboost import RatingsXGBoostUngatedAlgorithm
-from race_analytics.algorithms.proxy_tsr_xgboost import ProxyTSRXGBoostAlgorithm
+from race_analytics.algorithms.win_classifier import WinClassifier as ProxyTSRXGBoostAlgorithm
 from race_analytics.algorithms.base import OPTIONAL_PREDICTORS
 
 _LONG_AGO = datetime(2020, 1, 1)

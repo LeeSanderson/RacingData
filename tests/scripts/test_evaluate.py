@@ -4,7 +4,8 @@ import pytest
 from datetime import date, timedelta
 from unittest.mock import patch
 
-from race_analytics.scripts.evaluate import _extract_known_races, _race_card
+from race_analytics.scripts.evaluate import _extract_known_races
+from race_analytics.features.race_history import race_card as _race_card
 from race_analytics.features.horse_stats import extract_horse_stats as _compute_horse_stats
 from race_analytics.features.jockey_stats import extract_jockey_stats as _compute_jockey_stats
 
@@ -267,9 +268,7 @@ def test_evaluate_timing_summary_printed_after_accuracy_summary(capsys):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
     ):
         evaluate(folds=1)
@@ -406,9 +405,7 @@ def test_early_late_split_printed_in_evaluate_output(capsys):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
     ):
         evaluate(folds=1)
@@ -599,9 +596,7 @@ def test_evaluate_csv_carries_win_probability_for_predict_field_algo(tmp_path):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_FieldAlgo()]),
     ):
         evaluate(folds=1, save_results=True, results_file=out_path)
@@ -616,9 +611,7 @@ def test_evaluate_csv_win_probability_na_for_non_field_algo(tmp_path):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
     ):
         evaluate(folds=1, save_results=True, results_file=out_path)
@@ -635,9 +628,7 @@ def _eval_patches(fold_date):
     return [
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
     ]
 
@@ -657,9 +648,7 @@ def test_evaluate_save_results_writes_csv_with_correct_schema(tmp_path):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
     ):
         evaluate(folds=1, save_results=True, results_file=out_path)
@@ -674,9 +663,7 @@ def test_evaluate_results_file_without_save_results_still_writes(tmp_path):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
     ):
         evaluate(folds=1, results_file=out_path)
@@ -692,9 +679,7 @@ def test_evaluate_timing_accumulators_have_one_entry_per_completed_fold():
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.extract_horse_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_jockey_stats", return_value=pd.DataFrame()),
-        patch("race_analytics.scripts.evaluate.extract_trainer_stats", return_value=pd.DataFrame()),
+        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
     ):
         timing = evaluate(folds=1)

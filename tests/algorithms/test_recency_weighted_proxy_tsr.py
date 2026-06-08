@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from datetime import datetime
 
-from race_analytics.algorithms.proxy_tsr_xgboost import RecencyWeightedProxyTSRAlgorithm
+from race_analytics.algorithms.recency_weighted_win_classifier import RecencyWeightedWinClassifier as RecencyWeightedProxyTSRAlgorithm
 
 _LONG_AGO = datetime(2020, 1, 1)
 D_OLD = datetime(2021, 1, 1)
@@ -95,8 +95,8 @@ def _make_train_df_varied_dates() -> pd.DataFrame:
 def test_recency_and_abstain_registered_in_algorithms():
     from race_analytics.algorithms import ALGORITHMS
     names = [type(a).__name__ for a in ALGORITHMS]
-    assert "RecencyWeightedProxyTSRAlgorithm" in names
-    assert "AbstainRecencyWeightedAlgorithm" in names
+    assert "RecencyWeightedWinClassifier" in names
+    assert "GatedRecencyWeightedWinClassifier" in names
 
 
 def test_decay_weights_older_races_lower():

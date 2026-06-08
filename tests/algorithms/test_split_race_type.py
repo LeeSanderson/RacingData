@@ -97,14 +97,14 @@ def _make_train_df(n_flat: int = 110, n_jumps: int = 110) -> pd.DataFrame:
 def test_split_and_abstain_registered_in_algorithms():
     from race_analytics.algorithms import ALGORITHMS
     names = [type(a).__name__ for a in ALGORITHMS]
-    assert "SplitRaceTypeAlgorithm" in names
-    assert "AbstainWrapperSplitAlgorithm" in names
+    assert "SplitDisciplineWinClassifier" in names
+    assert "GatedSplitDisciplineWinClassifier" in names
 
 
 def test_flat_model_available_with_sufficient_flat_races():
-    from race_analytics.algorithms.split_race_type import SplitRaceTypeAlgorithm
+    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
 
-    algo = SplitRaceTypeAlgorithm(max_horses=10)
+    algo = SplitDisciplineWinClassifier(max_horses=10)
     algo.fit(_make_train_df(n_flat=110, n_jumps=110))
 
     assert algo._flat_available
@@ -112,9 +112,9 @@ def test_flat_model_available_with_sufficient_flat_races():
 
 
 def test_flat_races_route_to_flat_model_predict_field():
-    from race_analytics.algorithms.split_race_type import SplitRaceTypeAlgorithm
+    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
 
-    algo = SplitRaceTypeAlgorithm(max_horses=10)
+    algo = SplitDisciplineWinClassifier(max_horses=10)
     algo.fit(_make_train_df(n_flat=110, n_jumps=110))
 
     races = pd.DataFrame([_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]])
@@ -129,10 +129,10 @@ def test_flat_races_route_to_flat_model_predict_field():
 
 
 def test_fallback_used_when_flat_has_insufficient_races():
-    from race_analytics.algorithms.split_race_type import SplitRaceTypeAlgorithm
+    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
 
     # Only 5 flat races — below MIN_RACES threshold
-    algo = SplitRaceTypeAlgorithm(max_horses=10)
+    algo = SplitDisciplineWinClassifier(max_horses=10)
     algo.fit(_make_train_df(n_flat=5, n_jumps=110))
 
     assert not algo._flat_available
@@ -147,3 +147,15 @@ def test_fallback_used_when_flat_has_insufficient_races():
 
     assert not result.empty
     assert "WinProbability" in result.columns
+
+
+def test_inner_class_param_accepts_recency_weighted():
+    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
+    from race_analytics.algorithms.recency_weighted_win_classifier import RecencyWeightedWinClassifier
+
+    algo = SplitDisciplineWinClassifier(inner_class=RecencyWeightedWinClassifier, max_horses=10)
+    algo.fit(_make_train_df(n_flat=110, n_jumps=110))
+
+    assert isinstance(algo._flat_model, RecencyWeightedWinClassifier)
+    assert isinstance(algo._jumps_model, RecencyWeightedWinClassifier)
+    assert isinstance(algo._fallback_model, RecencyWeightedWinClassifier)

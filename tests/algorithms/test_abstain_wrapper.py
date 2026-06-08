@@ -2,7 +2,8 @@ import pandas as pd
 import pytest
 from datetime import datetime
 
-from race_analytics.algorithms.abstain_wrapper import AbstainWrapperAlgorithm
+from race_analytics.algorithms.gated_classifier import GatedClassifier
+from race_analytics.algorithms import GatedWinClassifier
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
@@ -15,7 +16,9 @@ def _train_row(horse_id: int, race_id: int, off: datetime = D1, wins: int = 0,
         "Wins": wins,
         "CourseName": "Newmarket",
         "Speed": 16.0, "FinishingPosition": 2, "OverallBeatenDistance": 2.0,
-        "HorseCount": 8,
+        "HorseCount": 8, "NumberOfPriorRaces": 3,
+        "JockeyId": horse_id + 1000,
+        "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
         "OfficialRating": 80.0, "RacingPostRating": 100.0, "TopSpeedRating": tsr,
         "LastRaceOfficialRating": 70.0, "LastRaceRacingPostRating": 95.0,
         "LastRaceTopSpeedRating": 92.0,
@@ -86,8 +89,8 @@ def _make_train_df(n_races: int = 5) -> pd.DataFrame:
 
 
 @pytest.fixture
-def trained_wrapper() -> AbstainWrapperAlgorithm:
-    algo = AbstainWrapperAlgorithm(max_horses=10, coverage=0.7)
+def trained_wrapper() -> GatedWinClassifier:
+    algo = GatedWinClassifier(max_horses=10, coverage=0.7)
     algo.fit(_make_train_df())
     return algo
 
@@ -95,14 +98,14 @@ def trained_wrapper() -> AbstainWrapperAlgorithm:
 # ── 1. fit ────────────────────────────────────────────────────────────────────
 
 def test_fit_completes_without_error():
-    algo = AbstainWrapperAlgorithm(max_horses=10)
+    algo = GatedWinClassifier(max_horses=10)
     algo.fit(_make_train_df())
 
 
 # ── 2. gate calibrated after fit ─────────────────────────────────────────────
 
 def test_confidence_gate_calibrated_after_fit():
-    algo = AbstainWrapperAlgorithm(max_horses=10, coverage=0.7)
+    algo = GatedWinClassifier(max_horses=10, coverage=0.7)
     algo.fit(_make_train_df())
     assert algo.get_confidence_gate()._calib_scores  # non-empty calibration
 
@@ -121,12 +124,12 @@ def test_predict_returns_raceId_horseId_columns(trained_wrapper):
 
 def test_lower_coverage_predicts_fewer_or_equal_races():
     """Lower coverage → higher threshold → fewer (or equal) races predicted."""
-    train_df = _make_train_df(n_races=10)  # more training races for a tighter distribution
+    train_df = _make_train_df(n_races=10)
 
-    algo_full = AbstainWrapperAlgorithm(max_horses=10, coverage=1.0)
+    algo_full = GatedWinClassifier(max_horses=10, coverage=1.0)
     algo_full.fit(train_df)
 
-    algo_tight = AbstainWrapperAlgorithm(max_horses=10, coverage=0.3)
+    algo_tight = GatedWinClassifier(max_horses=10, coverage=0.3)
     algo_tight.fit(train_df)
 
     races = pd.DataFrame(
@@ -162,7 +165,7 @@ def test_predict_field_unfiltered_has_at_least_as_many_rows_as_filtered(trained_
 def test_registered_in_algorithms_list():
     from race_analytics.algorithms import ALGORITHMS
     types = [type(a).__name__ for a in ALGORITHMS]
-    assert "AbstainWrapperAlgorithm" in types
+    assert "GatedWinClassifier" in types
 
 
 # ── 7. Rules gate: sprint races excluded from predict_field ───────────────────

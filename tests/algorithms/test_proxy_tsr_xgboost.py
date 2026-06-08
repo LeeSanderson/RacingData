@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-from race_analytics.algorithms.proxy_tsr_xgboost import ProxyTSRXGBoostAlgorithm
+from race_analytics.algorithms.win_classifier import WinClassifier as ProxyTSRXGBoostAlgorithm
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
@@ -180,4 +180,4 @@ def test_predict_includes_races_with_no_real_tsr(trained_algo):
 def test_algorithm_is_registered():
     from race_analytics.algorithms import ALGORITHMS
     algo_types = [type(a).__name__ for a in ALGORITHMS]
-    assert "ProxyTSRXGBoostAlgorithm" in algo_types
+    assert "WinClassifier" in algo_types

@@ -2,7 +2,8 @@ import pandas as pd
 import pytest
 from datetime import datetime
 
-from race_analytics.algorithms.ltr_proxy_tsr import LTRProxyTSRAlgorithm, AbstainWrapperLTRAlgorithm
+from race_analytics.algorithms.ranking_classifier import RankingClassifier as LTRProxyTSRAlgorithm
+from race_analytics.algorithms import GatedRankingClassifier as AbstainWrapperLTRAlgorithm
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
@@ -101,7 +102,7 @@ def test_ltr_fit_and_predict_field_returns_required_columns():
         assert col in result.columns, f"missing column: {col}"
 
 
-def test_abstain_wrapper_ltr_uses_gap_metric():
+def test_gated_ranking_classifier_uses_gap_metric():
     algo = AbstainWrapperLTRAlgorithm(max_horses=10)
     assert algo.get_confidence_gate().metric == "gap"
 
@@ -109,5 +110,5 @@ def test_abstain_wrapper_ltr_uses_gap_metric():
 def test_ltr_and_abstain_registered_in_algorithms():
     from race_analytics.algorithms import ALGORITHMS
     names = [type(a).__name__ for a in ALGORITHMS]
-    assert "LTRProxyTSRAlgorithm" in names
-    assert "AbstainWrapperLTRAlgorithm" in names
+    assert "RankingClassifier" in names
+    assert "GatedRankingClassifier" in names

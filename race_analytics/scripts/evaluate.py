@@ -25,9 +25,10 @@ from race_analytics.features.transforms import (
     encode_headgear,
 )
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
-from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
-from race_analytics.features.jockey_stats import CalculateJockeyStats, extract_jockey_stats
-from race_analytics.features.trainer_stats import CalculateTrainerStats, extract_trainer_stats
+from race_analytics.features.horse_stats import CalculateHorsesStats
+from race_analytics.features.jockey_stats import CalculateJockeyStats
+from race_analytics.features.trainer_stats import CalculateTrainerStats
+from race_analytics.features.race_history import race_card, decompose_race_history
 from race_analytics.utils.scoring import accuracy, roi
 from race_analytics.algorithms import ALGORITHMS
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
@@ -308,33 +309,6 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
     return races
 
 
-def _race_card(fold_df: pd.DataFrame) -> pd.DataFrame:
-    """Raw race card columns needed by predict() — it re-encodes Surface/Going/RaceType.
-
-    No rating columns: ratings reach the algorithms only through the per-horse
-    stats join (previous-race LastRace* ratings), never the card — see issues/prd.md.
-    """
-    cols = [
-        "RaceId",
-        "HorseId",
-        "JockeyId",
-        "TrainerId",
-        "Surface",
-        "Going",
-        "RaceType",
-        "DistanceInMeters",
-        "WeightInPounds",
-        "Class",
-        "Age",
-        "StallNumber",
-        "Pattern",
-        "RatingBand",
-        "AgeBand",
-        "SexRestriction",
-        "HeadGear",
-    ]
-    return fold_df[[c for c in cols if c in fold_df.columns]].copy()
-
 
 def _results(fold_df: pd.DataFrame) -> pd.DataFrame:
     return fold_df[
@@ -450,10 +424,8 @@ def evaluate(
             print("  No known races, skipping")
             continue
 
-        horse_stats = extract_horse_stats(train_df)
-        jockey_stats = extract_jockey_stats(train_df)
-        trainer_stats = extract_trainer_stats(train_df)
-        card = _race_card(known_fold)
+        _, horse_stats, jockey_stats, trainer_stats = decompose_race_history(train_df)
+        card = race_card(known_fold)
         results_df = _results(known_fold)
 
         for algo in selected_algos:
