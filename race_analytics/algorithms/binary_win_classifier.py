@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from race_analytics.algorithms.base import (
-    BaseAlgorithm,
+    FieldPredictorBaseAlgorithm,
     REQUIRED_PREDICTORS,
     OPTIONAL_PREDICTORS,
 )
@@ -38,7 +38,7 @@ def _add_race_context(df: pd.DataFrame, extra_cols: list[str]) -> pd.DataFrame:
     return df
 
 
-class BinaryWinClassifierAlgorithm(BaseAlgorithm):
+class BinaryWinClassifierAlgorithm(FieldPredictorBaseAlgorithm):
     extra_nan_tolerant_features: ClassVar[list[str]] = []
 
     def __init__(self, classifier, max_horses: int = 10):
@@ -164,22 +164,6 @@ class BinaryWinClassifierAlgorithm(BaseAlgorithm):
         )
 
         return predictable
-
-    def predict(
-        self,
-        races: pd.DataFrame,
-        horse_stats: pd.DataFrame,
-        jockey_stats: pd.DataFrame,
-        trainer_stats: pd.DataFrame | None = None,
-    ) -> pd.DataFrame:
-        field = self._run_prediction(races, horse_stats, jockey_stats, trainer_stats)
-        if field.empty or "PredictedRank" not in field.columns:
-            return pd.DataFrame(columns=["RaceId", "HorseId"])
-        return (
-            field[field["PredictedRank"] == 1][["RaceId", "HorseId"]]
-            .drop_duplicates(subset=["RaceId"])
-            .reset_index(drop=True)
-        )
 
     def predict_field(
         self,

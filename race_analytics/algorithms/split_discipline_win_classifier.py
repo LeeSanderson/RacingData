@@ -1,5 +1,6 @@
 import pandas as pd
 
+from race_analytics.algorithms.base import FieldPredictorBaseAlgorithm
 from race_analytics.algorithms.win_classifier import WinClassifier
 
 
@@ -16,7 +17,7 @@ class SplitDisciplineWinClassifier(WinClassifier):
 
     MIN_RACES = 100
 
-    def __init__(self, inner_class=WinClassifier, max_horses: int = 10):
+    def __init__(self, inner_class: type[FieldPredictorBaseAlgorithm] = WinClassifier, max_horses: int = 10):
         super().__init__(max_horses=max_horses)
         self._flat_model = inner_class(max_horses=max_horses)
         self._jumps_model = inner_class(max_horses=max_horses)
@@ -83,18 +84,3 @@ class SplitDisciplineWinClassifier(WinClassifier):
             return pd.DataFrame(columns=["RaceId", "HorseId"])
         return pd.concat(non_empty, ignore_index=True)
 
-    def predict(
-        self,
-        races: pd.DataFrame,
-        horse_stats: pd.DataFrame,
-        jockey_stats: pd.DataFrame,
-        trainer_stats: pd.DataFrame | None = None,
-    ) -> pd.DataFrame:
-        field = self.predict_field(races, horse_stats, jockey_stats, trainer_stats)
-        if field.empty or "PredictedRank" not in field.columns:
-            return pd.DataFrame(columns=["RaceId", "HorseId"])
-        return (
-            field[field["PredictedRank"] == 1][["RaceId", "HorseId"]]
-            .drop_duplicates(subset=["RaceId"])
-            .reset_index(drop=True)
-        )

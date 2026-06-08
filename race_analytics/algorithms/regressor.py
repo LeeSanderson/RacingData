@@ -4,7 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 
-from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS, REQUIRED_PREDICTORS, _Estimator
+from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS, REQUIRED_PREDICTORS
 from race_analytics.features.transforms import (
     encode_surfaces,
     encode_going,
@@ -27,11 +27,11 @@ from race_analytics.features.transforms import (
 class RegressorAlgorithm(BaseAlgorithm):
     def __init__(self, max_horses: int = 10):
         super().__init__(max_horses)
-        self._model: _Estimator = self._create_model()
+        self._model = self._create_model()
         self._fitted_predictors: list[str] = list(PREDICTORS)
 
     @abstractmethod
-    def _create_model(self) -> _Estimator:
+    def _create_model(self):
         ...
 
     def fit(self, train_df: pd.DataFrame) -> None:

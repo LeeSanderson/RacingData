@@ -1,13 +1,13 @@
 import pandas as pd
 
-from race_analytics.algorithms.base import BaseAlgorithm
+from race_analytics.algorithms.base import FieldPredictorBaseAlgorithm
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
 from race_analytics.algorithms.race_rules_gate import RaceRulesGate
 from race_analytics.features.race_history import decompose_race_history
 
 
-class GatedClassifier(BaseAlgorithm):
-    """Decorator that wraps any BaseAlgorithm with a confidence gate and hard race-rules gate.
+class GatedClassifier(FieldPredictorBaseAlgorithm):
+    """Decorator that wraps any FieldPredictorBaseAlgorithm with a confidence gate and hard race-rules gate.
 
     Filter A (confidence gate): calibrates from training-window in-sample predictions;
     threshold set so that `coverage` fraction of training races are kept.
@@ -15,7 +15,7 @@ class GatedClassifier(BaseAlgorithm):
     A race is bet only if it passes both gates.
     """
 
-    def __init__(self, inner: BaseAlgorithm, metric: str = "top_prob", coverage: float = 0.7):
+    def __init__(self, inner: FieldPredictorBaseAlgorithm, metric: str = "top_prob", coverage: float = 0.7):
         super().__init__(inner.max_horses)
         self._inner = inner
         self._confidence_gate = ConfidenceGate(metric)
@@ -48,22 +48,6 @@ class GatedClassifier(BaseAlgorithm):
         field = self._inner.predict_field(races, horse_stats, jockey_stats, trainer_stats)
         field = self._apply_rules_gate(field, races)
         return self._apply_confidence_gate(field)
-
-    def predict(
-        self,
-        races: pd.DataFrame,
-        horse_stats: pd.DataFrame,
-        jockey_stats: pd.DataFrame,
-        trainer_stats: pd.DataFrame | None = None,
-    ) -> pd.DataFrame:
-        field = self.predict_field(races, horse_stats, jockey_stats, trainer_stats)
-        if field.empty or "PredictedRank" not in field.columns:
-            return pd.DataFrame(columns=["RaceId", "HorseId"])
-        return (
-            field[field["PredictedRank"] == 1][["RaceId", "HorseId"]]
-            .drop_duplicates(subset=["RaceId"])
-            .reset_index(drop=True)
-        )
 
     def predict_field_unfiltered(
         self,
