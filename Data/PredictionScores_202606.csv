@@ -1,63 +1,78 @@
-FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName
-6,False,5/1,6,CompletedRace,920012,5,Bath,06/05/2026 17:00:00,5228807,No More Bolero
-6,False,11/2,6.5,CompletedRace,920017,5,Bath,06/05/2026 19:15:00,4269993,Wedgewood
-5,False,12/1,13,CompletedRace,920014,5,Bath,06/05/2026 21:00:00,2719428,City Escape IRE
-1,True,4/1,5,CompletedRace,920036,15,Doncaster,06/05/2026 17:10:00,7686986,Division Day
-1,True,6/1,7,CompletedRace,920035,15,Doncaster,06/05/2026 20:40:00,7475609,Domination IRE
-9,False,14/1,15,CompletedRace,915536,17,Epsom,06/05/2026 16:00:00,7566150,Venetian Lace IRE
-6,False,EvensF,2,CompletedRace,920046,17,Epsom,06/05/2026 17:15:00,7538895,Stellar Sunrise
-6,False,4/1,5,CompletedRace,920021,21,Goodwood,06/05/2026 17:25:00,6300765,Bizou
-3,False,17/2,9.5,CompletedRace,920022,21,Goodwood,06/05/2026 18:27:00,5900723,Moostar
-3,False,11/4,3.75,CompletedRace,920020,21,Goodwood,06/05/2026 19:37:00,5198118,Asteverdi
-1,True,1/3F,1.3333333333333333,CompletedRace,920059,16,Musselburgh,06/05/2026 13:50:00,6202555,Cascade Hall IRE
-5,False,7/4F,2.75,CompletedRace,920061,16,Musselburgh,06/05/2026 15:00:00,7592682,Sandy Craic IRE
-8,False,9/4,3.25,CompletedRace,920060,16,Musselburgh,06/05/2026 15:40:00,5104236,Starliner IRE
-5,False,13/2,7.5,CompletedRace,920057,16,Musselburgh,06/05/2026 16:15:00,6577905,Tiva IRE
-2,False,87/100F,1.87,CompletedRace,921983,445,Saratoga,06/05/2026 22:08:00,9050928,Always A Runner
-2,False,39/20,2.95,CompletedRace,921986,445,Saratoga,06/05/2026 23:25:00,6582490,Fully Subscribed
-1,True,4/9F,1.4444444444444444,CompletedRace,920024,80,Thirsk,06/05/2026 16:10:00,8062549,King Of Berkshire IRE
-7,False,17/2,9.5,CompletedRace,919995,1212,Ffos Las,06/04/2026 18:20:00,7816040,Tie Fighter IRE
-1,True,16/5,4.2,CompletedRace,919994,1212,Ffos Las,06/04/2026 19:50:00,8039760,Willow Wood IRE
-0,False,SP,,NonRunner,919996,1212,Ffos Las,06/04/2026 20:20:00,7183164,Belle Amie SWE
-3,False,7/4F,2.75,CompletedRace,919992,1212,Ffos Las,06/04/2026 20:50:00,5894810,Ghost Story IRE
-7,False,15/2,8.5,CompletedRace,920001,22,Hamilton,06/04/2026 14:51:00,6287950,Pickersgill IRE
-5,False,7/2,4.5,CompletedRace,919999,22,Hamilton,06/04/2026 15:21:00,3781882,Qitaal
-3,False,3/1,4,CompletedRace,919997,22,Hamilton,06/04/2026 15:51:00,7390860,Altareq
-1,True,1/4F,1.25,CompletedRace,921875,187,Leopardstown,06/04/2026 18:30:00,7801963,Endorsement
-3,False,7/2,4.5,CompletedRace,920422,393,Lingfield (AW),06/04/2026 17:40:00,5982401,Peregrine Falcon IRE
-1,True,100/30,4.333333333333334,CompletedRace,919886,84,Uttoxeter,06/04/2026 15:00:00,2928026,Tiger Orchid IRE
-3,False,100/30,4.333333333333334,CompletedRace,919884,84,Uttoxeter,06/04/2026 15:30:00,5633124,That's Nice IRE
-0,False,SP,,NonRunner,919887,84,Uttoxeter,06/04/2026 16:00:00,6215501,Beorma IRE
-2,False,11/10F,2.1,CompletedRace,919885,84,Uttoxeter,06/04/2026 16:30:00,5845749,Wheresmemoneygone IRE
-4,False,9/2,5.5,CompletedRace,920009,87,Wetherby,06/04/2026 16:12:00,7983209,Dalamara
-6,False,11/1,12,CompletedRace,920008,87,Wetherby,06/04/2026 17:15:00,5809880,Amerjeet
-4,False,9/4F,3.25,CompletedRace,920010,87,Wetherby,06/04/2026 17:50:00,7436440,Northern Tempest
-1,True,EvensF,2,CompletedRace,919873,39,Newton Abbot,06/03/2026 15:00:00,7051293,Dunkerque DEN
-5,False,5/2F,3.5,CompletedRace,919875,39,Newton Abbot,06/03/2026 15:30:00,5884300,Kenzo Des Bruyeres FR
-0,False,3/1,4,PulledUp,919871,39,Newton Abbot,06/03/2026 16:00:00,5424980,Jena d'Oudairies FR
-1,True,2/1F,3,CompletedRace,919981,40,Nottingham,06/03/2026 16:18:00,4924648,A Major Payne
-2,False,15/8F,2.875,CompletedRace,919984,40,Nottingham,06/03/2026 16:48:00,8455167,Gatehouse IRE
-2,False,100/30F,4.333333333333334,CompletedRace,919989,49,Ripon,06/03/2026 20:12:00,5096521,Canaria Queen
-7,False,6/1,7,CompletedRace,919990,49,Ripon,06/03/2026 20:42:00,7588052,Popty Ping
-2,False,5/2,3.5,CompletedRace,919881,85,Warwick,06/03/2026 19:30:00,8507334,Dream's Ka FR
-0,False,SP,,NonRunner,919879,85,Warwick,06/03/2026 20:00:00,6640606,Thickthorn Tom IRE
-1,True,9/4,3.25,CompletedRace,919878,85,Warwick,06/03/2026 21:00:00,3630330,Theonlywayiswessex FR
-2,False,4/1,5,CompletedRace,920270,1353,Newcastle (AW),06/02/2026 19:15:00,8018255,Pivotal Terms
-3,False,18/1,19,CompletedRace,919973,46,Pontefract,06/02/2026 14:48:00,8075064,Fozzie IRE
-6,False,12/1,13,CompletedRace,919975,46,Pontefract,06/02/2026 15:48:00,5743646,Maris Angel
-7,False,2/1F,3,CompletedRace,919977,46,Pontefract,06/02/2026 16:18:00,8534584,Egotistical
-5,False,5/1,6,CompletedRace,919976,46,Pontefract,06/02/2026 16:48:00,7538893,Holly Mist IRE
-4,False,17/2,9.5,CompletedRace,919978,46,Pontefract,06/02/2026 17:18:00,7493122,Quantum Power IRE
-1,True,9/4,3.25,CompletedRace,919866,61,Southwell,06/02/2026 15:00:00,3564068,Ceolwulf
-2,False,6/4F,2.5,CompletedRace,919867,61,Southwell,06/02/2026 16:30:00,5504617,Jafimgoso
-1,True,11/8J,2.375,CompletedRace,920263,513,Wolverhampton (AW),06/02/2026 17:24:00,8866972,Kakirra IRE
-3,False,10/11F,1.9090909090909092,CompletedRace,921954,513,Wolverhampton (AW),06/02/2026 18:30:00,5248382,Filey Beach IRE
-6,False,4/5F,1.8,CompletedRace,920261,513,Wolverhampton (AW),06/02/2026 20:00:00,8844374,Zoulette IRE
-5,False,12/1,13,CompletedRace,921809,184,Gowran Park,06/01/2026 15:09:00,5357864,Pink Oxalis
-2,False,7/2,4.5,CompletedRace,919958,31,Lingfield,06/01/2026 16:27:00,7020324,Chasse Patate IRE
-3,False,3/1,4,CompletedRace,920250,393,Lingfield (AW),06/01/2026 15:17:00,7020211,Astrological
-0,False,12/1,13,RefusedToRace,921815,190,Listowel,06/01/2026 14:22:00,5504679,Western Princess
-2,False,11/2,6.5,CompletedRace,921816,190,Listowel,06/01/2026 14:57:00,6473499,Becasse
-2,False,7/2,4.5,CompletedRace,921818,190,Listowel,06/01/2026 16:07:00,4241537,Blood Destiny FR
-5,False,13/2,7.5,CompletedRace,919965,36,Newbury,06/01/2026 16:00:00,6314162,Hint Of Humour
-6,False,15/2,8.5,CompletedRace,919960,36,Newbury,06/01/2026 16:35:00,4570893,Vaguely Royal IRE
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability
+1,True,8/13F,1.6153846153846154,CompletedRace,920071,12,Chepstow,06/06/2026 18:20:00,7204964,Poetry Of Time,0.29384235
+2,False,6/1,7,CompletedRace,920037,15,Doncaster,06/06/2026 15:05:00,7922029,Lopeo IRE,0.3172801
+2,False,12/1,13,CompletedRace,920051,17,Epsom,06/06/2026 13:30:00,5021381,Witness Stand,0.17630294
+7,False,16/5F,4.2,CompletedRace,920052,17,Epsom,06/06/2026 14:05:00,6550738,Pina Sonata,0.23659508
+4,False,5/4F,2.25,CompletedRace,915537,17,Epsom,06/06/2026 14:40:00,5218337,Calandagan IRE,0.3955487
+4,False,3/1,4,CompletedRace,919893,25,Hexham,06/06/2026 17:40:00,3851614,Conquer The Breeze IRE,0.21442844
+6,False,5/2F,3.5,CompletedRace,919890,25,Hexham,06/06/2026 18:10:00,4575824,Always Busy IRE,0.24703881
+5,False,9/2,5.5,CompletedRace,919892,25,Hexham,06/06/2026 18:43:00,3583190,Freddy Robinson,0.34791794
+1,True,3/1F,4,CompletedRace,919891,25,Hexham,06/06/2026 19:13:00,7436646,Abbey Scope,0.28294465
+3,False,5/2,3.5,CompletedRace,920081,31,Lingfield,06/06/2026 17:35:00,4924648,A Major Payne,0.31407785
+3,False,9/2,5.5,CompletedRace,920079,31,Lingfield,06/06/2026 18:05:00,7547294,Daretobedifferent IRE,0.32785565
+4,False,7/4F,2.75,CompletedRace,920067,16,Musselburgh,06/06/2026 14:50:00,6635764,Zubaru,0.27510676
+0,False,SP,,NonRunner,920064,16,Musselburgh,06/06/2026 16:10:00,8148796,Haayimm IRE,0.22246389
+5,False,100/30,4.333333333333334,CompletedRace,922040,195,Punchestown,06/06/2026 13:15:00,5218425,Magico,0.31914255
+1,True,4/6F,1.6666666666666665,CompletedRace,919898,101,Worcester,06/06/2026 13:45:00,5708500,She Is For Me Boys,0.38183042
+6,False,5/1,6,CompletedRace,920012,5,Bath,06/05/2026 17:00:00,5228807,No More Bolero,
+6,False,11/2,6.5,CompletedRace,920017,5,Bath,06/05/2026 19:15:00,4269993,Wedgewood,
+5,False,12/1,13,CompletedRace,920014,5,Bath,06/05/2026 21:00:00,2719428,City Escape IRE,
+1,True,4/1,5,CompletedRace,920036,15,Doncaster,06/05/2026 17:10:00,7686986,Division Day,
+1,True,6/1,7,CompletedRace,920035,15,Doncaster,06/05/2026 20:40:00,7475609,Domination IRE,
+9,False,14/1,15,CompletedRace,915536,17,Epsom,06/05/2026 16:00:00,7566150,Venetian Lace IRE,
+6,False,EvensF,2,CompletedRace,920046,17,Epsom,06/05/2026 17:15:00,7538895,Stellar Sunrise,
+6,False,4/1,5,CompletedRace,920021,21,Goodwood,06/05/2026 17:25:00,6300765,Bizou,
+3,False,17/2,9.5,CompletedRace,920022,21,Goodwood,06/05/2026 18:27:00,5900723,Moostar,
+3,False,11/4,3.75,CompletedRace,920020,21,Goodwood,06/05/2026 19:37:00,5198118,Asteverdi,
+1,True,1/3F,1.3333333333333333,CompletedRace,920059,16,Musselburgh,06/05/2026 13:50:00,6202555,Cascade Hall IRE,
+5,False,7/4F,2.75,CompletedRace,920061,16,Musselburgh,06/05/2026 15:00:00,7592682,Sandy Craic IRE,
+8,False,9/4,3.25,CompletedRace,920060,16,Musselburgh,06/05/2026 15:40:00,5104236,Starliner IRE,
+5,False,13/2,7.5,CompletedRace,920057,16,Musselburgh,06/05/2026 16:15:00,6577905,Tiva IRE,
+2,False,87/100F,1.87,CompletedRace,921983,445,Saratoga,06/05/2026 22:08:00,9050928,Always A Runner,
+2,False,39/20,2.95,CompletedRace,921986,445,Saratoga,06/05/2026 23:25:00,6582490,Fully Subscribed,
+1,True,4/9F,1.4444444444444444,CompletedRace,920024,80,Thirsk,06/05/2026 16:10:00,8062549,King Of Berkshire IRE,
+7,False,17/2,9.5,CompletedRace,919995,1212,Ffos Las,06/04/2026 18:20:00,7816040,Tie Fighter IRE,
+1,True,16/5,4.2,CompletedRace,919994,1212,Ffos Las,06/04/2026 19:50:00,8039760,Willow Wood IRE,
+0,False,SP,,NonRunner,919996,1212,Ffos Las,06/04/2026 20:20:00,7183164,Belle Amie SWE,
+3,False,7/4F,2.75,CompletedRace,919992,1212,Ffos Las,06/04/2026 20:50:00,5894810,Ghost Story IRE,
+7,False,15/2,8.5,CompletedRace,920001,22,Hamilton,06/04/2026 14:51:00,6287950,Pickersgill IRE,
+5,False,7/2,4.5,CompletedRace,919999,22,Hamilton,06/04/2026 15:21:00,3781882,Qitaal,
+3,False,3/1,4,CompletedRace,919997,22,Hamilton,06/04/2026 15:51:00,7390860,Altareq,
+1,True,1/4F,1.25,CompletedRace,921875,187,Leopardstown,06/04/2026 18:30:00,7801963,Endorsement,
+3,False,7/2,4.5,CompletedRace,920422,393,Lingfield (AW),06/04/2026 17:40:00,5982401,Peregrine Falcon IRE,
+1,True,100/30,4.333333333333334,CompletedRace,919886,84,Uttoxeter,06/04/2026 15:00:00,2928026,Tiger Orchid IRE,
+3,False,100/30,4.333333333333334,CompletedRace,919884,84,Uttoxeter,06/04/2026 15:30:00,5633124,That's Nice IRE,
+0,False,SP,,NonRunner,919887,84,Uttoxeter,06/04/2026 16:00:00,6215501,Beorma IRE,
+2,False,11/10F,2.1,CompletedRace,919885,84,Uttoxeter,06/04/2026 16:30:00,5845749,Wheresmemoneygone IRE,
+4,False,9/2,5.5,CompletedRace,920009,87,Wetherby,06/04/2026 16:12:00,7983209,Dalamara,
+6,False,11/1,12,CompletedRace,920008,87,Wetherby,06/04/2026 17:15:00,5809880,Amerjeet,
+4,False,9/4F,3.25,CompletedRace,920010,87,Wetherby,06/04/2026 17:50:00,7436440,Northern Tempest,
+1,True,EvensF,2,CompletedRace,919873,39,Newton Abbot,06/03/2026 15:00:00,7051293,Dunkerque DEN,
+5,False,5/2F,3.5,CompletedRace,919875,39,Newton Abbot,06/03/2026 15:30:00,5884300,Kenzo Des Bruyeres FR,
+0,False,3/1,4,PulledUp,919871,39,Newton Abbot,06/03/2026 16:00:00,5424980,Jena d'Oudairies FR,
+1,True,2/1F,3,CompletedRace,919981,40,Nottingham,06/03/2026 16:18:00,4924648,A Major Payne,
+2,False,15/8F,2.875,CompletedRace,919984,40,Nottingham,06/03/2026 16:48:00,8455167,Gatehouse IRE,
+2,False,100/30F,4.333333333333334,CompletedRace,919989,49,Ripon,06/03/2026 20:12:00,5096521,Canaria Queen,
+7,False,6/1,7,CompletedRace,919990,49,Ripon,06/03/2026 20:42:00,7588052,Popty Ping,
+2,False,5/2,3.5,CompletedRace,919881,85,Warwick,06/03/2026 19:30:00,8507334,Dream's Ka FR,
+0,False,SP,,NonRunner,919879,85,Warwick,06/03/2026 20:00:00,6640606,Thickthorn Tom IRE,
+1,True,9/4,3.25,CompletedRace,919878,85,Warwick,06/03/2026 21:00:00,3630330,Theonlywayiswessex FR,
+2,False,4/1,5,CompletedRace,920270,1353,Newcastle (AW),06/02/2026 19:15:00,8018255,Pivotal Terms,
+3,False,18/1,19,CompletedRace,919973,46,Pontefract,06/02/2026 14:48:00,8075064,Fozzie IRE,
+6,False,12/1,13,CompletedRace,919975,46,Pontefract,06/02/2026 15:48:00,5743646,Maris Angel,
+7,False,2/1F,3,CompletedRace,919977,46,Pontefract,06/02/2026 16:18:00,8534584,Egotistical,
+5,False,5/1,6,CompletedRace,919976,46,Pontefract,06/02/2026 16:48:00,7538893,Holly Mist IRE,
+4,False,17/2,9.5,CompletedRace,919978,46,Pontefract,06/02/2026 17:18:00,7493122,Quantum Power IRE,
+1,True,9/4,3.25,CompletedRace,919866,61,Southwell,06/02/2026 15:00:00,3564068,Ceolwulf,
+2,False,6/4F,2.5,CompletedRace,919867,61,Southwell,06/02/2026 16:30:00,5504617,Jafimgoso,
+1,True,11/8J,2.375,CompletedRace,920263,513,Wolverhampton (AW),06/02/2026 17:24:00,8866972,Kakirra IRE,
+3,False,10/11F,1.9090909090909092,CompletedRace,921954,513,Wolverhampton (AW),06/02/2026 18:30:00,5248382,Filey Beach IRE,
+6,False,4/5F,1.8,CompletedRace,920261,513,Wolverhampton (AW),06/02/2026 20:00:00,8844374,Zoulette IRE,
+5,False,12/1,13,CompletedRace,921809,184,Gowran Park,06/01/2026 15:09:00,5357864,Pink Oxalis,
+2,False,7/2,4.5,CompletedRace,919958,31,Lingfield,06/01/2026 16:27:00,7020324,Chasse Patate IRE,
+3,False,3/1,4,CompletedRace,920250,393,Lingfield (AW),06/01/2026 15:17:00,7020211,Astrological,
+0,False,12/1,13,RefusedToRace,921815,190,Listowel,06/01/2026 14:22:00,5504679,Western Princess,
+2,False,11/2,6.5,CompletedRace,921816,190,Listowel,06/01/2026 14:57:00,6473499,Becasse,
+2,False,7/2,4.5,CompletedRace,921818,190,Listowel,06/01/2026 16:07:00,4241537,Blood Destiny FR,
+5,False,13/2,7.5,CompletedRace,919965,36,Newbury,06/01/2026 16:00:00,6314162,Hint Of Humour,
+6,False,15/2,8.5,CompletedRace,919960,36,Newbury,06/01/2026 16:35:00,4570893,Vaguely Royal IRE,
