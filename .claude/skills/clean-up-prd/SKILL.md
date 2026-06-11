@@ -1,7 +1,6 @@
 ---
 name: clean-up-prd
-description: Verify all issues related to the current PRD have been completed and then delete all issues and the PRD itself to maintain a clean project management environment.
-Use when user explicitly states "clean up PRD" or when a PRD has been marked as completed and needs to be archived.
+description: Verify all issues related to the current PRD have been completed and then delete all issues and the PRD itself to maintain a clean project management environment. Use when user explicitly states "clean up PRD" or when a PRD has been marked as completed and needs to be archived.
 ---
 
 Review the current PRD and all associated issues. Verify that all tasks related to the PRD have been completed successfully. If any issues are still open, provide a summary of the remaining tasks and ask the user if they would like to proceed with cleaning up the PRD or if they want to address the remaining issues first.
