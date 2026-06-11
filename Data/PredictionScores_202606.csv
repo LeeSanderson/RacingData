@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability
+2,False,10/11F,1.9090909090909092,CompletedRace,919917,20,Fontwell,06/10/2026 14:30:00,7436509,Viscountess Nelson IRE,0.5635739
+0,False,SP,,NonRunner,919919,20,Fontwell,06/10/2026 15:30:00,5663053,Sixty Plus IRE,0.41973472
+2,False,11/8F,2.375,CompletedRace,919918,20,Fontwell,06/10/2026 16:00:00,5554936,Special John IRE,0.4147274
+2,False,8/13F,1.6153846153846154,CompletedRace,919922,20,Fontwell,06/10/2026 17:00:00,4893400,Muskerry Rock IRE,0.36795744
 1,True,5/2,3.5,CompletedRace,919916,61,Southwell,06/09/2026 15:30:00,6803084,Nazare FR,0.32002535
 4,False,9/4F,3.25,CompletedRace,920115,8,Carlisle,06/08/2026 16:18:00,6582589,Emery Down,0.1655781
 2,False,EvensF,2,CompletedRace,922497,196,Roscommon,06/08/2026 17:18:00,5870139,Polepatrick,0.5240884
