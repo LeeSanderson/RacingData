@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability
+1,True,8/11F,1.7272727272727273,CompletedRace,919927,101,Worcester,06/11/2026 17:08:00,6215501,Beorma IRE,0.49189714
+1,True,8/15F,1.5333333333333332,CompletedRace,919924,101,Worcester,06/11/2026 19:42:00,58950449,Sunray Shadow,0.45679793
+0,False,SP,,NonRunner,920148,104,Yarmouth,06/11/2026 16:28:00,5147958,Newtown Duke IRE,0.2718862
 2,False,10/11F,1.9090909090909092,CompletedRace,919917,20,Fontwell,06/10/2026 14:30:00,7436509,Viscountess Nelson IRE,0.5635739
 0,False,SP,,NonRunner,919919,20,Fontwell,06/10/2026 15:30:00,5663053,Sixty Plus IRE,0.41973472
 2,False,11/8F,2.375,CompletedRace,919918,20,Fontwell,06/10/2026 16:00:00,5554936,Special John IRE,0.4147274
