@@ -2,7 +2,7 @@
 
 **Type:** AFK
 **Parent RFC:** `issues/001-unify-prediction-data-path-racedata.md`
-**Status:** Proposed
+**Status:** Done (2026-06-13) — engine added to `race_analytics/algorithms/base.py` + `tests/algorithms/test_field_predictor_engine.py`
 **Blocked by:** `issues/002-racedata-value-object-and-builder.md`
 
 RFC migration step 2. Introduce the convention-driven template that owns the shared data-path,
@@ -30,15 +30,15 @@ In `race_analytics/algorithms/base.py`:
 
 ## Acceptance criteria
 
-- [ ] `FieldPredictor` + `AbstainCapable` Protocols defined; `FieldPredictorBaseAlgorithm` exposes the
+- [x] `FieldPredictor` + `AbstainCapable` Protocols defined; `FieldPredictorBaseAlgorithm` exposes the
       `RaceData`-based `fit`/`predict_field`/`predict` template with the knobs and hooks above.
-- [ ] A transitional adapter keeps the existing four-frame algorithms passing **unchanged** (e.g. legacy
-      four-frame entry points bridge through `RaceDataBuilder.from_legacy`). No subclass is migrated in this slice.
-- [ ] New engine-boundary tests pass using a **fake estimator** (`fit`/`predict_proba`/`predict`) over a
+- [x] A transitional adapter keeps the existing four-frame algorithms passing **unchanged** (type dispatch:
+      a `RaceData` runs the engine, the four-frame signature flows to subclass overrides). No subclass migrated.
+- [x] New engine-boundary tests pass using a **fake estimator** (`fit`/`predict_proba`/`predict`) over a
       hand-built `RaceData`: `predict_field` returns the full scored field with `score_col` + `PredictedRank`;
       `predict` returns top-1; the complete-race/max-field filter drops the right races; a `_race_gate` override
       drops the right races pre-score.
-- [ ] `python -m pytest tests/` green.
+- [x] `python -m pytest tests/` green (406 passed).
 
 ## Tests
 

@@ -2,7 +2,7 @@
 
 **Type:** AFK
 **Parent RFC:** `issues/001-unify-prediction-data-path-racedata.md`
-**Status:** Proposed
+**Status:** Done (2026-06-13) — `race_analytics/features/race_data.py` + `tests/features/test_race_data.py`
 **Blocked by:** None — can start immediately
 
 Foundation slice (RFC migration step 1). Purely additive — **no algorithm is modified**,
@@ -32,13 +32,13 @@ A new module `race_analytics/features/race_data.py`:
 
 ## Acceptance criteria
 
-- [ ] `race_analytics/features/race_data.py` exists with `RaceData` + `RaceDataBuilder` (incl. `from_legacy`).
-- [ ] **Characterization (must pass):** on a fixed fixture, `RaceDataBuilder.from_legacy(...).frame` equals
+- [x] `race_analytics/features/race_data.py` exists with `RaceData` + `RaceDataBuilder` (incl. `from_legacy`).
+- [x] **Characterization (must pass):** on a fixed fixture, `RaceDataBuilder.from_legacy(...).frame` equals
       the post-encode `merged` intermediate of today's `_run_prediction` — column-for-column (same columns,
       order, dtypes, values, including the `>10` clamp and `errors="ignore"` drops), with a frozen `as_of`.
-- [ ] `build_training` / `build_serving` produce the same feature columns in the same order for the same rows
+- [x] `build_training` / `build_serving` produce the same feature columns in the same order for the same rows
       (train==serve parity).
-- [ ] `python -m pytest tests/` green; **no existing test file modified**.
+- [x] `python -m pytest tests/` green (395 passed); **no existing test file modified**.
 
 ## Tests
 
