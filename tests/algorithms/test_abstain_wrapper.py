@@ -4,9 +4,21 @@ from datetime import datetime
 
 from race_analytics.algorithms.gated_classifier import GatedClassifier
 from race_analytics.algorithms import GatedWinClassifier
+from race_analytics.features.race_data import RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
+_AS_OF = datetime(2026, 1, 1)
+
+
+def _rd(df):
+    return RaceDataBuilder().wrap_training(df)
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 
 def _train_row(horse_id: int, race_id: int, off: datetime = D1, wins: int = 0,
@@ -91,7 +103,7 @@ def _make_train_df(n_races: int = 5) -> pd.DataFrame:
 @pytest.fixture
 def trained_wrapper() -> GatedWinClassifier:
     algo = GatedWinClassifier(max_horses=10, coverage=0.7)
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     return algo
 
 
@@ -99,14 +111,14 @@ def trained_wrapper() -> GatedWinClassifier:
 
 def test_fit_completes_without_error():
     algo = GatedWinClassifier(max_horses=10)
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
 
 
 # ── 2. gate calibrated after fit ─────────────────────────────────────────────
 
 def test_confidence_gate_calibrated_after_fit():
     algo = GatedWinClassifier(max_horses=10, coverage=0.7)
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     assert algo.get_confidence_gate()._calib_scores  # non-empty calibration
 
 
@@ -116,7 +128,7 @@ def test_predict_returns_raceId_horseId_columns(trained_wrapper):
     races = pd.DataFrame([_race_row(10, h, h) for h in [101, 102, 103]])
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
-    result = trained_wrapper.predict(races, horse_stats, jockey_stats)
+    result = trained_wrapper.predict(_serve(races, horse_stats, jockey_stats))
     assert list(result.columns) == ["RaceId", "HorseId"]
 
 
@@ -127,10 +139,10 @@ def test_lower_coverage_predicts_fewer_or_equal_races():
     train_df = _make_train_df(n_races=10)
 
     algo_full = GatedWinClassifier(max_horses=10, coverage=1.0)
-    algo_full.fit(train_df)
+    algo_full.fit(_rd(train_df))
 
     algo_tight = GatedWinClassifier(max_horses=10, coverage=0.3)
-    algo_tight.fit(train_df)
+    algo_tight.fit(_rd(train_df))
 
     races = pd.DataFrame(
         [_race_row(10, h, h) for h in [101, 102, 103]]
@@ -140,8 +152,8 @@ def test_lower_coverage_predicts_fewer_or_equal_races():
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101,102,103, 201,202,203, 301,302,303]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101,102,103, 201,202,203, 301,302,303]])
 
-    full_preds = algo_full.predict(races, horse_stats, jockey_stats)
-    tight_preds = algo_tight.predict(races, horse_stats, jockey_stats)
+    full_preds = algo_full.predict(_serve(races, horse_stats, jockey_stats))
+    tight_preds = algo_tight.predict(_serve(races, horse_stats, jockey_stats))
 
     assert len(tight_preds) <= len(full_preds)
 
@@ -155,8 +167,8 @@ def test_predict_field_unfiltered_has_at_least_as_many_rows_as_filtered(trained_
     )
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103, 201, 202, 203]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 201, 202, 203]])
-    filtered = trained_wrapper.predict_field(races, horse_stats, jockey_stats)
-    unfiltered = trained_wrapper.predict_field_unfiltered(races, horse_stats, jockey_stats)
+    filtered = trained_wrapper.predict_field(_serve(races, horse_stats, jockey_stats))
+    unfiltered = trained_wrapper.predict_field_unfiltered(_serve(races, horse_stats, jockey_stats))
     assert len(unfiltered) >= len(filtered)
 
 
@@ -177,7 +189,7 @@ def test_sprint_race_excluded_from_predict_field(trained_wrapper):
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103, 901, 902, 903]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 901, 902, 903]])
 
-    result = trained_wrapper.predict_field(races, horse_stats, jockey_stats)
+    result = trained_wrapper.predict_field(_serve(races, horse_stats, jockey_stats))
     assert 99 not in result["RaceId"].values
 
 
@@ -190,7 +202,7 @@ def test_class6_race_excluded_from_predict_field(trained_wrapper):
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103, 901, 902, 903]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 901, 902, 903]])
 
-    result = trained_wrapper.predict_field(races, horse_stats, jockey_stats)
+    result = trained_wrapper.predict_field(_serve(races, horse_stats, jockey_stats))
     assert 99 not in result["RaceId"].values
 
 
@@ -203,5 +215,5 @@ def test_sprint_race_excluded_from_predict_field_unfiltered(trained_wrapper):
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103, 901, 902, 903]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 901, 902, 903]])
 
-    result = trained_wrapper.predict_field_unfiltered(races, horse_stats, jockey_stats)
+    result = trained_wrapper.predict_field_unfiltered(_serve(races, horse_stats, jockey_stats))
     assert 99 not in result["RaceId"].values

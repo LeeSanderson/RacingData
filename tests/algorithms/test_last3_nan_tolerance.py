@@ -7,9 +7,21 @@ from race_analytics.algorithms.ridge_regression import RidgeRegressionAlgorithm
 from race_analytics.algorithms.ratings_xgboost import RatingsXGBoostUngatedAlgorithm
 from race_analytics.algorithms.win_classifier import WinClassifier as ProxyTSRXGBoostAlgorithm
 from race_analytics.algorithms.base import OPTIONAL_PREDICTORS
+from race_analytics.features.race_data import RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 _D1 = datetime(2021, 1, 1)
+_AS_OF = datetime(2026, 1, 1)
+
+
+def _rd(df):
+    return RaceDataBuilder().wrap_training(df)
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 
 def _train_row(
@@ -124,7 +136,7 @@ def _make_predict_fixtures(n_horses=3):
 
 def test_xgboost_fitted_predictors_include_last3_columns():
     algo = XGBoostAlgorithm()
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     for col in OPTIONAL_PREDICTORS:
         assert col in algo._fitted_predictors, f"{col} missing from _fitted_predictors"
 
@@ -133,9 +145,9 @@ def test_xgboost_fitted_predictors_include_last3_columns():
 
 def test_xgboost_predict_tolerates_nan_last3_in_one_horse():
     algo = XGBoostAlgorithm()
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures()
-    result = algo.predict(races, horse_stats, jockey_stats)
+    result = algo.predict(_serve(races, horse_stats, jockey_stats))
     assert len(result) > 0
 
 
@@ -143,7 +155,7 @@ def test_xgboost_predict_tolerates_nan_last3_in_one_horse():
 
 def test_ridge_fitted_predictors_exclude_last3_columns():
     algo = RidgeRegressionAlgorithm()
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     for col in OPTIONAL_PREDICTORS:
         assert col not in algo._fitted_predictors, f"{col} should not be in Ridge _fitted_predictors"
 
@@ -152,9 +164,9 @@ def test_ridge_fitted_predictors_exclude_last3_columns():
 
 def test_ratings_xgboost_ungated_predict_tolerates_nan_last3_in_one_horse():
     algo = RatingsXGBoostUngatedAlgorithm()
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures()
-    result = algo.predict(races, horse_stats, jockey_stats)
+    result = algo.predict(_serve(races, horse_stats, jockey_stats))
     assert len(result) > 0
 
 
@@ -162,7 +174,7 @@ def test_ratings_xgboost_ungated_predict_tolerates_nan_last3_in_one_horse():
 
 def test_proxy_tsr_xgboost_predict_tolerates_nan_last3_in_one_horse():
     algo = ProxyTSRXGBoostAlgorithm()
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures()
-    result = algo.predict(races, horse_stats, jockey_stats)
+    result = algo.predict(_serve(races, horse_stats, jockey_stats))
     assert len(result) > 0

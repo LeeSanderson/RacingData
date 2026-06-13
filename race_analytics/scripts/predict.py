@@ -47,14 +47,15 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
     race_cards["Off"] = pd.to_datetime(race_cards["Off"], format="%m/%d/%Y %H:%M:%S")
 
     # Build the canonical RaceData and drive the algorithm through the FieldPredictor
-    # contract (issue 007). `wrap_training` wraps the enriched Race_Features frame;
-    # `from_legacy` joins today's card to the precomputed per-entity stats CSVs as-of
-    # now — the same RaceData the legacy four-frame predict adapter built internally.
+    # contract. `wrap_training` wraps the enriched Race_Features frame;
+    # `build_serving_from_stats` joins today's card to the precomputed per-entity stats
+    # CSVs as-of now (the Stats CSVs are extract_*_stats(Race_Features), so this matches
+    # build_serving over the same history).
     builder = RaceDataBuilder()
     algorithm.fit(builder.wrap_training(race_features, max_horses=algorithm.max_horses))
 
     card = race_cards[[c for c in _RACE_CARD_COLS if c in race_cards.columns]].copy()
-    serve_data = builder.from_legacy(
+    serve_data = builder.build_serving_from_stats(
         card, horse_stats, jockey_stats, trainer_stats,
         as_of=pd.Timestamp(datetime.today()), max_horses=algorithm.max_horses,
     )

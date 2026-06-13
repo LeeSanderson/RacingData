@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 from dataclasses import replace
-from datetime import datetime
 from typing import ClassVar, Protocol, runtime_checkable
 import numpy as np
 import pandas as pd
 
-from race_analytics.features.race_data import RaceData, RaceDataBuilder
+from race_analytics.features.race_data import RaceData
 
 REQUIRED_PREDICTORS = [
     "DistanceInMeters",
@@ -99,16 +98,10 @@ class BaseAlgorithm(ABC):
         self.max_horses = max_horses
 
     @abstractmethod
-    def fit(self, train_df: pd.DataFrame) -> None: ...
+    def fit(self, data: RaceData) -> None: ...
 
     @abstractmethod
-    def predict(
-        self,
-        races: pd.DataFrame,
-        horse_stats: pd.DataFrame,
-        jockey_stats: pd.DataFrame,
-        trainer_stats: pd.DataFrame | None = None,
-    ) -> pd.DataFrame: ...
+    def predict(self, data: RaceData) -> pd.DataFrame: ...
 
 
 @runtime_checkable
@@ -139,12 +132,9 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     top-1 pick. Subclasses supply only what varies — the estimator-fit and score
     hooks, plus optional prepare/gate/weight hooks.
 
-    `fit`/`predict_field`/`predict` accept a `RaceData` directly (the canonical path)
-    or the legacy calling shapes — a flat enriched training frame for `fit`, four
-    decomposed frames for `predict_field`/`predict`. Legacy inputs are adapted to a
-    `RaceData` via `RaceDataBuilder` and then run through the same engine, so an
-    algorithm never re-implements the merge/encode/complete-race/rank data-path. The
-    legacy adapters are removed once every caller is on `RaceData` (issue 008).
+    `fit`/`predict_field`/`predict` all take a single `RaceData`. The merge/encode lives
+    in `RaceDataBuilder` and the complete-race/dropna/rank data-path lives here, so an
+    algorithm never re-implements it.
     """
 
     # ── convention knobs (override by class assignment) ──
@@ -177,9 +167,7 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         raise NotImplementedError("engine subclasses must implement _score")
 
     # ── the one training data-path ──
-    def fit(self, data) -> None:
-        if not isinstance(data, RaceData):
-            data = self._training_data_from_legacy(data)
+    def fit(self, data: RaceData) -> None:
         data = self._prepare_training(data)
         self._feature_cols = self._select_features(data)
         train = self._dropna_required(data)
@@ -190,12 +178,7 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         )
 
     # ── the one serving data-path ──
-    def predict_field(self, data, horse_stats=None, jockey_stats=None, trainer_stats=None):
-        if not isinstance(data, RaceData):
-            data = RaceDataBuilder().from_legacy(
-                data, horse_stats, jockey_stats, trainer_stats,
-                as_of=pd.Timestamp(datetime.today()), max_horses=self.max_horses,
-            )
+    def predict_field(self, data: RaceData) -> pd.DataFrame:
         if not self._feature_cols:
             return self._empty()
         data = self._prepare_serving(data)
@@ -211,17 +194,8 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
             field = field[field["PredictedRank"] == 1].reset_index(drop=True)
         return field
 
-    def predict(self, data, horse_stats=None, jockey_stats=None, trainer_stats=None):
-        return self._top1(self.predict_field(data, horse_stats, jockey_stats, trainer_stats))
-
-    # ── legacy → RaceData adapters (removed in issue 008) ──
-    def _training_data_from_legacy(self, train_df: pd.DataFrame) -> RaceData:
-        """Wrap an already-enriched flat training frame as a RaceData. Delegates to
-        `RaceDataBuilder.wrap_training` — the single home of the wrap (clamp the
-        day-since features, stamp `as_of` as the fold date) — so the harness and this
-        legacy adapter cannot diverge. Removed alongside the rest of the legacy shim in
-        issue 008."""
-        return RaceDataBuilder().wrap_training(train_df, self.max_horses)
+    def predict(self, data: RaceData) -> pd.DataFrame:
+        return self._top1(self.predict_field(data))
 
     def _add_race_context(self, data: RaceData) -> RaceData:
         """Materialise HorseCount and the per-race `Rel{col}` columns for the

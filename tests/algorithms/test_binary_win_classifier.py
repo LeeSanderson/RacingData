@@ -13,10 +13,21 @@ from datetime import datetime
 
 from race_analytics.algorithms.base import REQUIRED_PREDICTORS
 from race_analytics.algorithms.binary_win_classifier import BinaryWinClassifierAlgorithm
-from race_analytics.features.race_data import RaceData
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
+_AS_OF = datetime(2026, 1, 1)
 _REQ_COL = "DistanceInMeters"  # first entry of REQUIRED_PREDICTORS
+
+
+def _rd(df):
+    return RaceDataBuilder().wrap_training(df)
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 
 class _MockClassifier:
@@ -98,7 +109,7 @@ def _make_predict_fixtures(n_horses: int = 3):
 
 def test_fit_feeds_classifier_engineered_race_context():
     spy = _SpyAlgo()
-    spy.fit(_make_train_df())
+    spy.fit(_rd(_make_train_df()))
     cols = spy._mock.fit_X.columns
     # HorseCount + the relative-rating column are materialised by the engine and
     # become features, alongside the required predictor and the raw extra feature.
@@ -116,7 +127,7 @@ def test_fit_drops_rows_with_nan_required_predictor():
         _train_row(1, 11, wins=0),
         _train_row(2, 20, wins=0, dist=None),  # NaN in required — dropped
     ]
-    spy.fit(pd.DataFrame(rows))
+    spy.fit(_rd(pd.DataFrame(rows)))
     assert len(spy._mock.fit_X) == 2
 
 
@@ -132,7 +143,7 @@ def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped():
         _train_row(2, 21, wins=1),
         _train_row(3, 30, wins=0, dist=None),           # NaN in required — should drop
     ]
-    spy.fit(pd.DataFrame(rows))
+    spy.fit(_rd(pd.DataFrame(rows)))
 
     assert len(spy._mock.fit_X) == 4            # horse 30 dropped; others kept
     assert "SomeRatingCol" in spy._mock.fit_X.columns
@@ -153,9 +164,9 @@ def test_race_gate_sees_unscored_field_and_can_drop_it():
             return data.subset(pd.Series(False, index=data.frame.index))
 
     spy = _GatedSpy()
-    spy.fit(_make_train_df())
+    spy.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures()
-    result = spy.predict_field(races, horse_stats, jockey_stats)
+    result = spy.predict_field(_serve(races, horse_stats, jockey_stats))
 
     assert result.empty                                  # gate dropped everything
     assert len(spy._gate_frames) == 1
@@ -168,24 +179,24 @@ def test_race_gate_sees_unscored_field_and_can_drop_it():
 def test_predict_field_returns_empty_before_fit():
     spy = _SpyAlgo()
     races, horse_stats, jockey_stats = _make_predict_fixtures()
-    result = spy.predict_field(races, horse_stats, jockey_stats)
+    result = spy.predict_field(_serve(races, horse_stats, jockey_stats))
     assert result.empty
 
 
 def test_predict_field_returns_all_horses_not_only_rank1():
     spy = _SpyAlgo()
-    spy.fit(_make_train_df())
+    spy.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)
-    result = spy.predict_field(races, horse_stats, jockey_stats)
+    result = spy.predict_field(_serve(races, horse_stats, jockey_stats))
     assert len(result) == 3, f"Expected 3 horses, got {len(result)}"
     assert set(result["HorseId"]) == {0, 1, 2}
 
 
 def test_predict_field_has_win_probability_and_predicted_rank():
     spy = _SpyAlgo()
-    spy.fit(_make_train_df())
+    spy.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)
-    result = spy.predict_field(races, horse_stats, jockey_stats)
+    result = spy.predict_field(_serve(races, horse_stats, jockey_stats))
     assert "WinProbability" in result.columns
     assert "PredictedRank" in result.columns
     assert result["WinProbability"].notna().all()
@@ -194,8 +205,8 @@ def test_predict_field_has_win_probability_and_predicted_rank():
 
 def test_predict_still_returns_only_rank1_pick():
     spy = _SpyAlgo()
-    spy.fit(_make_train_df())
+    spy.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)
-    preds = spy.predict(races, horse_stats, jockey_stats)
+    preds = spy.predict(_serve(races, horse_stats, jockey_stats))
     assert len(preds) == 1
     assert list(preds.columns) == ["RaceId", "HorseId"]

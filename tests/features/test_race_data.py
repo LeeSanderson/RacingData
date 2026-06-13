@@ -1,11 +1,11 @@
 """Tests for the canonical RaceData value object + RaceDataBuilder (issue 002).
 
-The headline gate is `test_from_legacy_reproduces_run_prediction_intermediate`: it
+The headline gate is `test_build_serving_from_stats_reproduces_merged_intermediate`: it
 builds the post-encode `merged` frame with an independent, frozen reimplementation of
-the legacy `_run_prediction` merge + transform sequence and asserts that
-`RaceDataBuilder.from_legacy(...)` reproduces it column-for-column. (The production
-`_run_prediction` body was folded into the engine in issue 004; this reference is the
-behavioural snapshot it used to be characterised against.) `as_of` is fixed so
+the original `_run_prediction` merge + transform sequence and asserts that
+`RaceDataBuilder.build_serving_from_stats(...)` reproduces it column-for-column. (The
+production `_run_prediction` body was folded into the engine in issue 004; this reference
+is the behavioural snapshot it used to be characterised against.) `as_of` is fixed so
 `DaysRested` is deterministic.
 """
 
@@ -208,50 +208,50 @@ def _legacy_reference_merged(races, horse_stats, jockey_stats, trainer_stats):
 # ── characterization (the must-pass gate) ──────────────────────────────────────
 
 
-def test_from_legacy_reproduces_run_prediction_intermediate():
+def test_build_serving_from_stats_reproduces_merged_intermediate():
     races, hs, js, ts = _races(), _horse_stats(), _jockey_stats(), _trainer_stats()
     legacy = _legacy_reference_merged(races, hs, js, ts)
-    rd = RaceDataBuilder().from_legacy(races, hs, js, ts, as_of=_AS_OF)
+    rd = RaceDataBuilder().build_serving_from_stats(races, hs, js, ts, as_of=_AS_OF)
     pd.testing.assert_frame_equal(rd.frame, legacy)
 
 
-def test_from_legacy_without_trainer_stats():
+def test_build_serving_from_stats_without_trainer_stats():
     races, hs, js = _races(), _horse_stats(), _jockey_stats()
     legacy = _legacy_reference_merged(races, hs, js, None)
-    rd = RaceDataBuilder().from_legacy(races, hs, js, None, as_of=_AS_OF)
+    rd = RaceDataBuilder().build_serving_from_stats(races, hs, js, None, as_of=_AS_OF)
     pd.testing.assert_frame_equal(rd.frame, legacy)
 
 
-def test_from_legacy_does_not_mutate_inputs():
+def test_build_serving_from_stats_does_not_mutate_inputs():
     races = _races()
     before = races.copy()
-    RaceDataBuilder().from_legacy(races, _horse_stats(), _jockey_stats(), _trainer_stats(), as_of=_AS_OF)
+    RaceDataBuilder().build_serving_from_stats(races, _horse_stats(), _jockey_stats(), _trainer_stats(), as_of=_AS_OF)
     pd.testing.assert_frame_equal(races, before)
 
 
-def test_from_legacy_clamps_days_rested_to_ten():
+def test_build_serving_from_stats_clamps_days_rested_to_ten():
     # LastOff far in the past -> raw DaysRested >> 10, must clamp to 10.
     races = _races()
     hs = _horse_stats()
     hs["LastOff"] = pd.Timestamp("2020-01-01")
-    rd = RaceDataBuilder().from_legacy(races, hs, _jockey_stats(), _trainer_stats(), as_of=_AS_OF)
+    rd = RaceDataBuilder().build_serving_from_stats(races, hs, _jockey_stats(), _trainer_stats(), as_of=_AS_OF)
     assert (rd.frame["DaysRested"] == 10).all()
 
 
 # ── builder parity: training vs serving ────────────────────────────────────────
 
 
-def test_build_serving_matches_from_legacy_over_decomposed_history():
+def test_build_serving_matches_build_serving_from_stats_over_decomposed_history():
     hist = _enriched_history()
     card = race_card(hist)
     as_of = pd.Timestamp("2026-06-13")
     builder = RaceDataBuilder()
     serve = builder.build_serving(card, hist, as_of)
-    legacy = builder.from_legacy(
+    from_stats = builder.build_serving_from_stats(
         card, extract_horse_stats(hist), extract_jockey_stats(hist),
         extract_trainer_stats(hist), as_of,
     )
-    pd.testing.assert_frame_equal(serve.frame, legacy.frame)
+    pd.testing.assert_frame_equal(serve.frame, from_stats.frame)
 
 
 def test_build_training_and_serving_expose_same_feature_columns():
@@ -318,20 +318,6 @@ def test_wrap_training_as_of_is_one_day_past_last_race():
 def test_wrap_training_retains_labels():
     rd = RaceDataBuilder().wrap_training(_enriched_history(), max_horses=10)
     assert rd.has_labels is True
-
-
-def test_wrap_training_matches_legacy_training_adapter():
-    """wrap_training reproduces the base algorithm's _training_data_from_legacy
-    exactly (the path the un-migrated harness uses today via algo.fit(flat_frame))."""
-    from race_analytics.algorithms.win_classifier import WinClassifier
-
-    hist = _enriched_history()
-    hist["DaysRested"] = 99.0
-    legacy = WinClassifier(max_horses=10)._training_data_from_legacy(hist)
-    wrapped = RaceDataBuilder().wrap_training(hist, max_horses=10)
-    pd.testing.assert_frame_equal(wrapped.frame, legacy.frame)
-    assert wrapped.as_of == legacy.as_of
-    assert wrapped.max_horses == legacy.max_horses
 
 
 # ── RaceData value-object semantics ────────────────────────────────────────────

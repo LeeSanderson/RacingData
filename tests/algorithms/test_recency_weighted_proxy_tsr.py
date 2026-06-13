@@ -4,11 +4,22 @@ import pytest
 from datetime import datetime
 
 from race_analytics.algorithms.recency_weighted_win_classifier import RecencyWeightedWinClassifier as RecencyWeightedProxyTSRAlgorithm
-from race_analytics.features.race_data import RaceData
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 D_OLD = datetime(2021, 1, 1)
 D_NEW = datetime(2021, 5, 1)
+_AS_OF = datetime(2026, 1, 1)
+
+
+def _rd(df):
+    return RaceDataBuilder().wrap_training(df)
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 
 def _train_row(horse_id: int, race_id: int, off: datetime = D_OLD,
@@ -129,13 +140,13 @@ def test_decay_weights_derive_from_as_of_not_wall_clock():
 
 def test_recency_weighted_fit_and_predict_field_smoke():
     algo = RecencyWeightedProxyTSRAlgorithm(max_horses=10)
-    algo.fit(_make_train_df_varied_dates())
+    algo.fit(_rd(_make_train_df_varied_dates()))
 
     races = pd.DataFrame([_race_row(10, h, h) for h in [101, 102, 103]])
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
 
-    result = algo.predict_field(races, horse_stats, jockey_stats)
+    result = algo.predict_field(_serve(races, horse_stats, jockey_stats))
 
     assert not result.empty
     for col in ["RaceId", "HorseId", "WinProbability", "PredictedRank"]:

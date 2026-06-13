@@ -6,9 +6,21 @@ from race_analytics.algorithms.ratings_xgboost import (
     RatingsXGBoostAlgorithm,
     RatingsXGBoostUngatedAlgorithm,
 )
+from race_analytics.features.race_data import RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
+_AS_OF = datetime(2026, 1, 1)
+
+
+def _train():
+    return RaceDataBuilder().wrap_training(_make_train_df())
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 _CURRENT_RATINGS = ["OfficialRating", "RacingPostRating", "TopSpeedRating"]
 _LASTRACE_RATINGS = [
@@ -97,7 +109,7 @@ def _make_train_df() -> pd.DataFrame:
 @pytest.fixture
 def trained_algo() -> RatingsXGBoostAlgorithm:
     algo = RatingsXGBoostAlgorithm(max_horses=10)
-    algo.fit(_make_train_df())
+    algo.fit(_train())
     return algo
 
 
@@ -106,7 +118,7 @@ def trained_algo() -> RatingsXGBoostAlgorithm:
 
 def test_fit_uses_lastrace_ratings_and_excludes_current_race_ratings():
     algo = RatingsXGBoostAlgorithm(max_horses=10)
-    algo.fit(_make_train_df())
+    algo.fit(_train())
     feats = algo._feature_cols
     for col in _LASTRACE_RATINGS:
         assert col in feats, f"missing previous-race rating feature: {col}"
@@ -121,9 +133,9 @@ def test_fit_uses_lastrace_ratings_and_excludes_current_race_ratings():
 
 def test_gate_filters_on_lastrace_tsr_coverage():
     gated = RatingsXGBoostAlgorithm(max_horses=10)
-    gated.fit(_make_train_df())
+    gated.fit(_train())
     ungated = RatingsXGBoostUngatedAlgorithm(max_horses=10)
-    ungated.fit(_make_train_df())
+    ungated.fit(_train())
 
     races = pd.DataFrame(
         [_race_row(10, h, h) for h in [101, 102, 103]]
@@ -137,8 +149,8 @@ def test_gate_filters_on_lastrace_tsr_coverage():
     )
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 201, 202, 203]])
 
-    gated_res = gated.predict(races, horse_stats, jockey_stats)
-    ungated_res = ungated.predict(races, horse_stats, jockey_stats)
+    gated_res = gated.predict(_serve(races, horse_stats, jockey_stats))
+    ungated_res = ungated.predict(_serve(races, horse_stats, jockey_stats))
 
     assert 10 in gated_res["RaceId"].values
     assert 20 not in gated_res["RaceId"].values
@@ -156,7 +168,7 @@ def test_predict_works_from_card_without_rating_columns(trained_algo):
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
 
-    result = trained_algo.predict(races, horse_stats, jockey_stats)
+    result = trained_algo.predict(_serve(races, horse_stats, jockey_stats))
 
     assert list(result.columns) == ["RaceId", "HorseId"]
     assert result["RaceId"].tolist() == [10]

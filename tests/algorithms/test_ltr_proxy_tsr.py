@@ -4,9 +4,21 @@ from datetime import datetime
 
 from race_analytics.algorithms.ranking_classifier import RankingClassifier as LTRProxyTSRAlgorithm
 from race_analytics.algorithms import GatedRankingClassifier as AbstainWrapperLTRAlgorithm
+from race_analytics.features.race_data import RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
+_AS_OF = datetime(2026, 1, 1)
+
+
+def _rd(df):
+    return RaceDataBuilder().wrap_training(df)
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 
 def _train_row(horse_id: int, race_id: int, off: datetime = D1,
@@ -89,13 +101,13 @@ def _make_train_df() -> pd.DataFrame:
 
 def test_ltr_fit_and_predict_field_returns_required_columns():
     algo = LTRProxyTSRAlgorithm(max_horses=10)
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
 
     races = pd.DataFrame([_race_row(10, h, h) for h in [101, 102, 103]])
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
 
-    result = algo.predict_field(races, horse_stats, jockey_stats)
+    result = algo.predict_field(_serve(races, horse_stats, jockey_stats))
 
     assert not result.empty
     for col in ["RaceId", "HorseId", "WinProbability", "PredictedRank"]:

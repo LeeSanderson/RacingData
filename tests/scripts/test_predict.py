@@ -207,7 +207,7 @@ def test_predict_joins_trainer_stats_into_serving_data(data_dir):
     predict(data_path=data_dir, algorithm=_ServeCapturingAlgo())
     frame = _ServeCapturingAlgo.captured_frame
     assert frame is not None
-    assert "TrainerWinPercentage" in frame.columns  # joined on TrainerId via from_legacy
+    assert "TrainerWinPercentage" in frame.columns  # joined on TrainerId via build_serving_from_stats
 
 
 # ================================================================

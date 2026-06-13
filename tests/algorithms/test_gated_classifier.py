@@ -1,6 +1,3 @@
-from unittest import mock
-
-import numpy as np
 import pandas as pd
 import pytest
 from datetime import datetime
@@ -8,10 +5,21 @@ from datetime import datetime
 from race_analytics.algorithms.gated_classifier import GatedClassifier
 from race_analytics.algorithms.win_classifier import WinClassifier
 from race_analytics.algorithms.base import FieldPredictorBaseAlgorithm
-from race_analytics.features.race_data import RaceData
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
+_AS_OF = datetime(2026, 1, 1)
+
+
+def _rd(df):
+    return RaceDataBuilder().wrap_training(df)
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 
 def _train_row(horse_id: int, race_id: int, off: datetime = D1, wins: int = 0) -> dict:
@@ -92,7 +100,7 @@ def _make_train_df(n_races: int = 5) -> pd.DataFrame:
 def trained_gated() -> GatedClassifier:
     inner = WinClassifier(max_horses=10)
     algo = GatedClassifier(inner, coverage=0.7)
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     return algo
 
 
@@ -102,7 +110,7 @@ def test_fit_predict_field_returns_expected_columns(trained_gated):
     races = pd.DataFrame([_race_row(10, h, h) for h in [101, 102, 103]])
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
-    result = trained_gated.predict_field(races, horse_stats, jockey_stats)
+    result = trained_gated.predict_field(_serve(races, horse_stats, jockey_stats))
     for col in ["RaceId", "HorseId", "WinProbability", "PredictedRank"]:
         assert col in result.columns, f"missing column: {col}"
 
@@ -116,7 +124,7 @@ def test_predict_returns_one_row_per_race(trained_gated):
     )
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103, 201, 202, 203]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 201, 202, 203]])
-    result = trained_gated.predict(races, horse_stats, jockey_stats)
+    result = trained_gated.predict(_serve(races, horse_stats, jockey_stats))
     assert list(result.columns) == ["RaceId", "HorseId"]
     assert result["RaceId"].nunique() == len(result)
 
@@ -126,7 +134,7 @@ def test_predict_returns_one_row_per_race(trained_gated):
 def test_predict_field_unfiltered_has_more_rows_than_predict_field():
     inner = WinClassifier(max_horses=10)
     algo = GatedClassifier(inner, coverage=0.3)  # tight gate suppresses some races
-    algo.fit(_make_train_df(n_races=10))
+    algo.fit(_rd(_make_train_df(n_races=10)))
 
     races = pd.DataFrame(
         [_race_row(10, h, h) for h in [101, 102, 103]]
@@ -136,8 +144,8 @@ def test_predict_field_unfiltered_has_more_rows_than_predict_field():
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101,102,103,201,202,203,301,302,303]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101,102,103,201,202,203,301,302,303]])
 
-    filtered = algo.predict_field(races, horse_stats, jockey_stats)
-    unfiltered = algo.predict_field_unfiltered(races, horse_stats, jockey_stats)
+    filtered = algo.predict_field(_serve(races, horse_stats, jockey_stats))
+    unfiltered = algo.predict_field_unfiltered(_serve(races, horse_stats, jockey_stats))
     assert len(unfiltered) >= len(filtered)
 
 
@@ -154,46 +162,15 @@ def test_gated_classifier_does_not_inherit_from_inner():
 def test_gate_calibrated_after_fit():
     inner = WinClassifier(max_horses=10)
     algo = GatedClassifier(inner, coverage=0.7)
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     assert algo.get_confidence_gate()._calib_scores
 
 
-# ── 6. calibration drops the decompose_race_history round trip ────────────────
-
-def test_fit_does_not_call_decompose_race_history():
-    algo = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
-    with mock.patch(
-        "race_analytics.features.race_history.decompose_race_history",
-        side_effect=AssertionError("decompose_race_history must not be called"),
-    ):
-        algo.fit(_make_train_df())  # raises if the round trip is still wired in
-    assert algo.get_confidence_gate()._calib_scores
-
-
-# ── 7. calibration is wall-clock independent (fold date, not datetime.today) ──
-
-def test_calibration_is_independent_of_wall_clock():
-    """Two fits of the same data under different wall-clock times must calibrate
-    identically — the gate path reads RaceData.as_of, never datetime.today()."""
-    train_df = _make_train_df()
-
-    a = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
-    b = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
-    with mock.patch("race_analytics.algorithms.base.datetime") as m_dt:
-        m_dt.today.return_value = datetime(2026, 1, 1)
-        a.fit(train_df)
-    with mock.patch("race_analytics.algorithms.base.datetime") as m_dt:
-        m_dt.today.return_value = datetime(2030, 12, 31)
-        b.fit(train_df)
-
-    assert a.get_confidence_gate().threshold == b.get_confidence_gate().threshold
-
-
-# ── 8. characterization: threshold matches the legacy round trip on the fixture ─
+# ── 6. characterization: threshold matches the legacy round trip on the fixture ─
 
 def test_calibrated_threshold_matches_legacy_within_tolerance():
     algo = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
-    algo.fit(_make_train_df())
+    algo.fit(_rd(_make_train_df()))
     # Legacy (decompose -> four-frame re-encode) threshold pinned at 1/3 on this
     # uniform fixture (3 identical runners per race -> top_prob ~= 0.333).
     assert algo.get_confidence_gate().threshold == pytest.approx(0.33333334, abs=1e-2)

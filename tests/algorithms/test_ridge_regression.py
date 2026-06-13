@@ -3,9 +3,22 @@ import pandas as pd
 from datetime import datetime
 
 from race_analytics.algorithms.ridge_regression import RidgeRegressionAlgorithm
+from race_analytics.features.race_data import RaceDataBuilder
 
 # A fixed past date so DaysRested always caps at 10 — keeps tests deterministic
 _LONG_AGO = datetime(2020, 1, 1)
+_AS_OF = datetime(2026, 1, 1)
+
+
+def _fit(algo, rows):
+    algo.fit(RaceDataBuilder().wrap_training(pd.DataFrame(rows)))
+    return algo
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 PREDICTORS = [
     "DistanceInMeters", "WeightInPounds",
@@ -89,8 +102,7 @@ def trained_algo() -> RidgeRegressionAlgorithm:
         _train_row(race_id=r, horse_id=r * 10 + h, speed=14.0 + h)
         for r in range(1, 6) for h in range(3)
     ]
-    algo.fit(pd.DataFrame(rows))
-    return algo
+    return _fit(algo, rows)
 
 
 # ================================================================
@@ -103,7 +115,7 @@ def test_predict_returns_raceId_and_horseId_columns(trained_algo):
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
 
-    result = trained_algo.predict(races, horse_stats, jockey_stats)
+    result = trained_algo.predict(_serve(races, horse_stats, jockey_stats))
 
     assert list(result.columns) == ["RaceId", "HorseId"]
 
@@ -125,7 +137,7 @@ def test_predict_returns_one_row_per_race(trained_algo):
         [_jockey_stat(h) for h in [101, 102, 103, 201, 202, 203]]
     )
 
-    result = trained_algo.predict(races, horse_stats, jockey_stats)
+    result = trained_algo.predict(_serve(races, horse_stats, jockey_stats))
 
     assert len(result) == 2
     assert set(result["RaceId"]) == {10, 20}
@@ -143,7 +155,7 @@ def test_predict_excludes_races_exceeding_max_horses():
         _train_row(race_id=r, horse_id=r * 10 + h)
         for r in range(1, 6) for h in range(3)
     ]
-    algo.fit(pd.DataFrame(rows))
+    _fit(algo, rows)
 
     # Race 10: 3 horses — within the limit of 5
     # Race 20: 7 horses — exceeds the limit of 5
@@ -153,11 +165,11 @@ def test_predict_excludes_races_exceeding_max_horses():
         + [_race_row(20, h, h) for h in range(201, 208)]
     )
 
-    result = algo.predict(
+    result = algo.predict(_serve(
         pd.DataFrame(race_rows),
         pd.DataFrame([_horse_stat(h) for h in all_ids]),
         pd.DataFrame([_jockey_stat(h) for h in all_ids]),
-    )
+    ))
 
     assert len(result) == 1
     assert result.iloc[0]["RaceId"] == 10

@@ -13,8 +13,8 @@ from race_analytics.features.jockey_stats import extract_jockey_stats as _comput
 
 class _FakeBuilder:
     """Stub RaceDataBuilder so evaluate()'s plumbing tests don't run real feature
-    engineering on the minimal fold fixture — the analog of the old
-    decompose_race_history patch. wrap_training/build_serving just wrap the frames.
+    engineering on the minimal fold fixture. wrap_training/build_serving just wrap the
+    frames into a RaceData.
     """
 
     def wrap_training(self, frame, max_horses=10):

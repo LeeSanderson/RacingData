@@ -432,8 +432,7 @@ def evaluate(
 
         # Build the canonical RaceData once per fold — the training window and the
         # serving card — then drive every algorithm through the FieldPredictor
-        # contract. This replaces the per-algorithm decompose -> from_legacy round
-        # trip; `build_serving` is the single home of the merge + transform chain.
+        # contract. `build_serving` is the single home of the merge + transform chain.
         # `_engineer_features` stays as the window's feature source: its column set is
         # exactly what the models have always trained on, so metrics are unchanged.
         train_data = builder.wrap_training(train_df)

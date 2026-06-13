@@ -5,11 +5,10 @@ already materialised by the canonical transform chain. It is the single shape th
 will flow through `fit()`, `predict_field()`, and gate calibration as the algorithm
 subsystem migrates (see `issues/001-unify-prediction-data-path-racedata.md`).
 
-`RaceDataBuilder` is the single home of the merge + transform chain. Issue 002
-introduces it additively: `from_legacy` reproduces, exactly, the merged/encoded
-intermediate that `BinaryWinClassifierAlgorithm._run_prediction` builds today, with
-the one principled change that day-since features are computed against an explicit
-`as_of` rather than `datetime.today()`.
+`RaceDataBuilder` is the single home of the merge + transform chain. It joins a race
+card to per-entity stats — extracted from a history frame (`build_serving`) or supplied
+pre-computed (`build_serving_from_stats`) — and runs the canonical feature chain once.
+Day-since features are computed against an explicit `as_of`, never `datetime.today()`.
 """
 
 from __future__ import annotations
@@ -126,21 +125,24 @@ class RaceData:
 class RaceDataBuilder:
     """The single place the merge + feature-transform chain runs."""
 
-    def from_legacy(
+    def build_serving_from_stats(
         self,
-        races: pd.DataFrame,
+        card: pd.DataFrame,
         horse_stats: pd.DataFrame,
         jockey_stats: pd.DataFrame,
         trainer_stats: pd.DataFrame | None,
         as_of,
         max_horses: int = 10,
     ) -> RaceData:
-        """Build serving RaceData from the legacy four-frame inputs.
+        """Build serving RaceData from a card + pre-computed per-entity stats frames.
 
-        Reproduces BinaryWinClassifierAlgorithm._run_prediction lines 100-131,
-        substituting `as_of` for `datetime.today()`.
+        Joins the stats onto the card, derives DaysRested / DaysSinceJockeyLastRaced
+        against `as_of` (clamped to <= 10), and runs the canonical feature chain.
+        Used directly when stats are already materialised (e.g. predict.py reads the
+        Horse/Jockey/Trainer_Stats CSVs) and by `build_serving` after it extracts them.
         """
         today = np.datetime64(as_of)
+        races = card
 
         merged = pd.merge(races.copy(), horse_stats, how="left", on=["HorseId"])
         merged["DaysRested"] = np.ceil((today - pd.to_datetime(merged["LastOff"])) / _ONE_DAY)
@@ -171,7 +173,9 @@ class RaceDataBuilder:
         trainer_stats = (
             extract_trainer_stats(hist) if "TrainerId" in hist.columns else None
         )
-        return self.from_legacy(card, horse_stats, jockey_stats, trainer_stats, as_of, max_horses)
+        return self.build_serving_from_stats(
+            card, horse_stats, jockey_stats, trainer_stats, as_of, max_horses
+        )
 
     def build_training(self, raw: pd.DataFrame, as_of, max_horses: int = 10) -> RaceData:
         """Build training RaceData (labels retained) from an enriched race_history

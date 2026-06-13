@@ -13,8 +13,20 @@ import numpy as np
 import pandas as pd
 
 from race_analytics.algorithms.regressor import RegressorAlgorithm
+from race_analytics.features.race_data import RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
+_AS_OF = datetime(2026, 1, 1)
+
+
+def _rd(df):
+    return RaceDataBuilder().wrap_training(df)
+
+
+def _serve(races, horse_stats, jockey_stats):
+    return RaceDataBuilder().build_serving_from_stats(
+        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+    )
 
 
 class _RankByLastRaceSpeed:
@@ -91,7 +103,7 @@ def _fitted_algo(max_horses: int = 5) -> _CharacterizationRegressor:
         _train_row(race_id=r, horse_id=r * 10 + h, speed=14.0 + h, last_race_speed=14.0 + h)
         for r in range(1, 6) for h in range(3)
     ]
-    algo.fit(pd.DataFrame(rows))
+    algo.fit(_rd(pd.DataFrame(rows)))
     return algo
 
 
@@ -116,7 +128,7 @@ def test_regressor_top1_picks_are_pinned():
     )
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in races["HorseId"]])
 
-    result = algo.predict(races, horse_stats, jockey_stats)
+    result = algo.predict(_serve(races, horse_stats, jockey_stats))
 
     assert list(result.columns) == ["RaceId", "HorseId"]
     assert result.to_records(index=False).tolist() == [(10, 103)]
@@ -134,6 +146,6 @@ def test_regressor_full_field_winner_per_complete_race():
     )
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in races["HorseId"]])
 
-    result = algo.predict(races, horse_stats, jockey_stats)
+    result = algo.predict(_serve(races, horse_stats, jockey_stats))
 
     assert sorted(result.to_records(index=False).tolist()) == [(10, 103), (20, 201)]

@@ -1,7 +1,7 @@
 import pandas as pd
 from datetime import datetime
 
-from race_analytics.features.race_history import race_card, decompose_race_history
+from race_analytics.features.race_history import race_card
 
 _RACE_CARD_COLS = [
     "RaceId", "HorseId", "JockeyId", "TrainerId", "Surface", "Going",
@@ -78,32 +78,3 @@ def test_race_card_excludes_feature_columns():
     result = race_card(df)
     for col in ["LastRaceSpeed", "DaysRested", "JockeyWinPercentage", "Speed"]:
         assert col not in result.columns, f"feature column leaked into card: {col}"
-
-
-# ── decompose_race_history ────────────────────────────────────────────────────
-
-def test_decompose_race_history_returns_four_items():
-    df = _make_enriched_df()
-    result = decompose_race_history(df)
-    assert len(result) == 4
-
-
-def test_decompose_race_history_races_has_card_columns_only():
-    df = _make_enriched_df()
-    races, _, _, _ = decompose_race_history(df)
-    for col in races.columns:
-        assert col in _RACE_CARD_COLS, f"unexpected column in races: {col}"
-
-
-def test_decompose_race_history_horse_stats_has_one_row_per_horse():
-    df = _make_enriched_df(n_races=3)
-    _, horse_stats, _, _ = decompose_race_history(df)
-    n_unique_horses = df["HorseId"].nunique()
-    assert len(horse_stats) == n_unique_horses
-
-
-def test_decompose_race_history_jockey_stats_has_one_row_per_jockey():
-    df = _make_enriched_df(n_races=3)
-    _, _, jockey_stats, _ = decompose_race_history(df)
-    n_unique_jockeys = df["JockeyId"].nunique()
-    assert len(jockey_stats) == n_unique_jockeys
