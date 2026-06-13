@@ -1,30 +1,32 @@
 from abc import abstractmethod
-from datetime import datetime
+from typing import ClassVar
 
 import numpy as np
 import pandas as pd
 
-from race_analytics.algorithms.base import BaseAlgorithm, PREDICTORS, REQUIRED_PREDICTORS
-from race_analytics.features.transforms import (
-    encode_surfaces,
-    encode_going,
-    encode_race_type,
-    calculate_weight_change,
-    calculate_distance_change,
-    calculate_surface_switch,
-    calculate_code_switch,
-    calculate_horse_count,
-    calculate_race_class,
-    calculate_age_features,
-    calculate_draw_features,
-    encode_pattern,
-    calculate_is_handicap,
-    encode_age_band,
-    encode_sex_restriction,
+from race_analytics.algorithms.base import (
+    FieldPredictorBaseAlgorithm,
+    PREDICTORS,
+    REQUIRED_PREDICTORS,
 )
+from race_analytics.features.race_data import RaceData
 
 
-class RegressorAlgorithm(BaseAlgorithm):
+class RegressorAlgorithm(FieldPredictorBaseAlgorithm):
+    """Speed regressor on the shared RaceData engine.
+
+    Flips the engine conventions to regression: trains on `Speed`, scores with
+    `PredictedSpeed`, and returns a single top-1 pick per race. Feature selection is
+    the regressor's own two-tier rule — every required predictor plus only the
+    `nan_tolerant_predictors` (so a plain regressor uses no optional features, while
+    one that opts in tolerates their NaNs). The merge/encode/complete-race/rank
+    data-path lives in the base engine and `RaceDataBuilder`.
+    """
+
+    label_col: ClassVar[str] = "Speed"
+    score_col: ClassVar[str] = "PredictedSpeed"
+    return_full_field: ClassVar[bool] = False
+
     def __init__(self, max_horses: int = 10):
         super().__init__(max_horses)
         self._model = self._create_model()
@@ -34,94 +36,14 @@ class RegressorAlgorithm(BaseAlgorithm):
     def _create_model(self):
         ...
 
-    def fit(self, train_df: pd.DataFrame) -> None:
-        required = [c for c in REQUIRED_PREDICTORS if c in train_df.columns]
-        tolerated = [c for c in self.nan_tolerant_predictors if c in train_df.columns]
+    def _select_features(self, data: RaceData) -> list[str]:
+        required = [c for c in REQUIRED_PREDICTORS if c in data.frame.columns]
+        tolerated = [c for c in self.nan_tolerant_predictors if c in data.frame.columns]
         self._fitted_predictors = required + tolerated
-        data = train_df[self._fitted_predictors + ["Speed"]].dropna(subset=required + ["Speed"]).copy()
-        if "DaysRested" in data.columns:
-            data.loc[data["DaysRested"] > 10, "DaysRested"] = 10
-        if "DaysSinceJockeyLastRaced" in data.columns:
-            data.loc[data["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
-        self._model.fit(data[self._fitted_predictors], data["Speed"])
+        return self._fitted_predictors
 
-    def predict(
-        self,
-        races: pd.DataFrame,
-        horse_stats: pd.DataFrame,
-        jockey_stats: pd.DataFrame,
-        trainer_stats: pd.DataFrame | None = None,
-    ) -> pd.DataFrame:
-        today = np.datetime64(datetime.today())
-        one_day = np.timedelta64(1, "D")
+    def _fit_estimator(self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight) -> None:
+        self._model.fit(X, frame[self.label_col])
 
-        merged = pd.merge(races.copy(), horse_stats, how="left", on=["HorseId"])
-        merged["DaysRested"] = np.ceil(
-            (today - pd.to_datetime(merged["LastOff"])) / one_day
-        )
-        merged.loc[merged["DaysRested"] > 10, "DaysRested"] = 10
-        merged = merged.drop("LastOff", axis=1, errors="ignore")
-
-        merged = pd.merge(merged, jockey_stats, how="left", on=["JockeyId"])
-        merged["DaysSinceJockeyLastRaced"] = np.ceil(
-            (today - pd.to_datetime(merged["LastOff"])) / one_day
-        )
-        merged.loc[merged["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
-        merged = merged.drop("LastOff", axis=1, errors="ignore")
-
-        if trainer_stats is not None:
-            merged = pd.merge(merged, trainer_stats, how="left", on=["TrainerId"])
-
-        merged = encode_surfaces(merged)
-        merged = encode_going(merged)
-        merged = encode_race_type(merged)
-        merged = calculate_weight_change(merged)
-        merged = calculate_distance_change(merged)
-        merged = calculate_surface_switch(merged)
-        merged = calculate_code_switch(merged)
-        if "HorseCount" not in merged.columns:
-            merged = calculate_horse_count(merged)
-        merged = calculate_race_class(merged)
-        merged = calculate_age_features(merged)
-        merged = encode_pattern(merged)
-        merged = calculate_is_handicap(merged)
-        merged = encode_age_band(merged)
-        merged = encode_sex_restriction(merged)
-        merged = calculate_draw_features(merged)
-
-        required_fitted = [c for c in REQUIRED_PREDICTORS if c in self._fitted_predictors]
-        predictable = merged[["RaceId", "HorseId"] + self._fitted_predictors].dropna(subset=required_fitted).copy()
-        if len(predictable) == 0:
-            return pd.DataFrame(columns=["RaceId", "HorseId"])
-
-        original_counts = (
-            races.groupby("RaceId")["HorseId"]
-            .agg(["count"])
-            .rename(columns={"count": "OriginalCount"})
-        )
-        pred_counts = (
-            predictable.groupby("RaceId")["HorseId"]
-            .agg(["count"])
-            .rename(columns={"count": "PredictableCount"})
-        )
-        predictable = pd.merge(predictable, original_counts, how="left", on="RaceId")
-        predictable = pd.merge(predictable, pred_counts, how="left", on="RaceId")
-
-        predictable = predictable[
-            (predictable["OriginalCount"] == predictable["PredictableCount"])
-            & (predictable["OriginalCount"] <= self.max_horses)
-        ].copy()
-
-        if len(predictable) == 0:
-            return pd.DataFrame(columns=["RaceId", "HorseId"])
-
-        predictable["PredictedSpeed"] = self._model.predict(predictable[self._fitted_predictors])
-        predictable["PredictedRank"] = predictable.groupby("RaceId")[
-            "PredictedSpeed"
-        ].rank(method="dense", ascending=False)
-
-        return (
-            predictable[predictable["PredictedRank"] == 1][["RaceId", "HorseId"]]
-            .drop_duplicates(subset=["RaceId"])
-            .reset_index(drop=True)
-        )
+    def _score(self, X: pd.DataFrame) -> np.ndarray:
+        return self._model.predict(X)
