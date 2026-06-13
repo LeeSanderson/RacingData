@@ -149,6 +149,75 @@ def test_fallback_used_when_flat_has_insufficient_races():
     assert "WinProbability" in result.columns
 
 
+def _race_data(card: pd.DataFrame, as_of=D1):
+    """Build a serving RaceData from a raw card by joining the fixture stats."""
+    from race_analytics.features.race_data import RaceDataBuilder
+    hids = card["HorseId"].tolist()
+    jids = card["JockeyId"].tolist()
+    hs = pd.DataFrame([_horse_stat(h) for h in hids])
+    js = pd.DataFrame([_jockey_stat(j) for j in jids])
+    return RaceDataBuilder().from_legacy(card, hs, js, None, as_of=as_of)
+
+
+# ── RaceData contract (issue 007): fit/predict_field accept a RaceData ─────────
+
+
+def test_gated_split_discipline_fit_does_not_raise():
+    """GatedClassifier feeds its inner a RaceData; SplitDiscipline must accept it.
+    Regression for the AttributeError introduced when the gate moved to RaceData."""
+    from race_analytics.algorithms import GatedSplitDisciplineWinClassifier
+
+    algo = GatedSplitDisciplineWinClassifier(max_horses=10)
+    algo.fit(_make_train_df(n_flat=110, n_jumps=110))  # must not raise
+
+    gate = algo.get_confidence_gate()
+    assert gate.threshold >= 0.0  # calibrated from in-sample predict_field over RaceData
+
+
+def test_fit_and_predict_field_accept_racedata():
+    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
+    from race_analytics.features.race_data import RaceDataBuilder
+
+    algo = SplitDisciplineWinClassifier(max_horses=10)
+    train_data = RaceDataBuilder().wrap_training(_make_train_df(110, 110), max_horses=10)
+    algo.fit(train_data)
+    assert algo._flat_available and algo._jumps_available
+
+    card = pd.DataFrame([_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]])
+    field = algo.predict_field(_race_data(card))
+    assert not field.empty
+    for col in ["RaceId", "HorseId", "WinProbability", "PredictedRank"]:
+        assert col in field.columns
+
+
+def test_racedata_path_matches_legacy_four_frame_path():
+    """The migrated harness calls predict_field with a RaceData; it must produce the
+    same picks as the legacy four-frame call on the same underlying data — including
+    a mixed flat+jumps card that actually exercises the discipline split."""
+    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
+    from race_analytics.features.race_data import RaceDataBuilder
+
+    train_df = _make_train_df(110, 110)
+    card = pd.DataFrame(
+        [_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]]
+        + [_race_row(600, h, h, race_type="Hurdle") for h in [2001, 2002, 2003]]
+    )
+    hs = pd.DataFrame([_horse_stat(h) for h in [1001, 1002, 1003, 2001, 2002, 2003]])
+    js = pd.DataFrame([_jockey_stat(j) for j in [1001, 1002, 1003, 2001, 2002, 2003]])
+
+    legacy = SplitDisciplineWinClassifier(max_horses=10)
+    legacy.fit(train_df)
+    legacy_field = legacy.predict_field(card, hs, js).sort_values(["RaceId", "HorseId"]).reset_index(drop=True)
+
+    rd = SplitDisciplineWinClassifier(max_horses=10)
+    rd.fit(RaceDataBuilder().wrap_training(train_df, max_horses=10))
+    serve = RaceDataBuilder().from_legacy(card, hs, js, None, as_of=D1)
+    rd_field = rd.predict_field(serve).sort_values(["RaceId", "HorseId"]).reset_index(drop=True)
+
+    pd.testing.assert_series_equal(legacy_field["WinProbability"], rd_field["WinProbability"])
+    pd.testing.assert_series_equal(legacy_field["PredictedRank"], rd_field["PredictedRank"])
+
+
 def test_inner_class_param_accepts_recency_weighted():
     from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
     from race_analytics.algorithms.recency_weighted_win_classifier import RecencyWeightedWinClassifier

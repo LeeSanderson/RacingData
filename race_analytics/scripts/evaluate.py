@@ -5,7 +5,7 @@ import glob
 import time
 import pandas as pd
 import numpy as np
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from race_analytics.features.transforms import (
@@ -28,9 +28,11 @@ from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAn
 from race_analytics.features.horse_stats import CalculateHorsesStats
 from race_analytics.features.jockey_stats import CalculateJockeyStats
 from race_analytics.features.trainer_stats import CalculateTrainerStats
-from race_analytics.features.race_history import race_card, decompose_race_history
+from race_analytics.features.race_history import race_card
+from race_analytics.features.race_data import RaceDataBuilder
 from race_analytics.utils.scoring import accuracy, roi
 from race_analytics.algorithms import ALGORITHMS
+from race_analytics.algorithms.base import AbstainCapable
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
 
@@ -377,10 +379,10 @@ def _resolve_algorithms(names: list[str] | None) -> list:
                 f"Unknown algorithm(s): {', '.join(unknown)}\nAvailable: {available}"
             )
         selected = [proto_map[n] for n in names]
-    return [
-        type(a)(max_horses=a.max_horses) if hasattr(a, "max_horses") else type(a)()
-        for a in selected
-    ]
+    # Fresh instances every call so per-fold re-instantiation stops XGBoost's C++
+    # memory pool accumulating across folds. `max_horses` is part of the FieldPredictor
+    # contract, so no reflective hasattr guard is needed.
+    return [type(a)(max_horses=a.max_horses) for a in selected]
 
 
 def evaluate(
@@ -402,6 +404,10 @@ def evaluate(
     all_unfiltered_preds: dict[str, list[pd.DataFrame]] = {n: [] for n in algo_names}
     csv_rows: list[pd.DataFrame] = []
     baseline = MarketFavouriteBaseline()
+    builder = RaceDataBuilder()
+    # Serving features are computed as-of run time (matching the legacy predict
+    # adapter), so day-since features are identical to the pre-migration run.
+    serve_as_of = pd.Timestamp(datetime.today())
     should_save = save_results or results_file is not None
     incremental_path = results_file or (_default_csv_path() if should_save else None)
 
@@ -424,19 +430,26 @@ def evaluate(
             print("  No known races, skipping")
             continue
 
-        _, horse_stats, jockey_stats, trainer_stats = decompose_race_history(train_df)
+        # Build the canonical RaceData once per fold — the training window and the
+        # serving card — then drive every algorithm through the FieldPredictor
+        # contract. This replaces the per-algorithm decompose -> from_legacy round
+        # trip; `build_serving` is the single home of the merge + transform chain.
+        # `_engineer_features` stays as the window's feature source: its column set is
+        # exactly what the models have always trained on, so metrics are unchanged.
+        train_data = builder.wrap_training(train_df)
         card = race_card(known_fold)
+        serve_data = builder.build_serving(card, train_df, as_of=serve_as_of)
         results_df = _results(known_fold)
 
-        for algo in selected_algos:
+        for algo in selected_algos:  # algo: FieldPredictor
             name = type(algo).__name__
             print(f"  Fitting {name}...", flush=True)
             t0 = time.perf_counter()
-            algo.fit(train_df)
+            algo.fit(train_data)
             fit_time = time.perf_counter() - t0
 
             t0 = time.perf_counter()
-            preds = algo.predict(card, horse_stats, jockey_stats, trainer_stats)
+            preds = algo.predict(serve_data)
             predict_time = time.perf_counter() - t0
 
             acc = accuracy(preds, results_df)
@@ -454,15 +467,9 @@ def evaluate(
             all_fit_times[name].append(fit_time)
             all_predict_times[name].append(predict_time)
             all_total_known[name].append(known_fold["RaceId"].nunique())
-            if hasattr(algo, "predict_field"):
-                field_preds = algo.predict_field(card, horse_stats, jockey_stats, trainer_stats)
-            else:
-                field_preds = preds
-            if hasattr(algo, "predict_field_unfiltered"):
-                unfiltered = algo.predict_field_unfiltered(
-                    card, horse_stats, jockey_stats, trainer_stats
-                )
-                all_unfiltered_preds[name].append(unfiltered)
+            field_preds = algo.predict_field(serve_data)
+            if isinstance(algo, AbstainCapable):
+                all_unfiltered_preds[name].append(algo.predict_field_unfiltered(serve_data))
             csv_rows.append(_build_csv_rows(fold_date, name, field_preds, known_fold, results_df))
 
         # Flush this fold's rows to disk immediately so a crash loses at most one fold
@@ -514,8 +521,10 @@ def evaluate(
     algo_map = {type(a).__name__: a for a in selected_algos}
     for name in algo_names:
         algo = algo_map[name]
-        gate = getattr(algo, "get_confidence_gate", lambda: None)()
-        if gate is None or not all_unfiltered_preds.get(name):
+        if not isinstance(algo, AbstainCapable) or not all_unfiltered_preds.get(name):
+            continue
+        gate = algo.get_confidence_gate()
+        if gate is None:
             continue
         combined_unfiltered = pd.concat(all_unfiltered_preds[name], ignore_index=True)
         combined_results = pd.concat(all_results_store[name], ignore_index=True)

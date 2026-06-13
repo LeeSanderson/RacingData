@@ -1,7 +1,9 @@
 import os
 import argparse
 import pandas as pd
+from datetime import datetime
 from race_analytics.algorithms import ACTIVE_ALGORITHM
+from race_analytics.features.race_data import RaceDataBuilder
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
@@ -44,22 +46,27 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
     race_cards = pd.read_csv(os.path.join(data_path, "TodaysRaceCards.csv"))
     race_cards["Off"] = pd.to_datetime(race_cards["Off"], format="%m/%d/%Y %H:%M:%S")
 
-    algorithm.fit(race_features)
-    card = race_cards[[c for c in _RACE_CARD_COLS if c in race_cards.columns]].copy()
+    # Build the canonical RaceData and drive the algorithm through the FieldPredictor
+    # contract (issue 007). `wrap_training` wraps the enriched Race_Features frame;
+    # `from_legacy` joins today's card to the precomputed per-entity stats CSVs as-of
+    # now — the same RaceData the legacy four-frame predict adapter built internally.
+    builder = RaceDataBuilder()
+    algorithm.fit(builder.wrap_training(race_features, max_horses=algorithm.max_horses))
 
-    # Use predict_field() when available to capture WinProbability for each top pick.
-    if hasattr(algorithm, "predict_field"):
-        field = algorithm.predict_field(card, horse_stats, jockey_stats, trainer_stats)
-        if field.empty or "PredictedRank" not in field.columns:
-            winners = pd.DataFrame(columns=["RaceId", "HorseId"])
-        else:
-            winners = (
-                field[field["PredictedRank"] == 1][["RaceId", "HorseId", "WinProbability"]]
-                .drop_duplicates(subset=["RaceId"])
-                .reset_index(drop=True)
-            )
+    card = race_cards[[c for c in _RACE_CARD_COLS if c in race_cards.columns]].copy()
+    serve_data = builder.from_legacy(
+        card, horse_stats, jockey_stats, trainer_stats,
+        as_of=pd.Timestamp(datetime.today()), max_horses=algorithm.max_horses,
+    )
+    field = algorithm.predict_field(serve_data)
+    if field.empty or "PredictedRank" not in field.columns:
+        winners = pd.DataFrame(columns=["RaceId", "HorseId"])
     else:
-        winners = algorithm.predict(card, horse_stats, jockey_stats, trainer_stats)
+        winners = (
+            field[field["PredictedRank"] == 1][["RaceId", "HorseId", "WinProbability"]]
+            .drop_duplicates(subset=["RaceId"])
+            .reset_index(drop=True)
+        )
 
     output_path = os.path.join(data_path, "TodaysPredictions.csv")
 

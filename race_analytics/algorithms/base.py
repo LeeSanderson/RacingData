@@ -216,19 +216,12 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
 
     # ── legacy → RaceData adapters (removed in issue 008) ──
     def _training_data_from_legacy(self, train_df: pd.DataFrame) -> RaceData:
-        """Wrap an already-enriched flat training frame as a RaceData. The frame has
-        already been through the feature chain upstream, so this only clamps the
-        day-since features (the RaceData invariant) — it does not re-encode. `as_of`
-        is the fold date (one day past the last race), used by recency weighting."""
-        frame = train_df.copy()
-        for col in ("DaysRested", "DaysSinceJockeyLastRaced"):
-            if col in frame.columns:
-                frame.loc[frame[col] > 10, col] = 10
-        if "Off" in frame.columns:
-            as_of = pd.to_datetime(frame["Off"]).max().normalize() + pd.Timedelta(days=1)
-        else:
-            as_of = pd.Timestamp(datetime.today())
-        return RaceData(frame=frame, as_of=as_of, max_horses=self.max_horses)
+        """Wrap an already-enriched flat training frame as a RaceData. Delegates to
+        `RaceDataBuilder.wrap_training` — the single home of the wrap (clamp the
+        day-since features, stamp `as_of` as the fold date) — so the harness and this
+        legacy adapter cannot diverge. Removed alongside the rest of the legacy shim in
+        issue 008."""
+        return RaceDataBuilder().wrap_training(train_df, self.max_horses)
 
     def _add_race_context(self, data: RaceData) -> RaceData:
         """Materialise HorseCount and the per-race `Rel{col}` columns for the

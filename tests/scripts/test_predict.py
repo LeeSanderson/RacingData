@@ -6,19 +6,31 @@ from race_analytics.scripts.predict import predict
 
 
 # ================================================================
-# Shared fake algorithm and fixture helpers
+# Shared fake algorithms (FieldPredictor contract) and fixtures
 # ================================================================
 
 class _FakeAlgo:
+    """FieldPredictor stub: one rank-1 pick per race with a fixed WinProbability."""
+
     max_horses = 99
 
-    def fit(self, train_df: pd.DataFrame) -> None:
+    def __init__(self, max_horses: int = 99):
+        self.max_horses = max_horses
+
+    def fit(self, data) -> None:
         pass
 
-    def predict(self, races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame, trainer_stats: pd.DataFrame | None = None) -> pd.DataFrame:
-        if races.empty:
-            return pd.DataFrame(columns=["RaceId", "HorseId"])
-        return races.groupby("RaceId").first().reset_index()[["RaceId", "HorseId"]]
+    def predict_field(self, data) -> pd.DataFrame:
+        frame = data.frame
+        if frame.empty:
+            return pd.DataFrame(columns=["RaceId", "HorseId", "WinProbability", "PredictedRank"])
+        out = frame.groupby("RaceId").first().reset_index()[["RaceId", "HorseId"]].copy()
+        out["WinProbability"] = 0.5
+        out["PredictedRank"] = 1.0
+        return out
+
+    def predict(self, data) -> pd.DataFrame:
+        return self.predict_field(data)[["RaceId", "HorseId"]]
 
 
 def _write_race_features(path: str) -> None:
@@ -29,15 +41,19 @@ def _write_race_features(path: str) -> None:
 
 
 def _write_horse_stats(path: str) -> None:
-    pd.DataFrame([{"HorseId": 101, "LastOff": "2026-01-01 00:00:00"}]).to_csv(
-        os.path.join(path, "Horse_Stats.csv"), index=False
-    )
+    pd.DataFrame([
+        {"HorseId": 101, "LastOff": "2026-01-01 00:00:00"},
+        {"HorseId": 201, "LastOff": "2026-01-01 00:00:00"},
+        {"HorseId": 301, "LastOff": "2026-01-01 00:00:00"},
+    ]).to_csv(os.path.join(path, "Horse_Stats.csv"), index=False)
 
 
 def _write_jockey_stats(path: str) -> None:
-    pd.DataFrame([{"JockeyId": 201, "LastOff": "2026-01-01 00:00:00"}]).to_csv(
-        os.path.join(path, "Jockey_Stats.csv"), index=False
-    )
+    pd.DataFrame([
+        {"JockeyId": 201, "LastOff": "2026-01-01 00:00:00"},
+        {"JockeyId": 202, "LastOff": "2026-01-01 00:00:00"},
+        {"JockeyId": 203, "LastOff": "2026-01-01 00:00:00"},
+    ]).to_csv(os.path.join(path, "Jockey_Stats.csv"), index=False)
 
 
 def _write_trainer_stats(path: str) -> None:
@@ -53,7 +69,7 @@ def _write_trainer_stats(path: str) -> None:
 def _write_race_cards(path: str, rows: list | None = None) -> None:
     if rows is None:
         rows = [{
-            "RaceId": 10, "HorseId": 101, "JockeyId": 201,
+            "RaceId": 10, "HorseId": 101, "JockeyId": 201, "TrainerId": 301,
             "CourseId": 5, "CourseName": "Ascot",
             "Off": "05/21/2026 14:30:00",
             "HorseName": "Thunderbolt",
@@ -83,13 +99,15 @@ def test_predict_writes_todayspredictions_csv(data_dir):
 
 
 # ================================================================
-# test 2 — output has correct columns
+# test 2 — output has correct columns (predict_field carries WinProbability)
 # ================================================================
 
 def test_predict_output_has_correct_columns(data_dir):
     predict(data_path=data_dir, algorithm=_FakeAlgo())
     result = pd.read_csv(os.path.join(data_dir, "TodaysPredictions.csv"))
-    assert list(result.columns) == ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName"]
+    assert list(result.columns) == [
+        "RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName", "WinProbability"
+    ]
 
 
 # ================================================================
@@ -98,17 +116,17 @@ def test_predict_output_has_correct_columns(data_dir):
 
 def test_predict_output_is_sorted_by_coursename_off(tmp_path):
     rows = [
-        {"RaceId": 10, "HorseId": 101, "JockeyId": 201,
+        {"RaceId": 10, "HorseId": 101, "JockeyId": 201, "TrainerId": 301,
          "CourseId": 5, "CourseName": "York",
          "Off": "05/21/2026 15:00:00", "HorseName": "Alpha",
          "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
          "DistanceInMeters": 1600.0, "WeightInPounds": 126.0},
-        {"RaceId": 20, "HorseId": 201, "JockeyId": 202,
+        {"RaceId": 20, "HorseId": 201, "JockeyId": 202, "TrainerId": 301,
          "CourseId": 3, "CourseName": "Ascot",
          "Off": "05/21/2026 14:00:00", "HorseName": "Beta",
          "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
          "DistanceInMeters": 1600.0, "WeightInPounds": 126.0},
-        {"RaceId": 30, "HorseId": 301, "JockeyId": 203,
+        {"RaceId": 30, "HorseId": 301, "JockeyId": 203, "TrainerId": 301,
          "CourseId": 3, "CourseName": "Ascot",
          "Off": "05/21/2026 13:00:00", "HorseName": "Gamma",
          "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
@@ -133,30 +151,18 @@ def test_predict_output_is_sorted_by_coursename_off(tmp_path):
 
 class _EmptyAlgo:
     max_horses = 99
-    def fit(self, train_df): pass
-    def predict(self, races, horse_stats, jockey_stats, trainer_stats=None):
+
+    def __init__(self, max_horses: int = 99):
+        self.max_horses = max_horses
+
+    def fit(self, data):
+        pass
+
+    def predict_field(self, data):
+        return pd.DataFrame(columns=["RaceId", "HorseId", "WinProbability", "PredictedRank"])
+
+    def predict(self, data):
         return pd.DataFrame(columns=["RaceId", "HorseId"])
-
-
-# ================================================================
-# test 5 — trainer stats are loaded and passed to the algorithm
-# ================================================================
-
-class _TrainerCapturingAlgo:
-    max_horses = 99
-    captured_trainer_stats = None
-
-    def fit(self, train_df): pass
-
-    def predict(self, races, horse_stats, jockey_stats, trainer_stats=None):
-        _TrainerCapturingAlgo.captured_trainer_stats = trainer_stats
-        return pd.DataFrame(columns=["RaceId", "HorseId"])
-
-
-def test_predict_passes_trainer_stats_to_algorithm(data_dir):
-    predict(data_path=data_dir, algorithm=_TrainerCapturingAlgo())
-    assert _TrainerCapturingAlgo.captured_trainer_stats is not None
-    assert "TrainerId" in _TrainerCapturingAlgo.captured_trainer_stats.columns
 
 
 def test_predict_empty_winners_writes_empty_csv(data_dir):
@@ -167,27 +173,52 @@ def test_predict_empty_winners_writes_empty_csv(data_dir):
 
 
 # ================================================================
-# test 6 — the built card carries no rating columns (ratings come
-#          only from the per-horse stats join), predictions still produced
+# test 5 — trainer stats reach the serving RaceData (joined on TrainerId)
 # ================================================================
 
-class _CardCapturingAlgo:
+class _ServeCapturingAlgo:
+    """Captures the serving RaceData so tests can inspect what predict.py built."""
+
     max_horses = 99
-    captured_card = None
+    captured_frame = None
 
-    def fit(self, train_df): pass
+    def __init__(self, max_horses: int = 99):
+        self.max_horses = max_horses
 
-    def predict(self, races, horse_stats, jockey_stats, trainer_stats=None):
-        _CardCapturingAlgo.captured_card = races
-        if races.empty:
-            return pd.DataFrame(columns=["RaceId", "HorseId"])
-        return races.groupby("RaceId").first().reset_index()[["RaceId", "HorseId"]]
+    def fit(self, data):
+        pass
 
+    def predict_field(self, data):
+        type(self).captured_frame = data.frame
+        frame = data.frame
+        if frame.empty:
+            return pd.DataFrame(columns=["RaceId", "HorseId", "WinProbability", "PredictedRank"])
+        out = frame.groupby("RaceId").first().reset_index()[["RaceId", "HorseId"]].copy()
+        out["WinProbability"] = 0.5
+        out["PredictedRank"] = 1.0
+        return out
+
+    def predict(self, data):
+        return self.predict_field(data)[["RaceId", "HorseId"]]
+
+
+def test_predict_joins_trainer_stats_into_serving_data(data_dir):
+    _ServeCapturingAlgo.captured_frame = None
+    predict(data_path=data_dir, algorithm=_ServeCapturingAlgo())
+    frame = _ServeCapturingAlgo.captured_frame
+    assert frame is not None
+    assert "TrainerWinPercentage" in frame.columns  # joined on TrainerId via from_legacy
+
+
+# ================================================================
+# test 6 — the built card carries no rating columns (ratings come only
+#          from the per-horse stats join); predictions still produced
+# ================================================================
 
 def test_predict_card_drops_rating_columns_and_still_predicts(tmp_path):
-    # Source race cards DO carry ratings — the built card must strip them.
+    # Source race cards DO carry ratings — the built serving data must strip them.
     rows = [{
-        "RaceId": 10, "HorseId": 101, "JockeyId": 201,
+        "RaceId": 10, "HorseId": 101, "JockeyId": 201, "TrainerId": 301,
         "CourseId": 5, "CourseName": "Ascot",
         "Off": "05/21/2026 14:30:00", "HorseName": "Thunderbolt",
         "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
@@ -200,9 +231,10 @@ def test_predict_card_drops_rating_columns_and_still_predicts(tmp_path):
     _write_trainer_stats(str(tmp_path))
     _write_race_cards(str(tmp_path), rows=rows)
 
-    result = predict(data_path=str(tmp_path), algorithm=_CardCapturingAlgo())
+    _ServeCapturingAlgo.captured_frame = None
+    result = predict(data_path=str(tmp_path), algorithm=_ServeCapturingAlgo())
 
-    card = _CardCapturingAlgo.captured_card
+    frame = _ServeCapturingAlgo.captured_frame
     for col in ["OfficialRating", "RacingPostRating", "TopSpeedRating"]:
-        assert col not in card.columns, f"rating column leaked into the card: {col}"
+        assert col not in frame.columns, f"rating column leaked into the serving data: {col}"
     assert len(result) == 1  # prediction still produced

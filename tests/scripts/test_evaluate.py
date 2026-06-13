@@ -6,8 +6,22 @@ from unittest.mock import patch
 
 from race_analytics.scripts.evaluate import _extract_known_races
 from race_analytics.features.race_history import race_card as _race_card
+from race_analytics.features.race_data import RaceData
 from race_analytics.features.horse_stats import extract_horse_stats as _compute_horse_stats
 from race_analytics.features.jockey_stats import extract_jockey_stats as _compute_jockey_stats
+
+
+class _FakeBuilder:
+    """Stub RaceDataBuilder so evaluate()'s plumbing tests don't run real feature
+    engineering on the minimal fold fixture — the analog of the old
+    decompose_race_history patch. wrap_training/build_serving just wrap the frames.
+    """
+
+    def wrap_training(self, frame, max_horses=10):
+        return RaceData(frame.copy(), pd.Timestamp("2026-01-01"), max_horses)
+
+    def build_serving(self, card, history, as_of, max_horses=10):
+        return RaceData(card.copy(), pd.Timestamp(as_of), max_horses)
 
 
 # ================================================================
@@ -250,13 +264,30 @@ def _make_fold_races(fold_date):
 
 
 class _StubAlgo:
-    def fit(self, _train_df):
+    """FieldPredictor stub. predict_field carries no WinProbability (regressor-like),
+    so CSV WinProbability is NA — the post-migration analog of 'no predict_field'."""
+
+    def __init__(self, max_horses: int = 10):
+        self.max_horses = max_horses
+
+    def fit(self, data):
         pass
 
-    def predict(self, card, *_args):
-        if card.empty:
+    def predict(self, data):
+        frame = data.frame
+        if frame.empty:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
-        return pd.DataFrame([{"RaceId": int(card["RaceId"].iloc[0]), "HorseId": int(card["HorseId"].iloc[0])}])
+        return pd.DataFrame([{"RaceId": int(frame["RaceId"].iloc[0]), "HorseId": int(frame["HorseId"].iloc[0])}])
+
+    def predict_field(self, data):
+        frame = data.frame
+        if frame.empty:
+            return pd.DataFrame(columns=["RaceId", "HorseId", "PredictedRank"])
+        return pd.DataFrame([{
+            "RaceId": int(frame["RaceId"].iloc[0]),
+            "HorseId": int(frame["HorseId"].iloc[0]),
+            "PredictedRank": 1.0,
+        }])
 
 
 def test_evaluate_timing_summary_printed_after_accuracy_summary(capsys):
@@ -268,7 +299,7 @@ def test_evaluate_timing_summary_printed_after_accuracy_summary(capsys):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
     ):
         evaluate(folds=1)
@@ -405,7 +436,7 @@ def test_early_late_split_printed_in_evaluate_output(capsys):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
     ):
         evaluate(folds=1)
@@ -568,22 +599,27 @@ def test_build_csv_rows_race_class_na_when_no_class_column():
 
 
 class _FieldAlgo:
-    """Stub that also exposes predict_field() returning per-horse WinProbability."""
+    """FieldPredictor stub whose predict_field returns per-horse WinProbability."""
 
-    def fit(self, _train_df):
+    def __init__(self, max_horses: int = 10):
+        self.max_horses = max_horses
+
+    def fit(self, data):
         pass
 
-    def predict(self, card, *_args):
-        if card.empty:
+    def predict(self, data):
+        frame = data.frame
+        if frame.empty:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
-        return pd.DataFrame([{"RaceId": int(card["RaceId"].iloc[0]), "HorseId": int(card["HorseId"].iloc[0])}])
+        return pd.DataFrame([{"RaceId": int(frame["RaceId"].iloc[0]), "HorseId": int(frame["HorseId"].iloc[0])}])
 
-    def predict_field(self, card, *_args):
-        if card.empty:
+    def predict_field(self, data):
+        frame = data.frame
+        if frame.empty:
             return pd.DataFrame(columns=["RaceId", "HorseId", "WinProbability", "PredictedRank"])
         return pd.DataFrame([{
-            "RaceId": int(card["RaceId"].iloc[0]),
-            "HorseId": int(card["HorseId"].iloc[0]),
+            "RaceId": int(frame["RaceId"].iloc[0]),
+            "HorseId": int(frame["HorseId"].iloc[0]),
             "WinProbability": 0.75,
             "PredictedRank": 1.0,
         }])
@@ -596,7 +632,7 @@ def test_evaluate_csv_carries_win_probability_for_predict_field_algo(tmp_path):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_FieldAlgo()]),
     ):
         evaluate(folds=1, save_results=True, results_file=out_path)
@@ -611,12 +647,152 @@ def test_evaluate_csv_win_probability_na_for_non_field_algo(tmp_path):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
     ):
         evaluate(folds=1, save_results=True, results_file=out_path)
     df = pd.read_csv(out_path)
     assert df["WinProbability"].isna().all()
+
+
+# ================================================================
+# evaluate() — the declared FieldPredictor / AbstainCapable contract
+# (no hasattr/getattr/type() probing of algorithms)
+# ================================================================
+
+
+class _AbstainAlgo(_FieldAlgo):
+    """FieldPredictor + AbstainCapable. The harness must detect abstention via the
+    AbstainCapable Protocol (isinstance), not by probing for method names."""
+
+    def __init__(self, max_horses: int = 10):
+        super().__init__(max_horses)
+        from race_analytics.algorithms.confidence_gate import ConfidenceGate
+        self._gate = ConfidenceGate("top_prob")
+        self._gate.calibrate([0.5, 0.6, 0.7, 0.8], coverage=1.0)
+
+    def predict_field_unfiltered(self, data):
+        return self.predict_field(data)
+
+    def get_confidence_gate(self):
+        return self._gate
+
+
+def test_plain_field_predictor_is_not_abstain_capable():
+    from race_analytics.algorithms.base import FieldPredictor, AbstainCapable
+    assert isinstance(_FieldAlgo(), FieldPredictor)
+    assert not isinstance(_FieldAlgo(), AbstainCapable)
+    assert isinstance(_AbstainAlgo(), AbstainCapable)
+
+
+def test_evaluate_runs_field_predictor_with_no_frontier(capsys):
+    """A plain FieldPredictor (not abstain-capable) runs through the contract and
+    produces no ROI-vs-coverage frontier — the harness never probes for the methods."""
+    from race_analytics.scripts.evaluate import evaluate
+    fold_date = date.today() - timedelta(days=1)
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_FieldAlgo()]),
+    ):
+        evaluate(folds=1)
+    out = capsys.readouterr().out
+    assert "ROI-vs-Coverage Frontier" not in out
+
+
+def test_evaluate_abstain_capable_algo_triggers_frontier(capsys):
+    """An AbstainCapable algorithm's unfiltered field + gate drive the frontier,
+    selected via isinstance(algo, AbstainCapable)."""
+    from race_analytics.scripts.evaluate import evaluate
+    fold_date = date.today() - timedelta(days=1)
+    with (
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_AbstainAlgo()]),
+    ):
+        evaluate(folds=1)
+    out = capsys.readouterr().out
+    assert "=== ROI-vs-Coverage Frontier: _AbstainAlgo ===" in out
+
+
+# ================================================================
+# evaluate() — full real path (real RaceDataBuilder + real algorithm)
+# ================================================================
+
+
+def _enriched_fold_frame(fold_date) -> pd.DataFrame:
+    """A complete `_engineer_features`-shaped frame: two training flat races (horse 0
+    wins) plus one fold race of three known horses. Rich enough for the real
+    RaceDataBuilder (extract_*_stats + canonical chain) and a real classifier."""
+    base = {
+        "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
+        "Surface_AllWeather": 0.0, "Surface_Dirt": 0.0, "Surface_Turf": 1.0,
+        "Going_Good": 1.0, "Going_Good_To_Soft": 0.0, "Going_Soft": 0.0,
+        "Going_Good_To_Firm": 0.0, "Going_Firm": 0.0, "Going_Heavy": 0.0,
+        "RaceType_Flat": 1.0, "RaceType_Hurdle": 0.0, "RaceType_Other": 0.0, "RaceType_SteepleChase": 0.0,
+        "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
+        "Class": "3", "Age": 4, "Pattern": "", "RatingBand": "0-100",
+        "AgeBand": "3yo+", "SexRestriction": "", "HeadGear": "",
+        "OfficialRating": 80.0, "RacingPostRating": 100.0, "TopSpeedRating": 90.0,
+        "NumberOfPriorRaces": 5.0, "LastRaceAvgRelFinishingPosition": 0.4,
+        "DaysRested": 7.0, "DaysSinceJockeyLastRaced": 3.0,
+        "JockeyNumberOfPriorRaces": 10.0, "JockeyWinPercentage": 0.2,
+        "JockeyTop3Percentage": 0.5, "JockeyAvgRelFinishingPosition": 0.4,
+        "TrainerNumberOfPriorRaces": 20.0, "TrainerWinPercentage": 0.15,
+        "TrainerTop3Percentage": 0.45, "TrainerAvgRelFinishingPosition": 0.42,
+        "LastRaceDistanceInMeters": 1600.0, "LastRaceWeightInPounds": 126.0, "LastRaceSpeed": 15.5,
+        "LastRaceSurface_AllWeather": 0.0, "LastRaceSurface_Dirt": 0.0, "LastRaceSurface_Turf": 1.0,
+        "LastRaceGoing_Good": 1.0, "LastRaceGoing_Good_To_Soft": 0.0, "LastRaceGoing_Soft": 0.0,
+        "LastRaceGoing_Good_To_Firm": 0.0, "LastRaceGoing_Firm": 0.0, "LastRaceGoing_Heavy": 0.0,
+        "LastRaceRaceType_Flat": 1.0, "LastRaceRaceType_Hurdle": 0.0,
+        "LastRaceRaceType_Other": 0.0, "LastRaceRaceType_SteepleChase": 0.0,
+        "Last3RaceAvgSpeed": np.nan, "Last3RaceSpeedTrend": np.nan, "Last3AvgRelFinishingPosition": np.nan,
+        "ResultStatus": "CompletedRace",
+    }
+    rows = []
+    for r in (1, 2):
+        for h in range(4):
+            hid = r * 10 + h
+            rows.append({**base, "RaceId": r, "HorseId": hid, "JockeyId": 100 + hid,
+                         "TrainerId": 1000 + hid, "Off": pd.Timestamp("2026-05-10 13:00:00"),
+                         "KnownHorseAndJockey": False, "StallNumber": h + 1,
+                         "FinishingPosition": h + 1, "HorseCount": 4, "Speed": 16.0 - h * 0.1,
+                         "Wins": 1 if h == 0 else 0, "DecimalOdds": 3.0 + h,
+                         "CourseName": "Ascot", "HorseName": f"H{hid}"})
+    for h, hid in enumerate([10, 11, 20]):
+        rows.append({**base, "RaceId": 99, "HorseId": hid, "JockeyId": 100 + hid,
+                     "TrainerId": 1000 + hid, "Off": pd.Timestamp(f"{fold_date} 14:30:00"),
+                     "KnownHorseAndJockey": True, "StallNumber": h + 1,
+                     "FinishingPosition": h + 1, "HorseCount": 3, "Speed": 16.0,
+                     "Wins": 1 if h == 0 else 0, "DecimalOdds": 3.5,
+                     "CourseName": "York", "HorseName": f"H{hid}"})
+    return pd.DataFrame(rows)
+
+
+def test_evaluate_end_to_end_with_real_builder_and_active_algorithm(tmp_path):
+    """Drive evaluate() through the real RaceDataBuilder and the real ACTIVE algorithm
+    (GatedRecencyWeightedWinClassifier) — exercising wrap_training + build_serving +
+    fit/predict/predict_field/predict_field_unfiltered + the gate, end to end."""
+    from race_analytics.scripts.evaluate import evaluate
+    from race_analytics.algorithms import GatedRecencyWeightedWinClassifier
+
+    fold_date = date(2026, 5, 20)
+    out_path = str(tmp_path / "results.csv")
+    with (
+        patch("race_analytics.scripts.evaluate._fold_dates", return_value=[fold_date]),
+        patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
+        patch("race_analytics.scripts.evaluate._engineer_features", return_value=_enriched_fold_frame(fold_date)),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [GatedRecencyWeightedWinClassifier(max_horses=10)]),
+    ):
+        evaluate(folds=1, save_results=True, results_file=out_path)
+
+    df = pd.read_csv(out_path)
+    assert not df.empty
+    assert (df["Algorithm"] == "GatedRecencyWeightedWinClassifier").all()
+    assert set(df["RaceId"]) == {99}
+    assert df["WinProbability"].notna().all()  # the gated win-classifier carries probabilities
 
 
 # ================================================================
@@ -628,7 +804,7 @@ def _eval_patches(fold_date):
     return [
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
     ]
 
@@ -648,7 +824,7 @@ def test_evaluate_save_results_writes_csv_with_correct_schema(tmp_path):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
     ):
         evaluate(folds=1, save_results=True, results_file=out_path)
@@ -663,7 +839,7 @@ def test_evaluate_results_file_without_save_results_still_writes(tmp_path):
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
     ):
         evaluate(folds=1, results_file=out_path)
@@ -679,7 +855,7 @@ def test_evaluate_timing_accumulators_have_one_entry_per_completed_fold():
     with (
         patch("race_analytics.scripts.evaluate._load_window", return_value=pd.DataFrame([{"x": 1}])),
         patch("race_analytics.scripts.evaluate._engineer_features", return_value=_make_fold_races(fold_date)),
-        patch("race_analytics.scripts.evaluate.decompose_race_history", return_value=(pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), None)),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
         patch("race_analytics.scripts.evaluate.ALGORITHMS", [stub_algo]),
     ):
         timing = evaluate(folds=1)

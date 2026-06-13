@@ -15,6 +15,7 @@ the one principled change that day-since features are computed against an explic
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from datetime import datetime
 from typing import Iterable
 
 import numpy as np
@@ -182,3 +183,24 @@ class RaceDataBuilder:
                 frame.loc[frame[col] > 10, col] = 10
         frame = _apply_canonical_chain(frame)
         return RaceData(frame=frame, as_of=pd.Timestamp(as_of), max_horses=max_horses)
+
+    def wrap_training(self, enriched: pd.DataFrame, max_horses: int = 10) -> RaceData:
+        """Wrap an already-engineered flat training frame (the output of the harness's
+        `_engineer_features`) as a RaceData WITHOUT re-running the canonical chain.
+
+        Unlike `build_training`, this does NOT re-encode: `_engineer_features` produces
+        a frame whose feature set deliberately omits WeightChange/DistanceChange/
+        SurfaceSwitch/CodeSwitch, and re-running the chain would add them — changing the
+        columns the estimator is fitted on. This only clamps the day-since features (the
+        RaceData invariant) and stamps `as_of` as the fold date (one day past the last
+        race), used by recency weighting. It is the single home of the training-frame
+        wrap shared by the harness and the algorithm base's legacy fit adapter."""
+        frame = enriched.copy()
+        for col in ("DaysRested", "DaysSinceJockeyLastRaced"):
+            if col in frame.columns:
+                frame.loc[frame[col] > 10, col] = 10
+        if "Off" in frame.columns:
+            as_of = pd.to_datetime(frame["Off"]).max().normalize() + pd.Timedelta(days=1)
+        else:
+            as_of = pd.Timestamp(datetime.today())
+        return RaceData(frame=frame, as_of=as_of, max_horses=max_horses)

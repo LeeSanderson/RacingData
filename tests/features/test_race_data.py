@@ -283,6 +283,57 @@ def test_build_training_clamps_days_rested():
     assert (rd.frame["DaysRested"] == 10).all()
 
 
+# ── wrap_training: wrap an already-enriched frame WITHOUT re-running the chain ──
+
+
+def test_wrap_training_does_not_re_run_canonical_chain():
+    """The harness feeds wrap_training a frame already enriched by _engineer_features
+    (which does NOT compute WeightChange/DistanceChange/SurfaceSwitch/CodeSwitch).
+    Unlike build_training, wrap_training must NOT add those columns — re-encoding
+    would change the selected feature set and the fitted model."""
+    hist = _enriched_history()
+    for col in ("WeightChange", "DistanceChange", "SurfaceSwitch", "CodeSwitch"):
+        assert col not in hist.columns
+    rd = RaceDataBuilder().wrap_training(hist, max_horses=10)
+    for col in ("WeightChange", "DistanceChange", "SurfaceSwitch", "CodeSwitch"):
+        assert col not in rd.frame.columns, f"{col} was added — chain was re-run"
+
+
+def test_wrap_training_clamps_day_since_features():
+    hist = _enriched_history()
+    hist["DaysRested"] = 99.0
+    hist["DaysSinceJockeyLastRaced"] = 50.0
+    rd = RaceDataBuilder().wrap_training(hist, max_horses=10)
+    assert (rd.frame["DaysRested"] == 10).all()
+    assert (rd.frame["DaysSinceJockeyLastRaced"] == 10).all()
+
+
+def test_wrap_training_as_of_is_one_day_past_last_race():
+    hist = _enriched_history()
+    hist.loc[hist.index[-1], "Off"] = pd.Timestamp("2026-05-10 14:00:00")
+    rd = RaceDataBuilder().wrap_training(hist, max_horses=10)
+    assert rd.as_of == pd.Timestamp("2026-05-11")
+
+
+def test_wrap_training_retains_labels():
+    rd = RaceDataBuilder().wrap_training(_enriched_history(), max_horses=10)
+    assert rd.has_labels is True
+
+
+def test_wrap_training_matches_legacy_training_adapter():
+    """wrap_training reproduces the base algorithm's _training_data_from_legacy
+    exactly (the path the un-migrated harness uses today via algo.fit(flat_frame))."""
+    from race_analytics.algorithms.win_classifier import WinClassifier
+
+    hist = _enriched_history()
+    hist["DaysRested"] = 99.0
+    legacy = WinClassifier(max_horses=10)._training_data_from_legacy(hist)
+    wrapped = RaceDataBuilder().wrap_training(hist, max_horses=10)
+    pd.testing.assert_frame_equal(wrapped.frame, legacy.frame)
+    assert wrapped.as_of == legacy.as_of
+    assert wrapped.max_horses == legacy.max_horses
+
+
 # ── RaceData value-object semantics ────────────────────────────────────────────
 
 
