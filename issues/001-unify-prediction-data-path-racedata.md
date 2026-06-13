@@ -1,8 +1,23 @@
 # 001 — Unify the prediction data-path on a canonical `RaceData` value object
 
-**Status:** Proposed
-**Type:** Architecture / refactor (module deepening)
+**Status:** Proposed (parent RFC — decomposed into AFK slices below; **do not implement 001 directly**)
+**Type:** Architecture / refactor (module deepening) — design/decision doc, HITL
 **Scope:** `race_analytics/algorithms/`, `race_analytics/features/`, `race_analytics/scripts/evaluate.py`, `tests/`
+
+## Decomposition (2026-06-13)
+
+This RFC is the parent; the work is carried out by the dependency-ordered AFK slices below. Each is
+behavior-preserving and leaves the suite green until the final cleanup:
+
+1. `issues/002-racedata-value-object-and-builder.md` — `RaceData` + `RaceDataBuilder` + characterization (no algorithm touched)
+2. `issues/003-deepen-fieldpredictor-engine.md` — deepen `FieldPredictorBaseAlgorithm` into the template engine + Protocols
+3. `issues/004-migrate-win-classifier-family.md` — migrate the win-classifier family onto the hooks
+4. `issues/005-migrate-regressor-family.md` — migrate the regressor family onto the engine
+5. `issues/006-migrate-gated-classifier-calibration.md` — gate calibrates on the same `RaceData` (drop the round trip)
+6. `issues/007-migrate-harness-evaluate-predict.md` — `evaluate.py` + `predict.py` on `RaceData` + the Protocol contract
+7. `issues/008-remove-legacy-shim-and-duplication.md` — delete the `from_legacy` shim + duplicated paths
+
+The detailed design (interface, dependency strategy, testing strategy) for all slices is below.
 
 This RFC consolidates two pieces of architectural friction in the algorithms subsystem
 that are best fixed together:
