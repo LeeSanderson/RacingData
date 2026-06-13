@@ -1,9 +1,14 @@
+from unittest import mock
+
+import numpy as np
 import pandas as pd
 import pytest
 from datetime import datetime
 
 from race_analytics.algorithms.gated_classifier import GatedClassifier
 from race_analytics.algorithms.win_classifier import WinClassifier
+from race_analytics.algorithms.base import FieldPredictorBaseAlgorithm
+from race_analytics.features.race_data import RaceData
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
@@ -151,3 +156,75 @@ def test_gate_calibrated_after_fit():
     algo = GatedClassifier(inner, coverage=0.7)
     algo.fit(_make_train_df())
     assert algo.get_confidence_gate()._calib_scores
+
+
+# ── 6. calibration drops the decompose_race_history round trip ────────────────
+
+def test_fit_does_not_call_decompose_race_history():
+    algo = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
+    with mock.patch(
+        "race_analytics.features.race_history.decompose_race_history",
+        side_effect=AssertionError("decompose_race_history must not be called"),
+    ):
+        algo.fit(_make_train_df())  # raises if the round trip is still wired in
+    assert algo.get_confidence_gate()._calib_scores
+
+
+# ── 7. calibration is wall-clock independent (fold date, not datetime.today) ──
+
+def test_calibration_is_independent_of_wall_clock():
+    """Two fits of the same data under different wall-clock times must calibrate
+    identically — the gate path reads RaceData.as_of, never datetime.today()."""
+    train_df = _make_train_df()
+
+    a = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
+    b = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
+    with mock.patch("race_analytics.algorithms.base.datetime") as m_dt:
+        m_dt.today.return_value = datetime(2026, 1, 1)
+        a.fit(train_df)
+    with mock.patch("race_analytics.algorithms.base.datetime") as m_dt:
+        m_dt.today.return_value = datetime(2030, 12, 31)
+        b.fit(train_df)
+
+    assert a.get_confidence_gate().threshold == b.get_confidence_gate().threshold
+
+
+# ── 8. characterization: threshold matches the legacy round trip on the fixture ─
+
+def test_calibrated_threshold_matches_legacy_within_tolerance():
+    algo = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
+    algo.fit(_make_train_df())
+    # Legacy (decompose -> four-frame re-encode) threshold pinned at 1/3 on this
+    # uniform fixture (3 identical runners per race -> top_prob ~= 0.333).
+    assert algo.get_confidence_gate().threshold == pytest.approx(0.33333334, abs=1e-2)
+
+
+# ── 9. calibration flows RaceData.as_of through to the gate ───────────────────
+
+class _AsOfScoringInner(FieldPredictorBaseAlgorithm):
+    """Fake inner whose in-sample WinProbability encodes data.as_of, so that the
+    gate's calibration is observably driven by the RaceData it was handed."""
+
+    def fit(self, data) -> None:
+        pass
+
+    def predict_field(self, data, *args, **kwargs):
+        out = data.frame[["RaceId", "HorseId"]].copy()
+        out["WinProbability"] = (data.as_of.day % 28) / 28.0
+        out["PredictedRank"] = 1.0
+        return out
+
+
+def _race_data(as_of: pd.Timestamp) -> RaceData:
+    frame = pd.DataFrame(
+        {"RaceId": [1, 1, 2, 2], "HorseId": [10, 11, 20, 21], "Wins": [1, 0, 1, 0]}
+    )
+    return RaceData(frame, as_of=as_of)
+
+
+def test_different_as_of_calibrates_differently():
+    early = GatedClassifier(_AsOfScoringInner(), coverage=0.7)
+    late = GatedClassifier(_AsOfScoringInner(), coverage=0.7)
+    early.fit(_race_data(pd.Timestamp("2021-01-05")))
+    late.fit(_race_data(pd.Timestamp("2021-01-20")))
+    assert early.get_confidence_gate().threshold != late.get_confidence_gate().threshold
