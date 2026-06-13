@@ -49,6 +49,9 @@ Builds C#, runs tests, downloads the last 365 days of results, then runs `build_
 
 ## Critical Constraints
 
+### Prediction-time data — no leakage
+Two raw columns look usable but must never be features or filters: **RacingPostRating / TopSpeedRating** (`Results_*.csv`) are *post-race* figures (a TSR-gated model once faked 0.78 accuracy vs a 0.265 real anchor) — ratings may reach algorithms only as previous-race `LastRace*` values via the per-horse stats join, never the card; and **market odds** are unpopulated in `TodaysRaceCards.csv` at download (`FractionalOdds` = `"SP"`) — usable only to *measure* ROI retrospectively, never as a model input. Full detail: [`docs/data-pitfalls.md`](docs/data-pitfalls.md).
+
 ### racingpost.com scraping
 Plain HTTP clients (`Invoke-WebRequest`, `curl`, `HttpClient` with default headers) get HTTP 429 from racingpost.com. The codebase uses `PuppeteerHtmlLoader` (headless Chrome, iPad Landscape emulation). For any ad-hoc probing of racingpost.com markup or selectors, drive it through `PuppeteerHtmlLoader` or a throwaway PuppeteerSharp script — not Invoke-WebRequest.
 
@@ -116,6 +119,7 @@ class MyClassifier(FieldPredictorBaseAlgorithm):
 
 # Wrap any FieldPredictor in GatedClassifier to add a confidence gate (abstains below threshold).
 ```
+Full class hierarchy and the registry (`ALGORITHMS`/`ACTIVE_ALGORITHM`): [`docs/evaluation-pipeline.md`](docs/evaluation-pipeline.md).
 
 ### Going encoding default
 `encode_going()` in `race_analytics/features/transforms.py` defaults empty or null `Going`
@@ -134,3 +138,5 @@ Key decisions:
 - `max_horses` is a per-algorithm constructor parameter; applied internally by each algorithm
 - Primary metric: winner accuracy; ROI displayed for information only
 - Gated algorithms abstain on low-confidence races (trading coverage for accuracy/ROI); `evaluate.py` prints a ROI-vs-coverage frontier for them
+
+Full methodology, the algorithm class hierarchy, filters, metric definitions, timing, and run commands: [`docs/evaluation-pipeline.md`](docs/evaluation-pipeline.md). Current active algorithm and latest measured results: `evaluations.md`.
