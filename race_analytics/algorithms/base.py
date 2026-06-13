@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
+from dataclasses import replace
+from datetime import datetime
 from typing import ClassVar, Protocol, runtime_checkable
 import numpy as np
 import pandas as pd
 
-from race_analytics.features.race_data import RaceData
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 REQUIRED_PREDICTORS = [
     "DistanceInMeters",
@@ -137,10 +139,12 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     top-1 pick. Subclasses supply only what varies — the estimator-fit and score
     hooks, plus optional prepare/gate/weight hooks.
 
-    Transitional (issue 003): `fit`/`predict_field`/`predict` dispatch on type. A
-    `RaceData` runs the new engine; the legacy four-frame call signature continues to
-    flow to subclass overrides unchanged, so no existing algorithm is migrated yet.
-    The legacy paths are removed in issue 008.
+    `fit`/`predict_field`/`predict` accept a `RaceData` directly (the canonical path)
+    or the legacy calling shapes — a flat enriched training frame for `fit`, four
+    decomposed frames for `predict_field`/`predict`. Legacy inputs are adapted to a
+    `RaceData` via `RaceDataBuilder` and then run through the same engine, so an
+    algorithm never re-implements the merge/encode/complete-race/rank data-path. The
+    legacy adapters are removed once every caller is on `RaceData` (issue 008).
     """
 
     # ── convention knobs (override by class assignment) ──
@@ -175,9 +179,7 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     # ── the one training data-path ──
     def fit(self, data) -> None:
         if not isinstance(data, RaceData):
-            raise NotImplementedError(
-                "legacy fit(train_df) must be overridden by the subclass"
-            )
+            data = self._training_data_from_legacy(data)
         data = self._prepare_training(data)
         self._feature_cols = self._select_features(data)
         train = self._dropna_required(data)
@@ -190,29 +192,55 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     # ── the one serving data-path ──
     def predict_field(self, data, horse_stats=None, jockey_stats=None, trainer_stats=None):
         if not isinstance(data, RaceData):
-            raise NotImplementedError(
-                "legacy predict_field(four frames) must be overridden by the subclass"
+            data = RaceDataBuilder().from_legacy(
+                data, horse_stats, jockey_stats, trainer_stats,
+                as_of=pd.Timestamp(datetime.today()), max_horses=self.max_horses,
             )
         if not self._feature_cols:
             return self._empty()
         data = self._prepare_serving(data)
+        available = [c for c in self._feature_cols if c in data.frame.columns]
         original_counts = data.frame.groupby("RaceId")["HorseId"].count()
         predictable = self._keep_complete_races(self._dropna_required(data), original_counts)
         predictable = self._race_gate(predictable)
         if predictable.frame.empty:
             return self._empty()
-        scores = self._score(predictable.feature_frame(self._feature_cols))
+        scores = self._score(predictable.feature_frame(available))
         field = self._rank_within_race(predictable.frame, scores)
         if not self.return_full_field:
             field = field[field["PredictedRank"] == 1].reset_index(drop=True)
         return field
 
     def predict(self, data, horse_stats=None, jockey_stats=None, trainer_stats=None):
-        if isinstance(data, RaceData):
-            return self._top1(self.predict_field(data))
-        # legacy four-frame: delegate to the (overridden) four-frame predict_field
-        field = self.predict_field(data, horse_stats, jockey_stats, trainer_stats)
-        return self._top1(field)
+        return self._top1(self.predict_field(data, horse_stats, jockey_stats, trainer_stats))
+
+    # ── legacy → RaceData adapters (removed in issue 008) ──
+    def _training_data_from_legacy(self, train_df: pd.DataFrame) -> RaceData:
+        """Wrap an already-enriched flat training frame as a RaceData. The frame has
+        already been through the feature chain upstream, so this only clamps the
+        day-since features (the RaceData invariant) — it does not re-encode. `as_of`
+        is the fold date (one day past the last race), used by recency weighting."""
+        frame = train_df.copy()
+        for col in ("DaysRested", "DaysSinceJockeyLastRaced"):
+            if col in frame.columns:
+                frame.loc[frame[col] > 10, col] = 10
+        if "Off" in frame.columns:
+            as_of = pd.to_datetime(frame["Off"]).max().normalize() + pd.Timedelta(days=1)
+        else:
+            as_of = pd.Timestamp(datetime.today())
+        return RaceData(frame=frame, as_of=as_of, max_horses=self.max_horses)
+
+    def _add_race_context(self, data: RaceData) -> RaceData:
+        """Materialise HorseCount and the per-race `Rel{col}` columns for the
+        `extra_nan_tolerant_features`. Shared by every win-classifier family member so
+        the relative-rating logic runs identically for all of them."""
+        frame = data.frame.copy()
+        if "HorseCount" not in frame.columns:
+            frame["HorseCount"] = frame.groupby("RaceId")["HorseId"].transform("count")
+        for col in self.extra_nan_tolerant_features:
+            if col in frame.columns:
+                frame[f"Rel{col}"] = frame[col] - frame.groupby("RaceId")[col].transform("mean")
+        return replace(data, frame=frame)
 
     # ── shared helpers (implemented once) ──
     def _feature_universe(self) -> list[str]:
@@ -226,7 +254,9 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     def _dropna_required(self, data: RaceData) -> RaceData:
         required = [
             c for c in REQUIRED_PREDICTORS
-            if c in self._feature_cols and c not in self.nan_tolerant_predictors
+            if c in self._feature_cols
+            and c not in self.nan_tolerant_predictors
+            and c in data.frame.columns
         ]
         if data.has_labels and self.label_col in data.frame.columns:
             required = required + [self.label_col]

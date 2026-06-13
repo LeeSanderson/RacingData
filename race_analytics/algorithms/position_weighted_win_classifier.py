@@ -10,7 +10,7 @@ class PositionWeightedWinClassifier(WinClassifier):
     Training samples are weighted by 1/FinishingPosition (winner=1.0, 2nd=0.5, …).
     """
 
-    def _sample_weight(self, data: pd.DataFrame) -> np.ndarray | None:
-        if "FinishingPosition" not in data.columns:
+    def _sample_weight(self, frame: pd.DataFrame) -> np.ndarray | None:
+        if "FinishingPosition" not in frame.columns:
             return None
-        return (1.0 / data["FinishingPosition"]).to_numpy()
+        return (1.0 / frame["FinishingPosition"]).to_numpy()

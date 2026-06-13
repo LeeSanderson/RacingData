@@ -8,6 +8,7 @@ by their existing tests (run as part of the full suite) and must stay green — 
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from race_analytics.algorithms.base import (
     FieldPredictorBaseAlgorithm,
@@ -161,6 +162,55 @@ def test_return_full_field_false_yields_only_rank1_rows():
     field = algo.predict_field(_race_data(n_races=2, horses=3, with_label=False))
     assert len(field) == 2
     assert (field["PredictedRank"] == 1).all()
+
+
+# ── the engine ranks a full field for any (estimator, weighting) combination ────
+
+
+class _FakeRanker:
+    """A ranker-style estimator: fit(group=...) and predict (no predict_proba)."""
+
+    def __init__(self):
+        self.fit_sw = "unset"
+
+    def fit(self, X, y, group=None, sample_weight=None):
+        self.fit_sw = sample_weight
+        return self
+
+    def predict(self, X):
+        return np.arange(len(X), 0, -1)  # decreasing -> row[0] ranks first
+
+
+class _RankerEngine(FieldPredictorBaseAlgorithm):
+    """Engine subclass scoring via a ranker's predict() instead of predict_proba()."""
+
+    def __init__(self, max_horses=10):
+        self._r = _FakeRanker()
+        super().__init__(max_horses)
+
+    def _fit_estimator(self, X, frame, sample_weight):
+        self._r.fit(X, frame[self.label_col], sample_weight=sample_weight)
+
+    def _score(self, X):
+        return self._r.predict(X)
+
+
+class _WeightedClassifier(_EngineClassifier):
+    def _sample_weight(self, frame):
+        return np.full(len(frame), 3.0)
+
+
+@pytest.mark.parametrize("factory", [_EngineClassifier, _RankerEngine, _WeightedClassifier])
+def test_engine_ranks_full_field_for_any_estimator_and_weighting(factory):
+    algo = factory()
+    algo.fit(_race_data(with_label=True))
+    field = algo.predict_field(_race_data(n_races=2, horses=3, with_label=False))
+
+    assert len(field) == 6
+    assert {"RaceId", "HorseId", "WinProbability", "PredictedRank"} <= set(field.columns)
+    # exactly one rank-1 pick per race, regardless of estimator/weighting
+    rank1_per_race = field.groupby("RaceId")["PredictedRank"].apply(lambda r: (r == 1).sum())
+    assert (rank1_per_race == 1).all()
 
 
 # ── declared contracts ─────────────────────────────────────────────────────────

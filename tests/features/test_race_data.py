@@ -1,38 +1,44 @@
 """Tests for the canonical RaceData value object + RaceDataBuilder (issue 002).
 
 The headline gate is `test_from_legacy_reproduces_run_prediction_intermediate`: it
-captures the *actual* post-encode `merged` frame that the live
-`BinaryWinClassifierAlgorithm._run_prediction` builds and asserts that
-`RaceDataBuilder.from_legacy(...)` reproduces it column-for-column. `datetime.today()`
-is pinned so `DaysRested` is deterministic.
+builds the post-encode `merged` frame with an independent, frozen reimplementation of
+the legacy `_run_prediction` merge + transform sequence and asserts that
+`RaceDataBuilder.from_legacy(...)` reproduces it column-for-column. (The production
+`_run_prediction` body was folded into the engine in issue 004; this reference is the
+behavioural snapshot it used to be characterised against.) `as_of` is fixed so
+`DaysRested` is deterministic.
 """
 
 from datetime import datetime
-from unittest import mock
 
 import numpy as np
 import pandas as pd
 
-from race_analytics.algorithms import binary_win_classifier as bwc_module
-from race_analytics.algorithms.binary_win_classifier import BinaryWinClassifierAlgorithm
 from race_analytics.algorithms.base import REQUIRED_PREDICTORS, OPTIONAL_PREDICTORS
 from race_analytics.features.race_data import RaceData, RaceDataBuilder
 from race_analytics.features.race_history import race_card
 from race_analytics.features.horse_stats import extract_horse_stats
 from race_analytics.features.jockey_stats import extract_jockey_stats
 from race_analytics.features.trainer_stats import extract_trainer_stats
+from race_analytics.features.transforms import (
+    encode_surfaces,
+    encode_going,
+    encode_race_type,
+    calculate_weight_change,
+    calculate_distance_change,
+    calculate_surface_switch,
+    calculate_code_switch,
+    calculate_race_class,
+    calculate_age_features,
+    calculate_draw_features,
+    encode_pattern,
+    calculate_is_handicap,
+    encode_age_band,
+    encode_sex_restriction,
+    encode_headgear,
+)
 
 _AS_OF = datetime(2026, 6, 13, 9, 30, 0)
-
-
-class _MockClassifier:
-    def fit(self, X, y, **kwargs):
-        return self
-
-    def predict_proba(self, X):
-        out = np.zeros((len(X), 2))
-        out[:, 1] = 0.5
-        return out
 
 
 # ── fixtures (raw card + per-entity stats, as predict() would receive) ─────────
@@ -157,23 +163,46 @@ def _enriched_history() -> pd.DataFrame:
     return df
 
 
-def _capture_legacy_merged(races, horse_stats, jockey_stats, trainer_stats):
-    """Run the live _run_prediction and capture its post-encode `merged` frame."""
-    algo = BinaryWinClassifierAlgorithm(_MockClassifier())
-    algo._feature_cols = ["DistanceInMeters"]  # non-empty so _run_prediction proceeds
-    captured = {}
-    real_draw = bwc_module.calculate_draw_features
+def _legacy_reference_merged(races, horse_stats, jockey_stats, trainer_stats):
+    """Frozen reimplementation of the legacy `_run_prediction` merge + transform
+    sequence, independent of production code. `as_of` is pinned to `_AS_OF` so
+    `DaysRested` is deterministic."""
+    today = np.datetime64(_AS_OF)
+    one_day = np.timedelta64(1, "D")
 
-    def _capture(df):
-        out = real_draw(df)
-        captured["merged"] = out.copy()
-        return out
+    merged = pd.merge(races.copy(), horse_stats, how="left", on=["HorseId"])
+    merged["DaysRested"] = np.ceil((today - pd.to_datetime(merged["LastOff"])) / one_day)
+    merged.loc[merged["DaysRested"] > 10, "DaysRested"] = 10
+    merged = merged.drop("LastOff", axis=1, errors="ignore")
 
-    with mock.patch.object(bwc_module, "calculate_draw_features", _capture), \
-            mock.patch.object(bwc_module, "datetime") as m_dt:
-        m_dt.today.return_value = _AS_OF
-        algo.predict_field(races, horse_stats, jockey_stats, trainer_stats)
-    return captured["merged"]
+    merged = pd.merge(merged, jockey_stats, how="left", on=["JockeyId"])
+    merged["DaysSinceJockeyLastRaced"] = np.ceil(
+        (today - pd.to_datetime(merged["LastOff"])) / one_day
+    )
+    merged.loc[merged["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
+    merged = merged.drop("LastOff", axis=1, errors="ignore")
+
+    if trainer_stats is not None:
+        merged = pd.merge(merged, trainer_stats, how="left", on=["TrainerId"])
+
+    merged = encode_surfaces(merged)
+    merged = encode_going(merged)
+    merged = encode_race_type(merged)
+    merged = calculate_weight_change(merged)
+    merged = calculate_distance_change(merged)
+    merged = calculate_surface_switch(merged)
+    merged = calculate_code_switch(merged)
+    merged = calculate_race_class(merged)
+    merged = calculate_age_features(merged)
+    merged = encode_pattern(merged)
+    merged = calculate_is_handicap(merged)
+    merged = encode_age_band(merged)
+    merged = encode_sex_restriction(merged)
+    merged = encode_headgear(merged)
+    if "HorseCount" not in merged.columns:
+        merged["HorseCount"] = merged.groupby("RaceId")["HorseId"].transform("count")
+    merged = calculate_draw_features(merged)
+    return merged
 
 
 # ── characterization (the must-pass gate) ──────────────────────────────────────
@@ -181,14 +210,14 @@ def _capture_legacy_merged(races, horse_stats, jockey_stats, trainer_stats):
 
 def test_from_legacy_reproduces_run_prediction_intermediate():
     races, hs, js, ts = _races(), _horse_stats(), _jockey_stats(), _trainer_stats()
-    legacy = _capture_legacy_merged(races, hs, js, ts)
+    legacy = _legacy_reference_merged(races, hs, js, ts)
     rd = RaceDataBuilder().from_legacy(races, hs, js, ts, as_of=_AS_OF)
     pd.testing.assert_frame_equal(rd.frame, legacy)
 
 
 def test_from_legacy_without_trainer_stats():
     races, hs, js = _races(), _horse_stats(), _jockey_stats()
-    legacy = _capture_legacy_merged(races, hs, js, None)
+    legacy = _legacy_reference_merged(races, hs, js, None)
     rd = RaceDataBuilder().from_legacy(races, hs, js, None, as_of=_AS_OF)
     pd.testing.assert_frame_equal(rd.frame, legacy)
 

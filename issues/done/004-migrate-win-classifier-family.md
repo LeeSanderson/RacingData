@@ -2,7 +2,7 @@
 
 **Type:** AFK
 **Parent RFC:** `issues/001-unify-prediction-data-path-racedata.md`
-**Status:** Proposed
+**Status:** Done (2026-06-13)
 **Blocked by:** `issues/003-deepen-fieldpredictor-engine.md`
 
 RFC migration step 2 (continued). Move the win-classifier family off the duplicated
@@ -24,15 +24,35 @@ Reimplement these on the engine, supplying only what genuinely varies (`_prepare
 
 ## Acceptance criteria
 
-- [ ] Every win-classifier algorithm runs through the base engine template; no algorithm contains its own
+- [x] Every win-classifier algorithm runs through the base engine template; no algorithm contains its own
       merge/encode/complete-race/rank code.
-- [ ] `RecencyWeightedWinClassifier` weights derive from `RaceData.as_of`, verified by building two `RaceData`
+- [x] `RecencyWeightedWinClassifier` weights derive from `RaceData.as_of`, verified by building two `RaceData`
       with different `as_of` and asserting different weights for identical rows.
-- [ ] Existing behavior preserved: `tests/algorithms/test_binary_win_classifier.py`,
+- [x] Existing behavior preserved: `tests/algorithms/test_binary_win_classifier.py`,
       `test_recency_weighted_proxy_tsr.py`, `test_ratings_xgboost.py`, `test_predictors.py`,
       `test_last3_nan_tolerance.py`, `test_split_race_type.py`, `test_ltr_proxy_tsr.py` pass (migrated to the
       `RaceData` signature where they asserted on the four-frame API).
-- [ ] `python -m pytest tests/` green.
+- [x] `python -m pytest tests/` green (409 passed).
+
+## Completion notes (2026-06-13)
+
+- The base `FieldPredictorBaseAlgorithm` now adapts the legacy calling shapes to `RaceData` (flat enriched
+  frame for `fit` → clamp+wrap; four frames for `predict_field` → `RaceDataBuilder.from_legacy`) and runs the
+  one engine path. Un-migrated callers (`evaluate.py`, `predict.py`, `GatedClassifier`,
+  `SplitDisciplineWinClassifier`) keep working via these adapters until issues 006/007; they are deleted in 008.
+- Each family member now supplies only what varies: `BinaryWinClassifier` (`_fit_estimator`/`_score` + the
+  shared `_add_race_context` HorseCount/Rel hook), `WinClassifier` (proxy-TSR `_prepare_training`/`_prepare_serving`),
+  `RatingsXGBoost(Ungated)` (`_race_gate`), `PositionWeighted` (`_sample_weight`), `RecencyWeighted`
+  (`_sample_weight` from `as_of`), `RankingClassifier` (`label_col="FinishingPosition"` + ranker `_fit_estimator`/`_score`).
+  `Tuned` and `SplitDiscipline` needed no change (hyperparams / orchestrator).
+- **Behaviour-preserving incl. recency:** the adapter sets `as_of = max(Off).normalize() + 1 day` (the fold
+  date), so the new `as_of`-based decay reproduces the legacy date arithmetic exactly — no metric drift. The
+  fix is architectural (read `RaceData.as_of`, not `train_df["Off"]`), not numeric.
+- `test_race_data.py`'s characterization now compares `from_legacy` against an inlined, frozen reference of the
+  (deleted) `_run_prediction` merge+chain rather than patching production.
+- Note for a future cleanup (out of scope): `race_analytics/scripts/fold_analysis.py` was already broken before
+  this issue (imports `_compute_horse_stats`/`_race_card` from `evaluate.py` and `_add_race_context` from
+  `ratings_xgboost`, none of which exist); left untouched.
 
 ## Tests
 

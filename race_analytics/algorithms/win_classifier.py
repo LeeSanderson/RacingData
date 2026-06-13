@@ -1,13 +1,13 @@
-from datetime import timedelta
+from dataclasses import replace
 from typing import ClassVar
 
-import numpy as np
 import pandas as pd
 from xgboost import XGBClassifier
 
 from race_analytics.algorithms.base import OPTIONAL_PREDICTORS
 from race_analytics.algorithms.binary_win_classifier import BinaryWinClassifierAlgorithm
 from race_analytics.algorithms.proxy_tsr import ProxyTSRModel
+from race_analytics.features.race_data import RaceData
 
 # Previous-race ratings sourced from the per-horse stats join (leak-free); the
 # current-race OfficialRating/RacingPostRating/TopSpeedRating are post-race
@@ -60,16 +60,16 @@ class WinClassifier(BinaryWinClassifierAlgorithm):
             max_horses,
         )
 
-    def _prepare_training_df(self, train_df: pd.DataFrame) -> pd.DataFrame:
+    def _prepare_training(self, data: RaceData) -> RaceData:
         if self._tune_proxy:
-            self._proxy_model.tune(train_df)
-        self._proxy_model.fit(train_df)
-        self._horse_proxy_tsr = self._proxy_model.compute_horse_proxy_tsr(train_df)
-        df = train_df.copy()
-        df["LastProxyTSR"] = self._proxy_model.compute_as_of_proxy(train_df)
-        return df
+            self._proxy_model.tune(data.frame)
+        self._proxy_model.fit(data.frame)
+        self._horse_proxy_tsr = self._proxy_model.compute_horse_proxy_tsr(data.frame)
+        data = data.with_columns(LastProxyTSR=self._proxy_model.compute_as_of_proxy(data.frame))
+        return super()._prepare_training(data)
 
-    def _prepare_prediction_df(self, merged: pd.DataFrame) -> pd.DataFrame:
+    def _prepare_serving(self, data: RaceData) -> RaceData:
         if not self._horse_proxy_tsr.empty:
-            merged = pd.merge(merged, self._horse_proxy_tsr, on="HorseId", how="left")
-        return merged
+            merged = pd.merge(data.frame, self._horse_proxy_tsr, on="HorseId", how="left")
+            data = replace(data, frame=merged)
+        return super()._prepare_serving(data)

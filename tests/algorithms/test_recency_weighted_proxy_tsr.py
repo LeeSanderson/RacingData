@@ -4,6 +4,7 @@ import pytest
 from datetime import datetime
 
 from race_analytics.algorithms.recency_weighted_win_classifier import RecencyWeightedWinClassifier as RecencyWeightedProxyTSRAlgorithm
+from race_analytics.features.race_data import RaceData
 
 _LONG_AGO = datetime(2020, 1, 1)
 D_OLD = datetime(2021, 1, 1)
@@ -99,14 +100,31 @@ def test_recency_and_abstain_registered_in_algorithms():
     assert "GatedRecencyWeightedWinClassifier" in names
 
 
+def _prepared_weights(algo: RecencyWeightedProxyTSRAlgorithm, train_df: pd.DataFrame,
+                      as_of: pd.Timestamp) -> pd.DataFrame:
+    """Run the training-prep hook and return the prepared frame carrying `_w`."""
+    return algo._prepare_training(RaceData(train_df.copy(), as_of)).frame
+
+
 def test_decay_weights_older_races_lower():
     algo = RecencyWeightedProxyTSRAlgorithm(max_horses=10)
     train_df = _make_train_df_varied_dates()
-    algo.fit(train_df)
+    as_of = pd.to_datetime(train_df["Off"]).max().normalize() + pd.Timedelta(days=1)
 
-    old_idx = train_df[pd.to_datetime(train_df["Off"]).dt.date == D_OLD.date()].index
-    new_idx = train_df[pd.to_datetime(train_df["Off"]).dt.date == D_NEW.date()].index
-    assert algo._decay_weights.loc[old_idx].mean() < algo._decay_weights.loc[new_idx].mean()
+    w = _prepared_weights(algo, train_df, as_of)
+    off = pd.to_datetime(w["Off"]).dt.date
+    assert w.loc[off == D_OLD.date(), "_w"].mean() < w.loc[off == D_NEW.date(), "_w"].mean()
+
+
+def test_decay_weights_derive_from_as_of_not_wall_clock():
+    """Identical rows under two different `as_of` dates yield different weights, and a
+    later `as_of` (every race relatively older) yields uniformly smaller weights."""
+    train_df = _make_train_df_varied_dates()
+    early = _prepared_weights(RecencyWeightedProxyTSRAlgorithm(), train_df, pd.Timestamp("2021-05-02"))
+    late = _prepared_weights(RecencyWeightedProxyTSRAlgorithm(), train_df, pd.Timestamp("2021-08-02"))
+
+    assert not np.allclose(early["_w"].to_numpy(), late["_w"].to_numpy())
+    assert (late["_w"].to_numpy() <= early["_w"].to_numpy() + 1e-12).all()
 
 
 def test_recency_weighted_fit_and_predict_field_smoke():

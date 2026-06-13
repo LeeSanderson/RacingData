@@ -1,9 +1,19 @@
+"""Behaviour tests for BinaryWinClassifierAlgorithm on the RaceData engine (issue 004).
+
+These drive the algorithm through its public API — `fit(train_df)` and the four-frame
+`predict_field`/`predict` (adapted to RaceData by the base engine) — with a mock
+estimator. Generic engine mechanics (race-gate ordering, sample weighting, top-1
+shaping) live in `test_field_predictor_engine.py`; here we pin the win-classifier's
+own behaviour: the engineered race context, NaN handling, and full-field/top-1 output.
+"""
+
 import numpy as np
 import pandas as pd
 from datetime import datetime
 
 from race_analytics.algorithms.base import REQUIRED_PREDICTORS
 from race_analytics.algorithms.binary_win_classifier import BinaryWinClassifierAlgorithm
+from race_analytics.features.race_data import RaceData
 
 _LONG_AGO = datetime(2020, 1, 1)
 _REQ_COL = "DistanceInMeters"  # first entry of REQUIRED_PREDICTORS
@@ -13,10 +23,12 @@ class _MockClassifier:
     def __init__(self):
         self.fit_X = None
         self.fit_y = None
+        self.fit_sw = "unset"
 
-    def fit(self, X, y):
+    def fit(self, X, y, sample_weight=None):
         self.fit_X = pd.DataFrame(X).copy()
         self.fit_y = y.copy() if hasattr(y, "copy") else y
+        self.fit_sw = sample_weight
         return self
 
     def predict_proba(self, X):
@@ -31,22 +43,7 @@ class _SpyAlgo(BinaryWinClassifierAlgorithm):
 
     def __init__(self):
         self._mock = _MockClassifier()
-        self._prepare_training_calls: list[pd.DataFrame] = []
-        self._prepare_prediction_calls: list[pd.DataFrame] = []
-        self._apply_gate_calls: list[pd.DataFrame] = []
         super().__init__(self._mock)
-
-    def _prepare_training_df(self, train_df: pd.DataFrame) -> pd.DataFrame:
-        self._prepare_training_calls.append(train_df.copy())
-        return train_df
-
-    def _prepare_prediction_df(self, merged: pd.DataFrame) -> pd.DataFrame:
-        self._prepare_prediction_calls.append(merged.copy())
-        return merged
-
-    def _apply_gate(self, predictable: pd.DataFrame) -> pd.DataFrame:
-        self._apply_gate_calls.append(predictable.copy())
-        return predictable
 
 
 def _train_row(race_id: int, horse_id: int, wins: int = 0,
@@ -96,59 +93,34 @@ def _make_predict_fixtures(n_horses: int = 3):
     return races, horse_stats, jockey_stats
 
 
-# ── Cycle 1: _prepare_training_df called once during fit ─────────────────────
+# ── fit engineers the race context the classifier is trained on ───────────────
 
 
-def test_prepare_training_df_called_exactly_once_during_fit():
+def test_fit_feeds_classifier_engineered_race_context():
     spy = _SpyAlgo()
     spy.fit(_make_train_df())
-    assert len(spy._prepare_training_calls) == 1
+    cols = spy._mock.fit_X.columns
+    # HorseCount + the relative-rating column are materialised by the engine and
+    # become features, alongside the required predictor and the raw extra feature.
+    for expected in (_REQ_COL, "SomeRatingCol", "RelSomeRatingCol", "HorseCount"):
+        assert expected in cols, f"{expected} not fed to the estimator"
 
 
-# ── Cycle 2: _prepare_training_df receives full frame before dropna ───────────
+# ── dropna: NaN in a required predictor drops the row before fitting ──────────
 
 
-def test_prepare_training_df_sees_all_rows_including_those_dropped_by_dropna():
+def test_fit_drops_rows_with_nan_required_predictor():
     spy = _SpyAlgo()
     rows = [
         _train_row(1, 10, wins=1),
         _train_row(1, 11, wins=0),
-        _train_row(2, 20, wins=0, dist=None),  # NaN in required — will be dropped later
+        _train_row(2, 20, wins=0, dist=None),  # NaN in required — dropped
     ]
     spy.fit(pd.DataFrame(rows))
-
-    assert len(spy._prepare_training_calls[0]) == 3  # all rows before dropna
-    assert len(spy._mock.fit_X) == 2  # only 2 rows after dropna
+    assert len(spy._mock.fit_X) == 2
 
 
-# ── Cycle 3: _prepare_prediction_df called once during predict ────────────────
-
-
-def test_prepare_prediction_df_called_exactly_once_during_predict():
-    spy = _SpyAlgo()
-    spy.fit(_make_train_df())
-    races, horse_stats, jockey_stats = _make_predict_fixtures()
-    spy.predict(races, horse_stats, jockey_stats)
-    assert len(spy._prepare_prediction_calls) == 1
-
-
-# ── Cycle 4: _apply_gate called after count gate, before scoring ──────────────
-
-
-def test_apply_gate_called_with_count_columns_and_no_win_probability():
-    spy = _SpyAlgo()
-    spy.fit(_make_train_df())
-    races, horse_stats, jockey_stats = _make_predict_fixtures()
-    spy.predict(races, horse_stats, jockey_stats)
-
-    assert len(spy._apply_gate_calls) == 1
-    gate_frame = spy._apply_gate_calls[0]
-    assert "OriginalCount" in gate_frame.columns
-    assert "PredictableCount" in gate_frame.columns
-    assert "WinProbability" not in gate_frame.columns
-
-
-# ── Cycle 5: extra_nan_tolerant_features column tolerates NaN in fit ─────────
+# ── extra_nan_tolerant_features column tolerates NaN in fit ───────────────────
 
 
 def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped():
@@ -167,7 +139,30 @@ def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped():
     assert spy._mock.fit_X["SomeRatingCol"].isna().sum() == 1  # horse 20's NaN survived
 
 
-# ── predict_field() ───────────────────────────────────────────────────────────
+# ── the race gate runs after the complete-race filter, before scoring ─────────
+
+
+def test_race_gate_sees_unscored_field_and_can_drop_it():
+    class _GatedSpy(_SpyAlgo):
+        def __init__(self):
+            self._gate_frames: list[pd.DataFrame] = []
+            super().__init__()
+
+        def _race_gate(self, data: RaceData) -> RaceData:
+            self._gate_frames.append(data.frame.copy())
+            return data.subset(pd.Series(False, index=data.frame.index))
+
+    spy = _GatedSpy()
+    spy.fit(_make_train_df())
+    races, horse_stats, jockey_stats = _make_predict_fixtures()
+    result = spy.predict_field(races, horse_stats, jockey_stats)
+
+    assert result.empty                                  # gate dropped everything
+    assert len(spy._gate_frames) == 1
+    assert "WinProbability" not in spy._gate_frames[0].columns  # gate runs pre-scoring
+
+
+# ── predict_field() / predict() output shapes ─────────────────────────────────
 
 
 def test_predict_field_returns_empty_before_fit():
