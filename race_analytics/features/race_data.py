@@ -1,0 +1,184 @@
+"""Canonical, fully-engineered representation of a set of races.
+
+`RaceData` is ONE flat frame (one row per horse-in-race) with every feature column
+already materialised by the canonical transform chain. It is the single shape that
+will flow through `fit()`, `predict_field()`, and gate calibration as the algorithm
+subsystem migrates (see `issues/001-unify-prediction-data-path-racedata.md`).
+
+`RaceDataBuilder` is the single home of the merge + transform chain. Issue 002
+introduces it additively: `from_legacy` reproduces, exactly, the merged/encoded
+intermediate that `BinaryWinClassifierAlgorithm._run_prediction` builds today, with
+the one principled change that day-since features are computed against an explicit
+`as_of` rather than `datetime.today()`.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, replace
+from typing import Iterable
+
+import numpy as np
+import pandas as pd
+
+from race_analytics.features.transforms import (
+    encode_surfaces,
+    encode_going,
+    encode_race_type,
+    calculate_weight_change,
+    calculate_distance_change,
+    calculate_surface_switch,
+    calculate_code_switch,
+    calculate_race_class,
+    calculate_age_features,
+    calculate_draw_features,
+    encode_pattern,
+    calculate_is_handicap,
+    encode_age_band,
+    encode_sex_restriction,
+    encode_headgear,
+)
+from race_analytics.features.horse_stats import extract_horse_stats
+from race_analytics.features.jockey_stats import extract_jockey_stats
+from race_analytics.features.trainer_stats import extract_trainer_stats
+
+_LABEL_COLUMNS = ("Wins", "Speed", "FinishingPosition")
+_ONE_DAY = np.timedelta64(1, "D")
+
+
+def _add_race_context(df: pd.DataFrame, extra_cols: Iterable[str] = ()) -> pd.DataFrame:
+    """Add HorseCount and per-race Rel* columns. Mirrors the helper in
+    binary_win_classifier.py so the canonical chain matches the live pipeline."""
+    df = df.copy()
+    if "HorseCount" not in df.columns:
+        df["HorseCount"] = df.groupby("RaceId")["HorseId"].transform("count")
+    for col in extra_cols:
+        if col in df.columns:
+            df[f"Rel{col}"] = df[col] - df.groupby("RaceId")[col].transform("mean")
+    return df
+
+
+# The canonical feature-engineering chain — declared ONCE, in the exact order the
+# active win-classifier path (BinaryWinClassifierAlgorithm._run_prediction) applies
+# it. Each callable takes and returns a DataFrame.
+CANONICAL_TRANSFORMS = (
+    encode_surfaces,
+    encode_going,
+    encode_race_type,
+    calculate_weight_change,
+    calculate_distance_change,
+    calculate_surface_switch,
+    calculate_code_switch,
+    calculate_race_class,
+    calculate_age_features,
+    encode_pattern,
+    calculate_is_handicap,
+    encode_age_band,
+    encode_sex_restriction,
+    encode_headgear,
+    _add_race_context,
+    calculate_draw_features,
+)
+
+
+def _apply_canonical_chain(frame: pd.DataFrame) -> pd.DataFrame:
+    for transform in CANONICAL_TRANSFORMS:
+        frame = transform(frame)
+    return frame
+
+
+@dataclass(frozen=True)
+class RaceData:
+    """Immutable handle over a fully-engineered race frame.
+
+    Invariants (guaranteed by RaceDataBuilder):
+      * the encode_*/calculate_* chain has run exactly once, in canonical order;
+      * DaysRested / DaysSinceJockeyLastRaced are clamped to <= 10;
+      * `as_of` is the date features were computed 'as of' (fold date for training,
+        serving date for prediction) — any today-relative logic reads this.
+    """
+
+    frame: pd.DataFrame
+    as_of: pd.Timestamp
+    max_horses: int = 10
+
+    @property
+    def has_labels(self) -> bool:
+        """True iff a training label column is present (absent at serving time)."""
+        return any(col in self.frame.columns for col in _LABEL_COLUMNS)
+
+    def feature_frame(self, feature_cols: list[str]) -> pd.DataFrame:
+        """The columns the estimator consumes, in the requested order."""
+        return self.frame[list(feature_cols)]
+
+    def with_columns(self, **new_cols) -> "RaceData":
+        """Copy + add/overwrite columns (e.g. LastProxyTSR, recency weights)."""
+        frame = self.frame.copy()
+        for name, values in new_cols.items():
+            frame[name] = values
+        return replace(self, frame=frame)
+
+    def subset(self, mask) -> "RaceData":
+        """Copy + row filter (e.g. an in-pipeline race gate)."""
+        return replace(self, frame=self.frame[mask].copy())
+
+
+class RaceDataBuilder:
+    """The single place the merge + feature-transform chain runs."""
+
+    def from_legacy(
+        self,
+        races: pd.DataFrame,
+        horse_stats: pd.DataFrame,
+        jockey_stats: pd.DataFrame,
+        trainer_stats: pd.DataFrame | None,
+        as_of,
+        max_horses: int = 10,
+    ) -> RaceData:
+        """Build serving RaceData from the legacy four-frame inputs.
+
+        Reproduces BinaryWinClassifierAlgorithm._run_prediction lines 100-131,
+        substituting `as_of` for `datetime.today()`.
+        """
+        today = np.datetime64(as_of)
+
+        merged = pd.merge(races.copy(), horse_stats, how="left", on=["HorseId"])
+        merged["DaysRested"] = np.ceil((today - pd.to_datetime(merged["LastOff"])) / _ONE_DAY)
+        merged.loc[merged["DaysRested"] > 10, "DaysRested"] = 10
+        merged = merged.drop("LastOff", axis=1, errors="ignore")
+
+        merged = pd.merge(merged, jockey_stats, how="left", on=["JockeyId"])
+        merged["DaysSinceJockeyLastRaced"] = np.ceil(
+            (today - pd.to_datetime(merged["LastOff"])) / _ONE_DAY
+        )
+        merged.loc[merged["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
+        merged = merged.drop("LastOff", axis=1, errors="ignore")
+
+        if trainer_stats is not None:
+            merged = pd.merge(merged, trainer_stats, how="left", on=["TrainerId"])
+
+        merged = _apply_canonical_chain(merged)
+        return RaceData(frame=merged, as_of=pd.Timestamp(as_of), max_horses=max_horses)
+
+    def build_serving(
+        self, card: pd.DataFrame, history, as_of, max_horses: int = 10
+    ) -> RaceData:
+        """Join today's `card` to per-entity stats extracted from `history` and run
+        the canonical chain. `history` is a RaceData or an enriched race_history frame."""
+        hist = history.frame if isinstance(history, RaceData) else history
+        horse_stats = extract_horse_stats(hist)
+        jockey_stats = extract_jockey_stats(hist)
+        trainer_stats = (
+            extract_trainer_stats(hist) if "TrainerId" in hist.columns else None
+        )
+        return self.from_legacy(card, horse_stats, jockey_stats, trainer_stats, as_of, max_horses)
+
+    def build_training(self, raw: pd.DataFrame, as_of, max_horses: int = 10) -> RaceData:
+        """Build training RaceData (labels retained) from an enriched race_history
+        frame. Stats are already columns, so this runs the canonical chain directly,
+        clamping the day-since features exactly as the legacy fit() does."""
+        frame = raw.copy()
+        for col in ("DaysRested", "DaysSinceJockeyLastRaced"):
+            if col in frame.columns:
+                frame.loc[frame[col] > 10, col] = 10
+        frame = _apply_canonical_chain(frame)
+        return RaceData(frame=frame, as_of=pd.Timestamp(as_of), max_horses=max_horses)
