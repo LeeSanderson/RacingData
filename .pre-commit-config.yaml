@@ -1,0 +1,26 @@
+# Single local quality gate for the race_analytics Python package.
+#
+# `pre-commit run --all-files` is THE command humans, AI agents, the commit
+# hook, and (via issue 003) CI all invoke — PRD's "single gate command" — so the
+# ruff lint + format checks are defined once here and never drift between actors.
+#
+# Scope of this file is ruff only; the venv-pyright hook is added in issue 006.
+# The test suite stays a SEPARATE step (`python -m pytest tests/`) — too slow to
+# run on every commit.
+#
+# `rev` is pinned to v0.15.17 to match `ruff==0.15.17` in pyproject's `[dev]`
+# extra, so the hook, the CLI, and the editor all agree byte-for-byte.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.17
+    hooks:
+      # Linter. `ruff-check` is the current id; the bare `ruff` id is a deprecated
+      # legacy alias at this rev. `--fix` mirrors issue 001's safe-autofix pass.
+      # The upstream entry already passes `--force-exclude`, so ruff honours
+      # `extend-exclude = ["race_analytics/notebooks"]` from pyproject even though
+      # pre-commit passes file paths explicitly — keeping the out-of-scope
+      # notebooks unlinted.
+      - id: ruff-check
+        args: [--fix]
+      # Formatter (also runs with --force-exclude from the upstream entry).
+      - id: ruff-format
