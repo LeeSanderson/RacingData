@@ -6,7 +6,7 @@ surface_categories = ["Surface_AllWeather", "Surface_Dirt", "Surface_Turf"]
 
 def encode_surfaces(races: pd.DataFrame) -> pd.DataFrame:
     races = races.drop(
-        surface_categories + ["Surface_Unknown"], axis=1, errors="ignore"
+        [*surface_categories, "Surface_Unknown"], axis=1, errors="ignore"
     )
     races["SurfaceTemp"] = races["Surface"]
     races = pd.get_dummies(
@@ -100,14 +100,17 @@ def calculate_horse_count(races: pd.DataFrame) -> pd.DataFrame:
         .agg(["count"])
         .rename(columns={"count": "HorseCount"})
     )
-    return pd.merge(races, groups, how="left", on=["RaceId"])
+    return races.merge(groups, how="left", on=["RaceId"])
 
 
 calculateHorsesPerRace = calculate_horse_count
 
 
 def calculate_weight_change(races: pd.DataFrame) -> pd.DataFrame:
-    if "WeightInPounds" not in races.columns or "LastRaceWeightInPounds" not in races.columns:
+    if (
+        "WeightInPounds" not in races.columns
+        or "LastRaceWeightInPounds" not in races.columns
+    ):
         races["WeightChange"] = np.nan
         return races
     races["WeightChange"] = races["WeightInPounds"] - races["LastRaceWeightInPounds"]
@@ -115,7 +118,10 @@ def calculate_weight_change(races: pd.DataFrame) -> pd.DataFrame:
 
 
 def calculate_distance_change(races: pd.DataFrame) -> pd.DataFrame:
-    if "DistanceInMeters" not in races.columns or "LastRaceDistanceInMeters" not in races.columns:
+    if (
+        "DistanceInMeters" not in races.columns
+        or "LastRaceDistanceInMeters" not in races.columns
+    ):
         races["DistanceChange"] = np.nan
         return races
     races["DistanceChange"] = (
@@ -130,7 +136,7 @@ def calculate_surface_switch(races: pd.DataFrame) -> pd.DataFrame:
         races["SurfaceSwitch"] = np.nan
         return races
     has_last = races[last_cols].notna().any(axis=1)
-    current = races[[c for c in surface_categories]].fillna(0.0).values
+    current = races[list(surface_categories)].fillna(0.0).values
     last = races[last_cols].fillna(0.0).values
     same = (current * last).sum(axis=1)
     races["SurfaceSwitch"] = np.where(has_last, 1.0 - same, np.nan)
@@ -231,14 +237,20 @@ def encode_pattern(races: pd.DataFrame) -> pd.DataFrame:
             races[col] = 0.0
         return races
     _norm = {
-        "Group 1": "Group1", "G1": "Group1", "Grade 1": "Group1",
-        "Group 2": "Group2", "G2": "Group2", "Grade 2": "Group2",
-        "Group 3": "Group3", "G3": "Group3", "Grade 3": "Group3",
-        "Listed": "Listed", "L": "Listed",
+        "Group 1": "Group1",
+        "G1": "Group1",
+        "Grade 1": "Group1",
+        "Group 2": "Group2",
+        "G2": "Group2",
+        "Grade 2": "Group2",
+        "Group 3": "Group3",
+        "G3": "Group3",
+        "Grade 3": "Group3",
+        "Listed": "Listed",
+        "L": "Listed",
     }
     normalized = (
-        races["Pattern"].fillna("").astype(str).str.strip()
-        .map(_norm).fillna("None")
+        races["Pattern"].fillna("").astype(str).str.strip().map(_norm).fillna("None")
     )
     dummies = pd.get_dummies(
         pd.DataFrame({"PatternTemp": normalized}),
@@ -272,13 +284,17 @@ def encode_age_band(races: pd.DataFrame) -> pd.DataFrame:
     _norm = {
         "2yo": "2yo",
         "3yo": "3yo",
-        "3yo+": "3yoPlus", "3+": "3yoPlus", "3yo -": "3yoPlus",
-        "4yo+": "4yoPlus", "4+": "4yoPlus",
-        "5yo+": "4yoPlus", "5+": "4yoPlus", "6yo+": "4yoPlus",
+        "3yo+": "3yoPlus",
+        "3+": "3yoPlus",
+        "3yo -": "3yoPlus",
+        "4yo+": "4yoPlus",
+        "4+": "4yoPlus",
+        "5yo+": "4yoPlus",
+        "5+": "4yoPlus",
+        "6yo+": "4yoPlus",
     }
     normalized = (
-        races["AgeBand"].fillna("").astype(str).str.strip()
-        .map(_norm).fillna("None")
+        races["AgeBand"].fillna("").astype(str).str.strip().map(_norm).fillna("None")
     )
     dummies = pd.get_dummies(
         pd.DataFrame({"AgeBandTemp": normalized}),
@@ -304,7 +320,11 @@ headgear_columns = [
 
 def encode_headgear(races: pd.DataFrame) -> pd.DataFrame:
     races = races.drop(headgear_columns, axis=1, errors="ignore")
-    codes = races["HeadGear"].fillna("").astype(str) if "HeadGear" in races.columns else pd.Series("", index=races.index)
+    codes = (
+        races["HeadGear"].fillna("").astype(str)
+        if "HeadGear" in races.columns
+        else pd.Series("", index=races.index)
+    )
     races["IsFirstTimeHeadgear"] = codes.str.endswith("1").astype(float)
     base = codes.str.rstrip("1")
     races["HasBlinkers"] = base.str.contains("b", regex=False).astype(float)
@@ -315,7 +335,9 @@ def encode_headgear(races: pd.DataFrame) -> pd.DataFrame:
     if "LastRaceHeadGear" in races.columns:
         last = races["LastRaceHeadGear"].fillna("").astype(str)
         both_empty = (codes == "") & (last == "")
-        races["HeadGearChanged"] = np.where(both_empty, 0.0, (codes != last).astype(float))
+        races["HeadGearChanged"] = np.where(
+            both_empty, 0.0, (codes != last).astype(float)
+        )
     else:
         races["HeadGearChanged"] = 0.0
     return races
@@ -329,13 +351,23 @@ def encode_sex_restriction(races: pd.DataFrame) -> pd.DataFrame:
         races["SexRestriction_Open"] = 1.0
         return races
     _norm = {
-        "F": "F", "Fillies": "F", "Fillies Only": "F",
-        "M": "FM", "Mares": "FM", "Mares Only": "FM",
-        "F&M": "FM", "Fillies & Mares": "FM", "Fillies and Mares": "FM",
+        "F": "F",
+        "Fillies": "F",
+        "Fillies Only": "F",
+        "M": "FM",
+        "Mares": "FM",
+        "Mares Only": "FM",
+        "F&M": "FM",
+        "Fillies & Mares": "FM",
+        "Fillies and Mares": "FM",
     }
     normalized = (
-        races["SexRestriction"].fillna("").astype(str).str.strip()
-        .map(_norm).fillna("Open")
+        races["SexRestriction"]
+        .fillna("")
+        .astype(str)
+        .str.strip()
+        .map(_norm)
+        .fillna("Open")
     )
     dummies = pd.get_dummies(
         pd.DataFrame({"SexTemp": normalized}),

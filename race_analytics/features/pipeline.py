@@ -1,33 +1,42 @@
 import gc
+
 import pandas as pd
 
-from race_analytics.features.transforms import (
-    encode_surfaces,
-    encode_going,
-    encode_race_type,
-    calculate_speed,
-    clean_weight,
-    calculate_horse_count,
-    calculate_weight_change,
-    calculate_distance_change,
-    calculate_surface_switch,
-    calculate_code_switch,
-    calculate_race_class,
-    calculate_age_features,
-    calculate_draw_features,
-    encode_pattern,
-    calculate_is_handicap,
-    encode_age_band,
-    encode_sex_restriction,
+from race_analytics.features.horse_stats import (
+    CalculateHorsesStats,
+    extract_horse_stats,
+)
+from race_analytics.features.jockey_stats import (
+    CalculateJockeyStats,
+    extract_jockey_stats,
 )
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
-from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
-from race_analytics.features.jockey_stats import CalculateJockeyStats, extract_jockey_stats
-from race_analytics.features.trainer_stats import CalculateTrainerStats, extract_trainer_stats
+from race_analytics.features.trainer_stats import (
+    CalculateTrainerStats,
+    extract_trainer_stats,
+)
+from race_analytics.features.transforms import (
+    calculate_age_features,
+    calculate_code_switch,
+    calculate_distance_change,
+    calculate_draw_features,
+    calculate_horse_count,
+    calculate_is_handicap,
+    calculate_race_class,
+    calculate_speed,
+    calculate_surface_switch,
+    calculate_weight_change,
+    clean_weight,
+    encode_age_band,
+    encode_going,
+    encode_pattern,
+    encode_race_type,
+    encode_sex_restriction,
+    encode_surfaces,
+)
 
 
 class FeaturePipeline:
-
     def __init__(self) -> None:
         self._race_features: pd.DataFrame | None = None
         self._batch_counter = 0
@@ -75,7 +84,9 @@ class FeaturePipeline:
         CalculateTrainerStats().process_race_data(combined)
         gc.collect()
 
-        result = combined[combined["_batch_id"] == batch_id].drop("_batch_id", axis=1).copy()
+        result = (
+            combined[combined["_batch_id"] == batch_id].drop("_batch_id", axis=1).copy()
+        )
         self._race_features = combined.drop("_batch_id", axis=1)
         return result
 

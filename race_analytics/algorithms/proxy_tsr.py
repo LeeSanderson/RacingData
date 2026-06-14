@@ -54,12 +54,23 @@ class ProxyTSRModel:
 
     def _encode_courses(self, df: pd.DataFrame) -> pd.Series:
         known = set(self._course_encoder.classes_)
-        return df["CourseName"].fillna("Unknown").apply(
-            lambda x: int(self._course_encoder.transform([x])[0]) if x in known else -1
+        return (
+            df["CourseName"]
+            .fillna("Unknown")
+            .apply(
+                lambda x: (
+                    int(self._course_encoder.transform([x])[0]) if x in known else -1
+                )
+            )
         )
 
-    def tune(self, train_df: pd.DataFrame, n_iter: int = 20, cv: int = 3,
-             random_state: int = 42) -> None:
+    def tune(
+        self,
+        train_df: pd.DataFrame,
+        n_iter: int = 20,
+        cv: int = 3,
+        random_state: int = 42,
+    ) -> None:
         """Search for better XGBRegressor hyperparameters using RandomizedSearchCV.
 
         Call before fit(). Updates self._regressor with an unfitted instance using
@@ -72,7 +83,9 @@ class ProxyTSRModel:
         self._course_encoder.fit(train_df["CourseName"].fillna("Unknown"))
         labelled["CourseNameEncoded"] = self._encode_courses(labelled)
         feature_cols = [f for f in PROXY_TSR_FEATURES if f in labelled.columns]
-        data = labelled[feature_cols + ["TopSpeedRating"]].dropna(subset=["TopSpeedRating"])
+        data = labelled[[*feature_cols, "TopSpeedRating"]].dropna(
+            subset=["TopSpeedRating"]
+        )
         if len(data) < cv * 2:
             return
 
@@ -93,18 +106,22 @@ class ProxyTSRModel:
             n_jobs=-1,
         )
         search.fit(data[feature_cols], data["TopSpeedRating"])
-        self._regressor = XGBRegressor(**search.best_params_, random_state=42, verbosity=0)
+        self._regressor = XGBRegressor(
+            **search.best_params_, random_state=42, verbosity=0
+        )
 
     def fit(self, train_df: pd.DataFrame) -> None:
         labelled = train_df[train_df["TopSpeedRating"].notna()].copy()
         if len(labelled) == 0:
-            raise ValueError("No rows with TopSpeedRating found in training data — cannot fit ProxyTSRModel")
+            raise ValueError(
+                "No rows with TopSpeedRating found in training data — cannot fit ProxyTSRModel"
+            )
 
         self._course_encoder.fit(train_df["CourseName"].fillna("Unknown"))
         labelled["CourseNameEncoded"] = self._encode_courses(labelled)
 
         self._feature_cols = [f for f in PROXY_TSR_FEATURES if f in labelled.columns]
-        data = labelled[self._feature_cols + ["TopSpeedRating"]].copy()
+        data = labelled[[*self._feature_cols, "TopSpeedRating"]].copy()
         self._regressor.fit(data[self._feature_cols], data["TopSpeedRating"])
 
     def _predict_proxy(self, df: pd.DataFrame) -> np.ndarray:
@@ -124,8 +141,11 @@ class ProxyTSRModel:
         never see its own or the horse's future races.
         """
         work = pd.DataFrame(
-            {"HorseId": df["HorseId"].values, "Off": df["Off"].values,
-             "_ProxyTSR": self._predict_proxy(df)},
+            {
+                "HorseId": df["HorseId"].values,
+                "Off": df["Off"].values,
+                "_ProxyTSR": self._predict_proxy(df),
+            },
             index=df.index,
         )
         work = work.sort_values(["HorseId", "Off"], kind="stable")
@@ -139,8 +159,11 @@ class ProxyTSRModel:
         serving uses for prediction.
         """
         work = pd.DataFrame(
-            {"HorseId": train_df["HorseId"].values, "Off": train_df["Off"].values,
-             "_ProxyTSR": self._predict_proxy(train_df)}
+            {
+                "HorseId": train_df["HorseId"].values,
+                "Off": train_df["Off"].values,
+                "_ProxyTSR": self._predict_proxy(train_df),
+            }
         )
         work = work.sort_values(["HorseId", "Off"], kind="stable")
         last = work.groupby("HorseId", as_index=False).tail(1)

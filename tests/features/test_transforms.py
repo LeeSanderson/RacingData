@@ -1,36 +1,34 @@
-import pytest
 import pandas as pd
-import numpy as np
+import pytest
+
 import tests.utils.test_data as td
-
 from race_analytics.features.transforms import (
-    surface_categories,
-    going_categories,
-    race_type_categories,
-    pattern_categories,
     age_band_categories,
-    sex_restriction_categories,
-    headgear_columns,
-    encode_surfaces,
-    encode_going,
-    encode_race_type,
-    calculate_speed,
-    clean_weight,
-    calculate_horse_count,
-    calculate_weight_change,
-    calculate_distance_change,
-    calculate_surface_switch,
-    calculate_code_switch,
-    calculate_race_class,
     calculate_age_features,
+    calculate_code_switch,
+    calculate_distance_change,
     calculate_draw_features,
-    encode_pattern,
+    calculate_horse_count,
     calculate_is_handicap,
+    calculate_race_class,
+    calculate_speed,
+    calculate_surface_switch,
+    calculate_weight_change,
+    clean_weight,
     encode_age_band,
-    encode_sex_restriction,
+    encode_going,
     encode_headgear,
+    encode_pattern,
+    encode_race_type,
+    encode_sex_restriction,
+    encode_surfaces,
+    going_categories,
+    headgear_columns,
+    pattern_categories,
+    race_type_categories,
+    sex_restriction_categories,
+    surface_categories,
 )
-
 
 # --- encode_surfaces ---
 
@@ -41,9 +39,15 @@ def surface_dataframe():
         1, "Test", 2, "Test Course", td.dt("01/01/2021 12:00:00"), "Unknown"
     )
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),  # Turf
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),  # AllWeather
-        td.RaceResult.new(td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown),  # Dirt
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown
+        ),  # Turf
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown
+        ),  # AllWeather
+        td.RaceResult.new(
+            td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown
+        ),  # Dirt
         race_with_unknown_surface,
     ]
     return pd.DataFrame(data)
@@ -76,12 +80,24 @@ def test_encode_surfaces_drops_unknown_surface(surface_dataframe):
 @pytest.fixture
 def going_dataframe():
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good"),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"),
-        td.RaceResult.new(td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, "Good To Firm"),
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown, "Heavy"),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good To Soft"),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Firm"),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good"
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"
+        ),
+        td.RaceResult.new(
+            td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, "Good To Firm"
+        ),
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown, "Heavy"
+        ),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good To Soft"
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Firm"
+        ),
     ]
     return pd.DataFrame(data)
 
@@ -105,8 +121,12 @@ def test_encode_going_standard_values(going_dataframe):
 
 def test_encode_going_unknown_string_gives_all_zeros():
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Unknown Going"),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Good"),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Unknown Going"
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Good"
+        ),
     ]
     df = pd.DataFrame(data)
     result = encode_going(df)
@@ -118,7 +138,9 @@ def test_encode_going_unknown_string_gives_all_zeros():
 def test_encode_going_defaults_empty_to_good():
     data = [
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, ""),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"
+        ),
     ]
     df = pd.DataFrame(data)
     result = encode_going(df)
@@ -133,9 +155,11 @@ def test_encode_going_defaults_empty_to_good():
 
 @pytest.fixture
 def race_type_dataframe():
-    return pd.DataFrame({
-        "RaceType": ["Hurdle", "Flat", "SteepleChase", "Other"],
-    })
+    return pd.DataFrame(
+        {
+            "RaceType": ["Hurdle", "Flat", "SteepleChase", "Other"],
+        }
+    )
 
 
 def test_encode_race_type_has_all_four_categories(race_type_dataframe):
@@ -165,10 +189,17 @@ def test_encode_race_type_unknown_produces_all_zeros():
 
 @pytest.fixture
 def speed_dataframe():
-    return pd.DataFrame({
-        "DistanceInMeters": [1600, 2000, 1200, 800],
-        "RaceTimeInSeconds": [100.0, 125.0, 60.0, 38.0],  # speeds: 16, 16, 20, ~21.05
-    })
+    return pd.DataFrame(
+        {
+            "DistanceInMeters": [1600, 2000, 1200, 800],
+            "RaceTimeInSeconds": [
+                100.0,
+                125.0,
+                60.0,
+                38.0,
+            ],  # speeds: 16, 16, 20, ~21.05
+        }
+    )
 
 
 def test_calculate_speed_adds_speed_column(speed_dataframe):
@@ -222,13 +253,21 @@ def test_clean_weight_preserves_boundary_value(weight_dataframe):
 
 @pytest.fixture
 def horse_count_dataframe():
-    return pd.DataFrame([
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.LaylaDaffodil, td.ShaneFitzgerald),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.DuckAndVanish, td.PhilipDonovan),
-    ])
+    return pd.DataFrame(
+        [
+            td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
+            td.RaceResult.new(
+                td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan
+            ),
+            td.RaceResult.new(
+                td.Ballinrobe20thAt1515, td.LaylaDaffodil, td.ShaneFitzgerald
+            ),
+            td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),
+            td.RaceResult.new(
+                td.Chelmsford21stAt1805, td.DuckAndVanish, td.PhilipDonovan
+            ),
+        ]
+    )
 
 
 def test_calculate_horse_count_adds_column(horse_count_dataframe):
@@ -254,10 +293,12 @@ def test_calculate_horse_count_preserves_row_count(horse_count_dataframe):
 
 @pytest.fixture
 def weight_change_dataframe():
-    return pd.DataFrame({
-        "WeightInPounds": [130.0, 128.0, 126.0],
-        "LastRaceWeightInPounds": [126.0, 130.0, float("nan")],
-    })
+    return pd.DataFrame(
+        {
+            "WeightInPounds": [130.0, 128.0, 126.0],
+            "LastRaceWeightInPounds": [126.0, 130.0, float("nan")],
+        }
+    )
 
 
 def test_calculate_weight_change_adds_column(weight_change_dataframe):
@@ -271,7 +312,9 @@ def test_calculate_weight_change_computes_correctly(weight_change_dataframe):
     assert result.iloc[1]["WeightChange"] == pytest.approx(-2.0)
 
 
-def test_calculate_weight_change_is_nan_when_last_weight_is_nan(weight_change_dataframe):
+def test_calculate_weight_change_is_nan_when_last_weight_is_nan(
+    weight_change_dataframe,
+):
     result = calculate_weight_change(weight_change_dataframe)
     assert pd.isna(result.iloc[2]["WeightChange"])
 
@@ -281,10 +324,12 @@ def test_calculate_weight_change_is_nan_when_last_weight_is_nan(weight_change_da
 
 @pytest.fixture
 def distance_change_dataframe():
-    return pd.DataFrame({
-        "DistanceInMeters": [2000.0, 1600.0, 1200.0],
-        "LastRaceDistanceInMeters": [1600.0, 2000.0, float("nan")],
-    })
+    return pd.DataFrame(
+        {
+            "DistanceInMeters": [2000.0, 1600.0, 1200.0],
+            "LastRaceDistanceInMeters": [1600.0, 2000.0, float("nan")],
+        }
+    )
 
 
 def test_calculate_distance_change_adds_column(distance_change_dataframe):
@@ -298,7 +343,9 @@ def test_calculate_distance_change_computes_correctly(distance_change_dataframe)
     assert result.iloc[1]["DistanceChange"] == pytest.approx(-400.0)
 
 
-def test_calculate_distance_change_is_nan_when_last_distance_is_nan(distance_change_dataframe):
+def test_calculate_distance_change_is_nan_when_last_distance_is_nan(
+    distance_change_dataframe,
+):
     result = calculate_distance_change(distance_change_dataframe)
     assert pd.isna(result.iloc[2]["DistanceChange"])
 
@@ -312,14 +359,16 @@ def surface_switch_dataframe():
     # Row 1: Turf → AllWeather (surface switch)
     # Row 2: AllWeather → AllWeather (same surface)
     # Row 3: no prior race (all LastRaceSurface_* are NaN)
-    return pd.DataFrame({
-        "Surface_AllWeather": [0.0, 0.0, 1.0, 0.0],
-        "Surface_Dirt":       [0.0, 0.0, 0.0, 0.0],
-        "Surface_Turf":       [1.0, 1.0, 0.0, 1.0],
-        "LastRaceSurface_AllWeather": [0.0, 1.0, 1.0, float("nan")],
-        "LastRaceSurface_Dirt":       [0.0, 0.0, 0.0, float("nan")],
-        "LastRaceSurface_Turf":       [1.0, 0.0, 0.0, float("nan")],
-    })
+    return pd.DataFrame(
+        {
+            "Surface_AllWeather": [0.0, 0.0, 1.0, 0.0],
+            "Surface_Dirt": [0.0, 0.0, 0.0, 0.0],
+            "Surface_Turf": [1.0, 1.0, 0.0, 1.0],
+            "LastRaceSurface_AllWeather": [0.0, 1.0, 1.0, float("nan")],
+            "LastRaceSurface_Dirt": [0.0, 0.0, 0.0, float("nan")],
+            "LastRaceSurface_Turf": [1.0, 0.0, 0.0, float("nan")],
+        }
+    )
 
 
 def test_calculate_surface_switch_adds_column(surface_switch_dataframe):
@@ -353,16 +402,18 @@ def code_switch_dataframe():
     # Row 2: Hurdle → Flat (code switch: jumps to flat)
     # Row 3: Hurdle → SteepleChase (both jumps, same code)
     # Row 4: no prior race (all LastRaceRaceType_* are NaN)
-    return pd.DataFrame({
-        "RaceType_Flat":         [1.0, 1.0, 0.0, 0.0, 1.0],
-        "RaceType_Hurdle":       [0.0, 0.0, 1.0, 1.0, 0.0],
-        "RaceType_SteepleChase": [0.0, 0.0, 0.0, 0.0, 0.0],
-        "RaceType_Other":        [0.0, 0.0, 0.0, 0.0, 0.0],
-        "LastRaceRaceType_Flat":         [1.0, 0.0, 1.0, 0.0, float("nan")],
-        "LastRaceRaceType_Hurdle":       [0.0, 1.0, 0.0, 0.0, float("nan")],
-        "LastRaceRaceType_SteepleChase": [0.0, 0.0, 0.0, 1.0, float("nan")],
-        "LastRaceRaceType_Other":        [0.0, 0.0, 0.0, 0.0, float("nan")],
-    })
+    return pd.DataFrame(
+        {
+            "RaceType_Flat": [1.0, 1.0, 0.0, 0.0, 1.0],
+            "RaceType_Hurdle": [0.0, 0.0, 1.0, 1.0, 0.0],
+            "RaceType_SteepleChase": [0.0, 0.0, 0.0, 0.0, 0.0],
+            "RaceType_Other": [0.0, 0.0, 0.0, 0.0, 0.0],
+            "LastRaceRaceType_Flat": [1.0, 0.0, 1.0, 0.0, float("nan")],
+            "LastRaceRaceType_Hurdle": [0.0, 1.0, 0.0, 0.0, float("nan")],
+            "LastRaceRaceType_SteepleChase": [0.0, 0.0, 0.0, 1.0, float("nan")],
+            "LastRaceRaceType_Other": [0.0, 0.0, 0.0, 0.0, float("nan")],
+        }
+    )
 
 
 def test_calculate_code_switch_adds_column(code_switch_dataframe):
@@ -474,11 +525,13 @@ def draw_dataframe():
     # Row 1: flat, stall 6 of 8 horses → DrawPct 0.75
     # Row 2: jumps race → NaN
     # Row 3: flat, null stall → NaN
-    return pd.DataFrame({
-        "RaceType_Flat": [1.0, 1.0, 0.0, 1.0],
-        "StallNumber":   [2.0, 6.0, 3.0, float("nan")],
-        "HorseCount":    [8.0, 8.0, 8.0, 8.0],
-    })
+    return pd.DataFrame(
+        {
+            "RaceType_Flat": [1.0, 1.0, 0.0, 1.0],
+            "StallNumber": [2.0, 6.0, 3.0, float("nan")],
+            "HorseCount": [8.0, 8.0, 8.0, 8.0],
+        }
+    )
 
 
 def test_calculate_draw_features_flat_race_computes_draw_pct(draw_dataframe):

@@ -1,14 +1,20 @@
-import pytest
-import pandas as pd
-import numpy as np
 from datetime import datetime
+
+import pandas as pd
+import pytest
 
 from race_analytics.algorithms.proxy_tsr import ProxyTSRModel
 
 
-def _row(horse_id: int, race_id: int, off: datetime, tsr: float | None = 90.0,
-         finishing_pos: int = 1, beaten_dist: float = 0.0,
-         course: str = "Newmarket") -> dict:
+def _row(
+    horse_id: int,
+    race_id: int,
+    off: datetime,
+    tsr: float | None = 90.0,
+    finishing_pos: int = 1,
+    beaten_dist: float = 0.0,
+    course: str = "Newmarket",
+) -> dict:
     return {
         "HorseId": horse_id,
         "RaceId": race_id,
@@ -55,7 +61,7 @@ def basic_train_df() -> pd.DataFrame:
         _row(2, 104, D1, tsr=92.0),
         _row(2, 105, D2, tsr=95.0),
         _row(2, 106, D3, tsr=91.0),
-        _row(3, 107, D1, tsr=None),   # unlabelled — no TSR
+        _row(3, 107, D1, tsr=None),  # unlabelled — no TSR
         _row(3, 108, D2, tsr=None),
     ]
     return pd.DataFrame(rows)
@@ -86,9 +92,9 @@ def test_compute_horse_proxy_tsr_returns_required_columns(basic_train_df):
 
 def test_last_proxy_tsr_reflects_most_recent_race():
     rows = [
-        _row(1, 101, D1, tsr=70.0),   # oldest — low TSR
+        _row(1, 101, D1, tsr=70.0),  # oldest — low TSR
         _row(1, 102, D2, tsr=80.0),
-        _row(1, 103, D3, tsr=90.0),   # newest — high TSR
+        _row(1, 103, D3, tsr=90.0),  # newest — high TSR
     ]
     df = pd.DataFrame(rows)
     model = ProxyTSRModel()
@@ -119,11 +125,13 @@ def test_as_of_proxy_ignores_future_races(basic_train_df):
     model.fit(basic_train_df)
 
     two = pd.DataFrame([_row(1, 101, D1, tsr=85.0), _row(1, 102, D2, tsr=90.0)])
-    with_future = pd.DataFrame([
-        _row(1, 101, D1, tsr=85.0),
-        _row(1, 102, D2, tsr=90.0),
-        _row(1, 103, D3, tsr=88.0),  # a later race for the same horse
-    ])
+    with_future = pd.DataFrame(
+        [
+            _row(1, 101, D1, tsr=85.0),
+            _row(1, 102, D2, tsr=90.0),
+            _row(1, 103, D3, tsr=88.0),  # a later race for the same horse
+        ]
+    )
 
     proxy_two = model.compute_as_of_proxy(two)
     proxy_future = model.compute_as_of_proxy(with_future)
@@ -145,7 +153,9 @@ def test_unseen_course_name_does_not_raise(basic_train_df):
         _row(1, 201, D4, tsr=None, course="Timbuktu Racecourse"),
         _row(2, 202, D4, tsr=None, course="Timbuktu Racecourse"),
     ]
-    predict_df = pd.concat([basic_train_df, pd.DataFrame(unseen_rows)], ignore_index=True)
+    predict_df = pd.concat(
+        [basic_train_df, pd.DataFrame(unseen_rows)], ignore_index=True
+    )
     result = model.compute_horse_proxy_tsr(predict_df)  # must not raise
     assert len(result) > 0
 

@@ -7,11 +7,12 @@ shaping) live in `test_field_predictor_engine.py`; here we pin the win-classifie
 own behaviour: the engineered race context, NaN handling, and full-field/top-1 output.
 """
 
+from datetime import datetime
+from typing import ClassVar
+
 import numpy as np
 import pandas as pd
-from datetime import datetime
 
-from race_analytics.algorithms.base import REQUIRED_PREDICTORS
 from race_analytics.algorithms.binary_win_classifier import BinaryWinClassifierAlgorithm
 from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
@@ -45,20 +46,27 @@ class _MockClassifier:
     def predict_proba(self, X):
         n = len(X)
         probs = np.zeros((n, 2))
-        probs[:, 1] = np.arange(n, 0, -1) / n  # distinct decreasing; horse[0] gets rank-1
+        probs[:, 1] = (
+            np.arange(n, 0, -1) / n
+        )  # distinct decreasing; horse[0] gets rank-1
         return probs
 
 
 class _SpyAlgo(BinaryWinClassifierAlgorithm):
-    extra_nan_tolerant_features = ["SomeRatingCol"]
+    extra_nan_tolerant_features: ClassVar[list[str]] = ["SomeRatingCol"]
 
     def __init__(self):
         self._mock = _MockClassifier()
         super().__init__(self._mock)
 
 
-def _train_row(race_id: int, horse_id: int, wins: int = 0,
-               dist: float | None = 1600.0, some_rating: float | None = 90.0) -> dict:
+def _train_row(
+    race_id: int,
+    horse_id: int,
+    wins: int = 0,
+    dist: float | None = 1600.0,
+    some_rating: float | None = 90.0,
+) -> dict:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -70,8 +78,12 @@ def _train_row(race_id: int, horse_id: int, wins: int = 0,
 
 def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
     return {
-        "RaceId": race_id, "HorseId": horse_id, "JockeyId": jockey_id,
-        "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
+        "RaceId": race_id,
+        "HorseId": horse_id,
+        "JockeyId": jockey_id,
+        "Surface": "Turf",
+        "Going": "Good",
+        "RaceType": "Flat",
         _REQ_COL: 1600.0,
     }
 
@@ -139,13 +151,13 @@ def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped():
     rows = [
         _train_row(1, 10, wins=1),
         _train_row(1, 11, wins=0),
-        _train_row(2, 20, wins=0, some_rating=None),   # NaN in extra — should survive
+        _train_row(2, 20, wins=0, some_rating=None),  # NaN in extra — should survive
         _train_row(2, 21, wins=1),
-        _train_row(3, 30, wins=0, dist=None),           # NaN in required — should drop
+        _train_row(3, 30, wins=0, dist=None),  # NaN in required — should drop
     ]
     spy.fit(_rd(pd.DataFrame(rows)))
 
-    assert len(spy._mock.fit_X) == 4            # horse 30 dropped; others kept
+    assert len(spy._mock.fit_X) == 4  # horse 30 dropped; others kept
     assert "SomeRatingCol" in spy._mock.fit_X.columns
     assert spy._mock.fit_X["SomeRatingCol"].isna().sum() == 1  # horse 20's NaN survived
 
@@ -168,7 +180,7 @@ def test_race_gate_sees_unscored_field_and_can_drop_it():
     races, horse_stats, jockey_stats = _make_predict_fixtures()
     result = spy.predict_field(_serve(races, horse_stats, jockey_stats))
 
-    assert result.empty                                  # gate dropped everything
+    assert result.empty  # gate dropped everything
     assert len(spy._gate_frames) == 1
     assert "WinProbability" not in spy._gate_frames[0].columns  # gate runs pre-scoring
 

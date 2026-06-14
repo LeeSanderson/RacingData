@@ -1,18 +1,17 @@
-import pytest
 import pandas as pd
-import tests.utils.test_data as td
+import pytest
 
-from race_analytics.features.transforms import (
-    calculateHorsesPerRace,
-    encode_surfaces,
-    encode_going,
-    encode_race_type,
-)
-from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
+import tests.utils.test_data as td
 from race_analytics.features.horse_stats import CalculateHorsesStats
 from race_analytics.features.jockey_stats import CalculateJockeyStats
+from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.trainer_stats import CalculateTrainerStats
-
+from race_analytics.features.transforms import (
+    calculateHorsesPerRace,
+    encode_going,
+    encode_race_type,
+    encode_surfaces,
+)
 
 # ================================================================
 # calculateHorsesPerRace
@@ -66,8 +65,8 @@ def test_race_with_all_known_horses_and_jockeys_is_marked_known():
     ]
     df = pd.DataFrame(data)
     CalculateRacesWithKnownHorsesAndJockeys().process_race_data(df)
-    assert df["KnownHorseAndJockey"].iloc[2] == True
-    assert df["KnownHorseAndJockey"].iloc[3] == True
+    assert df["KnownHorseAndJockey"].iloc[2]
+    assert df["KnownHorseAndJockey"].iloc[3]
 
 
 def test_race_with_unknown_horse_is_not_marked_known():
@@ -81,8 +80,8 @@ def test_race_with_unknown_horse_is_not_marked_known():
     ]
     df = pd.DataFrame(data)
     CalculateRacesWithKnownHorsesAndJockeys().process_race_data(df)
-    assert df["KnownHorseAndJockey"].iloc[1] == False
-    assert df["KnownHorseAndJockey"].iloc[2] == False
+    assert not df["KnownHorseAndJockey"].iloc[1]
+    assert not df["KnownHorseAndJockey"].iloc[2]
 
 
 def test_race_with_unknown_jockey_is_not_marked_known():
@@ -97,8 +96,8 @@ def test_race_with_unknown_jockey_is_not_marked_known():
     ]
     df = pd.DataFrame(data)
     CalculateRacesWithKnownHorsesAndJockeys().process_race_data(df)
-    assert df["KnownHorseAndJockey"].iloc[2] == False
-    assert df["KnownHorseAndJockey"].iloc[3] == False
+    assert not df["KnownHorseAndJockey"].iloc[2]
+    assert not df["KnownHorseAndJockey"].iloc[3]
 
 
 def test_no_races_on_intermediate_day_does_not_raise():
@@ -115,8 +114,8 @@ def test_no_races_on_intermediate_day_does_not_raise():
     df = pd.DataFrame(data)
     # Should not raise KeyError
     CalculateRacesWithKnownHorsesAndJockeys().process_race_data(df)
-    assert df["KnownHorseAndJockey"].iloc[2] == True
-    assert df["KnownHorseAndJockey"].iloc[3] == True
+    assert df["KnownHorseAndJockey"].iloc[2]
+    assert df["KnownHorseAndJockey"].iloc[3]
 
 
 def test_known_across_three_days():

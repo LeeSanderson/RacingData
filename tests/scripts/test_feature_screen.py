@@ -1,7 +1,10 @@
 """Tests for feature_screen pure utility functions."""
-import pytest
 
-from race_analytics.scripts.feature_screen import rank_features
+from race_analytics.scripts.feature_screen import (
+    check_no_odds_features,
+    rank_features,
+    select_features,
+)
 
 
 def test_rank_features_returns_highest_first():
@@ -10,9 +13,6 @@ def test_rank_features_returns_highest_first():
     result = rank_features(importances)
     names = [name for name, _ in result]
     assert names == ["feat_b", "feat_c", "feat_a"]
-
-
-from race_analytics.scripts.feature_screen import select_features
 
 
 def test_select_features_keeps_above_threshold():
@@ -26,9 +26,6 @@ def test_select_features_default_threshold_drops_exactly_zero():
     """select_features with default threshold drops zero-importance features."""
     importances = {"feat_a": 0.1, "feat_b": 0.0}
     assert "feat_b" not in select_features(importances)
-
-
-from race_analytics.scripts.feature_screen import check_no_odds_features
 
 
 def test_check_no_odds_features_clean():

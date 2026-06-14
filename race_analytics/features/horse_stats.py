@@ -1,13 +1,14 @@
 import math
 from typing import Any
+
 import numpy as np
 import pandas as pd
 
 from race_analytics.features.base import RaceDataProcessor
 from race_analytics.features.transforms import (
-    surface_categories,
     going_categories,
     race_type_categories,
+    surface_categories,
 )
 
 
@@ -54,7 +55,11 @@ class CalculateHorsesStats(RaceDataProcessor):
             + [f"LastRace{going}" for going in going_categories]
             + [f"LastRace{rt}" for rt in race_type_categories]
         )
-        string_cols = {self.LAST_RACE_GOING, self.LAST_RACE_SURFACE, self.LAST_RACE_HEAD_GEAR}
+        string_cols = {
+            self.LAST_RACE_GOING,
+            self.LAST_RACE_SURFACE,
+            self.LAST_RACE_HEAD_GEAR,
+        }
         for col in self.new_column_names:
             df[col] = None if col in string_cols else np.nan
         df[self.NUMBER_OF_PRIOR_RACES] = 1.0
@@ -72,8 +77,9 @@ class CalculateHorsesStats(RaceDataProcessor):
                 lambda g: self.__calculate_counts_for_race_group(slice_date, g),
                 include_groups=False,
             )
-            daily_stats = pd.merge(
-                daily_slice.drop(self.new_column_names, axis=1, errors="ignore"),
+            daily_stats = daily_slice.drop(
+                self.new_column_names, axis=1, errors="ignore"
+            ).merge(
                 stats,
                 how="left",
                 on=["HorseId"],
@@ -87,7 +93,11 @@ class CalculateHorsesStats(RaceDataProcessor):
                 print("Slice horses:")
                 print(slice_horses)
                 print("Daily slice:")
-                print(daily_slice.drop(self.new_column_names, axis=1, errors="ignore").to_string())
+                print(
+                    daily_slice.drop(
+                        self.new_column_names, axis=1, errors="ignore"
+                    ).to_string()
+                )
                 print("Daily stats:")
                 print(daily_stats.to_string())
                 raise
@@ -108,9 +118,15 @@ class CalculateHorsesStats(RaceDataProcessor):
             (current_date - last_race["Off"].values[0]) / self.ONE_DAY
         )
         new_columns[self.LAST_RACE_ODDS] = last_race["DecimalOdds"].values[0]
-        new_columns[self.LAST_RACE_OFFICIAL_RATING] = last_race["OfficialRating"].values[0]
-        new_columns[self.LAST_RACE_RACING_POST_RATING] = last_race["RacingPostRating"].values[0]
-        new_columns[self.LAST_RACE_TOP_SPEED_RATING] = last_race["TopSpeedRating"].values[0]
+        new_columns[self.LAST_RACE_OFFICIAL_RATING] = last_race[
+            "OfficialRating"
+        ].values[0]
+        new_columns[self.LAST_RACE_RACING_POST_RATING] = last_race[
+            "RacingPostRating"
+        ].values[0]
+        new_columns[self.LAST_RACE_TOP_SPEED_RATING] = last_race[
+            "TopSpeedRating"
+        ].values[0]
         new_columns[self.LAST_RACE_HEAD_GEAR] = (
             last_race["HeadGear"].values[0] if "HeadGear" in last_race.columns else None
         )
@@ -122,7 +138,9 @@ class CalculateHorsesStats(RaceDataProcessor):
         if len(last3_speeds) >= 3:
             last3_avg = last3_speeds.mean()
             new_columns[self.LAST3_AVG_SPEED] = last3_avg
-            new_columns[self.LAST3_SPEED_TREND] = new_columns[self.LAST_RACE_SPEED] - last3_avg
+            new_columns[self.LAST3_SPEED_TREND] = (
+                new_columns[self.LAST_RACE_SPEED] - last3_avg
+            )
         else:
             new_columns[self.LAST3_AVG_SPEED] = np.nan
             new_columns[self.LAST3_SPEED_TREND] = np.nan
@@ -170,9 +188,7 @@ def _extract_last3_stats(races: pd.DataFrame) -> pd.DataFrame:
             }
         )
 
-    return (
-        recent.groupby("HorseId").apply(_agg, include_groups=False).reset_index()
-    )
+    return recent.groupby("HorseId").apply(_agg, include_groups=False).reset_index()
 
 
 def extract_horse_stats(races: pd.DataFrame) -> pd.DataFrame:
@@ -203,11 +219,19 @@ def extract_horse_stats(races: pd.DataFrame) -> pd.DataFrame:
         **{r: f"LastRace{r}" for r in race_type_categories},
     }
     cols = [
-        "HorseId", "Off", "DistanceInMeters", "WeightInPounds", "Speed",
-        "OfficialRating", "RacingPostRating", "TopSpeedRating",
+        "HorseId",
+        "Off",
+        "DistanceInMeters",
+        "WeightInPounds",
+        "Speed",
+        "OfficialRating",
+        "RacingPostRating",
+        "TopSpeedRating",
         "HeadGear",
         "LastRaceAvgRelFinishingPosition",
-        *surface_categories, *going_categories, *race_type_categories,
+        *surface_categories,
+        *going_categories,
+        *race_type_categories,
     ]
     out = last[[c for c in cols if c in last.columns]].rename(columns=rename)
     return out.merge(_extract_last3_stats(races), on="HorseId", how="left")

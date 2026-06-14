@@ -1,10 +1,11 @@
 import pandas as pd
-import pytest
 
 from race_analytics.algorithms.race_rules_gate import RaceRulesGate
 
 
-def _race(race_id: int, distance_m: float | None = 1600.0, cls: str | None = None) -> dict:
+def _race(
+    race_id: int, distance_m: float | None = 1600.0, cls: str | None = None
+) -> dict:
     row = {"RaceId": race_id, "HorseId": race_id * 10}
     if distance_m is not None:
         row["DistanceInMeters"] = distance_m
@@ -14,6 +15,7 @@ def _race(race_id: int, distance_m: float | None = 1600.0, cls: str | None = Non
 
 
 # ── Sprint rule ───────────────────────────────────────────────────────────────
+
 
 def test_sprint_race_is_excluded():
     gate = RaceRulesGate()
@@ -40,6 +42,7 @@ def test_missing_distance_is_not_excluded():
 
 
 # ── Class 6 rule ──────────────────────────────────────────────────────────────
+
 
 def test_class6_race_is_excluded():
     gate = RaceRulesGate()
@@ -74,6 +77,7 @@ def test_nan_class_is_not_excluded():
 
 # ── Combined ──────────────────────────────────────────────────────────────────
 
+
 def test_sprint_and_class6_race_is_excluded():
     gate = RaceRulesGate()
     races = pd.DataFrame([_race(1, distance_m=1000.0, cls="Class 6")])
@@ -93,11 +97,14 @@ def test_empty_dataframe_returns_empty_set():
 
 # ── Multi-horse race (dedup) ──────────────────────────────────────────────────
 
+
 def test_multi_horse_sprint_race_excluded_once():
     gate = RaceRulesGate()
-    races = pd.DataFrame([
-        {"RaceId": 1, "HorseId": 10, "DistanceInMeters": 900.0},
-        {"RaceId": 1, "HorseId": 11, "DistanceInMeters": 900.0},
-    ])
+    races = pd.DataFrame(
+        [
+            {"RaceId": 1, "HorseId": 10, "DistanceInMeters": 900.0},
+            {"RaceId": 1, "HorseId": 11, "DistanceInMeters": 900.0},
+        ]
+    )
     excluded = gate.excluded_race_ids(races)
     assert excluded == {1}

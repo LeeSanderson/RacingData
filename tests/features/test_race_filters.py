@@ -1,16 +1,17 @@
 import pandas as pd
-import tests.utils.test_data as td
 
+import tests.utils.test_data as td
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 
-
 # --- helpers ---
+
 
 def _make_df(*race_results):
     return pd.DataFrame(list(race_results))
 
 
 # --- tests ---
+
 
 def test_first_day_races_are_never_known():
     df = _make_df(
@@ -31,8 +32,8 @@ def test_race_with_all_known_horses_and_jockeys_is_marked_known():
         td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown),
     )
     CalculateRacesWithKnownHorsesAndJockeys().process_race_data(df)
-    assert df["KnownHorseAndJockey"].iloc[2] == True
-    assert df["KnownHorseAndJockey"].iloc[3] == True
+    assert df["KnownHorseAndJockey"].iloc[2]
+    assert df["KnownHorseAndJockey"].iloc[3]
 
 
 def test_race_with_unknown_horse_is_not_marked_known():
@@ -44,8 +45,8 @@ def test_race_with_unknown_horse_is_not_marked_known():
         td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.SimonTorrens),
     )
     CalculateRacesWithKnownHorsesAndJockeys().process_race_data(df)
-    assert df["KnownHorseAndJockey"].iloc[1] == False
-    assert df["KnownHorseAndJockey"].iloc[2] == False
+    assert not df["KnownHorseAndJockey"].iloc[1]
+    assert not df["KnownHorseAndJockey"].iloc[2]
 
 
 def test_race_with_unknown_jockey_is_not_marked_known():
@@ -58,8 +59,8 @@ def test_race_with_unknown_jockey_is_not_marked_known():
         td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown),
     )
     CalculateRacesWithKnownHorsesAndJockeys().process_race_data(df)
-    assert df["KnownHorseAndJockey"].iloc[2] == False
-    assert df["KnownHorseAndJockey"].iloc[3] == False
+    assert not df["KnownHorseAndJockey"].iloc[2]
+    assert not df["KnownHorseAndJockey"].iloc[3]
 
 
 def test_incremental_processing_updates_correctly_across_days():

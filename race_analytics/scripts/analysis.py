@@ -2,20 +2,19 @@
 Analysis script: feature importance, baseline correlation, and ratings impact.
 Run with: python -m race_analytics.scripts.analysis
 """
-import gc
-import glob
+
 import os
-import numpy as np
-import pandas as pd
 from datetime import date, timedelta
-from dateutil.relativedelta import relativedelta
+
+import pandas as pd
 from xgboost import XGBRegressor
 
-from race_analytics.scripts.evaluate import (
-    _load_window, _engineer_features, _compute_horse_stats,
-    _compute_jockey_stats, _race_card, _extract_known_races,
-)
 from race_analytics.algorithms.base import PREDICTORS
+from race_analytics.scripts.evaluate import (
+    _engineer_features,
+    _extract_known_races,
+    _load_window,
+)
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
@@ -37,14 +36,18 @@ def _load_one_fold(fold_date: date, training_months: int = 7):
 
 def feature_importance(train_df: pd.DataFrame) -> None:
     """Print XGBoost feature importances on the current PREDICTORS list."""
-    data = train_df[PREDICTORS + ["Speed"]].dropna().copy()
+    data = train_df[[*PREDICTORS, "Speed"]].dropna().copy()
     data.loc[data["DaysRested"] > 10, "DaysRested"] = 10
     data.loc[data["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
-    model = XGBRegressor(n_estimators=100, learning_rate=0.1, max_depth=4,
-                         random_state=42, verbosity=0)
+    model = XGBRegressor(
+        n_estimators=100, learning_rate=0.1, max_depth=4, random_state=42, verbosity=0
+    )
     model.fit(data[PREDICTORS], data["Speed"])
-    importances = sorted(zip(PREDICTORS, model.feature_importances_),
-                         key=lambda x: x[1], reverse=True)
+    importances = sorted(
+        zip(PREDICTORS, model.feature_importances_, strict=False),
+        key=lambda x: x[1],
+        reverse=True,
+    )
     print("\n--- XGBoost Feature Importances (current PREDICTORS) ---")
     for name, imp in importances:
         bar = "#" * int(imp * 400)
@@ -110,12 +113,14 @@ def relative_rating_potential(train_df: pd.DataFrame) -> None:
 def main():
     fold_date = date.today() - timedelta(days=1)
     print(f"Loading fold: {fold_date} (7 months training)...")
-    train_df, fold_df, known_fold = _load_one_fold(fold_date)
+    train_df, fold_df, _known_fold = _load_one_fold(fold_date)
     if train_df is None:
         print("No data available.")
         return
 
-    print(f"Training rows: {len(train_df)}, fold rows: {len(fold_df) if fold_df is not None else 0}")
+    print(
+        f"Training rows: {len(train_df)}, fold rows: {len(fold_df) if fold_df is not None else 0}"
+    )
 
     feature_importance(train_df)
     ratings_availability(train_df)

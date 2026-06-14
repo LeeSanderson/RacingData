@@ -1,4 +1,5 @@
 import math
+
 import numpy as np
 import pandas as pd
 
@@ -38,8 +39,9 @@ class CalculateJockeyStats(RaceDataProcessor):
                 lambda g: self.__calculate_stats_for_jockey(slice_date, g),
                 include_groups=False,
             )
-            daily_stats = pd.merge(
-                daily_slice.drop(self.new_column_names, axis=1, errors="ignore"),
+            daily_stats = daily_slice.drop(
+                self.new_column_names, axis=1, errors="ignore"
+            ).merge(
                 stats,
                 how="left",
                 on=["JockeyId"],
@@ -96,7 +98,8 @@ def extract_jockey_stats(races: pd.DataFrame) -> pd.DataFrame:
     last["JockeyAvgRelFinishingPosition"] = avg_pos
     return last[
         [
-            "JockeyId", "Off",
+            "JockeyId",
+            "Off",
             "JockeyNumberOfPriorRaces",
             "JockeyWinPercentage",
             "JockeyTop3Percentage",

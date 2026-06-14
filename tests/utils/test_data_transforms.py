@@ -1,16 +1,16 @@
-import pytest
 import pandas as pd
-import tests.utils.test_data as td
+import pytest
 
+import tests.utils.test_data as td
 from race_analytics.features.transforms import (
-    encode_surfaces,
-    encode_going,
-    going_categories,
-    calculate_speed,
-    clean_weight,
-    calculate_horse_count,
-    calculate_weight_change,
     calculate_distance_change,
+    calculate_horse_count,
+    calculate_speed,
+    calculate_weight_change,
+    clean_weight,
+    encode_going,
+    encode_surfaces,
+    going_categories,
 )
 
 
@@ -170,17 +170,17 @@ def test_encode_going_normalization_mapping(going_normalization_dataframe):
     for expected_col, row_idx in expected_values:
         # Check that the expected column exists and is 1.0 for this row
         assert expected_col in result.columns, f"Column {expected_col} should exist"
-        assert (
-            result.iloc[row_idx][expected_col] == 1.0
-        ), f"Row {row_idx} should have {expected_col} = 1.0"
+        assert result.iloc[row_idx][expected_col] == 1.0, (
+            f"Row {row_idx} should have {expected_col} = 1.0"
+        )
 
         # Check that all other going columns are 0.0 for this row
         all_going_cols = [col for col in result.columns if col.startswith("Going_")]
         other_cols = [col for col in all_going_cols if col != expected_col]
         for col in other_cols:
-            assert (
-                result.iloc[row_idx][col] == 0.0
-            ), f"Row {row_idx} should have {col} = 0.0"
+            assert result.iloc[row_idx][col] == 0.0, (
+                f"Row {row_idx} should have {col} = 0.0"
+            )
 
 
 def test_encode_going_drops_existing_going_columns():
@@ -242,18 +242,16 @@ def test_encode_going_handles_unknown_conditions():
 
     # Second row (Good) should have exactly one going column as 1.0
     going_values = [result.iloc[1][col] for col in going_cols]
-    assert (
-        sum(going_values) == 1.0
-    ), "Exactly one going column should be 1.0 for valid going"
+    assert sum(going_values) == 1.0, (
+        "Exactly one going column should be 1.0 for valid going"
+    )
     assert result.iloc[1]["Going_Good"] == 1.0, "Good going should set Going_Good = 1.0"
 
 
 def test_encode_going_defaults_empty_going_to_good():
     """Test that empty or null going defaults to Good"""
     data = [
-        td.RaceResult.new(
-            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, ""
-        ),
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, ""),
         td.RaceResult.new(
             td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, "Soft"
         ),
@@ -262,7 +260,9 @@ def test_encode_going_defaults_empty_going_to_good():
 
     result = encode_going(df)
 
-    assert result.iloc[0]["Going_Good"] == 1.0, "Empty going should default to Going_Good"
+    assert result.iloc[0]["Going_Good"] == 1.0, (
+        "Empty going should default to Going_Good"
+    )
     for col in going_categories:
         if col != "Going_Good":
             assert result.iloc[0][col] == 0.0, f"Empty going should leave {col} = 0.0"

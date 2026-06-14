@@ -1,5 +1,8 @@
+from typing import ClassVar
+
 import numpy as np
 import pandas as pd
+
 from race_analytics.algorithms.base import REQUIRED_PREDICTORS
 from race_analytics.algorithms.regressor import RegressorAlgorithm
 from race_analytics.features.race_data import RaceDataBuilder
@@ -22,7 +25,7 @@ class _CapturingEstimator:
 
 
 class _NanTolerantAlgo(RegressorAlgorithm):
-    nan_tolerant_predictors = ["SomeCol"]
+    nan_tolerant_predictors: ClassVar[list[str]] = ["SomeCol"]
 
     def _create_model(self):
         self._cap = _CapturingEstimator()

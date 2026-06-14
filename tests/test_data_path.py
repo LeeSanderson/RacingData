@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pytest
@@ -14,6 +13,7 @@ def _clear_env(monkeypatch):
 def test_default_resolves_to_data_dir_adjacent_to_package():
     result = Path(get_data_path())
     import race_analytics
+
     expected = Path(race_analytics.__file__).resolve().parent.parent / "Data"
     assert result == expected
 
@@ -22,6 +22,7 @@ def test_default_is_independent_of_cwd(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     result = Path(get_data_path())
     import race_analytics
+
     expected = Path(race_analytics.__file__).resolve().parent.parent / "Data"
     assert result == expected
 
@@ -35,5 +36,6 @@ def test_empty_env_var_falls_back_to_default(monkeypatch):
     monkeypatch.setenv("RACE_DATA_PATH", "")
     result = Path(get_data_path())
     import race_analytics
+
     expected = Path(race_analytics.__file__).resolve().parent.parent / "Data"
     assert result == expected

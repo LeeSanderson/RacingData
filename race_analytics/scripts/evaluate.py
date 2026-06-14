@@ -1,40 +1,41 @@
-import os
 import argparse
 import gc
 import glob
+import os
 import time
-import pandas as pd
-import numpy as np
 from datetime import date, datetime, timedelta
+
+import numpy as np
+import pandas as pd
 from dateutil.relativedelta import relativedelta
 
-from race_analytics.features.transforms import (
-    encode_surfaces,
-    encode_going,
-    encode_race_type,
-    calculate_speed,
-    clean_weight,
-    calculate_horse_count,
-    calculate_race_class,
-    calculate_age_features,
-    calculate_draw_features,
-    encode_pattern,
-    calculate_is_handicap,
-    encode_age_band,
-    encode_sex_restriction,
-    encode_headgear,
-)
-from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
-from race_analytics.features.horse_stats import CalculateHorsesStats
-from race_analytics.features.jockey_stats import CalculateJockeyStats
-from race_analytics.features.trainer_stats import CalculateTrainerStats
-from race_analytics.features.race_history import race_card
-from race_analytics.features.race_data import RaceDataBuilder
-from race_analytics.utils.scoring import accuracy, roi
 from race_analytics.algorithms import ALGORITHMS
 from race_analytics.algorithms.base import AbstainCapable
-from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
+from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
+from race_analytics.features.horse_stats import CalculateHorsesStats
+from race_analytics.features.jockey_stats import CalculateJockeyStats
+from race_analytics.features.race_data import RaceDataBuilder
+from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
+from race_analytics.features.race_history import race_card
+from race_analytics.features.trainer_stats import CalculateTrainerStats
+from race_analytics.features.transforms import (
+    calculate_age_features,
+    calculate_draw_features,
+    calculate_horse_count,
+    calculate_is_handicap,
+    calculate_race_class,
+    calculate_speed,
+    clean_weight,
+    encode_age_band,
+    encode_going,
+    encode_headgear,
+    encode_pattern,
+    encode_race_type,
+    encode_sex_restriction,
+    encode_surfaces,
+)
+from race_analytics.utils.scoring import accuracy, roi
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
@@ -54,10 +55,21 @@ def _aggregate_times(times: list[float]) -> tuple[float, float] | None:
 
 
 _CSV_COLUMNS = [
-    "FoldDate", "Algorithm", "RaceId", "HorseId", "CourseName",
-    "Surface", "Going", "RaceType", "DistanceInMeters",
-    "FinishingPosition", "DecimalOdds", "PredictedScore",
-    "WinProbability", "FieldSize", "RaceClass",
+    "FoldDate",
+    "Algorithm",
+    "RaceId",
+    "HorseId",
+    "CourseName",
+    "Surface",
+    "Going",
+    "RaceType",
+    "DistanceInMeters",
+    "FinishingPosition",
+    "DecimalOdds",
+    "PredictedScore",
+    "WinProbability",
+    "FieldSize",
+    "RaceClass",
 ]
 
 
@@ -83,20 +95,32 @@ def _build_csv_rows(
         carry_cols.append("WinProbability")
     working = working[carry_cols]
 
-    meta_cols = ["RaceId", "HorseId", "CourseName", "Surface", "Going", "RaceType", "DistanceInMeters"]
+    meta_cols = [
+        "RaceId",
+        "HorseId",
+        "CourseName",
+        "Surface",
+        "Going",
+        "RaceType",
+        "DistanceInMeters",
+    ]
     meta = known_fold[[c for c in meta_cols if c in known_fold.columns]].copy()
 
     result_cols = ["RaceId", "HorseId", "FinishingPosition", "DecimalOdds"]
     result_info = results_df[[c for c in result_cols if c in results_df.columns]].copy()
 
     field_sizes = (
-        known_fold.groupby("RaceId")["HorseId"].count().reset_index()
+        known_fold.groupby("RaceId")["HorseId"]
+        .count()
+        .reset_index()
         .rename(columns={"HorseId": "FieldSize"})
     )
 
     if "Class" in known_fold.columns:
         race_class = (
-            known_fold.groupby("RaceId")["Class"].first().reset_index()
+            known_fold.groupby("RaceId")["Class"]
+            .first()
+            .reset_index()
             .rename(columns={"Class": "RaceClass"})
         )
     else:
@@ -137,7 +161,9 @@ def _roi_coverage_frontier(
     if coverages is None:
         coverages = [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4]
     if unfiltered_field.empty or "WinProbability" not in unfiltered_field.columns:
-        return pd.DataFrame(columns=["coverage_target", "actual_coverage", "roi", "races"])
+        return pd.DataFrame(
+            columns=["coverage_target", "actual_coverage", "roi", "races"]
+        )
 
     race_scores = unfiltered_field.groupby("RaceId")["WinProbability"].apply(gate.score)
     calib = gate._calib_scores
@@ -153,12 +179,14 @@ def _roi_coverage_frontier(
         ][["RaceId", "HorseId"]]
         actual_cov = len(kept) / total_races if total_races > 0 else 0.0
         r = roi(top_picks, results) if not top_picks.empty else 0.0
-        rows.append({
-            "coverage_target": cov,
-            "actual_coverage": round(actual_cov, 3),
-            "roi": round(r, 3),
-            "races": len(top_picks),
-        })
+        rows.append(
+            {
+                "coverage_target": cov,
+                "actual_coverage": round(actual_cov, 3),
+                "roi": round(r, 3),
+                "races": len(top_picks),
+            }
+        )
     return pd.DataFrame(rows)
 
 
@@ -206,9 +234,7 @@ def _print_early_late_split(
 
 def _extract_known_races(fold_df: pd.DataFrame) -> pd.DataFrame:
     """Return only races where every horse and jockey is known from training history."""
-    return fold_df[fold_df["KnownHorseAndJockey"] == True].copy()
-
-
+    return fold_df[fold_df["KnownHorseAndJockey"]].copy()
 
 
 def _fold_dates(folds: int) -> list:
@@ -309,7 +335,6 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
     races = encode_sex_restriction(races)
     races = calculate_draw_features(races)
     return races
-
 
 
 def _results(fold_df: pd.DataFrame) -> pd.DataFrame:
@@ -468,14 +493,20 @@ def evaluate(
             all_total_known[name].append(known_fold["RaceId"].nunique())
             field_preds = algo.predict_field(serve_data)
             if isinstance(algo, AbstainCapable):
-                all_unfiltered_preds[name].append(algo.predict_field_unfiltered(serve_data))
-            csv_rows.append(_build_csv_rows(fold_date, name, field_preds, known_fold, results_df))
+                all_unfiltered_preds[name].append(
+                    algo.predict_field_unfiltered(serve_data)
+                )
+            csv_rows.append(
+                _build_csv_rows(fold_date, name, field_preds, known_fold, results_df)
+            )
 
         # Flush this fold's rows to disk immediately so a crash loses at most one fold
         if incremental_path and csv_rows:
-            fold_batch = pd.concat(csv_rows[-len(selected_algos):], ignore_index=True)
+            fold_batch = pd.concat(csv_rows[-len(selected_algos) :], ignore_index=True)
             write_header = not os.path.exists(incremental_path)
-            fold_batch.to_csv(incremental_path, mode="a", header=write_header, index=False)
+            fold_batch.to_csv(
+                incremental_path, mode="a", header=write_header, index=False
+            )
 
         gc.collect()
 
@@ -502,7 +533,9 @@ def evaluate(
         )
 
     print("\n=== Timing Summary ===")
-    print(f"{'Algorithm':<40} {'Fit(avg)':>10} {'Fit(std)':>10} {'Pred(avg)':>10} {'Pred(std)':>10}")
+    print(
+        f"{'Algorithm':<40} {'Fit(avg)':>10} {'Fit(std)':>10} {'Pred(avg)':>10} {'Pred(std)':>10}"
+    )
     print("-" * 86)
     for name in algo_names:
         fit_agg = _aggregate_times(all_fit_times[name])
@@ -512,7 +545,9 @@ def evaluate(
         else:
             fit_avg, fit_std = fit_agg
             pred_avg, pred_std = pred_agg
-            print(f"  {name:<40} {fit_avg:>10.3f} {fit_std:>10.3f} {pred_avg:>10.3f} {pred_std:>10.3f}")
+            print(
+                f"  {name:<40} {fit_avg:>10.3f} {fit_std:>10.3f} {pred_avg:>10.3f} {pred_std:>10.3f}"
+            )
 
     _print_early_late_split(algo_names, all_preds, all_results_store, all_total_known)
 

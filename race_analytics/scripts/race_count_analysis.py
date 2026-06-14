@@ -2,12 +2,17 @@
 Count races available under current KnownHorseAndJockey filter vs TSR-complete filter.
 Run with: python -m race_analytics.scripts.race_count_analysis
 """
+
 import gc
-import numpy as np
-import pandas as pd
 from datetime import date, timedelta
 
-from race_analytics.scripts.evaluate import _load_window, _engineer_features, _extract_known_races
+import pandas as pd
+
+from race_analytics.scripts.evaluate import (
+    _engineer_features,
+    _extract_known_races,
+    _load_window,
+)
 
 FOLDS = 60
 TRAINING_MONTHS = 7
@@ -66,7 +71,9 @@ def count_fold(fold_date: date) -> dict | None:
 
 
 def main():
-    fold_dates = [date.today() - timedelta(days=1) - timedelta(days=i) for i in range(FOLDS)]
+    fold_dates = [
+        date.today() - timedelta(days=1) - timedelta(days=i) for i in range(FOLDS)
+    ]
 
     results = []
     for fold_date in fold_dates:
@@ -89,16 +96,18 @@ def main():
     print("  Race availability across 60 folds")
     print("=" * 65)
     print(f"\n  {'Filter':<40} {'Avg/day':>8}  {'Total':>7}  {'% of known':>10}")
-    print(f"  {'-'*40}  {'-'*8}  {'-'*7}  {'-'*10}")
+    print(f"  {'-' * 40}  {'-' * 8}  {'-' * 7}  {'-' * 10}")
 
     total_known = df["known"].sum()
     avg_known = df["known"].mean()
-    print(f"  {'KnownHorseAndJockey (current)':<40} {avg_known:>8.1f}  {total_known:>7}  {'100%':>10}")
+    print(
+        f"  {'KnownHorseAndJockey (current)':<40} {avg_known:>8.1f}  {total_known:>7}  {'100%':>10}"
+    )
 
     for col, label in [
-        ("tsr_complete",  "+ TopSpeedRating complete"),
-        ("or_complete",   "+ OfficialRating complete"),
-        ("rpr_complete",  "+ RacingPostRating complete"),
+        ("tsr_complete", "+ TopSpeedRating complete"),
+        ("or_complete", "+ OfficialRating complete"),
+        ("rpr_complete", "+ RacingPostRating complete"),
         ("tsr_or_complete", "+ TSR OR OfficialRating complete"),
     ]:
         total = df[col].sum()
@@ -106,12 +115,16 @@ def main():
         pct = 100 * total / total_known if total_known else 0
         print(f"  {label:<40} {avg:>8.1f}  {total:>7}  {pct:>9.1f}%")
 
-    print(f"\n  Days with zero TSR-complete races: {(df['tsr_complete'] == 0).sum()} / {len(df)}")
-    print(f"  Days with zero OR-complete races:  {(df['or_complete'] == 0).sum()} / {len(df)}")
-    print(f"\n  TSR-complete races per day distribution:")
+    print(
+        f"\n  Days with zero TSR-complete races: {(df['tsr_complete'] == 0).sum()} / {len(df)}"
+    )
+    print(
+        f"  Days with zero OR-complete races:  {(df['or_complete'] == 0).sum()} / {len(df)}"
+    )
+    print("\n  TSR-complete races per day distribution:")
     bins = [0, 1, 3, 5, 10, 50]
     labels = ["0", "1-2", "3-4", "5-9", "10+"]
-    for i, (lo, hi, lbl) in enumerate(zip(bins, bins[1:], labels)):
+    for i, (lo, hi, lbl) in enumerate(zip(bins, bins[1:], labels, strict=False)):
         if i == 0:
             count = (df["tsr_complete"] == 0).sum()
         else:

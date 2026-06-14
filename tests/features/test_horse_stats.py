@@ -1,11 +1,17 @@
-import pytest
 import pandas as pd
-import numpy as np
-import tests.utils.test_data as td
+import pytest
 
-from race_analytics.features.horse_stats import CalculateHorsesStats, extract_horse_stats
-from race_analytics.features.transforms import calculateHorsesPerRace
-from race_analytics.features.transforms import encode_surfaces, encode_going, encode_race_type
+import tests.utils.test_data as td
+from race_analytics.features.horse_stats import (
+    CalculateHorsesStats,
+    extract_horse_stats,
+)
+from race_analytics.features.transforms import (
+    calculateHorsesPerRace,
+    encode_going,
+    encode_race_type,
+    encode_surfaces,
+)
 
 
 def _make_processed_df(*race_results):
@@ -28,13 +34,33 @@ def two_day_df():
     """Day 1 = Ballinrobe (July 20), Day 2 = Chelmsford (July 21)."""
     return _make_processed_df(
         td.RaceResult.new(
-            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown,
-            Going="Soft", FinishingPosition=2, DistanceInMeters=2400.0,
-            Speed=13.5, WeightInPounds=128.0, DecimalOdds=5.0,
-            OfficialRating=85.0, RacingPostRating=95.0, TopSpeedRating=88.0,
+            td.Ballinrobe20thAt1515,
+            td.SecretSecret,
+            td.PaulTown,
+            Going="Soft",
+            FinishingPosition=2,
+            DistanceInMeters=2400.0,
+            Speed=13.5,
+            WeightInPounds=128.0,
+            DecimalOdds=5.0,
+            OfficialRating=85.0,
+            RacingPostRating=95.0,
+            TopSpeedRating=88.0,
         ),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan, Going="Soft", FinishingPosition=1),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, Going="Good", FinishingPosition=1),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            Going="Soft",
+            FinishingPosition=1,
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805,
+            td.SecretSecret,
+            td.PaulTown,
+            Going="Good",
+            FinishingPosition=1,
+        ),
     )
 
 
@@ -73,15 +99,69 @@ def test_horse_with_one_prior_race_has_nan_for_3race_aggregates(two_day_df):
 def four_day_df():
     """SecretSecret has 3 prior races by day 4."""
     return _make_processed_df(
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2, Speed=13.0),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=1, Speed=13.5),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, FinishingPosition=1, Speed=14.0),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=2, Speed=13.8),
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown, FinishingPosition=1, Speed=15.0),
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=2, Speed=14.5),
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.ComeSeptember, td.SimonTorrens, FinishingPosition=3, Speed=14.0),
-        td.RaceResult.new(td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown, FinishingPosition=1, Speed=15.5),
-        td.RaceResult.new(td.Wolverhampton24thAt1300, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=2, Speed=15.0),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515,
+            td.SecretSecret,
+            td.PaulTown,
+            FinishingPosition=2,
+            Speed=13.0,
+        ),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            FinishingPosition=1,
+            Speed=13.5,
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805,
+            td.SecretSecret,
+            td.PaulTown,
+            FinishingPosition=1,
+            Speed=14.0,
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            FinishingPosition=2,
+            Speed=13.8,
+        ),
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815,
+            td.SecretSecret,
+            td.PaulTown,
+            FinishingPosition=1,
+            Speed=15.0,
+        ),
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            FinishingPosition=2,
+            Speed=14.5,
+        ),
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815,
+            td.ComeSeptember,
+            td.SimonTorrens,
+            FinishingPosition=3,
+            Speed=14.0,
+        ),
+        td.RaceResult.new(
+            td.Wolverhampton24thAt1300,
+            td.SecretSecret,
+            td.PaulTown,
+            FinishingPosition=1,
+            Speed=15.5,
+        ),
+        td.RaceResult.new(
+            td.Wolverhampton24thAt1300,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            FinishingPosition=2,
+            Speed=15.0,
+        ),
     )
 
 
@@ -93,7 +173,9 @@ def test_horse_with_3_prior_races_has_all_features(four_day_df):
     # trend = lastSpeed(15.0) - avg(14.0) = 1.0
     assert row["Last3RaceSpeedTrend"] == pytest.approx(1.0)
     # rel pos: day3=1/3, day2=1/2, day1=2/2 → mean ≈ 0.611
-    assert row["Last3AvgRelFinishingPosition"] == pytest.approx((1/3 + 1/2 + 1.0) / 3, rel=1e-4)
+    assert row["Last3AvgRelFinishingPosition"] == pytest.approx(
+        (1 / 3 + 1 / 2 + 1.0) / 3, rel=1e-4
+    )
 
 
 def test_extract_horse_stats_exports_last3_over_most_recent_races(four_day_df):
@@ -116,15 +198,28 @@ def rating_df():
     ratings distinct from the earlier race (Ballinrobe, July 20)."""
     return _make_processed_df(
         td.RaceResult.new(
-            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown,
+            td.Ballinrobe20thAt1515,
+            td.SecretSecret,
+            td.PaulTown,
             FinishingPosition=2,
-            OfficialRating=70.0, RacingPostRating=88.0, TopSpeedRating=75.0,
+            OfficialRating=70.0,
+            RacingPostRating=88.0,
+            TopSpeedRating=75.0,
         ),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=1),
         td.RaceResult.new(
-            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown,
+            td.Ballinrobe20thAt1515,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
             FinishingPosition=1,
-            OfficialRating=92.0, RacingPostRating=110.0, TopSpeedRating=101.0,
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805,
+            td.SecretSecret,
+            td.PaulTown,
+            FinishingPosition=1,
+            OfficialRating=92.0,
+            RacingPostRating=110.0,
+            TopSpeedRating=101.0,
         ),
     )
 
@@ -176,9 +271,18 @@ def test_horse_stats_encoded_surface_columns(two_day_df):
 def test_last_race_headgear_reflects_prior_race():
     """Day-2 row for SecretSecret must carry the HeadGear code from day 1."""
     df = _make_processed_df(
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=1),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, FinishingPosition=1),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2
+        ),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            FinishingPosition=1,
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, FinishingPosition=1
+        ),
     )
     df.loc[df["RaceId"] == td.Ballinrobe20thAt1515.RaceId, "HeadGear"] = "b1"
     df.loc[df["RaceId"] == td.Chelmsford21stAt1805.RaceId, "HeadGear"] = "v"

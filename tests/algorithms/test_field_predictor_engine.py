@@ -11,10 +11,10 @@ import pandas as pd
 import pytest
 
 from race_analytics.algorithms.base import (
-    FieldPredictorBaseAlgorithm,
-    FieldPredictor,
-    AbstainCapable,
     REQUIRED_PREDICTORS,
+    AbstainCapable,
+    FieldPredictor,
+    FieldPredictorBaseAlgorithm,
 )
 from race_analytics.features.race_data import RaceData
 
@@ -60,7 +60,7 @@ def _race_data(n_races=2, horses=3, with_label=True, max_horses=10) -> RaceData:
     rows = []
     for r in range(1, n_races + 1):
         for h in range(horses):
-            row = {c: 1.0 for c in REQUIRED_PREDICTORS}
+            row = dict.fromkeys(REQUIRED_PREDICTORS, 1.0)
             row["RaceId"] = r
             row["HorseId"] = r * 10 + h
             if with_label:
@@ -123,7 +123,8 @@ def test_incomplete_race_dropped_when_a_runner_has_nan_required():
     serve = _race_data(n_races=2, horses=3, with_label=False)
     # blank a required predictor for one runner in race 1 -> whole race excluded
     serve.frame.loc[
-        (serve.frame["RaceId"] == 1) & (serve.frame["HorseId"] == 12), "DistanceInMeters"
+        (serve.frame["RaceId"] == 1) & (serve.frame["HorseId"] == 12),
+        "DistanceInMeters",
     ] = np.nan
     field = algo.predict_field(serve)
     assert set(field["RaceId"]) == {2}
@@ -200,16 +201,22 @@ class _WeightedClassifier(_EngineClassifier):
         return np.full(len(frame), 3.0)
 
 
-@pytest.mark.parametrize("factory", [_EngineClassifier, _RankerEngine, _WeightedClassifier])
+@pytest.mark.parametrize(
+    "factory", [_EngineClassifier, _RankerEngine, _WeightedClassifier]
+)
 def test_engine_ranks_full_field_for_any_estimator_and_weighting(factory):
     algo = factory()
     algo.fit(_race_data(with_label=True))
     field = algo.predict_field(_race_data(n_races=2, horses=3, with_label=False))
 
     assert len(field) == 6
-    assert {"RaceId", "HorseId", "WinProbability", "PredictedRank"} <= set(field.columns)
+    assert {"RaceId", "HorseId", "WinProbability", "PredictedRank"} <= set(
+        field.columns
+    )
     # exactly one rank-1 pick per race, regardless of estimator/weighting
-    rank1_per_race = field.groupby("RaceId")["PredictedRank"].apply(lambda r: (r == 1).sum())
+    rank1_per_race = field.groupby("RaceId")["PredictedRank"].apply(
+        lambda r: (r == 1).sum()
+    )
     assert (rank1_per_race == 1).all()
 
 

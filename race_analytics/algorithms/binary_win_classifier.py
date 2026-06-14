@@ -28,8 +28,12 @@ class BinaryWinClassifierAlgorithm(FieldPredictorBaseAlgorithm):
     def _prepare_serving(self, data: RaceData) -> RaceData:
         return self._add_race_context(data)
 
-    def _fit_estimator(self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight) -> None:
-        fit_kwargs = {"sample_weight": sample_weight} if sample_weight is not None else {}
+    def _fit_estimator(
+        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight
+    ) -> None:
+        fit_kwargs = (
+            {"sample_weight": sample_weight} if sample_weight is not None else {}
+        )
         self._classifier.fit(X, frame[self.label_col], **fit_kwargs)
 
     def _score(self, X: pd.DataFrame) -> np.ndarray:

@@ -13,33 +13,33 @@ Day-since features are computed against an explicit `as_of`, never `datetime.tod
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from datetime import datetime
-from typing import Iterable
 
 import numpy as np
 import pandas as pd
 
-from race_analytics.features.transforms import (
-    encode_surfaces,
-    encode_going,
-    encode_race_type,
-    calculate_weight_change,
-    calculate_distance_change,
-    calculate_surface_switch,
-    calculate_code_switch,
-    calculate_race_class,
-    calculate_age_features,
-    calculate_draw_features,
-    encode_pattern,
-    calculate_is_handicap,
-    encode_age_band,
-    encode_sex_restriction,
-    encode_headgear,
-)
 from race_analytics.features.horse_stats import extract_horse_stats
 from race_analytics.features.jockey_stats import extract_jockey_stats
 from race_analytics.features.trainer_stats import extract_trainer_stats
+from race_analytics.features.transforms import (
+    calculate_age_features,
+    calculate_code_switch,
+    calculate_distance_change,
+    calculate_draw_features,
+    calculate_is_handicap,
+    calculate_race_class,
+    calculate_surface_switch,
+    calculate_weight_change,
+    encode_age_band,
+    encode_going,
+    encode_headgear,
+    encode_pattern,
+    encode_race_type,
+    encode_sex_restriction,
+    encode_surfaces,
+)
 
 _LABEL_COLUMNS = ("Wins", "Speed", "FinishingPosition")
 _ONE_DAY = np.timedelta64(1, "D")
@@ -110,14 +110,14 @@ class RaceData:
         """The columns the estimator consumes, in the requested order."""
         return self.frame[list(feature_cols)]
 
-    def with_columns(self, **new_cols) -> "RaceData":
+    def with_columns(self, **new_cols) -> RaceData:
         """Copy + add/overwrite columns (e.g. LastProxyTSR, recency weights)."""
         frame = self.frame.copy()
         for name, values in new_cols.items():
             frame[name] = values
         return replace(self, frame=frame)
 
-    def subset(self, mask) -> "RaceData":
+    def subset(self, mask) -> RaceData:
         """Copy + row filter (e.g. an in-pipeline race gate)."""
         return replace(self, frame=self.frame[mask].copy())
 
@@ -144,20 +144,24 @@ class RaceDataBuilder:
         today = np.datetime64(as_of)
         races = card
 
-        merged = pd.merge(races.copy(), horse_stats, how="left", on=["HorseId"])
-        merged["DaysRested"] = np.ceil((today - pd.to_datetime(merged["LastOff"])) / _ONE_DAY)
+        merged = races.copy().merge(horse_stats, how="left", on=["HorseId"])
+        merged["DaysRested"] = np.ceil(
+            (today - pd.to_datetime(merged["LastOff"])) / _ONE_DAY
+        )
         merged.loc[merged["DaysRested"] > 10, "DaysRested"] = 10
         merged = merged.drop("LastOff", axis=1, errors="ignore")
 
-        merged = pd.merge(merged, jockey_stats, how="left", on=["JockeyId"])
+        merged = merged.merge(jockey_stats, how="left", on=["JockeyId"])
         merged["DaysSinceJockeyLastRaced"] = np.ceil(
             (today - pd.to_datetime(merged["LastOff"])) / _ONE_DAY
         )
-        merged.loc[merged["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"] = 10
+        merged.loc[
+            merged["DaysSinceJockeyLastRaced"] > 10, "DaysSinceJockeyLastRaced"
+        ] = 10
         merged = merged.drop("LastOff", axis=1, errors="ignore")
 
         if trainer_stats is not None:
-            merged = pd.merge(merged, trainer_stats, how="left", on=["TrainerId"])
+            merged = merged.merge(trainer_stats, how="left", on=["TrainerId"])
 
         merged = _apply_canonical_chain(merged)
         return RaceData(frame=merged, as_of=pd.Timestamp(as_of), max_horses=max_horses)
@@ -177,7 +181,9 @@ class RaceDataBuilder:
             card, horse_stats, jockey_stats, trainer_stats, as_of, max_horses
         )
 
-    def build_training(self, raw: pd.DataFrame, as_of, max_horses: int = 10) -> RaceData:
+    def build_training(
+        self, raw: pd.DataFrame, as_of, max_horses: int = 10
+    ) -> RaceData:
         """Build training RaceData (labels retained) from an enriched race_history
         frame. Stats are already columns, so this runs the canonical chain directly,
         clamping the day-since features exactly as the legacy fit() does."""
@@ -204,7 +210,9 @@ class RaceDataBuilder:
             if col in frame.columns:
                 frame.loc[frame[col] > 10, col] = 10
         if "Off" in frame.columns:
-            as_of = pd.to_datetime(frame["Off"]).max().normalize() + pd.Timedelta(days=1)
+            as_of = pd.to_datetime(frame["Off"]).max().normalize() + pd.Timedelta(
+                days=1
+            )
         else:
             as_of = pd.Timestamp(datetime.today())
         return RaceData(frame=frame, as_of=as_of, max_horses=max_horses)

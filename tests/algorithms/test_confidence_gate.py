@@ -1,10 +1,10 @@
 import pandas as pd
-import numpy as np
 import pytest
+
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
 
-
 # ── score() ──────────────────────────────────────────────────────────────────
+
 
 class TestScore:
     def test_top_prob_returns_highest(self):
@@ -38,6 +38,7 @@ class TestScore:
 
 
 # ── calibrate() / keep() ─────────────────────────────────────────────────────
+
 
 class TestCalibrate:
     def test_full_coverage_threshold_at_minimum_score(self):
@@ -78,5 +79,5 @@ class TestCalibrate:
     def test_keep_at_threshold_boundary(self):
         gate = ConfidenceGate("top_prob")
         gate.calibrate([0.5], coverage=1.0)
-        assert gate.keep(0.5)      # exactly at threshold → kept
+        assert gate.keep(0.5)  # exactly at threshold → kept
         assert not gate.keep(0.4)  # below threshold → abstain

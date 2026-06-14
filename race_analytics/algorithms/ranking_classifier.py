@@ -10,7 +10,7 @@ from race_analytics.algorithms.win_classifier import WinClassifier
 class RankingClassifier(WinClassifier):
     """Learning-to-rank variant using XGBRanker with rank:pairwise objective.
 
-    Labels: HorseCount − FinishingPosition + 1 (winner gets highest label).
+    Labels: HorseCount - FinishingPosition + 1 (winner gets highest label).
     WinProbability stores the ranking score, not a calibrated probability.
     """
 
@@ -27,7 +27,9 @@ class RankingClassifier(WinClassifier):
             verbosity=0,
         )
 
-    def _fit_estimator(self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight) -> None:
+    def _fit_estimator(
+        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight
+    ) -> None:
         data = frame.sort_values("RaceId")
         group_sizes = data.groupby("RaceId")["RaceId"].count().values
         labels = (data["HorseCount"] - data["FinishingPosition"] + 1).clip(lower=0)

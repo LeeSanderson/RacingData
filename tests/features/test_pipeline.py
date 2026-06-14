@@ -1,6 +1,6 @@
 import pandas as pd
-import tests.utils.test_data as td
 
+import tests.utils.test_data as td
 from race_analytics.features.pipeline import FeaturePipeline
 
 
@@ -12,15 +12,29 @@ def _make_batch(*race_results):
 
 def _batch1():
     return _make_batch(
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=1),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2
+        ),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            FinishingPosition=1,
+        ),
     )
 
 
 def _batch2():
     return _make_batch(
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, FinishingPosition=1),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=2),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, FinishingPosition=1
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            FinishingPosition=2,
+        ),
     )
 
 
@@ -64,6 +78,11 @@ def test_save_methods_write_non_empty_csvs(tmp_path):
     pipeline.save_horse_stats(str(tmp_path / "Horse_Stats.csv"))
     pipeline.save_jockey_stats(str(tmp_path / "Jockey_Stats.csv"))
     pipeline.save_trainer_stats(str(tmp_path / "Trainer_Stats.csv"))
-    for name in ["Race_Features.csv", "Horse_Stats.csv", "Jockey_Stats.csv", "Trainer_Stats.csv"]:
+    for name in [
+        "Race_Features.csv",
+        "Horse_Stats.csv",
+        "Jockey_Stats.csv",
+        "Trainer_Stats.csv",
+    ]:
         df = pd.read_csv(tmp_path / name)
         assert len(df) > 0, f"{name} is empty"

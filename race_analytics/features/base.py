@@ -1,15 +1,18 @@
 import sys
-import pandas as pd
-from datetime import timedelta
 from abc import ABC
+from datetime import timedelta
+
+import pandas as pd
 
 
-class RaceDataProcessor(ABC):
-
-    def before_process_data(self, df: pd.DataFrame) -> None:
+# Template-method base: process_race_data drives the per-day loop;
+# before_process_data/update are optional no-op hooks subclasses override as needed
+# (not @abstractmethod — subclasses may override only the hooks they care about).
+class RaceDataProcessor(ABC):  # noqa: B024
+    def before_process_data(self, df: pd.DataFrame) -> None:  # noqa: B027
         pass
 
-    def update(
+    def update(  # noqa: B027
         self, df: pd.DataFrame, history: pd.DataFrame, daily_slice: pd.DataFrame
     ) -> None:
         pass

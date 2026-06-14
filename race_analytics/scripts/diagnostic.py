@@ -2,11 +2,11 @@
 Diagnostic analysis: characterise when the model wins and loses.
 Usage: python -m race_analytics.scripts.diagnostic path/to/eval_results.csv
 """
+
 import argparse
 import glob
 import os
 
-import numpy as np
 import pandas as pd
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -16,6 +16,7 @@ _FURLONG_M = 201.168
 
 
 # ── Pure helpers ──────────────────────────────────────────────────────────────
+
 
 def _distance_band(meters: float) -> str:
     if pd.isna(meters):
@@ -92,11 +93,15 @@ def _segment_table(picks: pd.DataFrame, col: str) -> pd.DataFrame:
     picks["_profit"] = picks.apply(
         lambda r: float(r["DecimalOdds"] - 1) if r["_win"] else -1.0, axis=1
     )
-    agg = picks.groupby(col, sort=False).agg(
-        Bets=("_win", "count"),
-        _wins=("_win", "sum"),
-        _profit=("_profit", "sum"),
-    ).reset_index()
+    agg = (
+        picks.groupby(col, sort=False)
+        .agg(
+            Bets=("_win", "count"),
+            _wins=("_win", "sum"),
+            _profit=("_profit", "sum"),
+        )
+        .reset_index()
+    )
     agg["WinRate"] = agg["_wins"] / agg["Bets"]
     agg["ROI"] = agg["_profit"] / agg["Bets"]
     agg["Coverage"] = agg["Bets"] / total
@@ -105,12 +110,15 @@ def _segment_table(picks: pd.DataFrame, col: str) -> pd.DataFrame:
 
 # ── I/O helpers ───────────────────────────────────────────────────────────────
 
+
 def _load_results_extra(picks: pd.DataFrame) -> pd.DataFrame:
     """Join AgeBand, Pattern, RatingBand from the raw Results_*.csv files."""
     race_ids = set(picks["RaceId"].unique())
     want = {"RaceId", "AgeBand", "Pattern", "RatingBand", "SexRestriction"}
     dfs = []
-    for path in sorted(glob.glob(os.path.join(_DATA_DIR, "Results_*.csv")), reverse=True):
+    for path in sorted(
+        glob.glob(os.path.join(_DATA_DIR, "Results_*.csv")), reverse=True
+    ):
         df = pd.read_csv(path, usecols=lambda c: c in want)
         df = df[df["RaceId"].isin(race_ids)].drop_duplicates("RaceId")
         if not df.empty:
@@ -124,6 +132,7 @@ def _load_results_extra(picks: pd.DataFrame) -> pd.DataFrame:
 
 
 # ── Display helpers ────────────────────────────────────────────────────────────
+
 
 def _confidence_band(prob: float) -> str:
     if pd.isna(prob):
@@ -151,7 +160,7 @@ def _print_segment_table(seg: pd.DataFrame, col: str, title: str) -> None:
     print("  " + "-" * 60)
     for _, row in seg.sort_values("ROI", ascending=False).iterrows():
         print(
-            f"  {str(row[col]):<25} {int(row['Bets']):>6} {row['WinRate']:>8.3f}"
+            f"  {row[col]!s:<25} {int(row['Bets']):>6} {row['WinRate']:>8.3f}"
             f" {row['ROI']:>8.3f} {row['Coverage']:>9.3f}"
         )
 
@@ -167,22 +176,27 @@ def _calibration_view(picks: pd.DataFrame) -> None:
         bins=[0, 0.10, 0.15, 0.20, 0.25, 0.30, 0.40, 1.0],
         labels=["<10%", "10-15%", "15-20%", "20-25%", "25-30%", "30-40%", "40%+"],
     )
-    cal = df.groupby("ProbBand", observed=True).agg(
-        Bets=("Win", "count"),
-        ActualWinRate=("Win", "mean"),
-        AvgPredicted=("WinProbability", "mean"),
-    ).reset_index()
+    cal = (
+        df.groupby("ProbBand", observed=True)
+        .agg(
+            Bets=("Win", "count"),
+            ActualWinRate=("Win", "mean"),
+            AvgPredicted=("WinProbability", "mean"),
+        )
+        .reset_index()
+    )
     print("\n--- Calibration (predicted vs actual win rate) ---")
     print(f"  {'Band':<10} {'Bets':>6} {'PredictedProb':>14} {'ActualWinRate':>14}")
     print("  " + "-" * 48)
     for _, row in cal.iterrows():
         print(
-            f"  {str(row['ProbBand']):<10} {int(row['Bets']):>6}"
+            f"  {row['ProbBand']!s:<10} {int(row['Bets']):>6}"
             f" {row['AvgPredicted']:>14.3f} {row['ActualWinRate']:>14.3f}"
         )
 
 
 # ── Candidate rules ───────────────────────────────────────────────────────────
+
 
 def _candidate_rules(picks: pd.DataFrame) -> pd.DataFrame:
     total = len(picks)
@@ -196,15 +210,17 @@ def _candidate_rules(picks: pd.DataFrame) -> pd.DataFrame:
             return
         wr = (kept["FinishingPosition"] == 1).mean() if len(kept) else 0.0
         r = _roi(kept)
-        rows.append({
-            "Rule": name,
-            "ExcludedBets": int(mask.sum()),
-            "CoverageAfter": len(kept) / total,
-            "WinRateAfter": wr,
-            "WinRateDelta": wr - baseline_wr,
-            "ROIAfter": r,
-            "ROIDelta": r - baseline_roi,
-        })
+        rows.append(
+            {
+                "Rule": name,
+                "ExcludedBets": int(mask.sum()),
+                "CoverageAfter": len(kept) / total,
+                "WinRateAfter": wr,
+                "WinRateDelta": wr - baseline_wr,
+                "ROIAfter": r,
+                "ROIDelta": r - baseline_roi,
+            }
+        )
 
     if "FieldSize" in picks.columns and picks["FieldSize"].notna().any():
         for n in [9, 13, 17, 21]:
@@ -227,10 +243,17 @@ def _candidate_rules(picks: pd.DataFrame) -> pd.DataFrame:
                 evaluate(picks["Going"] == val, f"Exclude Going={val}")
 
     if not rows:
-        return pd.DataFrame(columns=[
-            "Rule", "ExcludedBets", "CoverageAfter",
-            "WinRateAfter", "WinRateDelta", "ROIAfter", "ROIDelta",
-        ])
+        return pd.DataFrame(
+            columns=[
+                "Rule",
+                "ExcludedBets",
+                "CoverageAfter",
+                "WinRateAfter",
+                "WinRateDelta",
+                "ROIAfter",
+                "ROIDelta",
+            ]
+        )
     return pd.DataFrame(rows).sort_values("ROIDelta", ascending=False)
 
 
@@ -246,13 +269,14 @@ def _print_candidate_rules(rules: pd.DataFrame) -> None:
     print("  " + "-" * 88)
     for _, row in rules.head(20).iterrows():
         print(
-            f"  {str(row['Rule']):<40} {int(row['ExcludedBets']):>8}"
+            f"  {row['Rule']!s:<40} {int(row['ExcludedBets']):>8}"
             f" {row['CoverageAfter']:>9.3f} {row['WinRateDelta']:>+7.3f}"
             f" {row['ROIDelta']:>+8.3f} {row['ROIAfter']:>9.3f}"
         )
 
 
 # ── Feature nominations ────────────────────────────────────────────────────────
+
 
 def _feature_nominations(picks: pd.DataFrame, segment_stats: dict) -> list:
     baseline_roi = _roi(picks)
@@ -261,21 +285,26 @@ def _feature_nominations(picks: pd.DataFrame, segment_stats: dict) -> list:
         col = seg.columns[0]
         weak = seg[seg["ROI"] < baseline_roi - 0.05].sort_values("ROI")
         for _, row in weak.iterrows():
-            noms.append((
-                row["ROI"],
-                f"{label}={row[col]} (ROI={row['ROI']:.3f}, baseline={baseline_roi:.3f},"
-                f" bets={int(row['Bets'])})",
-            ))
+            noms.append(
+                (
+                    row["ROI"],
+                    f"{label}={row[col]} (ROI={row['ROI']:.3f}, baseline={baseline_roi:.3f},"
+                    f" bets={int(row['Bets'])})",
+                )
+            )
     noms.sort(key=lambda x: x[0])
     return [msg for _, msg in noms]
 
 
 # ── Main entry point ──────────────────────────────────────────────────────────
 
+
 def analyse(eval_csv_path: str) -> None:
     print(f"Loading eval results: {eval_csv_path}")
     df = pd.read_csv(eval_csv_path)
-    print(f"  {len(df)} rows | {df['Algorithm'].nunique()} algo(s) | {df['RaceId'].nunique()} unique races")
+    print(
+        f"  {len(df)} rows | {df['Algorithm'].nunique()} algo(s) | {df['RaceId'].nunique()} unique races"
+    )
 
     picks = _identify_picks(df)
     print(f"  {len(picks)} picks identified")
@@ -294,7 +323,9 @@ def analyse(eval_csv_path: str) -> None:
 
         print(f"\n{'=' * 70}")
         print(f"Algorithm: {algo}")
-        print(f"Total bets: {total}  Win rate: {wins/total:.3f}  ROI: {overall_roi:.3f}")
+        print(
+            f"Total bets: {total}  Win rate: {wins / total:.3f}  ROI: {overall_roi:.3f}"
+        )
         print("=" * 70)
 
         segment_stats: dict = {}
@@ -319,12 +350,16 @@ def analyse(eval_csv_path: str) -> None:
         if "WinProbability" in ap.columns and ap["WinProbability"].notna().any():
             ap["ConfidenceBand"] = ap["WinProbability"].apply(_confidence_band)
             seg = _segment_table(ap, "ConfidenceBand")
-            seg["_order"] = seg["ConfidenceBand"].map(
-                {b: i for i, b in enumerate(_BAND_ORDER)}
-            ).fillna(99)
+            seg["_order"] = (
+                seg["ConfidenceBand"]
+                .map({b: i for i, b in enumerate(_BAND_ORDER)})
+                .fillna(99)
+            )
             seg = seg.sort_values("_order").drop(columns=["_order"])
             segment_stats["Confidence Band"] = seg
-            _print_segment_table(seg, "ConfidenceBand", "Confidence Band (by probability)")
+            _print_segment_table(
+                seg, "ConfidenceBand", "Confidence Band (by probability)"
+            )
 
         _calibration_view(ap)
 

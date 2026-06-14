@@ -1,4 +1,5 @@
 import pandas as pd
+
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
 
 

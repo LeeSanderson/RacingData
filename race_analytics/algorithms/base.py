@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import replace
 from typing import ClassVar, Protocol, runtime_checkable
+
 import numpy as np
 import pandas as pd
 
@@ -160,7 +161,9 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     def _sample_weight(self, frame: pd.DataFrame):
         return None
 
-    def _fit_estimator(self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight) -> None:
+    def _fit_estimator(
+        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight
+    ) -> None:
         raise NotImplementedError("engine subclasses must implement _fit_estimator")
 
     def _score(self, X: pd.DataFrame) -> np.ndarray:
@@ -184,7 +187,9 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         data = self._prepare_serving(data)
         available = [c for c in self._feature_cols if c in data.frame.columns]
         original_counts = data.frame.groupby("RaceId")["HorseId"].count()
-        predictable = self._keep_complete_races(self._dropna_required(data), original_counts)
+        predictable = self._keep_complete_races(
+            self._dropna_required(data), original_counts
+        )
         predictable = self._race_gate(predictable)
         if predictable.frame.empty:
             return self._empty()
@@ -206,7 +211,9 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
             frame["HorseCount"] = frame.groupby("RaceId")["HorseId"].transform("count")
         for col in self.extra_nan_tolerant_features:
             if col in frame.columns:
-                frame[f"Rel{col}"] = frame[col] - frame.groupby("RaceId")[col].transform("mean")
+                frame[f"Rel{col}"] = frame[col] - frame.groupby("RaceId")[
+                    col
+                ].transform("mean")
         return replace(data, frame=frame)
 
     # ── shared helpers (implemented once) ──
@@ -220,19 +227,22 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
 
     def _dropna_required(self, data: RaceData) -> RaceData:
         required = [
-            c for c in REQUIRED_PREDICTORS
+            c
+            for c in REQUIRED_PREDICTORS
             if c in self._feature_cols
             and c not in self.nan_tolerant_predictors
             and c in data.frame.columns
         ]
         if data.has_labels and self.label_col in data.frame.columns:
-            required = required + [self.label_col]
+            required = [*required, self.label_col]
         if not required:
             return data
         mask = data.frame[required].notna().all(axis=1)
         return data.subset(mask)
 
-    def _keep_complete_races(self, data: RaceData, original_counts: pd.Series) -> RaceData:
+    def _keep_complete_races(
+        self, data: RaceData, original_counts: pd.Series
+    ) -> RaceData:
         pred_counts = data.frame.groupby("RaceId")["HorseId"].count()
         orig = original_counts.reindex(pred_counts.index)
         keep = pred_counts.index[
@@ -240,7 +250,9 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         ]
         return data.subset(data.frame["RaceId"].isin(keep))
 
-    def _rank_within_race(self, frame: pd.DataFrame, scores: np.ndarray) -> pd.DataFrame:
+    def _rank_within_race(
+        self, frame: pd.DataFrame, scores: np.ndarray
+    ) -> pd.DataFrame:
         out = frame.copy()
         out[self.score_col] = scores
         out["PredictedRank"] = out.groupby("RaceId")[self.score_col].rank(

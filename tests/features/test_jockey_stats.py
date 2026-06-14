@@ -1,7 +1,7 @@
-import pytest
 import pandas as pd
-import tests.utils.test_data as td
+import pytest
 
+import tests.utils.test_data as td
 from race_analytics.features.jockey_stats import CalculateJockeyStats
 from race_analytics.features.transforms import calculateHorsesPerRace
 
@@ -16,13 +16,39 @@ def _paul_town_on(df, race):
 def three_day_df():
     """PaulTown: day1=2nd/2, day2=1st/2, day3=any."""
     data = [
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2),
-        td.RaceResult.new(td.Ballinrobe20thAt1515, td.DuckAndVanish, td.PhilipDonovan, FinishingPosition=1),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown, FinishingPosition=1),
-        td.RaceResult.new(td.Chelmsford21stAt1805, td.LaylaDaffodil, td.ShaneFitzgerald, FinishingPosition=2),
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.SelfAssessed, td.PaulTown, FinishingPosition=1),
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.SecretSecret, td.SimonTorrens, FinishingPosition=2),
-        td.RaceResult.new(td.Nottingham22ndAt1815, td.DuckAndVanish, td.KevinSexton, FinishingPosition=3),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2
+        ),
+        td.RaceResult.new(
+            td.Ballinrobe20thAt1515,
+            td.DuckAndVanish,
+            td.PhilipDonovan,
+            FinishingPosition=1,
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown, FinishingPosition=1
+        ),
+        td.RaceResult.new(
+            td.Chelmsford21stAt1805,
+            td.LaylaDaffodil,
+            td.ShaneFitzgerald,
+            FinishingPosition=2,
+        ),
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815, td.SelfAssessed, td.PaulTown, FinishingPosition=1
+        ),
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815,
+            td.SecretSecret,
+            td.SimonTorrens,
+            FinishingPosition=2,
+        ),
+        td.RaceResult.new(
+            td.Nottingham22ndAt1815,
+            td.DuckAndVanish,
+            td.KevinSexton,
+            FinishingPosition=3,
+        ),
     ]
     df = pd.DataFrame(data)
     return calculateHorsesPerRace(df)

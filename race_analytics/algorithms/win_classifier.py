@@ -65,11 +65,13 @@ class WinClassifier(BinaryWinClassifierAlgorithm):
             self._proxy_model.tune(data.frame)
         self._proxy_model.fit(data.frame)
         self._horse_proxy_tsr = self._proxy_model.compute_horse_proxy_tsr(data.frame)
-        data = data.with_columns(LastProxyTSR=self._proxy_model.compute_as_of_proxy(data.frame))
+        data = data.with_columns(
+            LastProxyTSR=self._proxy_model.compute_as_of_proxy(data.frame)
+        )
         return super()._prepare_training(data)
 
     def _prepare_serving(self, data: RaceData) -> RaceData:
         if not self._horse_proxy_tsr.empty:
-            merged = pd.merge(data.frame, self._horse_proxy_tsr, on="HorseId", how="left")
+            merged = data.frame.merge(self._horse_proxy_tsr, on="HorseId", how="left")
             data = replace(data, frame=merged)
         return super()._prepare_serving(data)

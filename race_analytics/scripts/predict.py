@@ -1,7 +1,9 @@
-import os
 import argparse
-import pandas as pd
+import os
 from datetime import datetime
+
+import pandas as pd
+
 from race_analytics.algorithms import ACTIVE_ALGORITHM
 from race_analytics.features.race_data import RaceDataBuilder
 
@@ -29,7 +31,15 @@ _RACE_CARD_COLS = [
     "SexRestriction",
     "HeadGear",
 ]
-_OUTPUT_COLS = ["RaceId", "CourseId", "CourseName", "Off", "HorseId", "HorseName", "WinProbability"]
+_OUTPUT_COLS = [
+    "RaceId",
+    "CourseId",
+    "CourseName",
+    "Off",
+    "HorseId",
+    "HorseName",
+    "WinProbability",
+]
 
 
 def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
@@ -56,8 +66,12 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
 
     card = race_cards[[c for c in _RACE_CARD_COLS if c in race_cards.columns]].copy()
     serve_data = builder.build_serving_from_stats(
-        card, horse_stats, jockey_stats, trainer_stats,
-        as_of=pd.Timestamp(datetime.today()), max_horses=algorithm.max_horses,
+        card,
+        horse_stats,
+        jockey_stats,
+        trainer_stats,
+        as_of=pd.Timestamp(datetime.today()),
+        max_horses=algorithm.max_horses,
     )
     field = algorithm.predict_field(serve_data)
     if field.empty or "PredictedRank" not in field.columns:
@@ -79,11 +93,11 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
     meta = race_cards[
         ["RaceId", "HorseId", "CourseId", "CourseName", "Off", "HorseName"]
     ].copy()
-    predictions = pd.merge(winners, meta, on=["RaceId", "HorseId"], how="left")
+    predictions = winners.merge(meta, on=["RaceId", "HorseId"], how="left")
     out_cols = [c for c in _OUTPUT_COLS if c in predictions.columns]
-    predictions = predictions.sort_values(["CourseName", "Off"])[
-        out_cols
-    ].reset_index(drop=True)
+    predictions = predictions.sort_values(["CourseName", "Off"])[out_cols].reset_index(
+        drop=True
+    )
     predictions.to_csv(output_path, index=False)
     return predictions
 

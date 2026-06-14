@@ -1,5 +1,5 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 
 from race_analytics.scripts.diagnostic import (
@@ -10,10 +10,10 @@ from race_analytics.scripts.diagnostic import (
     _segment_table,
 )
 
-
 # ================================================================
 # _distance_band
 # ================================================================
+
 
 def test_distance_band_under_6f():
     assert _distance_band(5 * 201.168) == "<6f"
@@ -46,6 +46,7 @@ def test_distance_band_na_returns_unknown():
 # ================================================================
 # _field_size_band
 # ================================================================
+
 
 def test_field_size_band_small():
     assert _field_size_band(4) == "2-5"
@@ -86,69 +87,152 @@ def test_field_size_band_na_returns_unknown():
 # _identify_picks
 # ================================================================
 
+
 def _race_df(rows):
     """Helper to build a minimal eval-CSV-shaped DataFrame."""
     return pd.DataFrame(rows)
 
 
 def test_identify_picks_single_horse_per_race():
-    df = _race_df([
-        {"FoldDate": "2026-01-01", "Algorithm": "Algo", "RaceId": 1,
-         "HorseId": 10, "WinProbability": 0.3, "PredictedScore": np.nan},
-    ])
+    df = _race_df(
+        [
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 10,
+                "WinProbability": 0.3,
+                "PredictedScore": np.nan,
+            },
+        ]
+    )
     result = _identify_picks(df)
     assert len(result) == 1
     assert result.iloc[0]["HorseId"] == 10
 
 
 def test_identify_picks_selects_highest_win_probability():
-    df = _race_df([
-        {"FoldDate": "2026-01-01", "Algorithm": "Algo", "RaceId": 1,
-         "HorseId": 10, "WinProbability": 0.20, "PredictedScore": np.nan},
-        {"FoldDate": "2026-01-01", "Algorithm": "Algo", "RaceId": 1,
-         "HorseId": 11, "WinProbability": 0.45, "PredictedScore": np.nan},
-        {"FoldDate": "2026-01-01", "Algorithm": "Algo", "RaceId": 1,
-         "HorseId": 12, "WinProbability": 0.15, "PredictedScore": np.nan},
-    ])
+    df = _race_df(
+        [
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 10,
+                "WinProbability": 0.20,
+                "PredictedScore": np.nan,
+            },
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 11,
+                "WinProbability": 0.45,
+                "PredictedScore": np.nan,
+            },
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 12,
+                "WinProbability": 0.15,
+                "PredictedScore": np.nan,
+            },
+        ]
+    )
     result = _identify_picks(df)
     assert len(result) == 1
     assert result.iloc[0]["HorseId"] == 11
 
 
 def test_identify_picks_falls_back_to_predicted_score_when_no_probability():
-    df = _race_df([
-        {"FoldDate": "2026-01-01", "Algorithm": "Algo", "RaceId": 1,
-         "HorseId": 10, "WinProbability": np.nan, "PredictedScore": 14.0},
-        {"FoldDate": "2026-01-01", "Algorithm": "Algo", "RaceId": 1,
-         "HorseId": 11, "WinProbability": np.nan, "PredictedScore": 17.5},
-    ])
+    df = _race_df(
+        [
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 10,
+                "WinProbability": np.nan,
+                "PredictedScore": 14.0,
+            },
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 11,
+                "WinProbability": np.nan,
+                "PredictedScore": 17.5,
+            },
+        ]
+    )
     result = _identify_picks(df)
     assert len(result) == 1
     assert result.iloc[0]["HorseId"] == 11
 
 
 def test_identify_picks_ignores_na_win_probability_rows_if_another_has_value():
-    df = _race_df([
-        {"FoldDate": "2026-01-01", "Algorithm": "Algo", "RaceId": 1,
-         "HorseId": 10, "WinProbability": np.nan, "PredictedScore": 99.0},
-        {"FoldDate": "2026-01-01", "Algorithm": "Algo", "RaceId": 1,
-         "HorseId": 11, "WinProbability": 0.35, "PredictedScore": 1.0},
-    ])
+    df = _race_df(
+        [
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 10,
+                "WinProbability": np.nan,
+                "PredictedScore": 99.0,
+            },
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 11,
+                "WinProbability": 0.35,
+                "PredictedScore": 1.0,
+            },
+        ]
+    )
     result = _identify_picks(df)
     assert result.iloc[0]["HorseId"] == 11
 
 
 def test_identify_picks_one_pick_per_algo_per_race_per_fold():
-    df = _race_df([
-        {"FoldDate": "2026-01-01", "Algorithm": "A", "RaceId": 1,
-         "HorseId": 10, "WinProbability": 0.4, "PredictedScore": np.nan},
-        {"FoldDate": "2026-01-01", "Algorithm": "B", "RaceId": 1,
-         "HorseId": 10, "WinProbability": 0.2, "PredictedScore": np.nan},
-        {"FoldDate": "2026-01-01", "Algorithm": "B", "RaceId": 1,
-         "HorseId": 11, "WinProbability": 0.5, "PredictedScore": np.nan},
-        {"FoldDate": "2026-01-02", "Algorithm": "A", "RaceId": 1,
-         "HorseId": 20, "WinProbability": 0.3, "PredictedScore": np.nan},
-    ])
+    df = _race_df(
+        [
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "A",
+                "RaceId": 1,
+                "HorseId": 10,
+                "WinProbability": 0.4,
+                "PredictedScore": np.nan,
+            },
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "B",
+                "RaceId": 1,
+                "HorseId": 10,
+                "WinProbability": 0.2,
+                "PredictedScore": np.nan,
+            },
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "B",
+                "RaceId": 1,
+                "HorseId": 11,
+                "WinProbability": 0.5,
+                "PredictedScore": np.nan,
+            },
+            {
+                "FoldDate": "2026-01-02",
+                "Algorithm": "A",
+                "RaceId": 1,
+                "HorseId": 20,
+                "WinProbability": 0.3,
+                "PredictedScore": np.nan,
+            },
+        ]
+    )
     result = _identify_picks(df)
     assert len(result) == 3  # (A,1,01), (B,1,01), (A,1,02)
 
@@ -156,6 +240,7 @@ def test_identify_picks_one_pick_per_algo_per_race_per_fold():
 # ================================================================
 # _roi
 # ================================================================
+
 
 def _picks_df(rows):
     return pd.DataFrame(rows)
@@ -167,29 +252,35 @@ def test_roi_empty_returns_zero():
 
 
 def test_roi_all_wins():
-    df = _picks_df([
-        {"FinishingPosition": 1, "DecimalOdds": 3.0},
-        {"FinishingPosition": 1, "DecimalOdds": 5.0},
-    ])
+    df = _picks_df(
+        [
+            {"FinishingPosition": 1, "DecimalOdds": 3.0},
+            {"FinishingPosition": 1, "DecimalOdds": 5.0},
+        ]
+    )
     # profit = (3-1) + (5-1) = 6; roi = 6/2 = 3.0
     assert _roi(df) == pytest.approx(3.0)
 
 
 def test_roi_all_losses():
-    df = _picks_df([
-        {"FinishingPosition": 2, "DecimalOdds": 3.0},
-        {"FinishingPosition": 3, "DecimalOdds": 5.0},
-    ])
+    df = _picks_df(
+        [
+            {"FinishingPosition": 2, "DecimalOdds": 3.0},
+            {"FinishingPosition": 3, "DecimalOdds": 5.0},
+        ]
+    )
     # profit = -1 + -1 = -2; roi = -2/2 = -1.0
     assert _roi(df) == pytest.approx(-1.0)
 
 
 def test_roi_mixed():
-    df = _picks_df([
-        {"FinishingPosition": 1, "DecimalOdds": 4.0},
-        {"FinishingPosition": 2, "DecimalOdds": 3.0},
-        {"FinishingPosition": 3, "DecimalOdds": 6.0},
-    ])
+    df = _picks_df(
+        [
+            {"FinishingPosition": 1, "DecimalOdds": 4.0},
+            {"FinishingPosition": 2, "DecimalOdds": 3.0},
+            {"FinishingPosition": 3, "DecimalOdds": 6.0},
+        ]
+    )
     # profit = (4-1) + (-1) + (-1) = 1; roi = 1/3
     assert _roi(df) == pytest.approx(1 / 3)
 
@@ -198,14 +289,17 @@ def test_roi_mixed():
 # _segment_table
 # ================================================================
 
+
 def _seg_picks():
-    return pd.DataFrame([
-        {"FinishingPosition": 1, "DecimalOdds": 4.0, "RaceType": "Flat"},
-        {"FinishingPosition": 2, "DecimalOdds": 3.0, "RaceType": "Flat"},
-        {"FinishingPosition": 1, "DecimalOdds": 6.0, "RaceType": "Hurdle"},
-        {"FinishingPosition": 3, "DecimalOdds": 5.0, "RaceType": "Hurdle"},
-        {"FinishingPosition": 2, "DecimalOdds": 2.0, "RaceType": "Hurdle"},
-    ])
+    return pd.DataFrame(
+        [
+            {"FinishingPosition": 1, "DecimalOdds": 4.0, "RaceType": "Flat"},
+            {"FinishingPosition": 2, "DecimalOdds": 3.0, "RaceType": "Flat"},
+            {"FinishingPosition": 1, "DecimalOdds": 6.0, "RaceType": "Hurdle"},
+            {"FinishingPosition": 3, "DecimalOdds": 5.0, "RaceType": "Hurdle"},
+            {"FinishingPosition": 2, "DecimalOdds": 2.0, "RaceType": "Hurdle"},
+        ]
+    )
 
 
 def test_segment_table_has_required_columns():

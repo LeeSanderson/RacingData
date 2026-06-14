@@ -22,7 +22,11 @@ class SplitDisciplineWinClassifier(WinClassifier):
 
     MIN_RACES = 100
 
-    def __init__(self, inner_class: type[FieldPredictorBaseAlgorithm] = WinClassifier, max_horses: int = 10):
+    def __init__(
+        self,
+        inner_class: type[FieldPredictorBaseAlgorithm] = WinClassifier,
+        max_horses: int = 10,
+    ):
         super().__init__(max_horses=max_horses)
         self._flat_model = inner_class(max_horses=max_horses)
         self._jumps_model = inner_class(max_horses=max_horses)
@@ -36,10 +40,14 @@ class SplitDisciplineWinClassifier(WinClassifier):
         jumps = data.subset(~flat_mask)
 
         self._flat_available = (
-            flat.frame["RaceId"].nunique() >= self.MIN_RACES if not flat.frame.empty else False
+            flat.frame["RaceId"].nunique() >= self.MIN_RACES
+            if not flat.frame.empty
+            else False
         )
         self._jumps_available = (
-            jumps.frame["RaceId"].nunique() >= self.MIN_RACES if not jumps.frame.empty else False
+            jumps.frame["RaceId"].nunique() >= self.MIN_RACES
+            if not jumps.frame.empty
+            else False
         )
 
         if self._flat_available:

@@ -1,5 +1,6 @@
-import pandas as pd
 from datetime import datetime
+
+import pandas as pd
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
@@ -14,61 +15,111 @@ def _train_row(
 ) -> dict:
     is_flat = race_type_flat == 1.0
     return {
-        "HorseId": horse_id, "RaceId": race_id, "Off": D1,
-        "Wins": wins, "FinishingPosition": finishing_position,
+        "HorseId": horse_id,
+        "RaceId": race_id,
+        "Off": D1,
+        "Wins": wins,
+        "FinishingPosition": finishing_position,
         "CourseName": "Newmarket",
-        "Speed": 16.0, "OverallBeatenDistance": 2.0, "HorseCount": 8,
-        "OfficialRating": 80.0, "RacingPostRating": 100.0, "TopSpeedRating": 90.0,
-        "LastRaceOfficialRating": 70.0, "LastRaceRacingPostRating": 95.0,
+        "Speed": 16.0,
+        "OverallBeatenDistance": 2.0,
+        "HorseCount": 8,
+        "OfficialRating": 80.0,
+        "RacingPostRating": 100.0,
+        "TopSpeedRating": 90.0,
+        "LastRaceOfficialRating": 70.0,
+        "LastRaceRacingPostRating": 95.0,
         "LastRaceTopSpeedRating": 92.0,
-        "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
-        "Surface_AllWeather": 0.0, "Surface_Dirt": 0.0, "Surface_Turf": 1.0,
-        "Going_Firm": 0.0, "Going_Good": 1.0, "Going_Good_To_Firm": 0.0,
-        "Going_Good_To_Soft": 0.0, "Going_Heavy": 0.0, "Going_Soft": 0.0,
-        "RaceType_Flat": race_type_flat, "RaceType_Hurdle": 0.0 if is_flat else 1.0,
-        "RaceType_Other": 0.0, "RaceType_SteepleChase": 0.0,
-        "LastRaceDistanceInMeters": 1600.0, "LastRaceWeightInPounds": 126.0,
-        "LastRaceSpeed": 15.5, "DaysRested": 7.0,
+        "DistanceInMeters": 1600.0,
+        "WeightInPounds": 126.0,
+        "Surface_AllWeather": 0.0,
+        "Surface_Dirt": 0.0,
+        "Surface_Turf": 1.0,
+        "Going_Firm": 0.0,
+        "Going_Good": 1.0,
+        "Going_Good_To_Firm": 0.0,
+        "Going_Good_To_Soft": 0.0,
+        "Going_Heavy": 0.0,
+        "Going_Soft": 0.0,
+        "RaceType_Flat": race_type_flat,
+        "RaceType_Hurdle": 0.0 if is_flat else 1.0,
+        "RaceType_Other": 0.0,
+        "RaceType_SteepleChase": 0.0,
+        "LastRaceDistanceInMeters": 1600.0,
+        "LastRaceWeightInPounds": 126.0,
+        "LastRaceSpeed": 15.5,
+        "DaysRested": 7.0,
         "LastRaceAvgRelFinishingPosition": 0.5,
-        "LastRaceSurface_AllWeather": 0.0, "LastRaceSurface_Dirt": 0.0, "LastRaceSurface_Turf": 1.0,
-        "LastRaceGoing_Good": 1.0, "LastRaceGoing_Good_To_Soft": 0.0, "LastRaceGoing_Soft": 0.0,
-        "LastRaceGoing_Good_To_Firm": 0.0, "LastRaceGoing_Firm": 0.0, "LastRaceGoing_Heavy": 0.0,
-        "LastRaceRaceType_Other": 0.0, "LastRaceRaceType_Hurdle": 0.0,
-        "LastRaceRaceType_SteepleChase": 0.0, "LastRaceRaceType_Flat": 1.0,
-        "JockeyNumberOfPriorRaces": 10.0, "DaysSinceJockeyLastRaced": 3.0,
-        "JockeyWinPercentage": 0.2, "JockeyTop3Percentage": 0.5,
+        "LastRaceSurface_AllWeather": 0.0,
+        "LastRaceSurface_Dirt": 0.0,
+        "LastRaceSurface_Turf": 1.0,
+        "LastRaceGoing_Good": 1.0,
+        "LastRaceGoing_Good_To_Soft": 0.0,
+        "LastRaceGoing_Soft": 0.0,
+        "LastRaceGoing_Good_To_Firm": 0.0,
+        "LastRaceGoing_Firm": 0.0,
+        "LastRaceGoing_Heavy": 0.0,
+        "LastRaceRaceType_Other": 0.0,
+        "LastRaceRaceType_Hurdle": 0.0,
+        "LastRaceRaceType_SteepleChase": 0.0,
+        "LastRaceRaceType_Flat": 1.0,
+        "JockeyNumberOfPriorRaces": 10.0,
+        "DaysSinceJockeyLastRaced": 3.0,
+        "JockeyWinPercentage": 0.2,
+        "JockeyTop3Percentage": 0.5,
         "JockeyAvgRelFinishingPosition": 0.4,
     }
 
 
-def _race_row(race_id: int, horse_id: int, jockey_id: int, race_type: str = "Flat") -> dict:
+def _race_row(
+    race_id: int, horse_id: int, jockey_id: int, race_type: str = "Flat"
+) -> dict:
     return {
-        "RaceId": race_id, "HorseId": horse_id, "JockeyId": jockey_id,
-        "Surface": "Turf", "Going": "Good", "RaceType": race_type,
-        "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
-        "OfficialRating": 80.0, "RacingPostRating": 100.0, "TopSpeedRating": 90.0,
+        "RaceId": race_id,
+        "HorseId": horse_id,
+        "JockeyId": jockey_id,
+        "Surface": "Turf",
+        "Going": "Good",
+        "RaceType": race_type,
+        "DistanceInMeters": 1600.0,
+        "WeightInPounds": 126.0,
+        "OfficialRating": 80.0,
+        "RacingPostRating": 100.0,
+        "TopSpeedRating": 90.0,
     }
 
 
 def _horse_stat(horse_id: int) -> dict:
     return {
-        "HorseId": horse_id, "LastOff": _LONG_AGO,
-        "LastRaceDistanceInMeters": 1600.0, "LastRaceWeightInPounds": 126.0,
-        "LastRaceAvgRelFinishingPosition": 0.5, "LastRaceSpeed": 16.0,
-        "LastRaceOfficialRating": 70.0, "LastRaceRacingPostRating": 95.0,
+        "HorseId": horse_id,
+        "LastOff": _LONG_AGO,
+        "LastRaceDistanceInMeters": 1600.0,
+        "LastRaceWeightInPounds": 126.0,
+        "LastRaceAvgRelFinishingPosition": 0.5,
+        "LastRaceSpeed": 16.0,
+        "LastRaceOfficialRating": 70.0,
+        "LastRaceRacingPostRating": 95.0,
         "LastRaceTopSpeedRating": 92.0,
-        "LastRaceSurface_AllWeather": 0.0, "LastRaceSurface_Dirt": 0.0, "LastRaceSurface_Turf": 1.0,
-        "LastRaceGoing_Firm": 0.0, "LastRaceGoing_Good": 1.0,
-        "LastRaceGoing_Good_To_Firm": 0.0, "LastRaceGoing_Good_To_Soft": 0.0,
-        "LastRaceGoing_Heavy": 0.0, "LastRaceGoing_Soft": 0.0,
-        "LastRaceRaceType_Flat": 1.0, "LastRaceRaceType_Hurdle": 0.0,
-        "LastRaceRaceType_Other": 0.0, "LastRaceRaceType_SteepleChase": 0.0,
+        "LastRaceSurface_AllWeather": 0.0,
+        "LastRaceSurface_Dirt": 0.0,
+        "LastRaceSurface_Turf": 1.0,
+        "LastRaceGoing_Firm": 0.0,
+        "LastRaceGoing_Good": 1.0,
+        "LastRaceGoing_Good_To_Firm": 0.0,
+        "LastRaceGoing_Good_To_Soft": 0.0,
+        "LastRaceGoing_Heavy": 0.0,
+        "LastRaceGoing_Soft": 0.0,
+        "LastRaceRaceType_Flat": 1.0,
+        "LastRaceRaceType_Hurdle": 0.0,
+        "LastRaceRaceType_Other": 0.0,
+        "LastRaceRaceType_SteepleChase": 0.0,
     }
 
 
 def _jockey_stat(jockey_id: int) -> dict:
     return {
-        "JockeyId": jockey_id, "LastOff": _LONG_AGO,
+        "JockeyId": jockey_id,
+        "LastOff": _LONG_AGO,
         "JockeyNumberOfPriorRaces": 10.0,
         "JockeyWinPercentage": 0.2,
         "JockeyTop3Percentage": 0.5,
@@ -82,27 +133,42 @@ def _make_train_df(n_flat: int = 110, n_jumps: int = 110) -> pd.DataFrame:
     for i in range(n_flat):
         race_id = i + 1
         for h in range(4):
-            rows.append(_train_row(horse_id=race_id * 10 + h, race_id=race_id,
-                                   race_type_flat=1.0, wins=1 if h == 0 else 0,
-                                   finishing_position=h + 1))
+            rows.append(
+                _train_row(
+                    horse_id=race_id * 10 + h,
+                    race_id=race_id,
+                    race_type_flat=1.0,
+                    wins=1 if h == 0 else 0,
+                    finishing_position=h + 1,
+                )
+            )
     for i in range(n_jumps):
         race_id = n_flat + i + 1
         for h in range(4):
-            rows.append(_train_row(horse_id=race_id * 10 + h, race_id=race_id,
-                                   race_type_flat=0.0, wins=1 if h == 0 else 0,
-                                   finishing_position=h + 1))
+            rows.append(
+                _train_row(
+                    horse_id=race_id * 10 + h,
+                    race_id=race_id,
+                    race_type_flat=0.0,
+                    wins=1 if h == 0 else 0,
+                    finishing_position=h + 1,
+                )
+            )
     return pd.DataFrame(rows)
 
 
 def test_split_and_abstain_registered_in_algorithms():
     from race_analytics.algorithms import ALGORITHMS
+
     names = [type(a).__name__ for a in ALGORITHMS]
     assert "SplitDisciplineWinClassifier" in names
     assert "GatedSplitDisciplineWinClassifier" in names
 
 
 def test_flat_model_available_with_sufficient_flat_races():
-    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
+    from race_analytics.algorithms.split_discipline_win_classifier import (
+        SplitDisciplineWinClassifier,
+    )
 
     algo = SplitDisciplineWinClassifier(max_horses=10)
     algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))
@@ -112,15 +178,16 @@ def test_flat_model_available_with_sufficient_flat_races():
 
 
 def test_flat_races_route_to_flat_model_predict_field():
-    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
+    from race_analytics.algorithms.split_discipline_win_classifier import (
+        SplitDisciplineWinClassifier,
+    )
 
     algo = SplitDisciplineWinClassifier(max_horses=10)
     algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))
 
-    races = pd.DataFrame([_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]])
-    horse_stats = pd.DataFrame([_horse_stat(h) for h in [1001, 1002, 1003]])
-    jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [1001, 1002, 1003]])
-
+    races = pd.DataFrame(
+        [_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]]
+    )
     result = algo.predict_field(_race_data(races))
 
     assert not result.empty
@@ -129,7 +196,9 @@ def test_flat_races_route_to_flat_model_predict_field():
 
 
 def test_fallback_used_when_flat_has_insufficient_races():
-    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
+    from race_analytics.algorithms.split_discipline_win_classifier import (
+        SplitDisciplineWinClassifier,
+    )
 
     # Only 5 flat races — below MIN_RACES threshold
     algo = SplitDisciplineWinClassifier(max_horses=10)
@@ -139,10 +208,9 @@ def test_fallback_used_when_flat_has_insufficient_races():
     assert algo._jumps_available
 
     # Predictions on flat races must still work (fallback used, no drops)
-    races = pd.DataFrame([_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]])
-    horse_stats = pd.DataFrame([_horse_stat(h) for h in [1001, 1002, 1003]])
-    jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [1001, 1002, 1003]])
-
+    races = pd.DataFrame(
+        [_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]]
+    )
     result = algo.predict_field(_race_data(races))
 
     assert not result.empty
@@ -151,12 +219,14 @@ def test_fallback_used_when_flat_has_insufficient_races():
 
 def _rd(df: pd.DataFrame):
     from race_analytics.features.race_data import RaceDataBuilder
+
     return RaceDataBuilder().wrap_training(df, max_horses=10)
 
 
 def _race_data(card: pd.DataFrame, as_of=D1):
     """Build a serving RaceData from a raw card by joining the fixture stats."""
     from race_analytics.features.race_data import RaceDataBuilder
+
     hids = card["HorseId"].tolist()
     jids = card["JockeyId"].tolist()
     hs = pd.DataFrame([_horse_stat(h) for h in hids])
@@ -176,19 +246,27 @@ def test_gated_split_discipline_fit_does_not_raise():
     algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))  # must not raise
 
     gate = algo.get_confidence_gate()
-    assert gate.threshold >= 0.0  # calibrated from in-sample predict_field over RaceData
+    assert (
+        gate.threshold >= 0.0
+    )  # calibrated from in-sample predict_field over RaceData
 
 
 def test_fit_and_predict_field_accept_racedata():
-    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
+    from race_analytics.algorithms.split_discipline_win_classifier import (
+        SplitDisciplineWinClassifier,
+    )
     from race_analytics.features.race_data import RaceDataBuilder
 
     algo = SplitDisciplineWinClassifier(max_horses=10)
-    train_data = RaceDataBuilder().wrap_training(_make_train_df(110, 110), max_horses=10)
+    train_data = RaceDataBuilder().wrap_training(
+        _make_train_df(110, 110), max_horses=10
+    )
     algo.fit(train_data)
     assert algo._flat_available and algo._jumps_available
 
-    card = pd.DataFrame([_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]])
+    card = pd.DataFrame(
+        [_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]]
+    )
     field = algo.predict_field(_race_data(card))
     assert not field.empty
     for col in ["RaceId", "HorseId", "WinProbability", "PredictedRank"]:
@@ -198,7 +276,9 @@ def test_fit_and_predict_field_accept_racedata():
 def test_mixed_card_routes_flat_and_jumps_through_the_split():
     """A mixed flat+jumps card is scored end-to-end via the RaceData split — both
     disciplines survive and each race keeps exactly one rank-1 pick."""
-    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
+    from race_analytics.algorithms.split_discipline_win_classifier import (
+        SplitDisciplineWinClassifier,
+    )
 
     rd = SplitDisciplineWinClassifier(max_horses=10)
     rd.fit(_rd(_make_train_df(110, 110)))
@@ -217,10 +297,16 @@ def test_mixed_card_routes_flat_and_jumps_through_the_split():
 
 
 def test_inner_class_param_accepts_recency_weighted():
-    from race_analytics.algorithms.split_discipline_win_classifier import SplitDisciplineWinClassifier
-    from race_analytics.algorithms.recency_weighted_win_classifier import RecencyWeightedWinClassifier
+    from race_analytics.algorithms.recency_weighted_win_classifier import (
+        RecencyWeightedWinClassifier,
+    )
+    from race_analytics.algorithms.split_discipline_win_classifier import (
+        SplitDisciplineWinClassifier,
+    )
 
-    algo = SplitDisciplineWinClassifier(inner_class=RecencyWeightedWinClassifier, max_horses=10)
+    algo = SplitDisciplineWinClassifier(
+        inner_class=RecencyWeightedWinClassifier, max_horses=10
+    )
     algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))
 
     assert isinstance(algo._flat_model, RecencyWeightedWinClassifier)

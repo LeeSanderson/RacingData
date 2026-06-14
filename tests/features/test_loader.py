@@ -1,10 +1,11 @@
-import pytest
-import pandas as pd
 from pathlib import Path
 
+import pandas as pd
+import pytest
+
 from race_analytics.features.loader import (
-    load_results,
     load_race_cards,
+    load_results,
     load_stats,
 )
 
@@ -29,13 +30,19 @@ def _race_row(race_id: int, off: str, status: str = "CompletedRace") -> dict:
 
 
 def test_load_results_concatenates_multiple_files(tmp_path):
-    _write_results_csv(tmp_path / "Results_202601.csv", [
-        _race_row(1, "01/10/2026 14:00:00"),
-        _race_row(2, "01/10/2026 15:00:00"),
-    ])
-    _write_results_csv(tmp_path / "Results_202602.csv", [
-        _race_row(3, "02/05/2026 13:00:00"),
-    ])
+    _write_results_csv(
+        tmp_path / "Results_202601.csv",
+        [
+            _race_row(1, "01/10/2026 14:00:00"),
+            _race_row(2, "01/10/2026 15:00:00"),
+        ],
+    )
+    _write_results_csv(
+        tmp_path / "Results_202602.csv",
+        [
+            _race_row(3, "02/05/2026 13:00:00"),
+        ],
+    )
     df = load_results(tmp_path)
     assert len(df) == 3
     assert set(df["RaceId"]) == {1, 2, 3}
@@ -43,22 +50,31 @@ def test_load_results_concatenates_multiple_files(tmp_path):
 
 def test_load_results_sorted_chronologically(tmp_path):
     # Feb file written first, then Jan — output must still be chronological
-    _write_results_csv(tmp_path / "Results_202602.csv", [
-        _race_row(3, "02/05/2026 13:00:00"),
-    ])
-    _write_results_csv(tmp_path / "Results_202601.csv", [
-        _race_row(1, "01/10/2026 14:00:00"),
-        _race_row(2, "01/20/2026 15:00:00"),
-    ])
+    _write_results_csv(
+        tmp_path / "Results_202602.csv",
+        [
+            _race_row(3, "02/05/2026 13:00:00"),
+        ],
+    )
+    _write_results_csv(
+        tmp_path / "Results_202601.csv",
+        [
+            _race_row(1, "01/10/2026 14:00:00"),
+            _race_row(2, "01/20/2026 15:00:00"),
+        ],
+    )
     df = load_results(tmp_path)
     assert df["Off"].is_monotonic_increasing
     assert df["RaceId"].tolist() == [1, 2, 3]
 
 
 def test_load_results_off_column_is_datetime(tmp_path):
-    _write_results_csv(tmp_path / "Results_202601.csv", [
-        _race_row(1, "01/10/2026 14:00:00"),
-    ])
+    _write_results_csv(
+        tmp_path / "Results_202601.csv",
+        [
+            _race_row(1, "01/10/2026 14:00:00"),
+        ],
+    )
     df = load_results(tmp_path)
     assert pd.api.types.is_datetime64_any_dtype(df["Off"])
 
@@ -70,26 +86,41 @@ def test_load_results_raises_when_no_files(tmp_path):
 
 def test_load_results_months_limits_to_most_recent_files(tmp_path):
     # Three monthly files; months=2 should drop the oldest (Jan).
-    _write_results_csv(tmp_path / "Results_202601.csv", [
-        _race_row(1, "01/10/2026 14:00:00"),
-    ])
-    _write_results_csv(tmp_path / "Results_202602.csv", [
-        _race_row(2, "02/05/2026 13:00:00"),
-    ])
-    _write_results_csv(tmp_path / "Results_202603.csv", [
-        _race_row(3, "03/05/2026 13:00:00"),
-    ])
+    _write_results_csv(
+        tmp_path / "Results_202601.csv",
+        [
+            _race_row(1, "01/10/2026 14:00:00"),
+        ],
+    )
+    _write_results_csv(
+        tmp_path / "Results_202602.csv",
+        [
+            _race_row(2, "02/05/2026 13:00:00"),
+        ],
+    )
+    _write_results_csv(
+        tmp_path / "Results_202603.csv",
+        [
+            _race_row(3, "03/05/2026 13:00:00"),
+        ],
+    )
     df = load_results(tmp_path, months=2)
     assert set(df["RaceId"]) == {2, 3}
 
 
 def test_load_results_months_none_loads_all_files(tmp_path):
-    _write_results_csv(tmp_path / "Results_202601.csv", [
-        _race_row(1, "01/10/2026 14:00:00"),
-    ])
-    _write_results_csv(tmp_path / "Results_202602.csv", [
-        _race_row(2, "02/05/2026 13:00:00"),
-    ])
+    _write_results_csv(
+        tmp_path / "Results_202601.csv",
+        [
+            _race_row(1, "01/10/2026 14:00:00"),
+        ],
+    )
+    _write_results_csv(
+        tmp_path / "Results_202602.csv",
+        [
+            _race_row(2, "02/05/2026 13:00:00"),
+        ],
+    )
     df = load_results(tmp_path, months=None)
     assert set(df["RaceId"]) == {1, 2}
 
@@ -100,9 +131,11 @@ def test_load_results_months_none_loads_all_files(tmp_path):
 
 
 def test_load_race_cards_returns_dataframe(tmp_path):
-    pd.DataFrame([
-        {"RaceId": 10, "Off": "05/26/2026 14:00:00", "HorseId": 100},
-    ]).to_csv(tmp_path / "TodaysRaceCards.csv", index=False)
+    pd.DataFrame(
+        [
+            {"RaceId": 10, "Off": "05/26/2026 14:00:00", "HorseId": 100},
+        ]
+    ).to_csv(tmp_path / "TodaysRaceCards.csv", index=False)
     df = load_race_cards(tmp_path)
     assert len(df) == 1
     assert df.iloc[0]["RaceId"] == 10
@@ -141,7 +174,12 @@ def test_load_stats_raises_when_file_missing(tmp_path):
 
 
 def test_load_stats_loads_each_standard_stats_file(tmp_path):
-    for name in ("Race_Features.csv", "Horse_Stats.csv", "Jockey_Stats.csv", "Trainer_Stats.csv"):
+    for name in (
+        "Race_Features.csv",
+        "Horse_Stats.csv",
+        "Jockey_Stats.csv",
+        "Trainer_Stats.csv",
+    ):
         pd.DataFrame([{"Id": 1}]).to_csv(tmp_path / name, index=False)
         df = load_stats(tmp_path, name)
         assert len(df) == 1

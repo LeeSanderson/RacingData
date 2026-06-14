@@ -17,6 +17,18 @@ dependencies = [
     "nbconvert",
 ]
 
+# Pinned dev toolchain — the single quality gate for the Python package.
+# ruff is used in stage 1 (issue 001/002); pyright + pre-commit are pinned here
+# but first *used* in stage 2 (issues 005/006), so `.[dev]` is the one install
+# for the whole rollout.
+[project.optional-dependencies]
+dev = [
+    "ruff==0.15.17",
+    "pyright==1.1.410",
+    "pre-commit==4.6.0",
+    "pytest==9.1.0",
+]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["race_analytics*"]
@@ -24,3 +36,16 @@ include = ["race_analytics*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py310"
+# Notebooks are out of scope (PRD): the tracked *.ipynb and their gitignored
+# nbconvert *.py outputs are not linted/typed/formatted.
+extend-exclude = ["race_analytics/notebooks"]
+
+[tool.ruff.lint]
+# Curated broad rule set — deliberately NOT `select = ["ALL"]` (avoids
+# conflicting/opinionated families and an ongoing ignore-list chore).
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "RUF", "NPY", "PD"]
+# PD011 (.values access) is noisy; the formatter owns line length, so E501 is off.
+ignore = ["PD011", "E501"]

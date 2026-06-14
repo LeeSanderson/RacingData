@@ -53,6 +53,33 @@ here — those are issues 002–006.
 - [ ] No `[tool.pyright]` block, `.pre-commit-config.yaml`, CI pipeline, or `.vscode` change
       is included in this issue's diff.
 
+## Outcome (done 2026-06-14)
+
+Completed. Pinned dev extra (`ruff==0.15.17`, `pyright==1.1.410`, `pre-commit==4.6.0`,
+`pytest==9.1.0`) and the curated `[tool.ruff]` / `[tool.ruff.lint]` config added to
+`pyproject.toml`. `ruff check --fix` (safe fixes only) + `ruff format` applied, then the
+55 non-auto-fixable residuals hand-fixed: `pd.merge(...)` → `.merge(...)` (PD015),
+list-concat → unpacking (RUF005), `zip(..., strict=False)` (B905, behaviour-preserving —
+`race_count_analysis` zips ragged `bins`/`bins[1:]`, so `strict=True` would have broken
+it), `== True`/`== False` → truthiness on the clean-bool `KnownHorseAndJockey` column
+(E712), unused-var removal (F841/RUF059), `ClassVar` annotations on test stubs (RUF012),
+import consolidation (E402), ambiguous-unicode → ASCII in docstrings (RUF002). Three
+`# noqa` total — all `B024`/`B027` on `features/base.RaceDataProcessor`, an intentional
+template-method base whose hooks are optional no-ops (decorating `@abstractmethod` would
+be a contract change, out of scope for the mechanical slice).
+
+**Deviation from the literal config spec:** added
+`extend-exclude = ["race_analytics/notebooks"]` to `[tool.ruff]`. The tracked `*.ipynb`
+notebooks (and their gitignored nbconvert `*.py`) live under `race_analytics/`, and the
+acceptance command `ruff check race_analytics` would otherwise scan them — but the PRD
+puts notebooks explicitly out of scope ("not linted/typed/formatted"). The exclude makes
+ruff's scope match the PRD.
+
+Verified: `pip install -e .[dev]` succeeds; `ruff check race_analytics tests` → "All
+checks passed!"; `ruff format --check` → 86 files already formatted; `pytest tests/` →
+420 passed (unchanged from baseline). No `[tool.pyright]`, `.pre-commit-config.yaml`, CI
+YAML, or `.vscode` change in the diff.
+
 ## Blocked by
 
 None — can start immediately.

@@ -1,6 +1,7 @@
-import pytest
-import pandas as pd
 from datetime import datetime
+
+import pandas as pd
+import pytest
 
 from race_analytics.algorithms.ratings_xgboost import (
     RatingsXGBoostAlgorithm,
@@ -22,6 +23,7 @@ def _serve(races, horse_stats, jockey_stats):
         races, horse_stats, jockey_stats, None, as_of=_AS_OF
     )
 
+
 _CURRENT_RATINGS = ["OfficialRating", "RacingPostRating", "TopSpeedRating"]
 _LASTRACE_RATINGS = [
     "LastRaceOfficialRating",
@@ -30,34 +32,63 @@ _LASTRACE_RATINGS = [
 ]
 
 
-def _train_row(horse_id: int, race_id: int, wins: int = 0,
-               last_tsr: float | None = 90.0) -> dict:
+def _train_row(
+    horse_id: int, race_id: int, wins: int = 0, last_tsr: float | None = 90.0
+) -> dict:
     """A training row carrying BOTH current-race ratings and the previous-race
     LastRace* ratings, so a test can prove the current-race ones are dropped."""
     return {
-        "HorseId": horse_id, "RaceId": race_id, "Off": D1, "Wins": wins,
-        "Speed": 16.0, "HorseCount": 3,
+        "HorseId": horse_id,
+        "RaceId": race_id,
+        "Off": D1,
+        "Wins": wins,
+        "Speed": 16.0,
+        "HorseCount": 3,
         # current-race (post-race) ratings — must NOT be used as features
-        "OfficialRating": 80.0, "RacingPostRating": 100.0, "TopSpeedRating": 88.0,
+        "OfficialRating": 80.0,
+        "RacingPostRating": 100.0,
+        "TopSpeedRating": 88.0,
         # previous-race ratings — the leak-free signal the model should use
-        "LastRaceOfficialRating": 70.0, "LastRaceRacingPostRating": 95.0,
+        "LastRaceOfficialRating": 70.0,
+        "LastRaceRacingPostRating": 95.0,
         "LastRaceTopSpeedRating": last_tsr,
-        "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
-        "Surface_AllWeather": 0.0, "Surface_Dirt": 0.0, "Surface_Turf": 1.0,
-        "Going_Firm": 0.0, "Going_Good": 1.0, "Going_Good_To_Firm": 0.0,
-        "Going_Good_To_Soft": 0.0, "Going_Heavy": 0.0, "Going_Soft": 0.0,
-        "RaceType_Flat": 1.0, "RaceType_Hurdle": 0.0,
-        "RaceType_Other": 0.0, "RaceType_SteepleChase": 0.0,
-        "LastRaceDistanceInMeters": 1600.0, "LastRaceWeightInPounds": 126.0,
-        "LastRaceSpeed": 15.5, "DaysRested": 7.0,
+        "DistanceInMeters": 1600.0,
+        "WeightInPounds": 126.0,
+        "Surface_AllWeather": 0.0,
+        "Surface_Dirt": 0.0,
+        "Surface_Turf": 1.0,
+        "Going_Firm": 0.0,
+        "Going_Good": 1.0,
+        "Going_Good_To_Firm": 0.0,
+        "Going_Good_To_Soft": 0.0,
+        "Going_Heavy": 0.0,
+        "Going_Soft": 0.0,
+        "RaceType_Flat": 1.0,
+        "RaceType_Hurdle": 0.0,
+        "RaceType_Other": 0.0,
+        "RaceType_SteepleChase": 0.0,
+        "LastRaceDistanceInMeters": 1600.0,
+        "LastRaceWeightInPounds": 126.0,
+        "LastRaceSpeed": 15.5,
+        "DaysRested": 7.0,
         "LastRaceAvgRelFinishingPosition": 0.5,
-        "LastRaceSurface_AllWeather": 0.0, "LastRaceSurface_Dirt": 0.0, "LastRaceSurface_Turf": 1.0,
-        "LastRaceGoing_Good": 1.0, "LastRaceGoing_Good_To_Soft": 0.0, "LastRaceGoing_Soft": 0.0,
-        "LastRaceGoing_Good_To_Firm": 0.0, "LastRaceGoing_Firm": 0.0, "LastRaceGoing_Heavy": 0.0,
-        "LastRaceRaceType_Other": 0.0, "LastRaceRaceType_Hurdle": 0.0,
-        "LastRaceRaceType_SteepleChase": 0.0, "LastRaceRaceType_Flat": 1.0,
-        "JockeyNumberOfPriorRaces": 10.0, "DaysSinceJockeyLastRaced": 3.0,
-        "JockeyWinPercentage": 0.2, "JockeyTop3Percentage": 0.5,
+        "LastRaceSurface_AllWeather": 0.0,
+        "LastRaceSurface_Dirt": 0.0,
+        "LastRaceSurface_Turf": 1.0,
+        "LastRaceGoing_Good": 1.0,
+        "LastRaceGoing_Good_To_Soft": 0.0,
+        "LastRaceGoing_Soft": 0.0,
+        "LastRaceGoing_Good_To_Firm": 0.0,
+        "LastRaceGoing_Firm": 0.0,
+        "LastRaceGoing_Heavy": 0.0,
+        "LastRaceRaceType_Other": 0.0,
+        "LastRaceRaceType_Hurdle": 0.0,
+        "LastRaceRaceType_SteepleChase": 0.0,
+        "LastRaceRaceType_Flat": 1.0,
+        "JockeyNumberOfPriorRaces": 10.0,
+        "DaysSinceJockeyLastRaced": 3.0,
+        "JockeyWinPercentage": 0.2,
+        "JockeyTop3Percentage": 0.5,
         "JockeyAvgRelFinishingPosition": 0.4,
     }
 
@@ -65,31 +96,48 @@ def _train_row(horse_id: int, race_id: int, wins: int = 0,
 def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
     """A race card row with NO rating columns — ratings must come from horse_stats."""
     return {
-        "RaceId": race_id, "HorseId": horse_id, "JockeyId": jockey_id,
-        "Surface": "Turf", "Going": "Good", "RaceType": "Flat",
-        "DistanceInMeters": 1600.0, "WeightInPounds": 126.0,
+        "RaceId": race_id,
+        "HorseId": horse_id,
+        "JockeyId": jockey_id,
+        "Surface": "Turf",
+        "Going": "Good",
+        "RaceType": "Flat",
+        "DistanceInMeters": 1600.0,
+        "WeightInPounds": 126.0,
     }
 
 
 def _horse_stat(horse_id: int, last_tsr: float | None = 90.0) -> dict:
     return {
-        "HorseId": horse_id, "LastOff": _LONG_AGO,
-        "LastRaceDistanceInMeters": 1600.0, "LastRaceWeightInPounds": 126.0,
-        "LastRaceAvgRelFinishingPosition": 0.5, "LastRaceSpeed": 16.0,
-        "LastRaceOfficialRating": 70.0, "LastRaceRacingPostRating": 95.0,
+        "HorseId": horse_id,
+        "LastOff": _LONG_AGO,
+        "LastRaceDistanceInMeters": 1600.0,
+        "LastRaceWeightInPounds": 126.0,
+        "LastRaceAvgRelFinishingPosition": 0.5,
+        "LastRaceSpeed": 16.0,
+        "LastRaceOfficialRating": 70.0,
+        "LastRaceRacingPostRating": 95.0,
         "LastRaceTopSpeedRating": last_tsr,
-        "LastRaceSurface_AllWeather": 0.0, "LastRaceSurface_Dirt": 0.0, "LastRaceSurface_Turf": 1.0,
-        "LastRaceGoing_Firm": 0.0, "LastRaceGoing_Good": 1.0,
-        "LastRaceGoing_Good_To_Firm": 0.0, "LastRaceGoing_Good_To_Soft": 0.0,
-        "LastRaceGoing_Heavy": 0.0, "LastRaceGoing_Soft": 0.0,
-        "LastRaceRaceType_Flat": 1.0, "LastRaceRaceType_Hurdle": 0.0,
-        "LastRaceRaceType_Other": 0.0, "LastRaceRaceType_SteepleChase": 0.0,
+        "LastRaceSurface_AllWeather": 0.0,
+        "LastRaceSurface_Dirt": 0.0,
+        "LastRaceSurface_Turf": 1.0,
+        "LastRaceGoing_Firm": 0.0,
+        "LastRaceGoing_Good": 1.0,
+        "LastRaceGoing_Good_To_Firm": 0.0,
+        "LastRaceGoing_Good_To_Soft": 0.0,
+        "LastRaceGoing_Heavy": 0.0,
+        "LastRaceGoing_Soft": 0.0,
+        "LastRaceRaceType_Flat": 1.0,
+        "LastRaceRaceType_Hurdle": 0.0,
+        "LastRaceRaceType_Other": 0.0,
+        "LastRaceRaceType_SteepleChase": 0.0,
     }
 
 
 def _jockey_stat(jockey_id: int) -> dict:
     return {
-        "JockeyId": jockey_id, "LastOff": _LONG_AGO,
+        "JockeyId": jockey_id,
+        "LastOff": _LONG_AGO,
         "JockeyNumberOfPriorRaces": 10.0,
         "JockeyWinPercentage": 0.2,
         "JockeyTop3Percentage": 0.5,
@@ -99,9 +147,11 @@ def _jockey_stat(jockey_id: int) -> dict:
 
 def _make_train_df() -> pd.DataFrame:
     rows = [
-        _train_row(horse_id=r * 10 + h, race_id=r, wins=1 if h == 0 else 0,
-                   last_tsr=90.0 + h)
-        for r in range(1, 6) for h in range(3)
+        _train_row(
+            horse_id=r * 10 + h, race_id=r, wins=1 if h == 0 else 0, last_tsr=90.0 + h
+        )
+        for r in range(1, 6)
+        for h in range(3)
     ]
     return pd.DataFrame(rows)
 
@@ -147,7 +197,9 @@ def test_gate_filters_on_lastrace_tsr_coverage():
         [_horse_stat(h) for h in [101, 102, 103]]
         + [_horse_stat(201, last_tsr=None), _horse_stat(202), _horse_stat(203)]
     )
-    jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103, 201, 202, 203]])
+    jockey_stats = pd.DataFrame(
+        [_jockey_stat(h) for h in [101, 102, 103, 201, 202, 203]]
+    )
 
     gated_res = gated.predict(_serve(races, horse_stats, jockey_stats))
     ungated_res = ungated.predict(_serve(races, horse_stats, jockey_stats))
@@ -179,6 +231,7 @@ def test_predict_works_from_card_without_rating_columns(trained_algo):
 
 def test_both_variants_registered():
     from race_analytics.algorithms import ALGORITHMS
+
     names = [type(a).__name__ for a in ALGORITHMS]
     assert "RatingsXGBoostAlgorithm" in names
     assert "RatingsXGBoostUngatedAlgorithm" in names

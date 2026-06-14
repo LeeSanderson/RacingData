@@ -33,8 +33,9 @@ class CalculateTrainerStats(RaceDataProcessor):
                 lambda g: self.__calculate_stats_for_trainer(g),
                 include_groups=False,
             )
-            daily_stats = pd.merge(
-                daily_slice.drop(self.new_column_names, axis=1, errors="ignore"),
+            daily_stats = daily_slice.drop(
+                self.new_column_names, axis=1, errors="ignore"
+            ).merge(
                 stats,
                 how="left",
                 on=["TrainerId"],

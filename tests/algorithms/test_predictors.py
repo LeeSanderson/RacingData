@@ -1,4 +1,8 @@
-from race_analytics.algorithms.base import PREDICTORS, REQUIRED_PREDICTORS, OPTIONAL_PREDICTORS
+from race_analytics.algorithms.base import (
+    OPTIONAL_PREDICTORS,
+    PREDICTORS,
+    REQUIRED_PREDICTORS,
+)
 
 _NEW_COLS = [
     "Last3RaceAvgSpeed",

@@ -1,8 +1,6 @@
 from sklearn.linear_model import Ridge
-from sklearn.preprocessing import StandardScaler, PolynomialFeatures
-from sklearn.pipeline import make_pipeline
-
-from sklearn.pipeline import Pipeline
+from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 
 from race_analytics.algorithms.regressor import RegressorAlgorithm
 
