@@ -1,16 +1,18 @@
+import pathlib
+
 import pandas as pd
 
 import tests.utils.test_data as td
 from race_analytics.features.pipeline import FeaturePipeline
 
 
-def _make_batch(*race_results):
+def _make_batch(*race_results: td.RaceResult) -> pd.DataFrame:
     df = pd.DataFrame(list(race_results))
     df["RaceTimeInSeconds"] = df["DistanceInMeters"] / df["Speed"]
     return df
 
 
-def _batch1():
+def _batch1() -> pd.DataFrame:
     return _make_batch(
         td.RaceResult.new(
             td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2
@@ -24,7 +26,7 @@ def _batch1():
     )
 
 
-def _batch2():
+def _batch2() -> pd.DataFrame:
     return _make_batch(
         td.RaceResult.new(
             td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown, FinishingPosition=1
@@ -38,7 +40,7 @@ def _batch2():
     )
 
 
-def test_process_returns_expected_stat_columns():
+def test_process_returns_expected_stat_columns() -> None:
     pipeline = FeaturePipeline()
     result = pipeline.process(_batch1())
     for col in [
@@ -53,7 +55,7 @@ def test_process_returns_expected_stat_columns():
         assert col in result.columns, f"Missing column: {col}"
 
 
-def test_process_adds_wins_column_from_finishing_position():
+def test_process_adds_wins_column_from_finishing_position() -> None:
     pipeline = FeaturePipeline()
     result = pipeline.process(_batch1())
     assert "Wins" in result.columns
@@ -63,7 +65,7 @@ def test_process_adds_wins_column_from_finishing_position():
     assert loser["Wins"] == 0
 
 
-def test_state_accumulates_across_calls():
+def test_state_accumulates_across_calls() -> None:
     pipeline = FeaturePipeline()
     pipeline.process(_batch1())
     result2 = pipeline.process(_batch2())
@@ -71,7 +73,7 @@ def test_state_accumulates_across_calls():
     assert secret["NumberOfPriorRaces"] == 1
 
 
-def test_save_methods_write_non_empty_csvs(tmp_path):
+def test_save_methods_write_non_empty_csvs(tmp_path: pathlib.Path) -> None:
     pipeline = FeaturePipeline()
     pipeline.process(_batch1())
     pipeline.save_race_features(str(tmp_path / "Race_Features.csv"))

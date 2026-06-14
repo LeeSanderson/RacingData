@@ -10,7 +10,7 @@ import pandas as pd
 from dateutil.relativedelta import relativedelta
 
 from race_analytics.algorithms import ALGORITHMS
-from race_analytics.algorithms.base import AbstainCapable
+from race_analytics.algorithms.base import AbstainCapable, FieldPredictor
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
 from race_analytics.features.horse_stats import CalculateHorsesStats
@@ -166,19 +166,19 @@ def _roi_coverage_frontier(
         )
 
     race_scores = unfiltered_field.groupby("RaceId")["WinProbability"].apply(gate.score)
-    calib = gate._calib_scores
+    calib = gate._calib_scores  # pyright: ignore[reportPrivateUsage]  # intentional internal access (maintainer-sanctioned)
     total_races = len(race_scores)
 
     rows = []
     for cov in coverages:
         threshold = float(np.quantile(calib, 1.0 - cov)) if calib else 0.0
-        kept = race_scores[race_scores >= threshold].index
+        kept = race_scores[race_scores >= threshold].index  # pyright: ignore[reportAttributeAccessIssue]  # apply yields a Series
         top_picks = unfiltered_field[
             unfiltered_field["RaceId"].isin(kept)
             & (unfiltered_field["PredictedRank"] == 1)
         ][["RaceId", "HorseId"]]
         actual_cov = len(kept) / total_races if total_races > 0 else 0.0
-        r = roi(top_picks, results) if not top_picks.empty else 0.0
+        r = roi(top_picks, results) if not top_picks.empty else 0.0  # pyright: ignore[reportArgumentType, reportAttributeAccessIssue]  # column-list index yields DataFrame
         rows.append(
             {
                 "coverage_target": cov,
@@ -192,9 +192,9 @@ def _roi_coverage_frontier(
 
 def _print_early_late_split(
     algo_names: list[str],
-    all_preds: dict,
-    all_results_store: dict,
-    all_total_known: dict,
+    all_preds: dict[str, list[pd.DataFrame]],
+    all_results_store: dict[str, list[pd.DataFrame]],
+    all_total_known: dict[str, list[int]],
 ) -> None:
     """Print early-vs-late stability split for all algorithms."""
     print("\n=== Early-vs-Late Stability ===")
@@ -237,7 +237,7 @@ def _extract_known_races(fold_df: pd.DataFrame) -> pd.DataFrame:
     return fold_df[fold_df["KnownHorseAndJockey"]].copy()
 
 
-def _fold_dates(folds: int) -> list:
+def _fold_dates(folds: int) -> list[date]:
     yesterday = date.today() - timedelta(days=1)
     return [yesterday - timedelta(days=i) for i in range(folds)]
 
@@ -361,11 +361,11 @@ def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:
     for _, row in merged.iterrows():
         won = row["FinishingPosition"] == 1
         pos = (
-            int(row["FinishingPosition"]) if pd.notna(row["FinishingPosition"]) else "?"
+            int(row["FinishingPosition"]) if pd.notna(row["FinishingPosition"]) else "?"  # pyright: ignore[reportGeneralTypeIssues, reportArgumentType]  # scalar cell; notna is a bool
         )
-        odds = f"{row['DecimalOdds']:.2f}" if pd.notna(row["DecimalOdds"]) else "N/A"
+        odds = f"{row['DecimalOdds']:.2f}" if pd.notna(row["DecimalOdds"]) else "N/A"  # pyright: ignore[reportGeneralTypeIssues]  # notna of a scalar is a bool
         icon = "+" if won else "-"
-        time_str = row["Off"].strftime("%H:%M") if pd.notna(row["Off"]) else "?"
+        time_str = row["Off"].strftime("%H:%M") if pd.notna(row["Off"]) else "?"  # pyright: ignore[reportGeneralTypeIssues, reportAttributeAccessIssue]  # scalar cell; notna is a bool
         horse = str(row.get("HorseName", "Unknown"))[:30]
         course = str(row.get("CourseName", "Unknown"))[:20]
         print(
@@ -373,7 +373,7 @@ def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:
         )
 
 
-def _resolve_algorithm_classes(names: list[str] | None) -> list:
+def _resolve_algorithm_classes(names: list[str] | None) -> list[type]:
     """Return algorithm classes (not instances) for the requested names."""
     class_map = {type(a).__name__: type(a) for a in ALGORITHMS}
     if not names:
@@ -387,7 +387,7 @@ def _resolve_algorithm_classes(names: list[str] | None) -> list:
     return [class_map[n] for n in names]
 
 
-def _resolve_algorithms(names: list[str] | None) -> list:
+def _resolve_algorithms(names: list[str] | None) -> list[FieldPredictor]:
     """Return fresh algorithm instances to run, or raise SystemExit on unknown names.
 
     Fresh instances are returned on every call so that per-fold re-instantiation
@@ -417,7 +417,7 @@ def evaluate(
     save_results: bool = False,
     results_file: str | None = None,
     fold_offset: int = 0,
-) -> dict:
+) -> dict[str, dict[str, list[float]]]:
     fold_dates = _fold_dates(folds)[fold_offset:]
     algo_names = [a.__name__ for a in _resolve_algorithm_classes(algorithms)]
     all_preds = {n: [] for n in algo_names}
@@ -435,6 +435,9 @@ def evaluate(
     serve_as_of = pd.Timestamp(datetime.today())
     should_save = save_results or results_file is not None
     incremental_path = results_file or (_default_csv_path() if should_save else None)
+    # Bound even when fold_dates is empty so the ROI-vs-coverage frontier below never
+    # references it unbound; each fold reassigns it (fresh instances — see the loop).
+    selected_algos: list[FieldPredictor] = []
 
     for fold_date in fold_dates:
         # Fresh instances every fold — prevents XGBoost C++ memory from accumulating
@@ -462,7 +465,7 @@ def evaluate(
         # exactly what the models have always trained on, so metrics are unchanged.
         train_data = builder.wrap_training(train_df)
         card = race_card(known_fold)
-        serve_data = builder.build_serving(card, train_df, as_of=serve_as_of)
+        serve_data = builder.build_serving(card, train_df, as_of=serve_as_of)  # pyright: ignore[reportArgumentType]  # boolean-indexed .copy() is a DataFrame
         results_df = _results(known_fold)
 
         for algo in selected_algos:  # algo: FieldPredictor
@@ -554,8 +557,12 @@ def evaluate(
     # ROI-vs-coverage frontier for abstain algorithms
     algo_map = {type(a).__name__: a for a in selected_algos}
     for name in algo_names:
-        algo = algo_map[name]
-        if not isinstance(algo, AbstainCapable) or not all_unfiltered_preds.get(name):
+        algo = algo_map.get(name)
+        if (
+            algo is None
+            or not isinstance(algo, AbstainCapable)
+            or not all_unfiltered_preds.get(name)
+        ):
             continue
         gate = algo.get_confidence_gate()
         if gate is None:
@@ -571,7 +578,7 @@ def evaluate(
         for _, row in frontier.iterrows():
             print(
                 f"  {row['coverage_target']:>14.2f} {row['actual_coverage']:>16.3f}"
-                f" {row['roi']:>8.3f} {int(row['races']):>8}"
+                f" {row['roi']:>8.3f} {int(row['races']):>8}"  # pyright: ignore[reportArgumentType]  # scalar cell is int-convertible
             )
 
     # CSV already written incrementally per fold above; nothing more to do here.

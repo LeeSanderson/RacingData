@@ -13,15 +13,20 @@ import argparse
 import glob
 import os
 from datetime import date, timedelta
+from typing import Any
 
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
 from race_analytics.algorithms.xgboost_algorithm import XGBoostAlgorithm
+from race_analytics.features.race_data import RaceDataBuilder
+
+# Intentional reuse of evaluate's module-internal helpers (single source of the
+# training-window load + feature engineering); the pyright ignores document that.
 from race_analytics.scripts.evaluate import (
-    _DEFAULT_TRAINING_MONTHS,
-    _MAX_MONTHLY_FILES,
-    _engineer_features,
+    _DEFAULT_TRAINING_MONTHS,  # pyright: ignore[reportPrivateUsage]
+    _MAX_MONTHLY_FILES,  # pyright: ignore[reportPrivateUsage]
+    _engineer_features,  # pyright: ignore[reportPrivateUsage]
 )
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -54,17 +59,19 @@ _NEW_TIER1_FEATURES = frozenset(
 _ODDS_KEYWORDS = ("odds", "price", "decimalodds", "fractionalodds", "startingprice")
 
 
-def rank_features(importances: dict) -> list:
+def rank_features(importances: dict[str, float]) -> list[tuple[str, float]]:
     """Return (feature, importance) pairs sorted by importance descending."""
     return sorted(importances.items(), key=lambda x: x[1], reverse=True)
 
 
-def select_features(importances: dict, min_importance: float = 1e-6) -> set:
+def select_features(
+    importances: dict[str, float], min_importance: float = 1e-6
+) -> set[str]:
     """Return features with mean importance >= min_importance."""
     return {f for f, imp in importances.items() if imp >= min_importance}
 
 
-def check_no_odds_features(features: list) -> bool:
+def check_no_odds_features(features: list[str]) -> bool:
     """Return True if no feature name contains odds-related keywords."""
     for feat in features:
         if any(kw in feat.lower() for kw in _ODDS_KEYWORDS):
@@ -96,7 +103,7 @@ def _load_training_window(training_months: int) -> pd.DataFrame:
 
 def screen(
     training_months: int = _DEFAULT_TRAINING_MONTHS, min_importance: float = 1e-6
-) -> dict:
+) -> dict[str, Any]:
     """Fit XGBoost on a training window and return ranked feature importances."""
     print(f"Loading {training_months} months of training data...", flush=True)
     raw = _load_training_window(training_months)
@@ -108,10 +115,12 @@ def screen(
 
     print("  Fitting XGBoost...", flush=True)
     algo = XGBoostAlgorithm(max_horses=10)
-    algo.fit(races)
+    # fit() takes a RaceData (RFC-001); wrap the engineered training frame exactly
+    # as the harness does. Previously this passed the raw DataFrame, which now fails.
+    algo.fit(RaceDataBuilder().wrap_training(races))
 
-    model = algo._model
-    fitted = algo._fitted_predictors
+    model = algo._model  # pyright: ignore[reportPrivateUsage]  inspecting fitted internals
+    fitted = algo._fitted_predictors  # pyright: ignore[reportPrivateUsage]  inspecting fitted internals
     if not hasattr(model, "feature_importances_") or not fitted:
         return {"ranked": [], "selected": set(), "odds_clean": True}
 
@@ -128,7 +137,7 @@ def screen(
     }
 
 
-def _print_report(result: dict) -> None:
+def _print_report(result: dict[str, Any]) -> None:
     ranked = result["ranked"]
     selected = result["selected"]
     odds_clean = result["odds_clean"]

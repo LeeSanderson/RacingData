@@ -1,8 +1,11 @@
 import os
+import pathlib
+from typing import Any, ClassVar
 
 import pandas as pd
 import pytest
 
+from race_analytics.features.race_data import RaceData
 from race_analytics.scripts.predict import predict
 
 # ================================================================
@@ -18,10 +21,10 @@ class _FakeAlgo:
     def __init__(self, max_horses: int = 99):
         self.max_horses = max_horses
 
-    def fit(self, data) -> None:
+    def fit(self, data: RaceData) -> None:
         pass
 
-    def predict_field(self, data) -> pd.DataFrame:
+    def predict_field(self, data: RaceData) -> pd.DataFrame:
         frame = data.frame
         if frame.empty:
             return pd.DataFrame(
@@ -34,8 +37,8 @@ class _FakeAlgo:
         out["PredictedRank"] = 1.0
         return out
 
-    def predict(self, data) -> pd.DataFrame:
-        return self.predict_field(data)[["RaceId", "HorseId"]]
+    def predict(self, data: RaceData) -> pd.DataFrame:
+        return self.predict_field(data)[["RaceId", "HorseId"]]  # pyright: ignore[reportReturnType]  # column-list index yields DataFrame
 
 
 def _write_race_features(path: str) -> None:
@@ -86,7 +89,7 @@ def _write_trainer_stats(path: str) -> None:
     ).to_csv(os.path.join(path, "Trainer_Stats.csv"), index=False)
 
 
-def _write_race_cards(path: str, rows: list | None = None) -> None:
+def _write_race_cards(path: str, rows: list[dict[str, Any]] | None = None) -> None:
     if rows is None:
         rows = [
             {
@@ -109,7 +112,7 @@ def _write_race_cards(path: str, rows: list | None = None) -> None:
 
 
 @pytest.fixture
-def data_dir(tmp_path):
+def data_dir(tmp_path: pathlib.Path) -> str:
     _write_race_features(str(tmp_path))
     _write_horse_stats(str(tmp_path))
     _write_jockey_stats(str(tmp_path))
@@ -123,7 +126,7 @@ def data_dir(tmp_path):
 # ================================================================
 
 
-def test_predict_writes_todayspredictions_csv(data_dir):
+def test_predict_writes_todayspredictions_csv(data_dir: str) -> None:
     predict(data_path=data_dir, algorithm=_FakeAlgo())
     assert os.path.exists(os.path.join(data_dir, "TodaysPredictions.csv"))
 
@@ -133,7 +136,7 @@ def test_predict_writes_todayspredictions_csv(data_dir):
 # ================================================================
 
 
-def test_predict_output_has_correct_columns(data_dir):
+def test_predict_output_has_correct_columns(data_dir: str) -> None:
     predict(data_path=data_dir, algorithm=_FakeAlgo())
     result = pd.read_csv(os.path.join(data_dir, "TodaysPredictions.csv"))
     assert list(result.columns) == [
@@ -152,7 +155,7 @@ def test_predict_output_has_correct_columns(data_dir):
 # ================================================================
 
 
-def test_predict_output_is_sorted_by_coursename_off(tmp_path):
+def test_predict_output_is_sorted_by_coursename_off(tmp_path: pathlib.Path) -> None:
     rows = [
         {
             "RaceId": 10,
@@ -224,19 +227,19 @@ class _EmptyAlgo:
     def __init__(self, max_horses: int = 99):
         self.max_horses = max_horses
 
-    def fit(self, data):
+    def fit(self, data: RaceData) -> None:
         pass
 
-    def predict_field(self, data):
+    def predict_field(self, data: RaceData) -> pd.DataFrame:
         return pd.DataFrame(
             columns=["RaceId", "HorseId", "WinProbability", "PredictedRank"]
         )
 
-    def predict(self, data):
+    def predict(self, data: RaceData) -> pd.DataFrame:
         return pd.DataFrame(columns=["RaceId", "HorseId"])
 
 
-def test_predict_empty_winners_writes_empty_csv(data_dir):
+def test_predict_empty_winners_writes_empty_csv(data_dir: str) -> None:
     predict(data_path=data_dir, algorithm=_EmptyAlgo())
     result = pd.read_csv(os.path.join(data_dir, "TodaysPredictions.csv"))
     assert list(result.columns) == [
@@ -260,15 +263,15 @@ class _ServeCapturingAlgo:
     """Captures the serving RaceData so tests can inspect what predict.py built."""
 
     max_horses = 99
-    captured_frame = None
+    captured_frame: ClassVar[pd.DataFrame | None] = None
 
     def __init__(self, max_horses: int = 99):
         self.max_horses = max_horses
 
-    def fit(self, data):
+    def fit(self, data: RaceData) -> None:
         pass
 
-    def predict_field(self, data):
+    def predict_field(self, data: RaceData) -> pd.DataFrame:
         type(self).captured_frame = data.frame
         frame = data.frame
         if frame.empty:
@@ -282,11 +285,11 @@ class _ServeCapturingAlgo:
         out["PredictedRank"] = 1.0
         return out
 
-    def predict(self, data):
-        return self.predict_field(data)[["RaceId", "HorseId"]]
+    def predict(self, data: RaceData) -> pd.DataFrame:
+        return self.predict_field(data)[["RaceId", "HorseId"]]  # pyright: ignore[reportReturnType]  # column-list index yields DataFrame
 
 
-def test_predict_joins_trainer_stats_into_serving_data(data_dir):
+def test_predict_joins_trainer_stats_into_serving_data(data_dir: str) -> None:
     _ServeCapturingAlgo.captured_frame = None
     predict(data_path=data_dir, algorithm=_ServeCapturingAlgo())
     frame = _ServeCapturingAlgo.captured_frame
@@ -302,7 +305,9 @@ def test_predict_joins_trainer_stats_into_serving_data(data_dir):
 # ================================================================
 
 
-def test_predict_card_drops_rating_columns_and_still_predicts(tmp_path):
+def test_predict_card_drops_rating_columns_and_still_predicts(
+    tmp_path: pathlib.Path,
+) -> None:
     # Source race cards DO carry ratings — the built serving data must strip them.
     rows = [
         {
@@ -335,7 +340,8 @@ def test_predict_card_drops_rating_columns_and_still_predicts(tmp_path):
 
     frame = _ServeCapturingAlgo.captured_frame
     for col in ["OfficialRating", "RacingPostRating", "TopSpeedRating"]:
-        assert col not in frame.columns, (
+        assert col not in frame.columns, (  # pyright: ignore[reportAttributeAccessIssue]  # predict() populates captured_frame at runtime
+            f"rating column leaked into the serving data: {col}"
             f"rating column leaked into the serving data: {col}"
         )
     assert len(result) == 1  # prediction still produced

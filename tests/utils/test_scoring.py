@@ -1,14 +1,16 @@
+from typing import Any
+
 import pandas as pd
 import pytest
 
 from race_analytics.utils.scoring import accuracy, roi
 
 
-def _predictions(rows):
+def _predictions(rows: list[tuple[Any, ...]]) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["RaceId", "HorseId"])
 
 
-def _results(rows):
+def _results(rows: list[tuple[Any, ...]]) -> pd.DataFrame:
     return pd.DataFrame(
         rows,
         columns=[
@@ -21,7 +23,7 @@ def _results(rows):
     )
 
 
-def test_accuracy_all_correct():
+def test_accuracy_all_correct() -> None:
     preds = _predictions([(1, 10), (2, 20)])
     results = _results(
         [
@@ -32,7 +34,7 @@ def test_accuracy_all_correct():
     assert accuracy(preds, results) == pytest.approx(1.0)
 
 
-def test_accuracy_all_wrong():
+def test_accuracy_all_wrong() -> None:
     preds = _predictions([(1, 10), (2, 20)])
     results = _results(
         [
@@ -43,7 +45,7 @@ def test_accuracy_all_wrong():
     assert accuracy(preds, results) == pytest.approx(0.0)
 
 
-def test_accuracy_mixed():
+def test_accuracy_mixed() -> None:
     preds = _predictions([(1, 10), (2, 20)])
     results = _results(
         [
@@ -54,7 +56,7 @@ def test_accuracy_mixed():
     assert accuracy(preds, results) == pytest.approx(0.5)
 
 
-def test_accuracy_excludes_void_races():
+def test_accuracy_excludes_void_races() -> None:
     # Race 1: correct and completed; Race 2: predicted but voided
     preds = _predictions([(1, 10), (2, 20)])
     results = _results(
@@ -67,7 +69,7 @@ def test_accuracy_excludes_void_races():
     assert accuracy(preds, results) == pytest.approx(1.0)
 
 
-def test_roi_all_correct():
+def test_roi_all_correct() -> None:
     # 2 races, odds 3.0 and 4.0, both correct
     # stakes=2, winnings=7.0, earnings=5.0
     preds = _predictions([(1, 10), (2, 20)])
@@ -80,7 +82,7 @@ def test_roi_all_correct():
     assert roi(preds, results) == pytest.approx(5.0)
 
 
-def test_roi_all_wrong():
+def test_roi_all_wrong() -> None:
     # 2 races, both wrong → winnings=0, earnings=-2.0
     preds = _predictions([(1, 10), (2, 20)])
     results = _results(
@@ -92,7 +94,7 @@ def test_roi_all_wrong():
     assert roi(preds, results) == pytest.approx(-2.0)
 
 
-def test_roi_mixed():
+def test_roi_mixed() -> None:
     # Race 1 correct (odds 5.0), Race 2 wrong
     # stakes=2, winnings=5.0, earnings=3.0
     preds = _predictions([(1, 10), (2, 20)])
@@ -105,7 +107,7 @@ def test_roi_mixed():
     assert roi(preds, results) == pytest.approx(3.0)
 
 
-def test_roi_excludes_void_races():
+def test_roi_excludes_void_races() -> None:
     # Race 1: correct, completed (odds 4.0); Race 2: void (NonRunner)
     # Only race 1 counts: stakes=1, winnings=4.0, earnings=3.0
     preds = _predictions([(1, 10), (2, 20)])

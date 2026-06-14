@@ -30,7 +30,7 @@ class CalculateJockeyStats(RaceDataProcessor):
         self, df: pd.DataFrame, history: pd.DataFrame, daily_slice: pd.DataFrame
     ) -> None:
         slice_jockeys = daily_slice["JockeyId"].unique().tolist()
-        jockey_history = history[history["JockeyId"].isin(slice_jockeys)].sort_values(
+        jockey_history = history[history["JockeyId"].isin(slice_jockeys)].sort_values(  # pyright: ignore[reportCallIssue]  # boolean-indexing yields DataFrame
             ["JockeyId", "Off"], ascending=[True, False]
         )
         if len(jockey_history) > 0:
@@ -75,7 +75,7 @@ class CalculateJockeyStats(RaceDataProcessor):
 def extract_jockey_stats(races: pd.DataFrame) -> pd.DataFrame:
     """One row per jockey with stats updated through the most recent race, for use in predict()."""
     last = (
-        races[races["JockeyId"] > 0]
+        races[races["JockeyId"] > 0]  # pyright: ignore[reportCallIssue]  # boolean-indexing yields DataFrame
         .sort_values(["JockeyId", "Off"], ascending=[True, False])
         .groupby("JockeyId")
         .first()

@@ -1,9 +1,14 @@
+import pathlib
 from datetime import date, timedelta
+from typing import TYPE_CHECKING
 from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
 import pytest
+
+if TYPE_CHECKING:
+    from race_analytics.algorithms.confidence_gate import ConfidenceGate
 
 from race_analytics.features.horse_stats import (
     extract_horse_stats as _compute_horse_stats,
@@ -13,7 +18,9 @@ from race_analytics.features.jockey_stats import (
 )
 from race_analytics.features.race_data import RaceData
 from race_analytics.features.race_history import race_card as _race_card
-from race_analytics.scripts.evaluate import _extract_known_races
+from race_analytics.scripts.evaluate import (
+    _extract_known_races,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+)
 
 
 class _FakeBuilder:
@@ -22,11 +29,25 @@ class _FakeBuilder:
     frames into a RaceData.
     """
 
-    def wrap_training(self, frame, max_horses=10):
-        return RaceData(frame.copy(), pd.Timestamp("2026-01-01"), max_horses)
+    def wrap_training(self, frame: pd.DataFrame, max_horses: int = 10) -> RaceData:
+        return RaceData(
+            frame.copy(),
+            pd.Timestamp("2026-01-01"),  # pyright: ignore[reportArgumentType]  # Timestamp ctor return includes a NaTType arm
+            max_horses,
+        )
 
-    def build_serving(self, card, history, as_of, max_horses=10):
-        return RaceData(card.copy(), pd.Timestamp(as_of), max_horses)
+    def build_serving(
+        self,
+        card: pd.DataFrame,
+        history: RaceData | pd.DataFrame,
+        as_of: pd.Timestamp,
+        max_horses: int = 10,
+    ) -> RaceData:
+        return RaceData(
+            card.copy(),
+            pd.Timestamp(as_of),  # pyright: ignore[reportArgumentType]  # Timestamp ctor return includes a NaTType arm
+            max_horses,
+        )
 
 
 # ================================================================
@@ -34,7 +55,7 @@ class _FakeBuilder:
 # ================================================================
 
 
-def test_extract_known_races_removes_unknown_races():
+def test_extract_known_races_removes_unknown_races() -> None:
     df = pd.DataFrame(
         [
             {"RaceId": 1, "HorseId": 10, "KnownHorseAndJockey": True},
@@ -48,7 +69,7 @@ def test_extract_known_races_removes_unknown_races():
     assert len(result) == 2
 
 
-def test_extract_known_races_keeps_all_when_all_known():
+def test_extract_known_races_keeps_all_when_all_known() -> None:
     df = pd.DataFrame(
         [
             {"RaceId": 1, "HorseId": 10, "KnownHorseAndJockey": True},
@@ -59,7 +80,7 @@ def test_extract_known_races_keeps_all_when_all_known():
     assert len(result) == 2
 
 
-def test_extract_known_races_returns_empty_when_none_known():
+def test_extract_known_races_returns_empty_when_none_known() -> None:
     df = pd.DataFrame(
         [
             {"RaceId": 1, "HorseId": 10, "KnownHorseAndJockey": False},
@@ -73,7 +94,7 @@ def test_extract_known_races_returns_empty_when_none_known():
 # ================================================================
 
 
-def test_race_card_drops_rating_columns():
+def test_race_card_drops_rating_columns() -> None:
     fold_df = pd.DataFrame(
         [
             {
@@ -106,21 +127,21 @@ def test_race_card_drops_rating_columns():
 
 
 def _train_row(
-    horse_id,
-    jockey_id,
-    off,
-    finishing_pos=2,
-    horse_count=5,
-    speed=15.0,
-    dist=1600.0,
-    weight=126.0,
-    n_prior=3.0,
-    last_avg_rel_pos=0.3,
-    j_n_prior=5.0,
-    j_win_pct=0.2,
-    j_top3_pct=0.4,
-    j_avg_rel=0.35,
-):
+    horse_id: int,
+    jockey_id: int,
+    off: str,
+    finishing_pos: int = 2,
+    horse_count: int = 5,
+    speed: float = 15.0,
+    dist: float = 1600.0,
+    weight: float = 126.0,
+    n_prior: float = 3.0,
+    last_avg_rel_pos: float = 0.3,
+    j_n_prior: float = 5.0,
+    j_win_pct: float = 0.2,
+    j_top3_pct: float = 0.4,
+    j_avg_rel: float = 0.35,
+) -> dict[str, object]:
     return {
         "HorseId": horse_id,
         "JockeyId": jockey_id,
@@ -157,7 +178,7 @@ def _train_row(
 # ================================================================
 
 
-def test_horse_stats_one_row_per_horse():
+def test_horse_stats_one_row_per_horse() -> None:
     rows = [
         _train_row(horse_id=1, jockey_id=10, off="2026-01-01"),
         _train_row(horse_id=1, jockey_id=10, off="2026-02-01"),
@@ -168,7 +189,7 @@ def test_horse_stats_one_row_per_horse():
     assert set(result["HorseId"]) == {1, 2}
 
 
-def test_horse_stats_uses_most_recent_race_as_last_off():
+def test_horse_stats_uses_most_recent_race_as_last_off() -> None:
     rows = [
         _train_row(horse_id=1, jockey_id=10, off="2026-01-01", speed=14.0),
         _train_row(horse_id=1, jockey_id=10, off="2026-03-01", speed=16.0),
@@ -179,7 +200,7 @@ def test_horse_stats_uses_most_recent_race_as_last_off():
     assert row["LastRaceSpeed"] == pytest.approx(16.0)
 
 
-def test_horse_stats_has_required_columns():
+def test_horse_stats_has_required_columns() -> None:
     rows = [_train_row(horse_id=1, jockey_id=10, off="2026-01-01")]
     result = _compute_horse_stats(pd.DataFrame(rows))
     for col in [
@@ -196,7 +217,7 @@ def test_horse_stats_has_required_columns():
         assert col in result.columns, f"Missing column: {col}"
 
 
-def test_horse_stats_avg_rel_pos_incorporates_last_race():
+def test_horse_stats_avg_rel_pos_incorporates_last_race() -> None:
     # n_prior=4, last_avg_rel_pos=0.4, finishing_pos=1, horse_count=5
     # updated = (0.4*4 + 1/5) / 5 = (1.6+0.2)/5 = 0.36
     rows = [
@@ -219,7 +240,7 @@ def test_horse_stats_avg_rel_pos_incorporates_last_race():
 # ================================================================
 
 
-def test_jockey_stats_one_row_per_jockey():
+def test_jockey_stats_one_row_per_jockey() -> None:
     rows = [
         _train_row(horse_id=1, jockey_id=10, off="2026-01-01"),
         _train_row(horse_id=2, jockey_id=10, off="2026-02-01"),
@@ -230,7 +251,7 @@ def test_jockey_stats_one_row_per_jockey():
     assert set(result["JockeyId"]) == {10, 20}
 
 
-def test_jockey_stats_has_required_columns():
+def test_jockey_stats_has_required_columns() -> None:
     rows = [_train_row(horse_id=1, jockey_id=10, off="2026-01-01")]
     result = _compute_jockey_stats(pd.DataFrame(rows))
     for col in [
@@ -244,7 +265,7 @@ def test_jockey_stats_has_required_columns():
         assert col in result.columns, f"Missing column: {col}"
 
 
-def test_jockey_stats_excludes_jockey_id_zero():
+def test_jockey_stats_excludes_jockey_id_zero() -> None:
     rows = [
         _train_row(horse_id=1, jockey_id=0, off="2026-01-01"),
         _train_row(horse_id=2, jockey_id=10, off="2026-01-01"),
@@ -254,7 +275,7 @@ def test_jockey_stats_excludes_jockey_id_zero():
     assert len(result) == 1
 
 
-def test_jockey_stats_uses_most_recent_race_as_last_off():
+def test_jockey_stats_uses_most_recent_race_as_last_off() -> None:
     rows = [
         _train_row(horse_id=1, jockey_id=10, off="2026-01-01"),
         _train_row(horse_id=2, jockey_id=10, off="2026-03-01"),
@@ -270,14 +291,18 @@ def test_jockey_stats_uses_most_recent_race_as_last_off():
 # ================================================================
 
 
-def test_format_timing_returns_pipe_prefixed_string():
-    from race_analytics.scripts.evaluate import _format_timing
+def test_format_timing_returns_pipe_prefixed_string() -> None:
+    from race_analytics.scripts.evaluate import (
+        _format_timing,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     assert _format_timing(1.234, 0.056) == "| fit=1.234s, predict=0.056s"
 
 
-def test_format_timing_three_decimal_places():
-    from race_analytics.scripts.evaluate import _format_timing
+def test_format_timing_three_decimal_places() -> None:
+    from race_analytics.scripts.evaluate import (
+        _format_timing,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     result = _format_timing(0.1, 0.001)
     assert "fit=0.100s" in result
@@ -289,24 +314,32 @@ def test_format_timing_three_decimal_places():
 # ================================================================
 
 
-def test_aggregate_times_returns_mean_and_std():
-    from race_analytics.scripts.evaluate import _aggregate_times
+def test_aggregate_times_returns_mean_and_std() -> None:
+    from race_analytics.scripts.evaluate import (
+        _aggregate_times,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
-    mean, std = _aggregate_times([1.0, 2.0, 3.0])
+    # non-empty input always yields a (mean, std) tuple, never None
+    mean, std = _aggregate_times([1.0, 2.0, 3.0])  # pyright: ignore[reportGeneralTypeIssues]  # result is non-None for non-empty input
     assert mean == pytest.approx(2.0)
     assert std == pytest.approx(np.std([1.0, 2.0, 3.0]))
 
 
-def test_aggregate_times_single_value_has_zero_std():
-    from race_analytics.scripts.evaluate import _aggregate_times
+def test_aggregate_times_single_value_has_zero_std() -> None:
+    from race_analytics.scripts.evaluate import (
+        _aggregate_times,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
-    mean, std = _aggregate_times([5.0])
+    # non-empty input always yields a (mean, std) tuple, never None
+    mean, std = _aggregate_times([5.0])  # pyright: ignore[reportGeneralTypeIssues]  # result is non-None for non-empty input
     assert mean == pytest.approx(5.0)
     assert std == pytest.approx(0.0)
 
 
-def test_aggregate_times_empty_returns_none():
-    from race_analytics.scripts.evaluate import _aggregate_times
+def test_aggregate_times_empty_returns_none() -> None:
+    from race_analytics.scripts.evaluate import (
+        _aggregate_times,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     assert _aggregate_times([]) is None
 
@@ -316,7 +349,7 @@ def test_aggregate_times_empty_returns_none():
 # ================================================================
 
 
-def _make_fold_races(fold_date):
+def _make_fold_races(fold_date: date) -> pd.DataFrame:
     """Minimal two-row DataFrame: one training row + one known fold row."""
     train_date = fold_date - timedelta(days=1)
     return pd.DataFrame(
@@ -368,10 +401,10 @@ class _StubAlgo:
     def __init__(self, max_horses: int = 10):
         self.max_horses = max_horses
 
-    def fit(self, data):
+    def fit(self, data: RaceData) -> None:
         pass
 
-    def predict(self, data):
+    def predict(self, data: RaceData) -> pd.DataFrame:
         frame = data.frame
         if frame.empty:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
@@ -384,7 +417,7 @@ class _StubAlgo:
             ]
         )
 
-    def predict_field(self, data):
+    def predict_field(self, data: RaceData) -> pd.DataFrame:
         frame = data.frame
         if frame.empty:
             return pd.DataFrame(columns=["RaceId", "HorseId", "PredictedRank"])
@@ -399,7 +432,9 @@ class _StubAlgo:
         )
 
 
-def test_evaluate_timing_summary_printed_after_accuracy_summary(capsys):
+def test_evaluate_timing_summary_printed_after_accuracy_summary(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     fold_date = date.today() - timedelta(days=1)
@@ -428,7 +463,9 @@ def test_evaluate_timing_summary_printed_after_accuracy_summary(capsys):
     assert "Pred(std)" in out
 
 
-def test_evaluate_timing_summary_shows_na_for_skipped_algorithms(capsys):
+def test_evaluate_timing_summary_shows_na_for_skipped_algorithms(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     # Return empty raw data so all folds are skipped (no known races)
@@ -488,9 +525,11 @@ def _make_results(picks: list[tuple[int, int, int, float]]) -> pd.DataFrame:
     )
 
 
-def test_roi_coverage_frontier_returns_expected_columns():
+def test_roi_coverage_frontier_returns_expected_columns() -> None:
     from race_analytics.algorithms.confidence_gate import ConfidenceGate
-    from race_analytics.scripts.evaluate import _roi_coverage_frontier
+    from race_analytics.scripts.evaluate import (
+        _roi_coverage_frontier,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     gate = ConfidenceGate("top_prob")
     gate.calibrate([0.7, 0.6, 0.5, 0.4], coverage=1.0)
@@ -515,9 +554,11 @@ def test_roi_coverage_frontier_returns_expected_columns():
     assert set(df.columns) >= {"coverage_target", "actual_coverage", "roi", "races"}
 
 
-def test_roi_coverage_frontier_full_coverage_keeps_all_races():
+def test_roi_coverage_frontier_full_coverage_keeps_all_races() -> None:
     from race_analytics.algorithms.confidence_gate import ConfidenceGate
-    from race_analytics.scripts.evaluate import _roi_coverage_frontier
+    from race_analytics.scripts.evaluate import (
+        _roi_coverage_frontier,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     gate = ConfidenceGate("top_prob")
     gate.calibrate([0.5, 0.6, 0.7, 0.8], coverage=1.0)
@@ -544,9 +585,11 @@ def test_roi_coverage_frontier_full_coverage_keeps_all_races():
     assert row["races"] == 3
 
 
-def test_roi_coverage_frontier_tighter_coverage_fewer_races():
+def test_roi_coverage_frontier_tighter_coverage_fewer_races() -> None:
     from race_analytics.algorithms.confidence_gate import ConfidenceGate
-    from race_analytics.scripts.evaluate import _roi_coverage_frontier
+    from race_analytics.scripts.evaluate import (
+        _roi_coverage_frontier,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     gate = ConfidenceGate("top_prob")
     gate.calibrate([0.5, 0.6, 0.7, 0.8], coverage=1.0)
@@ -572,8 +615,8 @@ def test_roi_coverage_frontier_tighter_coverage_fewer_races():
         ]
     )
     df = _roi_coverage_frontier(field, results, gate, coverages=[1.0, 0.5])
-    races_full = df[df["coverage_target"] == 1.0]["races"].iloc[0]
-    races_tight = df[df["coverage_target"] == 0.5]["races"].iloc[0]
+    races_full = df[df["coverage_target"] == 1.0]["races"].iloc[0]  # pyright: ignore[reportAttributeAccessIssue]  # column select yields a Series with .iloc
+    races_tight = df[df["coverage_target"] == 0.5]["races"].iloc[0]  # pyright: ignore[reportAttributeAccessIssue]  # column select yields a Series with .iloc
     assert races_tight <= races_full
 
 
@@ -582,7 +625,9 @@ def test_roi_coverage_frontier_tighter_coverage_fewer_races():
 # ================================================================
 
 
-def test_early_late_split_printed_in_evaluate_output(capsys):
+def test_early_late_split_printed_in_evaluate_output(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     fold_date = date.today() - timedelta(days=1)
@@ -629,11 +674,11 @@ _CSV_COLUMNS = [
 ]
 
 
-def _minimal_preds(race_id=2, horse_id=20):
+def _minimal_preds(race_id: int = 2, horse_id: int = 20) -> pd.DataFrame:
     return pd.DataFrame([{"RaceId": race_id, "HorseId": horse_id}])
 
 
-def _minimal_known_fold(race_id=2, horse_id=20):
+def _minimal_known_fold(race_id: int = 2, horse_id: int = 20) -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
@@ -649,7 +694,7 @@ def _minimal_known_fold(race_id=2, horse_id=20):
     )
 
 
-def _minimal_results(race_id=2, horse_id=20):
+def _minimal_results(race_id: int = 2, horse_id: int = 20) -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
@@ -663,8 +708,10 @@ def _minimal_results(race_id=2, horse_id=20):
     )
 
 
-def test_build_csv_rows_has_required_columns():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_has_required_columns() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     rows = _build_csv_rows(
         date(2026, 5, 29),
@@ -676,8 +723,10 @@ def test_build_csv_rows_has_required_columns():
     assert list(rows.columns) == _CSV_COLUMNS
 
 
-def test_build_csv_rows_surface_going_racetype_are_raw_strings():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_surface_going_racetype_are_raw_strings() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     rows = _build_csv_rows(
         date(2026, 5, 29),
@@ -691,8 +740,10 @@ def test_build_csv_rows_surface_going_racetype_are_raw_strings():
     assert rows.iloc[0]["RaceType"] == "Flat"
 
 
-def test_build_csv_rows_predicted_score_from_predicted_speed():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_predicted_score_from_predicted_speed() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     preds = pd.DataFrame([{"RaceId": 2, "HorseId": 20, "PredictedSpeed": 17.5}])
     rows = _build_csv_rows(
@@ -705,8 +756,10 @@ def test_build_csv_rows_predicted_score_from_predicted_speed():
     assert rows.iloc[0]["PredictedScore"] == pytest.approx(17.5)
 
 
-def test_build_csv_rows_predicted_score_null_when_no_predicted_speed():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_predicted_score_null_when_no_predicted_speed() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     rows = _build_csv_rows(
         date(2026, 5, 29),
@@ -718,8 +771,10 @@ def test_build_csv_rows_predicted_score_null_when_no_predicted_speed():
     assert pd.isna(rows.iloc[0]["PredictedScore"])
 
 
-def test_build_csv_rows_empty_preds_returns_empty_frame():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_empty_preds_returns_empty_frame() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     rows = _build_csv_rows(
         date(2026, 5, 29),
@@ -732,8 +787,10 @@ def test_build_csv_rows_empty_preds_returns_empty_frame():
     assert list(rows.columns) == _CSV_COLUMNS
 
 
-def test_build_csv_rows_carries_win_probability_when_present():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_carries_win_probability_when_present() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     preds = pd.DataFrame([{"RaceId": 2, "HorseId": 20, "WinProbability": 0.42}])
     rows = _build_csv_rows(
@@ -746,8 +803,10 @@ def test_build_csv_rows_carries_win_probability_when_present():
     assert rows.iloc[0]["WinProbability"] == pytest.approx(0.42)
 
 
-def test_build_csv_rows_win_probability_na_when_absent():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_win_probability_na_when_absent() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     rows = _build_csv_rows(
         date(2026, 5, 29),
@@ -759,8 +818,10 @@ def test_build_csv_rows_win_probability_na_when_absent():
     assert pd.isna(rows.iloc[0]["WinProbability"])
 
 
-def test_build_csv_rows_field_size_equals_horses_in_race():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_field_size_equals_horses_in_race() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     known_fold = pd.DataFrame(
         [
@@ -823,8 +884,10 @@ def test_build_csv_rows_field_size_equals_horses_in_race():
     assert rows.iloc[0]["FieldSize"] == 4
 
 
-def test_build_csv_rows_race_class_from_class_column():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_race_class_from_class_column() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     known_fold = pd.DataFrame(
         [
@@ -850,8 +913,10 @@ def test_build_csv_rows_race_class_from_class_column():
     assert rows.iloc[0]["RaceClass"] == "Class 3"
 
 
-def test_build_csv_rows_race_class_na_when_no_class_column():
-    from race_analytics.scripts.evaluate import _build_csv_rows
+def test_build_csv_rows_race_class_na_when_no_class_column() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
 
     rows = _build_csv_rows(
         date(2026, 5, 29),
@@ -874,10 +939,10 @@ class _FieldAlgo:
     def __init__(self, max_horses: int = 10):
         self.max_horses = max_horses
 
-    def fit(self, data):
+    def fit(self, data: RaceData) -> None:
         pass
 
-    def predict(self, data):
+    def predict(self, data: RaceData) -> pd.DataFrame:
         frame = data.frame
         if frame.empty:
             return pd.DataFrame(columns=["RaceId", "HorseId"])
@@ -890,7 +955,7 @@ class _FieldAlgo:
             ]
         )
 
-    def predict_field(self, data):
+    def predict_field(self, data: RaceData) -> pd.DataFrame:
         frame = data.frame
         if frame.empty:
             return pd.DataFrame(
@@ -908,7 +973,9 @@ class _FieldAlgo:
         )
 
 
-def test_evaluate_csv_carries_win_probability_for_predict_field_algo(tmp_path):
+def test_evaluate_csv_carries_win_probability_for_predict_field_algo(
+    tmp_path: pathlib.Path,
+) -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     fold_date = date.today() - timedelta(days=1)
@@ -930,7 +997,9 @@ def test_evaluate_csv_carries_win_probability_for_predict_field_algo(tmp_path):
     assert df.iloc[0]["WinProbability"] == pytest.approx(0.75)
 
 
-def test_evaluate_csv_win_probability_na_for_non_field_algo(tmp_path):
+def test_evaluate_csv_win_probability_na_for_non_field_algo(
+    tmp_path: pathlib.Path,
+) -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     fold_date = date.today() - timedelta(days=1)
@@ -969,14 +1038,14 @@ class _AbstainAlgo(_FieldAlgo):
         self._gate = ConfidenceGate("top_prob")
         self._gate.calibrate([0.5, 0.6, 0.7, 0.8], coverage=1.0)
 
-    def predict_field_unfiltered(self, data):
+    def predict_field_unfiltered(self, data: RaceData) -> pd.DataFrame:
         return self.predict_field(data)
 
-    def get_confidence_gate(self):
+    def get_confidence_gate(self) -> "ConfidenceGate | None":
         return self._gate
 
 
-def test_plain_field_predictor_is_not_abstain_capable():
+def test_plain_field_predictor_is_not_abstain_capable() -> None:
     from race_analytics.algorithms.base import AbstainCapable, FieldPredictor
 
     assert isinstance(_FieldAlgo(), FieldPredictor)
@@ -984,7 +1053,9 @@ def test_plain_field_predictor_is_not_abstain_capable():
     assert isinstance(_AbstainAlgo(), AbstainCapable)
 
 
-def test_evaluate_runs_field_predictor_with_no_frontier(capsys):
+def test_evaluate_runs_field_predictor_with_no_frontier(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     """A plain FieldPredictor (not abstain-capable) runs through the contract and
     produces no ROI-vs-coverage frontier — the harness never probes for the methods."""
     from race_analytics.scripts.evaluate import evaluate
@@ -1007,7 +1078,9 @@ def test_evaluate_runs_field_predictor_with_no_frontier(capsys):
     assert "ROI-vs-Coverage Frontier" not in out
 
 
-def test_evaluate_abstain_capable_algo_triggers_frontier(capsys):
+def test_evaluate_abstain_capable_algo_triggers_frontier(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     """An AbstainCapable algorithm's unfiltered field + gate drive the frontier,
     selected via isinstance(algo, AbstainCapable)."""
     from race_analytics.scripts.evaluate import evaluate
@@ -1035,7 +1108,7 @@ def test_evaluate_abstain_capable_algo_triggers_frontier(capsys):
 # ================================================================
 
 
-def _enriched_fold_frame(fold_date) -> pd.DataFrame:
+def _enriched_fold_frame(fold_date: date) -> pd.DataFrame:
     """A complete `_engineer_features`-shaped frame: two training flat races (horse 0
     wins) plus one fold race of three known horses. Rich enough for the real
     RaceDataBuilder (extract_*_stats + canonical chain) and a real classifier."""
@@ -1147,7 +1220,9 @@ def _enriched_fold_frame(fold_date) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def test_evaluate_end_to_end_with_real_builder_and_active_algorithm(tmp_path):
+def test_evaluate_end_to_end_with_real_builder_and_active_algorithm(
+    tmp_path: pathlib.Path,
+) -> None:
     """Drive evaluate() through the real RaceDataBuilder and the real ACTIVE algorithm
     (GatedRecencyWeightedWinClassifier) — exercising wrap_training + build_serving +
     fit/predict/predict_field/predict_field_unfiltered + the gate, end to end."""
@@ -1187,23 +1262,7 @@ def test_evaluate_end_to_end_with_real_builder_and_active_algorithm(tmp_path):
 # ================================================================
 
 
-def _eval_patches(fold_date):
-    """Return the standard mock context for a 1-fold evaluate() run."""
-    return [
-        patch(
-            "race_analytics.scripts.evaluate._load_window",
-            return_value=pd.DataFrame([{"x": 1}]),
-        ),
-        patch(
-            "race_analytics.scripts.evaluate._engineer_features",
-            return_value=_make_fold_races(fold_date),
-        ),
-        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
-        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
-    ]
-
-
-def test_evaluate_no_flags_writes_no_file(tmp_path):
+def test_evaluate_no_flags_writes_no_file(tmp_path: pathlib.Path) -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     with patch(
@@ -1213,7 +1272,9 @@ def test_evaluate_no_flags_writes_no_file(tmp_path):
     assert list(tmp_path.iterdir()) == []
 
 
-def test_evaluate_save_results_writes_csv_with_correct_schema(tmp_path):
+def test_evaluate_save_results_writes_csv_with_correct_schema(
+    tmp_path: pathlib.Path,
+) -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     fold_date = date.today() - timedelta(days=1)
@@ -1235,7 +1296,9 @@ def test_evaluate_save_results_writes_csv_with_correct_schema(tmp_path):
     assert list(df.columns) == _CSV_COLUMNS
 
 
-def test_evaluate_results_file_without_save_results_still_writes(tmp_path):
+def test_evaluate_results_file_without_save_results_still_writes(
+    tmp_path: pathlib.Path,
+) -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     fold_date = date.today() - timedelta(days=1)
@@ -1256,7 +1319,7 @@ def test_evaluate_results_file_without_save_results_still_writes(tmp_path):
     assert (tmp_path / "results.csv").exists()
 
 
-def test_evaluate_timing_accumulators_have_one_entry_per_completed_fold():
+def test_evaluate_timing_accumulators_have_one_entry_per_completed_fold() -> None:
     from race_analytics.scripts.evaluate import evaluate
 
     fold_date = date.today() - timedelta(days=1)
@@ -1284,3 +1347,17 @@ def test_evaluate_timing_accumulators_have_one_entry_per_completed_fold():
     assert len(timing["predict_times"][name]) == 1
     assert timing["fit_times"][name][0] >= 0.0
     assert timing["predict_times"][name][0] >= 0.0
+
+
+def test_evaluate_with_zero_folds_returns_without_unbound_error() -> None:
+    """evaluate(folds=0) must not crash referencing `selected_algos` unbound.
+
+    Regression: `selected_algos` was assigned only inside the per-fold loop, so a
+    zero-fold run reached the ROI-vs-coverage frontier with it unbound (NameError).
+    It is now initialised before the loop and the frontier guards missing entries.
+    """
+    from race_analytics.scripts.evaluate import evaluate
+
+    result = evaluate(folds=0)
+
+    assert isinstance(result, dict)

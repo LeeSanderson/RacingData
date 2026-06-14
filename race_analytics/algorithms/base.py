@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
 from dataclasses import replace
-from typing import ClassVar, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
 
 import numpy as np
 import pandas as pd
 
 from race_analytics.features.race_data import RaceData
+
+if TYPE_CHECKING:
+    from race_analytics.algorithms.confidence_gate import ConfidenceGate
 
 REQUIRED_PREDICTORS = [
     "DistanceInMeters",
@@ -122,8 +125,8 @@ class AbstainCapable(Protocol):
     """Separately-declared capability for algorithms that can abstain — replaces the
     harness's reflective hasattr/getattr probing (issue 007)."""
 
-    def predict_field_unfiltered(self, data): ...
-    def get_confidence_gate(self): ...
+    def predict_field_unfiltered(self, data: RaceData) -> pd.DataFrame: ...
+    def get_confidence_gate(self) -> "ConfidenceGate | None": ...
 
 
 class FieldPredictorBaseAlgorithm(BaseAlgorithm):
@@ -158,11 +161,11 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     def _race_gate(self, data: RaceData) -> RaceData:
         return data
 
-    def _sample_weight(self, frame: pd.DataFrame):
+    def _sample_weight(self, frame: pd.DataFrame) -> np.ndarray | None:
         return None
 
     def _fit_estimator(
-        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight
+        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight: np.ndarray | None
     ) -> None:
         raise NotImplementedError("engine subclasses must implement _fit_estimator")
 
@@ -188,7 +191,8 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         available = [c for c in self._feature_cols if c in data.frame.columns]
         original_counts = data.frame.groupby("RaceId")["HorseId"].count()
         predictable = self._keep_complete_races(
-            self._dropna_required(data), original_counts
+            self._dropna_required(data),
+            original_counts,  # pyright: ignore[reportArgumentType]  # SeriesGroupBy.count() is a Series
         )
         predictable = self._race_gate(predictable)
         if predictable.frame.empty:
@@ -197,7 +201,7 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         field = self._rank_within_race(predictable.frame, scores)
         if not self.return_full_field:
             field = field[field["PredictedRank"] == 1].reset_index(drop=True)
-        return field
+        return field  # pyright: ignore[reportReturnType]  # boolean-indexing yields DataFrame
 
     def predict(self, data: RaceData) -> pd.DataFrame:
         return self._top1(self.predict_field(data))
@@ -238,7 +242,7 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         if not required:
             return data
         mask = data.frame[required].notna().all(axis=1)
-        return data.subset(mask)
+        return data.subset(mask)  # pyright: ignore[reportArgumentType]  # all(axis=1) is a Series
 
     def _keep_complete_races(
         self, data: RaceData, original_counts: pd.Series
@@ -246,7 +250,7 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         pred_counts = data.frame.groupby("RaceId")["HorseId"].count()
         orig = original_counts.reindex(pred_counts.index)
         keep = pred_counts.index[
-            (pred_counts.values == orig.values) & (orig.values <= self.max_horses)
+            (pred_counts.values == orig.values) & (orig.values <= self.max_horses)  # pyright: ignore[reportOperatorIssue]  # ndarray elementwise ops
         ]
         return data.subset(data.frame["RaceId"].isin(keep))
 
@@ -268,7 +272,7 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         if field.empty or "PredictedRank" not in field.columns:
             return self._empty()
         return (
-            field[field["PredictedRank"] == 1][["RaceId", "HorseId"]]
-            .drop_duplicates(subset=["RaceId"])
+            field[field["PredictedRank"] == 1][["RaceId", "HorseId"]]  # pyright: ignore[reportCallIssue]  # column-list index narrows to DataFrame
+            .drop_duplicates(subset=["RaceId"])  # pyright: ignore[reportAttributeAccessIssue]  # result is a DataFrame
             .reset_index(drop=True)
         )

@@ -24,18 +24,20 @@ _AS_OF = pd.Timestamp("2026-06-13")
 class _FakeClassifier:
     """Decreasing predict_proba so horse[0] in each race ranks first."""
 
-    def __init__(self):
-        self.fit_X = None
-        self.fit_y = None
-        self.fit_sw = "unset"
+    def __init__(self) -> None:
+        self.fit_X: pd.DataFrame | None = None
+        self.fit_y: pd.Series | None = None
+        self.fit_sw: np.ndarray | str | None = "unset"
 
-    def fit(self, X, y, sample_weight=None):
+    def fit(
+        self, X: pd.DataFrame, y: pd.Series, sample_weight: np.ndarray | None = None
+    ) -> "_FakeClassifier":
         self.fit_X = pd.DataFrame(X).copy()
         self.fit_y = y.copy() if hasattr(y, "copy") else y
         self.fit_sw = sample_weight
         return self
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
         n = len(X)
         out = np.zeros((n, 2))
         out[:, 1] = np.arange(n, 0, -1) / n
@@ -45,18 +47,24 @@ class _FakeClassifier:
 class _EngineClassifier(FieldPredictorBaseAlgorithm):
     """Minimal engine subclass: only the estimator-fit and score hooks."""
 
-    def __init__(self, clf=None, max_horses=10):
+    def __init__(
+        self, clf: _FakeClassifier | None = None, max_horses: int = 10
+    ) -> None:
         self._clf = clf or _FakeClassifier()
         super().__init__(max_horses)
 
-    def _fit_estimator(self, X, frame, sample_weight):
+    def _fit_estimator(
+        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight: np.ndarray | None
+    ) -> None:
         self._clf.fit(X, frame[self.label_col], sample_weight=sample_weight)
 
-    def _score(self, X):
+    def _score(self, X: pd.DataFrame) -> np.ndarray:
         return self._clf.predict_proba(X)[:, 1]
 
 
-def _race_data(n_races=2, horses=3, with_label=True, max_horses=10) -> RaceData:
+def _race_data(
+    n_races: int = 2, horses: int = 3, with_label: bool = True, max_horses: int = 10
+) -> RaceData:
     rows = []
     for r in range(1, n_races + 1):
         for h in range(horses):
@@ -66,11 +74,13 @@ def _race_data(n_races=2, horses=3, with_label=True, max_horses=10) -> RaceData:
             if with_label:
                 row["Wins"] = 1.0 if h == 0 else 0.0
             rows.append(row)
-    return RaceData(pd.DataFrame(rows), _AS_OF, max_horses=max_horses)
+    return RaceData(pd.DataFrame(rows), _AS_OF, max_horses=max_horses)  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
 
 
-def _fitted_engine(**kwargs) -> _EngineClassifier:
-    algo = _EngineClassifier(**kwargs)
+def _fitted_engine(
+    clf: _FakeClassifier | None = None, max_horses: int = 10
+) -> _EngineClassifier:
+    algo = _EngineClassifier(clf=clf, max_horses=max_horses)
     algo.fit(_race_data(with_label=True))
     return algo
 
@@ -105,7 +115,7 @@ def test_predict_returns_top1_per_race():
 
 def test_fit_selects_required_predictors_as_feature_cols():
     algo = _fitted_engine()
-    assert set(algo._feature_cols) == set(REQUIRED_PREDICTORS)
+    assert set(algo._feature_cols) == set(REQUIRED_PREDICTORS)  # pyright: ignore[reportPrivateUsage]  # intentional internal-state assertion
 
 
 # ── filters ────────────────────────────────────────────────────────────────────
@@ -132,7 +142,7 @@ def test_incomplete_race_dropped_when_a_runner_has_nan_required():
 
 def test_race_gate_override_filters_before_scoring():
     class _GatedEngine(_EngineClassifier):
-        def _race_gate(self, data):
+        def _race_gate(self, data: RaceData) -> RaceData:
             return data.subset(data.frame["RaceId"] == 1)
 
     algo = _GatedEngine()
@@ -143,15 +153,15 @@ def test_race_gate_override_filters_before_scoring():
 
 def test_sample_weight_hook_is_passed_to_estimator():
     class _WeightedEngine(_EngineClassifier):
-        def _sample_weight(self, frame):
+        def _sample_weight(self, frame: pd.DataFrame) -> np.ndarray:
             return np.full(len(frame), 2.0)
 
     clf = _FakeClassifier()
     algo = _WeightedEngine(clf=clf)
     algo.fit(_race_data(with_label=True))
     assert clf.fit_sw is not None
-    assert len(clf.fit_sw) == len(clf.fit_X)
-    assert (clf.fit_sw == 2.0).all()
+    assert len(clf.fit_sw) == len(clf.fit_X)  # pyright: ignore[reportArgumentType]  # fit_X set during fit() above
+    assert (clf.fit_sw == 2.0).all()  # pyright: ignore[reportAttributeAccessIssue]  # fit_sw is ndarray after fit()
 
 
 def test_return_full_field_false_yields_only_rank1_rows():
@@ -171,40 +181,50 @@ def test_return_full_field_false_yields_only_rank1_rows():
 class _FakeRanker:
     """A ranker-style estimator: fit(group=...) and predict (no predict_proba)."""
 
-    def __init__(self):
-        self.fit_sw = "unset"
+    def __init__(self) -> None:
+        self.fit_sw: np.ndarray | str | None = "unset"
 
-    def fit(self, X, y, group=None, sample_weight=None):
+    def fit(
+        self,
+        X: pd.DataFrame,
+        y: pd.Series,
+        group: np.ndarray | None = None,
+        sample_weight: np.ndarray | None = None,
+    ) -> "_FakeRanker":
         self.fit_sw = sample_weight
         return self
 
-    def predict(self, X):
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
         return np.arange(len(X), 0, -1)  # decreasing -> row[0] ranks first
 
 
 class _RankerEngine(FieldPredictorBaseAlgorithm):
     """Engine subclass scoring via a ranker's predict() instead of predict_proba()."""
 
-    def __init__(self, max_horses=10):
+    def __init__(self, max_horses: int = 10) -> None:
         self._r = _FakeRanker()
         super().__init__(max_horses)
 
-    def _fit_estimator(self, X, frame, sample_weight):
+    def _fit_estimator(
+        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight: np.ndarray | None
+    ) -> None:
         self._r.fit(X, frame[self.label_col], sample_weight=sample_weight)
 
-    def _score(self, X):
+    def _score(self, X: pd.DataFrame) -> np.ndarray:
         return self._r.predict(X)
 
 
 class _WeightedClassifier(_EngineClassifier):
-    def _sample_weight(self, frame):
+    def _sample_weight(self, frame: pd.DataFrame) -> np.ndarray:
         return np.full(len(frame), 3.0)
 
 
 @pytest.mark.parametrize(
     "factory", [_EngineClassifier, _RankerEngine, _WeightedClassifier]
 )
-def test_engine_ranks_full_field_for_any_estimator_and_weighting(factory):
+def test_engine_ranks_full_field_for_any_estimator_and_weighting(
+    factory: type[FieldPredictorBaseAlgorithm],
+) -> None:
     algo = factory()
     algo.fit(_race_data(with_label=True))
     field = algo.predict_field(_race_data(n_races=2, horses=3, with_label=False))
@@ -229,10 +249,10 @@ def test_engine_satisfies_field_predictor_protocol():
 
 def test_abstain_capable_protocol_membership():
     class _Abstainer:
-        def predict_field_unfiltered(self, data):
+        def predict_field_unfiltered(self, data: RaceData) -> RaceData:
             return data
 
-        def get_confidence_gate(self):
+        def get_confidence_gate(self) -> None:
             return None
 
     assert isinstance(_Abstainer(), AbstainCapable)

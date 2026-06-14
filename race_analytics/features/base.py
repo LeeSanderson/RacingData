@@ -37,7 +37,7 @@ class RaceDataProcessor(ABC):  # noqa: B024
                 (df["Off"].dt.date >= slice_start) & (df["Off"].dt.date < slice_end)
             ]
             if len(daily_slice) > 0:
-                self.update(df, history, daily_slice)
+                self.update(df, history, daily_slice)  # pyright: ignore[reportArgumentType]  # boolean-indexing yields DataFrame
             slice_start = slice_end
             day_num += 1
             if _tty:

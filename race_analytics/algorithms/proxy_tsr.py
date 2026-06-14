@@ -53,7 +53,7 @@ class ProxyTSRModel:
         self._feature_cols: list[str] = []
 
     def _encode_courses(self, df: pd.DataFrame) -> pd.Series:
-        known = set(self._course_encoder.classes_)
+        known = set(self._course_encoder.classes_)  # pyright: ignore[reportArgumentType]  # LabelEncoder.classes_ is an ndarray
         return (
             df["CourseName"]
             .fillna("Unknown")
@@ -169,6 +169,6 @@ class ProxyTSRModel:
         last = work.groupby("HorseId", as_index=False).tail(1)
         return (
             last[["HorseId", "_ProxyTSR"]]
-            .rename(columns={"_ProxyTSR": "LastProxyTSR"})
+            .rename(columns={"_ProxyTSR": "LastProxyTSR"})  # pyright: ignore[reportCallIssue]  # rename(columns=) overload gap
             .reset_index(drop=True)
         )

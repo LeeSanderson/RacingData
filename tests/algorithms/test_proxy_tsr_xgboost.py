@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -6,7 +7,7 @@ import pytest
 from race_analytics.algorithms.win_classifier import (
     WinClassifier as ProxyTSRXGBoostAlgorithm,
 )
-from race_analytics.features.race_data import RaceDataBuilder
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
@@ -15,13 +16,19 @@ D3 = datetime(2021, 3, 1)
 _AS_OF = datetime(2026, 1, 1)
 
 
-def _train():
+def _train() -> RaceData:
     return RaceDataBuilder().wrap_training(_make_train_df())
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted as Timestamp at runtime
     )
 
 
@@ -31,7 +38,7 @@ def _train_row(
     off: datetime = D1,
     wins: int = 0,
     tsr: float | None = 90.0,
-) -> dict:
+) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "RaceId": race_id,
@@ -93,7 +100,7 @@ def _train_row(
 
 def _race_row(
     race_id: int, horse_id: int, jockey_id: int, tsr: float | None = 90.0
-) -> dict:
+) -> dict[str, Any]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -109,7 +116,7 @@ def _race_row(
     }
 
 
-def _horse_stat(horse_id: int) -> dict:
+def _horse_stat(horse_id: int) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -136,7 +143,7 @@ def _horse_stat(horse_id: int) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, Any]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -173,7 +180,7 @@ def trained_algo() -> ProxyTSRXGBoostAlgorithm:
 # ── 1. fit completes ──────────────────────────────────────────────────────────
 
 
-def test_fit_completes_without_error():
+def test_fit_completes_without_error() -> None:
     algo = ProxyTSRXGBoostAlgorithm(max_horses=10)
     algo.fit(_train())  # must not raise
 
@@ -181,10 +188,10 @@ def test_fit_completes_without_error():
 # ── 1b. feature set drops raw ratings, uses LastRace* + as-of proxy ───────────
 
 
-def test_feature_set_drops_raw_ratings_and_uses_lastrace_plus_proxy():
+def test_feature_set_drops_raw_ratings_and_uses_lastrace_plus_proxy() -> None:
     algo = ProxyTSRXGBoostAlgorithm(max_horses=10)
     algo.fit(_train())
-    feats = algo._feature_cols
+    feats = algo._feature_cols  # pyright: ignore[reportPrivateUsage]  # test inspects the fitted feature list
     # primary leak gone: no raw current-race RPR/TSR (nor OfficialRating)
     for col in ["OfficialRating", "RacingPostRating", "TopSpeedRating"]:
         assert col not in feats, f"raw current-race rating leaked into features: {col}"
@@ -205,7 +212,9 @@ def test_feature_set_drops_raw_ratings_and_uses_lastrace_plus_proxy():
 # ── 2. predict returns correct columns ───────────────────────────────────────
 
 
-def test_predict_returns_raceId_and_horseId_columns(trained_algo):
+def test_predict_returns_raceId_and_horseId_columns(
+    trained_algo: ProxyTSRXGBoostAlgorithm,
+) -> None:
     races = pd.DataFrame([_race_row(10, h, h) for h in [101, 102, 103]])
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
@@ -218,7 +227,9 @@ def test_predict_returns_raceId_and_horseId_columns(trained_algo):
 # ── 3. predict returns one row per race ───────────────────────────────────────
 
 
-def test_predict_returns_one_row_per_race(trained_algo):
+def test_predict_returns_one_row_per_race(
+    trained_algo: ProxyTSRXGBoostAlgorithm,
+) -> None:
     races = pd.DataFrame(
         [_race_row(10, h, h) for h in [101, 102, 103]]
         + [_race_row(20, h, h) for h in [201, 202, 203]]
@@ -238,7 +249,9 @@ def test_predict_returns_one_row_per_race(trained_algo):
 # ── 4. No TSR gating — predicts on races with no real TopSpeedRating ──────────
 
 
-def test_predict_includes_races_with_no_real_tsr(trained_algo):
+def test_predict_includes_races_with_no_real_tsr(
+    trained_algo: ProxyTSRXGBoostAlgorithm,
+) -> None:
     # Race 10: horses with real TSR; Race 20: all TSR = NaN
     races = pd.DataFrame(
         [_race_row(10, h, h, tsr=90.0) for h in [101, 102, 103]]
@@ -258,7 +271,7 @@ def test_predict_includes_races_with_no_real_tsr(trained_algo):
 # ── 5. Algorithm is registered in the ALGORITHMS list ────────────────────────
 
 
-def test_algorithm_is_registered():
+def test_algorithm_is_registered() -> None:
     from race_analytics.algorithms import ALGORITHMS
 
     algo_types = [type(a).__name__ for a in ALGORITHMS]

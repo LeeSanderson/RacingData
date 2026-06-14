@@ -1,8 +1,12 @@
+from collections.abc import Iterable
+
 import pandas as pd
 
 
 class MarketFavouriteBaseline:
-    def predict(self, race_ids, odds_df: pd.DataFrame) -> pd.DataFrame:
+    def predict(
+        self, race_ids: Iterable[int] | pd.Series, odds_df: pd.DataFrame
+    ) -> pd.DataFrame:
         df = odds_df[odds_df["RaceId"].isin(race_ids)][
             ["RaceId", "HorseId", "DecimalOdds"]
         ].copy()

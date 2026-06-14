@@ -31,15 +31,18 @@ class CalculateRacesWithKnownHorsesAndJockeys(RaceDataProcessor):
         ] = True
 
     def __calculate_counts_for_race_group(
-        self, race_group, known_jockeys, known_runners
+        self,
+        race_group: pd.DataFrame,
+        known_jockeys: list[int],
+        known_runners: list[int],
     ) -> pd.Series:
         new_columns = {"HorseCount": race_group["HorseId"].count()}
         new_columns["KnownHorseCount"] = race_group[
             race_group["HorseId"].isin(known_runners)
-        ]["HorseId"].count()
+        ]["HorseId"].count()  # pyright: ignore[reportAttributeAccessIssue]  # column index yields a Series
         new_columns["KnownJockeyCount"] = race_group[
             race_group["JockeyId"].isin(known_jockeys)
-        ]["JockeyId"].count()
+        ]["JockeyId"].count()  # pyright: ignore[reportAttributeAccessIssue]  # column index yields a Series
         return pd.Series(
             new_columns, index=["HorseCount", "KnownHorseCount", "KnownJockeyCount"]
         )

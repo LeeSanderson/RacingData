@@ -28,7 +28,7 @@ class RankingClassifier(WinClassifier):
         )
 
     def _fit_estimator(
-        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight
+        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight: np.ndarray | None
     ) -> None:
         data = frame.sort_values("RaceId")
         group_sizes = data.groupby("RaceId")["RaceId"].count().values

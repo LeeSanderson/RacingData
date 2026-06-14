@@ -14,7 +14,7 @@ from race_analytics.features.transforms import (
 )
 
 
-def _make_processed_df(*race_results):
+def _make_processed_df(*race_results: td.RaceResult) -> pd.DataFrame:
     df = pd.DataFrame(list(race_results))
     df = calculateHorsesPerRace(df)
     df = encode_surfaces(df)
@@ -23,14 +23,14 @@ def _make_processed_df(*race_results):
     return df
 
 
-def _secret_on(df, race):
+def _secret_on(df: pd.DataFrame, race: td.Race) -> pd.Series:
     return df[
         (df["HorseId"] == td.SecretSecret.HorseId) & (df["RaceId"] == race.RaceId)
     ].iloc[0]
 
 
 @pytest.fixture
-def two_day_df():
+def two_day_df() -> pd.DataFrame:
     """Day 1 = Ballinrobe (July 20), Day 2 = Chelmsford (July 21)."""
     return _make_processed_df(
         td.RaceResult.new(
@@ -64,7 +64,7 @@ def two_day_df():
     )
 
 
-def test_horse_with_no_prior_races_has_nan_stats(two_day_df):
+def test_horse_with_no_prior_races_has_nan_stats(two_day_df: pd.DataFrame) -> None:
     CalculateHorsesStats().process_race_data(two_day_df)
     duck_day1 = two_day_df[
         (two_day_df["HorseId"] == td.DuckAndVanish.HorseId)
@@ -75,7 +75,9 @@ def test_horse_with_no_prior_races_has_nan_stats(two_day_df):
     assert pd.isna(duck_day1["LastRaceSpeed"])
 
 
-def test_horse_with_one_prior_race_has_last_race_features(two_day_df):
+def test_horse_with_one_prior_race_has_last_race_features(
+    two_day_df: pd.DataFrame,
+) -> None:
     CalculateHorsesStats().process_race_data(two_day_df)
     row = _secret_on(two_day_df, td.Chelmsford21stAt1805)
     assert row["NumberOfPriorRaces"] == 1
@@ -87,16 +89,20 @@ def test_horse_with_one_prior_race_has_last_race_features(two_day_df):
     assert row["LastRaceSurface"] == "Turf"
 
 
-def test_horse_with_one_prior_race_has_nan_for_3race_aggregates(two_day_df):
+def test_horse_with_one_prior_race_has_nan_for_3race_aggregates(
+    two_day_df: pd.DataFrame,
+) -> None:
     CalculateHorsesStats().process_race_data(two_day_df)
     row = _secret_on(two_day_df, td.Chelmsford21stAt1805)
-    assert pd.isna(row["Last3RaceAvgSpeed"])
-    assert pd.isna(row["Last3RaceSpeedTrend"])
-    assert pd.isna(row["Last3AvgRelFinishingPosition"])
+    # pandas stubs type Series.__getitem__ as Series|scalar, so pd.isna returns a
+    # union pyright won't accept as a bool assert operand — scalar at runtime.
+    assert pd.isna(row["Last3RaceAvgSpeed"])  # pyright: ignore[reportGeneralTypeIssues]
+    assert pd.isna(row["Last3RaceSpeedTrend"])  # pyright: ignore[reportGeneralTypeIssues]
+    assert pd.isna(row["Last3AvgRelFinishingPosition"])  # pyright: ignore[reportGeneralTypeIssues]
 
 
 @pytest.fixture
-def four_day_df():
+def four_day_df() -> pd.DataFrame:
     """SecretSecret has 3 prior races by day 4."""
     return _make_processed_df(
         td.RaceResult.new(
@@ -165,7 +171,7 @@ def four_day_df():
     )
 
 
-def test_horse_with_3_prior_races_has_all_features(four_day_df):
+def test_horse_with_3_prior_races_has_all_features(four_day_df: pd.DataFrame) -> None:
     CalculateHorsesStats().process_race_data(four_day_df)
     row = _secret_on(four_day_df, td.Wolverhampton24thAt1300)
     # Last 3 speeds: 15.0, 14.0, 13.0 → avg = 14.0
@@ -178,7 +184,9 @@ def test_horse_with_3_prior_races_has_all_features(four_day_df):
     )
 
 
-def test_extract_horse_stats_exports_last3_over_most_recent_races(four_day_df):
+def test_extract_horse_stats_exports_last3_over_most_recent_races(
+    four_day_df: pd.DataFrame,
+) -> None:
     CalculateHorsesStats().process_race_data(four_day_df)
     stats = extract_horse_stats(four_day_df)
     row = stats[stats["HorseId"] == td.SecretSecret.HorseId].iloc[0]
@@ -193,7 +201,7 @@ def test_extract_horse_stats_exports_last3_over_most_recent_races(four_day_df):
 
 
 @pytest.fixture
-def rating_df():
+def rating_df() -> pd.DataFrame:
     """SecretSecret races twice; the most recent race (Chelmsford, July 21) has
     ratings distinct from the earlier race (Ballinrobe, July 20)."""
     return _make_processed_df(
@@ -224,7 +232,9 @@ def rating_df():
     )
 
 
-def test_extract_horse_stats_carries_previous_race_ratings(rating_df):
+def test_extract_horse_stats_carries_previous_race_ratings(
+    rating_df: pd.DataFrame,
+) -> None:
     CalculateHorsesStats().process_race_data(rating_df)
     stats = extract_horse_stats(rating_df)
     assert "LastRaceOfficialRating" in stats.columns
@@ -237,7 +247,9 @@ def test_extract_horse_stats_carries_previous_race_ratings(rating_df):
     assert row["LastRaceTopSpeedRating"] == pytest.approx(101.0)
 
 
-def test_extract_horse_stats_last3_nan_with_fewer_than_3_races(two_day_df):
+def test_extract_horse_stats_last3_nan_with_fewer_than_3_races(
+    two_day_df: pd.DataFrame,
+) -> None:
     CalculateHorsesStats().process_race_data(two_day_df)
     stats = extract_horse_stats(two_day_df)
     row = stats[stats["HorseId"] == td.SecretSecret.HorseId].iloc[0]
@@ -246,7 +258,9 @@ def test_extract_horse_stats_last3_nan_with_fewer_than_3_races(two_day_df):
     assert pd.isna(row["Last3AvgRelFinishingPosition"])
 
 
-def test_incremental_processing_updates_stats_across_days(four_day_df):
+def test_incremental_processing_updates_stats_across_days(
+    four_day_df: pd.DataFrame,
+) -> None:
     CalculateHorsesStats().process_race_data(four_day_df)
     row_day2 = _secret_on(four_day_df, td.Chelmsford21stAt1805)
     row_day4 = _secret_on(four_day_df, td.Wolverhampton24thAt1300)
@@ -254,21 +268,21 @@ def test_incremental_processing_updates_stats_across_days(four_day_df):
     assert row_day4["NumberOfPriorRaces"] == 3
 
 
-def test_horse_stats_encoded_going_columns(two_day_df):
+def test_horse_stats_encoded_going_columns(two_day_df: pd.DataFrame) -> None:
     CalculateHorsesStats().process_race_data(two_day_df)
     row = _secret_on(two_day_df, td.Chelmsford21stAt1805)
     assert row["LastRaceGoing_Soft"] == 1.0
     assert row["LastRaceGoing_Good"] == 0.0
 
 
-def test_horse_stats_encoded_surface_columns(two_day_df):
+def test_horse_stats_encoded_surface_columns(two_day_df: pd.DataFrame) -> None:
     CalculateHorsesStats().process_race_data(two_day_df)
     row = _secret_on(two_day_df, td.Chelmsford21stAt1805)
     assert row["LastRaceSurface_Turf"] == 1.0
     assert row["LastRaceSurface_AllWeather"] == 0.0
 
 
-def test_last_race_headgear_reflects_prior_race():
+def test_last_race_headgear_reflects_prior_race() -> None:
     """Day-2 row for SecretSecret must carry the HeadGear code from day 1."""
     df = _make_processed_df(
         td.RaceResult.new(

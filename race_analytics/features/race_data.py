@@ -16,6 +16,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass, replace
 from datetime import datetime
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -108,16 +109,16 @@ class RaceData:
 
     def feature_frame(self, feature_cols: list[str]) -> pd.DataFrame:
         """The columns the estimator consumes, in the requested order."""
-        return self.frame[list(feature_cols)]
+        return self.frame[list(feature_cols)]  # pyright: ignore[reportReturnType]  # column-list index yields DataFrame
 
-    def with_columns(self, **new_cols) -> RaceData:
+    def with_columns(self, **new_cols: Any) -> RaceData:
         """Copy + add/overwrite columns (e.g. LastProxyTSR, recency weights)."""
         frame = self.frame.copy()
         for name, values in new_cols.items():
             frame[name] = values
         return replace(self, frame=frame)
 
-    def subset(self, mask) -> RaceData:
+    def subset(self, mask: pd.Series | pd.DataFrame | np.ndarray) -> RaceData:
         """Copy + row filter (e.g. an in-pipeline race gate)."""
         return replace(self, frame=self.frame[mask].copy())
 
@@ -131,7 +132,7 @@ class RaceDataBuilder:
         horse_stats: pd.DataFrame,
         jockey_stats: pd.DataFrame,
         trainer_stats: pd.DataFrame | None,
-        as_of,
+        as_of: pd.Timestamp,
         max_horses: int = 10,
     ) -> RaceData:
         """Build serving RaceData from a card + pre-computed per-entity stats frames.
@@ -164,10 +165,14 @@ class RaceDataBuilder:
             merged = merged.merge(trainer_stats, how="left", on=["TrainerId"])
 
         merged = _apply_canonical_chain(merged)
-        return RaceData(frame=merged, as_of=pd.Timestamp(as_of), max_horses=max_horses)
+        return RaceData(frame=merged, as_of=pd.Timestamp(as_of), max_horses=max_horses)  # pyright: ignore[reportArgumentType]  # Timestamp ctor return includes NaTType arm
 
     def build_serving(
-        self, card: pd.DataFrame, history, as_of, max_horses: int = 10
+        self,
+        card: pd.DataFrame,
+        history: RaceData | pd.DataFrame,
+        as_of: pd.Timestamp,
+        max_horses: int = 10,
     ) -> RaceData:
         """Join today's `card` to per-entity stats extracted from `history` and run
         the canonical chain. `history` is a RaceData or an enriched race_history frame."""
@@ -182,7 +187,7 @@ class RaceDataBuilder:
         )
 
     def build_training(
-        self, raw: pd.DataFrame, as_of, max_horses: int = 10
+        self, raw: pd.DataFrame, as_of: pd.Timestamp, max_horses: int = 10
     ) -> RaceData:
         """Build training RaceData (labels retained) from an enriched race_history
         frame. Stats are already columns, so this runs the canonical chain directly,
@@ -192,7 +197,7 @@ class RaceDataBuilder:
             if col in frame.columns:
                 frame.loc[frame[col] > 10, col] = 10
         frame = _apply_canonical_chain(frame)
-        return RaceData(frame=frame, as_of=pd.Timestamp(as_of), max_horses=max_horses)
+        return RaceData(frame=frame, as_of=pd.Timestamp(as_of), max_horses=max_horses)  # pyright: ignore[reportArgumentType]  # Timestamp ctor return includes NaTType arm
 
     def wrap_training(self, enriched: pd.DataFrame, max_horses: int = 10) -> RaceData:
         """Wrap an already-engineered flat training frame (the output of the harness's
@@ -215,4 +220,4 @@ class RaceDataBuilder:
             )
         else:
             as_of = pd.Timestamp(datetime.today())
-        return RaceData(frame=frame, as_of=as_of, max_horses=max_horses)
+        return RaceData(frame=frame, as_of=as_of, max_horses=max_horses)  # pyright: ignore[reportArgumentType]  # Off.max() is a Timestamp at runtime

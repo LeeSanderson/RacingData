@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 import pandas as pd
 import pytest
@@ -50,12 +51,12 @@ def _write_results(path: str) -> None:
 
 
 @pytest.fixture
-def data_dir(tmp_path):
+def data_dir(tmp_path: pathlib.Path) -> str:
     _write_results(str(tmp_path))
     return str(tmp_path)
 
 
-def test_build_features_writes_all_four_csvs(data_dir):
+def test_build_features_writes_all_four_csvs(data_dir: str) -> None:
     build_features(data_dir)
     for name in [
         "Race_Features.csv",

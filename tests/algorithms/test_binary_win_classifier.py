@@ -8,7 +8,7 @@ own behaviour: the engineered race context, NaN handling, and full-field/top-1 o
 """
 
 from datetime import datetime
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import numpy as np
 import pandas as pd
@@ -21,29 +21,37 @@ _AS_OF = datetime(2026, 1, 1)
 _REQ_COL = "DistanceInMeters"  # first entry of REQUIRED_PREDICTORS
 
 
-def _rd(df):
+def _rd(df: pd.DataFrame) -> RaceData:
     return RaceDataBuilder().wrap_training(df)
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted as Timestamp at runtime
     )
 
 
 class _MockClassifier:
-    def __init__(self):
-        self.fit_X = None
-        self.fit_y = None
-        self.fit_sw = "unset"
+    def __init__(self) -> None:
+        self.fit_X: pd.DataFrame | None = None
+        self.fit_y: Any = None
+        self.fit_sw: Any = "unset"
 
-    def fit(self, X, y, sample_weight=None):
+    def fit(
+        self, X: pd.DataFrame, y: pd.Series, sample_weight: np.ndarray | None = None
+    ) -> "_MockClassifier":
         self.fit_X = pd.DataFrame(X).copy()
         self.fit_y = y.copy() if hasattr(y, "copy") else y
         self.fit_sw = sample_weight
         return self
 
-    def predict_proba(self, X):
+    def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
         n = len(X)
         probs = np.zeros((n, 2))
         probs[:, 1] = (
@@ -55,7 +63,7 @@ class _MockClassifier:
 class _SpyAlgo(BinaryWinClassifierAlgorithm):
     extra_nan_tolerant_features: ClassVar[list[str]] = ["SomeRatingCol"]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._mock = _MockClassifier()
         super().__init__(self._mock)
 
@@ -66,7 +74,7 @@ def _train_row(
     wins: int = 0,
     dist: float | None = 1600.0,
     some_rating: float | None = 90.0,
-) -> dict:
+) -> dict[str, Any]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -76,7 +84,7 @@ def _train_row(
     }
 
 
-def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
+def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict[str, Any]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -88,7 +96,7 @@ def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
     }
 
 
-def _horse_stat(horse_id: int, some_rating: float | None = 90.0) -> dict:
+def _horse_stat(horse_id: int, some_rating: float | None = 90.0) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -96,7 +104,7 @@ def _horse_stat(horse_id: int, some_rating: float | None = 90.0) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, Any]:
     return {"JockeyId": jockey_id, "LastOff": _LONG_AGO}
 
 
@@ -109,7 +117,9 @@ def _make_train_df(n_races: int = 3, horses_per_race: int = 3) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def _make_predict_fixtures(n_horses: int = 3):
+def _make_predict_fixtures(
+    n_horses: int = 3,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     races = pd.DataFrame([_race_row(99, h, h) for h in range(n_horses)])
     horse_stats = pd.DataFrame([_horse_stat(h) for h in range(n_horses)])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in range(n_horses)])
@@ -119,10 +129,11 @@ def _make_predict_fixtures(n_horses: int = 3):
 # ── fit engineers the race context the classifier is trained on ───────────────
 
 
-def test_fit_feeds_classifier_engineered_race_context():
+def test_fit_feeds_classifier_engineered_race_context() -> None:
     spy = _SpyAlgo()
     spy.fit(_rd(_make_train_df()))
-    cols = spy._mock.fit_X.columns
+    # fit_X is captured by the mock during fit (private spy attr, set non-None)
+    cols = spy._mock.fit_X.columns  # pyright: ignore[reportPrivateUsage, reportOptionalMemberAccess]
     # HorseCount + the relative-rating column are materialised by the engine and
     # become features, alongside the required predictor and the raw extra feature.
     for expected in (_REQ_COL, "SomeRatingCol", "RelSomeRatingCol", "HorseCount"):
@@ -132,7 +143,7 @@ def test_fit_feeds_classifier_engineered_race_context():
 # ── dropna: NaN in a required predictor drops the row before fitting ──────────
 
 
-def test_fit_drops_rows_with_nan_required_predictor():
+def test_fit_drops_rows_with_nan_required_predictor() -> None:
     spy = _SpyAlgo()
     rows = [
         _train_row(1, 10, wins=1),
@@ -140,13 +151,13 @@ def test_fit_drops_rows_with_nan_required_predictor():
         _train_row(2, 20, wins=0, dist=None),  # NaN in required — dropped
     ]
     spy.fit(_rd(pd.DataFrame(rows)))
-    assert len(spy._mock.fit_X) == 2
+    assert len(spy._mock.fit_X) == 2  # pyright: ignore[reportPrivateUsage, reportArgumentType]
 
 
 # ── extra_nan_tolerant_features column tolerates NaN in fit ───────────────────
 
 
-def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped():
+def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped() -> None:
     spy = _SpyAlgo()
     rows = [
         _train_row(1, 10, wins=1),
@@ -157,17 +168,18 @@ def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped():
     ]
     spy.fit(_rd(pd.DataFrame(rows)))
 
-    assert len(spy._mock.fit_X) == 4  # horse 30 dropped; others kept
-    assert "SomeRatingCol" in spy._mock.fit_X.columns
-    assert spy._mock.fit_X["SomeRatingCol"].isna().sum() == 1  # horse 20's NaN survived
+    # fit_X captured by the mock during fit (private spy attr, set non-None)
+    assert len(spy._mock.fit_X) == 4  # pyright: ignore[reportPrivateUsage, reportArgumentType]  # horse 30 dropped; others kept
+    assert "SomeRatingCol" in spy._mock.fit_X.columns  # pyright: ignore[reportPrivateUsage, reportOptionalMemberAccess]
+    assert spy._mock.fit_X["SomeRatingCol"].isna().sum() == 1  # pyright: ignore[reportPrivateUsage, reportOptionalSubscript]  # horse 20's NaN survived
 
 
 # ── the race gate runs after the complete-race filter, before scoring ─────────
 
 
-def test_race_gate_sees_unscored_field_and_can_drop_it():
+def test_race_gate_sees_unscored_field_and_can_drop_it() -> None:
     class _GatedSpy(_SpyAlgo):
-        def __init__(self):
+        def __init__(self) -> None:
             self._gate_frames: list[pd.DataFrame] = []
             super().__init__()
 
@@ -181,21 +193,22 @@ def test_race_gate_sees_unscored_field_and_can_drop_it():
     result = spy.predict_field(_serve(races, horse_stats, jockey_stats))
 
     assert result.empty  # gate dropped everything
-    assert len(spy._gate_frames) == 1
-    assert "WinProbability" not in spy._gate_frames[0].columns  # gate runs pre-scoring
+    # _gate_frames records the frames the gate saw (private spy attr)
+    assert len(spy._gate_frames) == 1  # pyright: ignore[reportPrivateUsage]
+    assert "WinProbability" not in spy._gate_frames[0].columns  # pyright: ignore[reportPrivateUsage]  # gate runs pre-scoring
 
 
 # ── predict_field() / predict() output shapes ─────────────────────────────────
 
 
-def test_predict_field_returns_empty_before_fit():
+def test_predict_field_returns_empty_before_fit() -> None:
     spy = _SpyAlgo()
     races, horse_stats, jockey_stats = _make_predict_fixtures()
     result = spy.predict_field(_serve(races, horse_stats, jockey_stats))
     assert result.empty
 
 
-def test_predict_field_returns_all_horses_not_only_rank1():
+def test_predict_field_returns_all_horses_not_only_rank1() -> None:
     spy = _SpyAlgo()
     spy.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)
@@ -204,7 +217,7 @@ def test_predict_field_returns_all_horses_not_only_rank1():
     assert set(result["HorseId"]) == {0, 1, 2}
 
 
-def test_predict_field_has_win_probability_and_predicted_rank():
+def test_predict_field_has_win_probability_and_predicted_rank() -> None:
     spy = _SpyAlgo()
     spy.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)
@@ -215,7 +228,7 @@ def test_predict_field_has_win_probability_and_predicted_rank():
     assert result["PredictedRank"].notna().all()
 
 
-def test_predict_still_returns_only_rank1_pick():
+def test_predict_still_returns_only_rank1_pick() -> None:
     spy = _SpyAlgo()
     spy.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures(n_horses=3)

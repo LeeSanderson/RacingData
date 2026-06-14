@@ -1,5 +1,11 @@
 """Tests for feature_screen pure utility functions."""
 
+import pandas as pd
+import pytest
+
+from race_analytics.algorithms.xgboost_algorithm import XGBoostAlgorithm
+from race_analytics.features.race_data import RaceData
+from race_analytics.scripts import feature_screen as fs
 from race_analytics.scripts.feature_screen import (
     check_no_odds_features,
     rank_features,
@@ -38,3 +44,28 @@ def test_check_no_odds_features_detects_odds_keyword():
     """check_no_odds_features returns False when an odds keyword appears."""
     features = ["DistanceInMeters", "DecimalOdds"]
     assert check_no_odds_features(features) is False
+
+
+def test_screen_wraps_training_frame_as_race_data(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """screen() must hand fit() a RaceData, not the raw engineered DataFrame.
+
+    Regression: fit() is RaceData-only (RFC-001); screen() previously passed the
+    engineered DataFrame straight through, which fails at runtime. Stub the data
+    load + feature engineering and capture the type of the object given to fit().
+    """
+    enriched = pd.DataFrame({"Off": pd.to_datetime(["2026-01-01"]), "Wins": [1]})
+    monkeypatch.setattr(fs, "_load_training_window", lambda months: enriched)
+    monkeypatch.setattr(fs, "_engineer_features", lambda raw: enriched)
+
+    captured: dict[str, type] = {}
+
+    def _capture_fit(self: XGBoostAlgorithm, data: object) -> None:
+        captured["type"] = type(data)
+
+    monkeypatch.setattr(XGBoostAlgorithm, "fit", _capture_fit)
+
+    fs.screen(training_months=1)
+
+    assert captured["type"] is RaceData

@@ -9,33 +9,39 @@ from race_analytics.algorithms.win_classifier import (
     WinClassifier as ProxyTSRXGBoostAlgorithm,
 )
 from race_analytics.algorithms.xgboost_algorithm import XGBoostAlgorithm
-from race_analytics.features.race_data import RaceDataBuilder
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 _D1 = datetime(2021, 1, 1)
 _AS_OF = datetime(2026, 1, 1)
 
 
-def _rd(df):
+def _rd(df: pd.DataFrame) -> RaceData:
     return RaceDataBuilder().wrap_training(df)
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted by Timestamp-typed param at runtime
     )
 
 
 def _train_row(
-    race_id,
-    horse_id,
-    wins=0,
-    speed=16.0,
-    tsr=90.0,
-    last3_avspd=14.0,
-    last3_trend=0.1,
-    last3_relpos=0.5,
-):
+    race_id: int,
+    horse_id: int,
+    wins: int = 0,
+    speed: float = 16.0,
+    tsr: float = 90.0,
+    last3_avspd: float | None = 14.0,
+    last3_trend: float | None = 0.1,
+    last3_relpos: float | None = 0.5,
+) -> dict[str, object]:
     return {
         "HorseId": horse_id,
         "RaceId": race_id,
@@ -118,7 +124,7 @@ def _train_row(
     }
 
 
-def _make_train_df(n_races=5, horses_per_race=3):
+def _make_train_df(n_races: int = 5, horses_per_race: int = 3) -> pd.DataFrame:
     rows = [
         _train_row(r, r * 10 + h, wins=1 if h == 0 else 0)
         for r in range(1, n_races + 1)
@@ -140,7 +146,7 @@ def _make_train_df(n_races=5, horses_per_race=3):
     return pd.DataFrame(rows)
 
 
-def _race_row(race_id, horse_id, jockey_id):
+def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict[str, object]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -153,7 +159,12 @@ def _race_row(race_id, horse_id, jockey_id):
     }
 
 
-def _horse_stat(horse_id, last3_avspd=14.0, last3_trend=0.1, last3_relpos=0.5):
+def _horse_stat(
+    horse_id: int,
+    last3_avspd: float | None = 14.0,
+    last3_trend: float | None = 0.1,
+    last3_relpos: float | None = 0.5,
+) -> dict[str, object]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -183,7 +194,7 @@ def _horse_stat(horse_id, last3_avspd=14.0, last3_trend=0.1, last3_relpos=0.5):
     }
 
 
-def _jockey_stat(jockey_id):
+def _jockey_stat(jockey_id: int) -> dict[str, object]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -194,7 +205,9 @@ def _jockey_stat(jockey_id):
     }
 
 
-def _make_predict_fixtures(n_horses=3):
+def _make_predict_fixtures(
+    n_horses: int = 3,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     races = pd.DataFrame([_race_row(99, h, h) for h in range(n_horses)])
     horse_stats = pd.DataFrame(
         [
@@ -214,7 +227,9 @@ def test_xgboost_fitted_predictors_include_last3_columns():
     algo = XGBoostAlgorithm()
     algo.fit(_rd(_make_train_df()))
     for col in OPTIONAL_PREDICTORS:
-        assert col in algo._fitted_predictors, f"{col} missing from _fitted_predictors"
+        assert col in algo._fitted_predictors, (  # pyright: ignore[reportPrivateUsage]  # intentional internal-state assertion
+            f"{col} missing from _fitted_predictors"
+        )
 
 
 # ── Test 2: XGBoostAlgorithm.predict returns non-empty with NaN Last3* horse ──
@@ -235,7 +250,7 @@ def test_ridge_fitted_predictors_exclude_last3_columns():
     algo = RidgeRegressionAlgorithm()
     algo.fit(_rd(_make_train_df()))
     for col in OPTIONAL_PREDICTORS:
-        assert col not in algo._fitted_predictors, (
+        assert col not in algo._fitted_predictors, (  # pyright: ignore[reportPrivateUsage]  # intentional internal-state assertion
             f"{col} should not be in Ridge _fitted_predictors"
         )
 

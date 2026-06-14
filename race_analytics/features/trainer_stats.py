@@ -27,7 +27,7 @@ class CalculateTrainerStats(RaceDataProcessor):
         slice_trainers = daily_slice["TrainerId"].unique().tolist()
         trainer_history = history[
             history["TrainerId"].isin(slice_trainers)
-        ].sort_values(["TrainerId", "Off"], ascending=[True, False])
+        ].sort_values(["TrainerId", "Off"], ascending=[True, False])  # pyright: ignore[reportCallIssue]  # boolean-indexing yields DataFrame
         if len(trainer_history) > 0:
             stats = trainer_history.groupby("TrainerId").apply(
                 lambda g: self.__calculate_stats_for_trainer(g),
@@ -63,7 +63,7 @@ class CalculateTrainerStats(RaceDataProcessor):
 def extract_trainer_stats(races: pd.DataFrame) -> pd.DataFrame:
     """One row per trainer with stats updated through the most recent race, for use in predict()."""
     last = (
-        races[races["TrainerId"] > 0]
+        races[races["TrainerId"] > 0]  # pyright: ignore[reportCallIssue]  # boolean-indexing yields DataFrame
         .sort_values(["TrainerId", "Off"], ascending=[True, False])
         .groupby("TrainerId")
         .first()

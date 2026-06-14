@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import pandas as pd
 
@@ -27,7 +28,7 @@ _RACE_CARD_COLS = [
 D1 = datetime(2021, 1, 1)
 
 
-def _enriched_row(horse_id: int, race_id: int, off: datetime = D1) -> dict:
+def _enriched_row(horse_id: int, race_id: int, off: datetime = D1) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "RaceId": race_id,
@@ -115,14 +116,14 @@ def _make_enriched_df(n_races: int = 3) -> pd.DataFrame:
 # ── race_card ─────────────────────────────────────────────────────────────────
 
 
-def test_race_card_returns_only_card_columns():
+def test_race_card_returns_only_card_columns() -> None:
     df = _make_enriched_df()
     result = race_card(df)
     for col in result.columns:
         assert col in _RACE_CARD_COLS, f"unexpected column: {col}"
 
 
-def test_race_card_includes_present_card_columns():
+def test_race_card_includes_present_card_columns() -> None:
     df = _make_enriched_df()
     result = race_card(df)
     for col in [
@@ -136,7 +137,7 @@ def test_race_card_includes_present_card_columns():
         assert col in result.columns, f"missing expected card column: {col}"
 
 
-def test_race_card_excludes_feature_columns():
+def test_race_card_excludes_feature_columns() -> None:
     df = _make_enriched_df()
     result = race_card(df)
     for col in ["LastRaceSpeed", "DaysRested", "JockeyWinPercentage", "Speed"]:

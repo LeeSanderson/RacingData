@@ -7,32 +7,32 @@ from race_analytics.algorithms.confidence_gate import ConfidenceGate
 
 
 class TestScore:
-    def test_top_prob_returns_highest(self):
+    def test_top_prob_returns_highest(self) -> None:
         gate = ConfidenceGate("top_prob")
         assert gate.score(pd.Series([0.6, 0.3, 0.1])) == pytest.approx(0.6)
 
-    def test_gap_returns_top_minus_second(self):
+    def test_gap_returns_top_minus_second(self) -> None:
         gate = ConfidenceGate("gap")
         assert gate.score(pd.Series([0.6, 0.3, 0.1])) == pytest.approx(0.3)
 
-    def test_single_horse_top_prob(self):
+    def test_single_horse_top_prob(self) -> None:
         gate = ConfidenceGate("top_prob")
         assert gate.score(pd.Series([0.8])) == pytest.approx(0.8)
 
-    def test_single_horse_gap_equals_top_prob(self):
+    def test_single_horse_gap_equals_top_prob(self) -> None:
         # no second horse → gap = top - 0 = top
         gate = ConfidenceGate("gap")
         assert gate.score(pd.Series([0.8])) == pytest.approx(0.8)
 
-    def test_empty_race_top_prob_returns_zero(self):
+    def test_empty_race_top_prob_returns_zero(self) -> None:
         gate = ConfidenceGate("top_prob")
         assert gate.score(pd.Series([], dtype=float)) == pytest.approx(0.0)
 
-    def test_empty_race_gap_returns_zero(self):
+    def test_empty_race_gap_returns_zero(self) -> None:
         gate = ConfidenceGate("gap")
         assert gate.score(pd.Series([], dtype=float)) == pytest.approx(0.0)
 
-    def test_invalid_metric_raises(self):
+    def test_invalid_metric_raises(self) -> None:
         with pytest.raises(ValueError, match="metric must be"):
             ConfidenceGate("invalid")
 
@@ -41,14 +41,14 @@ class TestScore:
 
 
 class TestCalibrate:
-    def test_full_coverage_threshold_at_minimum_score(self):
+    def test_full_coverage_threshold_at_minimum_score(self) -> None:
         gate = ConfidenceGate("top_prob")
         gate.calibrate([0.3, 0.5, 0.7, 0.9], coverage=1.0)
         # threshold = quantile(scores, 0.0) = 0.3
         assert gate.keep(0.3)
         assert gate.keep(0.9)
 
-    def test_half_coverage_keeps_top_half(self):
+    def test_half_coverage_keeps_top_half(self) -> None:
         gate = ConfidenceGate("top_prob")
         gate.calibrate([0.2, 0.4, 0.6, 0.8], coverage=0.5)
         # threshold = quantile(0.5) = median([0.2,0.4,0.6,0.8]) = 0.5
@@ -57,18 +57,19 @@ class TestCalibrate:
         assert not gate.keep(0.4)
         assert not gate.keep(0.2)
 
-    def test_empty_scores_threshold_is_zero(self):
+    def test_empty_scores_threshold_is_zero(self) -> None:
         gate = ConfidenceGate("top_prob")
         gate.calibrate([], coverage=0.7)
         assert gate.threshold == pytest.approx(0.0)
         assert gate.keep(0.0)
 
-    def test_calibrate_stores_scores_for_frontier(self):
+    def test_calibrate_stores_scores_for_frontier(self) -> None:
         gate = ConfidenceGate("top_prob")
         gate.calibrate([0.3, 0.7], coverage=0.5)
-        assert gate._calib_scores == [0.3, 0.7]
+        # test pins the stored calibration scores (private attr)
+        assert gate._calib_scores == [0.3, 0.7]  # pyright: ignore[reportPrivateUsage]
 
-    def test_gap_metric_calibration(self):
+    def test_gap_metric_calibration(self) -> None:
         gate = ConfidenceGate("gap")
         gate.calibrate([0.1, 0.2, 0.3, 0.4], coverage=0.5)
         # threshold = median([0.1,0.2,0.3,0.4]) = 0.25
@@ -76,7 +77,7 @@ class TestCalibrate:
         assert gate.keep(0.4)
         assert not gate.keep(0.1)
 
-    def test_keep_at_threshold_boundary(self):
+    def test_keep_at_threshold_boundary(self) -> None:
         gate = ConfidenceGate("top_prob")
         gate.calibrate([0.5], coverage=1.0)
         assert gate.keep(0.5)  # exactly at threshold → kept

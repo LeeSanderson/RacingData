@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -14,13 +15,19 @@ D_NEW = datetime(2021, 5, 1)
 _AS_OF = datetime(2026, 1, 1)
 
 
-def _rd(df):
+def _rd(df: pd.DataFrame) -> RaceData:
     return RaceDataBuilder().wrap_training(df)
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted as Timestamp at runtime
     )
 
 
@@ -30,7 +37,7 @@ def _train_row(
     off: datetime = D_OLD,
     wins: int = 0,
     finishing_position: int = 2,
-) -> dict:
+) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "RaceId": race_id,
@@ -88,7 +95,7 @@ def _train_row(
     }
 
 
-def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
+def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict[str, Any]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -104,7 +111,7 @@ def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
     }
 
 
-def _horse_stat(horse_id: int) -> dict:
+def _horse_stat(horse_id: int) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -131,7 +138,7 @@ def _horse_stat(horse_id: int) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, Any]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -161,7 +168,7 @@ def _make_train_df_varied_dates() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def test_recency_and_abstain_registered_in_algorithms():
+def test_recency_and_abstain_registered_in_algorithms() -> None:
     from race_analytics.algorithms import ALGORITHMS
 
     names = [type(a).__name__ for a in ALGORITHMS]
@@ -173,15 +180,16 @@ def _prepared_weights(
     algo: RecencyWeightedProxyTSRAlgorithm, train_df: pd.DataFrame, as_of: pd.Timestamp
 ) -> pd.DataFrame:
     """Run the training-prep hook and return the prepared frame carrying `_w`."""
-    return algo._prepare_training(RaceData(train_df.copy(), as_of)).frame
+    # test exercises the protected training-prep hook directly
+    return algo._prepare_training(RaceData(train_df.copy(), as_of)).frame  # pyright: ignore[reportPrivateUsage]
 
 
-def test_decay_weights_older_races_lower():
+def test_decay_weights_older_races_lower() -> None:
     algo = RecencyWeightedProxyTSRAlgorithm(max_horses=10)
     train_df = _make_train_df_varied_dates()
     as_of = pd.to_datetime(train_df["Off"]).max().normalize() + pd.Timedelta(days=1)
 
-    w = _prepared_weights(algo, train_df, as_of)
+    w = _prepared_weights(algo, train_df, as_of)  # pyright: ignore[reportArgumentType]  # .max() inferred as Unknown | NaTType, a Timestamp at runtime
     off = pd.to_datetime(w["Off"]).dt.date
     assert (
         w.loc[off == D_OLD.date(), "_w"].mean()
@@ -189,22 +197,26 @@ def test_decay_weights_older_races_lower():
     )
 
 
-def test_decay_weights_derive_from_as_of_not_wall_clock():
+def test_decay_weights_derive_from_as_of_not_wall_clock() -> None:
     """Identical rows under two different `as_of` dates yield different weights, and a
     later `as_of` (every race relatively older) yields uniformly smaller weights."""
     train_df = _make_train_df_varied_dates()
     early = _prepared_weights(
-        RecencyWeightedProxyTSRAlgorithm(), train_df, pd.Timestamp("2021-05-02")
+        RecencyWeightedProxyTSRAlgorithm(),
+        train_df,
+        pd.Timestamp("2021-05-02"),  # pyright: ignore[reportArgumentType]  # Timestamp ctor return includes NaTType arm
     )
     late = _prepared_weights(
-        RecencyWeightedProxyTSRAlgorithm(), train_df, pd.Timestamp("2021-08-02")
+        RecencyWeightedProxyTSRAlgorithm(),
+        train_df,
+        pd.Timestamp("2021-08-02"),  # pyright: ignore[reportArgumentType]  # Timestamp ctor return includes NaTType arm
     )
 
     assert not np.allclose(early["_w"].to_numpy(), late["_w"].to_numpy())
     assert (late["_w"].to_numpy() <= early["_w"].to_numpy() + 1e-12).all()
 
 
-def test_recency_weighted_fit_and_predict_field_smoke():
+def test_recency_weighted_fit_and_predict_field_smoke() -> None:
     algo = RecencyWeightedProxyTSRAlgorithm(max_horses=10)
     algo.fit(_rd(_make_train_df_varied_dates()))
 

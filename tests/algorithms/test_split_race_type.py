@@ -1,6 +1,9 @@
 from datetime import datetime
+from typing import Any
 
 import pandas as pd
+
+from race_analytics.features.race_data import RaceData
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
@@ -12,7 +15,7 @@ def _train_row(
     race_type_flat: float = 1.0,
     wins: int = 0,
     finishing_position: int = 2,
-) -> dict:
+) -> dict[str, Any]:
     is_flat = race_type_flat == 1.0
     return {
         "HorseId": horse_id,
@@ -73,7 +76,7 @@ def _train_row(
 
 def _race_row(
     race_id: int, horse_id: int, jockey_id: int, race_type: str = "Flat"
-) -> dict:
+) -> dict[str, Any]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -89,7 +92,7 @@ def _race_row(
     }
 
 
-def _horse_stat(horse_id: int) -> dict:
+def _horse_stat(horse_id: int) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -116,7 +119,7 @@ def _horse_stat(horse_id: int) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, Any]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -157,7 +160,7 @@ def _make_train_df(n_flat: int = 110, n_jumps: int = 110) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def test_split_and_abstain_registered_in_algorithms():
+def test_split_and_abstain_registered_in_algorithms() -> None:
     from race_analytics.algorithms import ALGORITHMS
 
     names = [type(a).__name__ for a in ALGORITHMS]
@@ -165,7 +168,7 @@ def test_split_and_abstain_registered_in_algorithms():
     assert "GatedSplitDisciplineWinClassifier" in names
 
 
-def test_flat_model_available_with_sufficient_flat_races():
+def test_flat_model_available_with_sufficient_flat_races() -> None:
     from race_analytics.algorithms.split_discipline_win_classifier import (
         SplitDisciplineWinClassifier,
     )
@@ -173,11 +176,12 @@ def test_flat_model_available_with_sufficient_flat_races():
     algo = SplitDisciplineWinClassifier(max_horses=10)
     algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))
 
-    assert algo._flat_available
-    assert algo._jumps_available
+    # availability flags are set during fit (private attrs)
+    assert algo._flat_available  # pyright: ignore[reportPrivateUsage]
+    assert algo._jumps_available  # pyright: ignore[reportPrivateUsage]
 
 
-def test_flat_races_route_to_flat_model_predict_field():
+def test_flat_races_route_to_flat_model_predict_field() -> None:
     from race_analytics.algorithms.split_discipline_win_classifier import (
         SplitDisciplineWinClassifier,
     )
@@ -195,7 +199,7 @@ def test_flat_races_route_to_flat_model_predict_field():
         assert col in result.columns, f"missing column: {col}"
 
 
-def test_fallback_used_when_flat_has_insufficient_races():
+def test_fallback_used_when_flat_has_insufficient_races() -> None:
     from race_analytics.algorithms.split_discipline_win_classifier import (
         SplitDisciplineWinClassifier,
     )
@@ -204,8 +208,8 @@ def test_fallback_used_when_flat_has_insufficient_races():
     algo = SplitDisciplineWinClassifier(max_horses=10)
     algo.fit(_rd(_make_train_df(n_flat=5, n_jumps=110)))
 
-    assert not algo._flat_available
-    assert algo._jumps_available
+    assert not algo._flat_available  # pyright: ignore[reportPrivateUsage]  # availability flag set during fit
+    assert algo._jumps_available  # pyright: ignore[reportPrivateUsage]
 
     # Predictions on flat races must still work (fallback used, no drops)
     races = pd.DataFrame(
@@ -217,13 +221,13 @@ def test_fallback_used_when_flat_has_insufficient_races():
     assert "WinProbability" in result.columns
 
 
-def _rd(df: pd.DataFrame):
+def _rd(df: pd.DataFrame) -> RaceData:
     from race_analytics.features.race_data import RaceDataBuilder
 
     return RaceDataBuilder().wrap_training(df, max_horses=10)
 
 
-def _race_data(card: pd.DataFrame, as_of=D1):
+def _race_data(card: pd.DataFrame, as_of: datetime = D1) -> RaceData:
     """Build a serving RaceData from a raw card by joining the fixture stats."""
     from race_analytics.features.race_data import RaceDataBuilder
 
@@ -231,13 +235,19 @@ def _race_data(card: pd.DataFrame, as_of=D1):
     jids = card["JockeyId"].tolist()
     hs = pd.DataFrame([_horse_stat(h) for h in hids])
     js = pd.DataFrame([_jockey_stat(j) for j in jids])
-    return RaceDataBuilder().build_serving_from_stats(card, hs, js, None, as_of=as_of)
+    return RaceDataBuilder().build_serving_from_stats(
+        card,
+        hs,
+        js,
+        None,
+        as_of=as_of,  # pyright: ignore[reportArgumentType]  # datetime accepted as Timestamp at runtime
+    )
 
 
 # ── RaceData contract: fit/predict_field take a RaceData ───────────────────────
 
 
-def test_gated_split_discipline_fit_does_not_raise():
+def test_gated_split_discipline_fit_does_not_raise() -> None:
     """GatedClassifier feeds its inner a RaceData; SplitDiscipline must accept it.
     Regression for the AttributeError introduced when the gate moved to RaceData."""
     from race_analytics.algorithms import GatedSplitDisciplineWinClassifier
@@ -251,7 +261,7 @@ def test_gated_split_discipline_fit_does_not_raise():
     )  # calibrated from in-sample predict_field over RaceData
 
 
-def test_fit_and_predict_field_accept_racedata():
+def test_fit_and_predict_field_accept_racedata() -> None:
     from race_analytics.algorithms.split_discipline_win_classifier import (
         SplitDisciplineWinClassifier,
     )
@@ -262,7 +272,8 @@ def test_fit_and_predict_field_accept_racedata():
         _make_train_df(110, 110), max_horses=10
     )
     algo.fit(train_data)
-    assert algo._flat_available and algo._jumps_available
+    # availability flags set during fit (private attrs)
+    assert algo._flat_available and algo._jumps_available  # pyright: ignore[reportPrivateUsage]
 
     card = pd.DataFrame(
         [_race_row(500, h, h, race_type="Flat") for h in [1001, 1002, 1003]]
@@ -273,7 +284,7 @@ def test_fit_and_predict_field_accept_racedata():
         assert col in field.columns
 
 
-def test_mixed_card_routes_flat_and_jumps_through_the_split():
+def test_mixed_card_routes_flat_and_jumps_through_the_split() -> None:
     """A mixed flat+jumps card is scored end-to-end via the RaceData split — both
     disciplines survive and each race keeps exactly one rank-1 pick."""
     from race_analytics.algorithms.split_discipline_win_classifier import (
@@ -296,7 +307,7 @@ def test_mixed_card_routes_flat_and_jumps_through_the_split():
     assert (field.groupby("RaceId").size() == 3).all()
 
 
-def test_inner_class_param_accepts_recency_weighted():
+def test_inner_class_param_accepts_recency_weighted() -> None:
     from race_analytics.algorithms.recency_weighted_win_classifier import (
         RecencyWeightedWinClassifier,
     )
@@ -309,6 +320,7 @@ def test_inner_class_param_accepts_recency_weighted():
     )
     algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))
 
-    assert isinstance(algo._flat_model, RecencyWeightedWinClassifier)
-    assert isinstance(algo._jumps_model, RecencyWeightedWinClassifier)
-    assert isinstance(algo._fallback_model, RecencyWeightedWinClassifier)
+    # the three inner models are private attrs assembled during construction/fit
+    assert isinstance(algo._flat_model, RecencyWeightedWinClassifier)  # pyright: ignore[reportPrivateUsage]
+    assert isinstance(algo._jumps_model, RecencyWeightedWinClassifier)  # pyright: ignore[reportPrivateUsage]
+    assert isinstance(algo._fallback_model, RecencyWeightedWinClassifier)  # pyright: ignore[reportPrivateUsage]

@@ -34,7 +34,7 @@ from race_analytics.features.transforms import (
 
 
 @pytest.fixture
-def surface_dataframe():
+def surface_dataframe() -> pd.DataFrame:
     race_with_unknown_surface = td.Race(
         1, "Test", 2, "Test Course", td.dt("01/01/2021 12:00:00"), "Unknown"
     )
@@ -53,12 +53,12 @@ def surface_dataframe():
     return pd.DataFrame(data)
 
 
-def test_encode_surfaces_has_expected_columns(surface_dataframe):
+def test_encode_surfaces_has_expected_columns(surface_dataframe: pd.DataFrame) -> None:
     result = encode_surfaces(surface_dataframe)
     assert all(col in result.columns for col in surface_categories)
 
 
-def test_encode_surfaces_has_expected_values(surface_dataframe):
+def test_encode_surfaces_has_expected_values(surface_dataframe: pd.DataFrame) -> None:
     result = encode_surfaces(surface_dataframe)
     expected = {
         "Surface_AllWeather": [0.0, 1.0, 0.0, 0.0],
@@ -69,7 +69,7 @@ def test_encode_surfaces_has_expected_values(surface_dataframe):
         assert result[col].tolist() == values
 
 
-def test_encode_surfaces_drops_unknown_surface(surface_dataframe):
+def test_encode_surfaces_drops_unknown_surface(surface_dataframe: pd.DataFrame) -> None:
     result = encode_surfaces(surface_dataframe)
     assert "Surface_Unknown" not in result.columns
 
@@ -78,7 +78,7 @@ def test_encode_surfaces_drops_unknown_surface(surface_dataframe):
 
 
 @pytest.fixture
-def going_dataframe():
+def going_dataframe() -> pd.DataFrame:
     data = [
         td.RaceResult.new(
             td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, "Good"
@@ -102,14 +102,14 @@ def going_dataframe():
     return pd.DataFrame(data)
 
 
-def test_encode_going_has_all_six_categories(going_dataframe):
+def test_encode_going_has_all_six_categories(going_dataframe: pd.DataFrame) -> None:
     result = encode_going(going_dataframe)
     for col in going_categories:
         assert col in result.columns
         assert result[col].dtype == float
 
 
-def test_encode_going_standard_values(going_dataframe):
+def test_encode_going_standard_values(going_dataframe: pd.DataFrame) -> None:
     result = encode_going(going_dataframe)
     assert result.iloc[0]["Going_Good"] == 1.0
     assert result.iloc[1]["Going_Soft"] == 1.0
@@ -154,7 +154,7 @@ def test_encode_going_defaults_empty_to_good():
 
 
 @pytest.fixture
-def race_type_dataframe():
+def race_type_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "RaceType": ["Hurdle", "Flat", "SteepleChase", "Other"],
@@ -162,13 +162,15 @@ def race_type_dataframe():
     )
 
 
-def test_encode_race_type_has_all_four_categories(race_type_dataframe):
+def test_encode_race_type_has_all_four_categories(
+    race_type_dataframe: pd.DataFrame,
+) -> None:
     result = encode_race_type(race_type_dataframe)
     for col in race_type_categories:
         assert col in result.columns
 
 
-def test_encode_race_type_values(race_type_dataframe):
+def test_encode_race_type_values(race_type_dataframe: pd.DataFrame) -> None:
     result = encode_race_type(race_type_dataframe)
     assert result.iloc[0]["RaceType_Hurdle"] == 1.0
     assert result.iloc[1]["RaceType_Flat"] == 1.0
@@ -188,7 +190,7 @@ def test_encode_race_type_unknown_produces_all_zeros():
 
 
 @pytest.fixture
-def speed_dataframe():
+def speed_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "DistanceInMeters": [1600, 2000, 1200, 800],
@@ -202,23 +204,23 @@ def speed_dataframe():
     )
 
 
-def test_calculate_speed_adds_speed_column(speed_dataframe):
+def test_calculate_speed_adds_speed_column(speed_dataframe: pd.DataFrame) -> None:
     result = calculate_speed(speed_dataframe)
     assert "Speed" in result.columns
 
 
-def test_calculate_speed_calculates_correctly(speed_dataframe):
+def test_calculate_speed_calculates_correctly(speed_dataframe: pd.DataFrame) -> None:
     result = calculate_speed(speed_dataframe)
     assert result.iloc[0]["Speed"] == pytest.approx(16.0)
     assert result.iloc[1]["Speed"] == pytest.approx(16.0)
 
 
-def test_calculate_speed_clamps_over_20_to_nan(speed_dataframe):
+def test_calculate_speed_clamps_over_20_to_nan(speed_dataframe: pd.DataFrame) -> None:
     result = calculate_speed(speed_dataframe)
     assert pd.isna(result.iloc[3]["Speed"])
 
 
-def test_calculate_speed_preserves_exactly_20(speed_dataframe):
+def test_calculate_speed_preserves_exactly_20(speed_dataframe: pd.DataFrame) -> None:
     result = calculate_speed(speed_dataframe)
     assert result.iloc[2]["Speed"] == pytest.approx(20.0)
 
@@ -227,23 +229,23 @@ def test_calculate_speed_preserves_exactly_20(speed_dataframe):
 
 
 @pytest.fixture
-def weight_dataframe():
+def weight_dataframe() -> pd.DataFrame:
     return pd.DataFrame({"WeightInPounds": [126.0, 9.0, 0.0, 130.0, 10.0]})
 
 
-def test_clean_weight_sets_invalid_to_nan(weight_dataframe):
+def test_clean_weight_sets_invalid_to_nan(weight_dataframe: pd.DataFrame) -> None:
     result = clean_weight(weight_dataframe)
     assert pd.isna(result.iloc[1]["WeightInPounds"])
     assert pd.isna(result.iloc[2]["WeightInPounds"])
 
 
-def test_clean_weight_preserves_valid_weights(weight_dataframe):
+def test_clean_weight_preserves_valid_weights(weight_dataframe: pd.DataFrame) -> None:
     result = clean_weight(weight_dataframe)
     assert result.iloc[0]["WeightInPounds"] == 126.0
     assert result.iloc[3]["WeightInPounds"] == 130.0
 
 
-def test_clean_weight_preserves_boundary_value(weight_dataframe):
+def test_clean_weight_preserves_boundary_value(weight_dataframe: pd.DataFrame) -> None:
     result = clean_weight(weight_dataframe)
     assert result.iloc[4]["WeightInPounds"] == 10.0
 
@@ -252,7 +254,7 @@ def test_clean_weight_preserves_boundary_value(weight_dataframe):
 
 
 @pytest.fixture
-def horse_count_dataframe():
+def horse_count_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
         [
             td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
@@ -270,12 +272,14 @@ def horse_count_dataframe():
     )
 
 
-def test_calculate_horse_count_adds_column(horse_count_dataframe):
+def test_calculate_horse_count_adds_column(horse_count_dataframe: pd.DataFrame) -> None:
     result = calculate_horse_count(horse_count_dataframe)
     assert "HorseCount" in result.columns
 
 
-def test_calculate_horse_count_correct_counts(horse_count_dataframe):
+def test_calculate_horse_count_correct_counts(
+    horse_count_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_horse_count(horse_count_dataframe)
     ballinrobe = result[result["RaceId"] == td.Ballinrobe20thAt1515.RaceId]
     chelmsford = result[result["RaceId"] == td.Chelmsford21stAt1805.RaceId]
@@ -283,7 +287,9 @@ def test_calculate_horse_count_correct_counts(horse_count_dataframe):
     assert (chelmsford["HorseCount"] == 2).all()
 
 
-def test_calculate_horse_count_preserves_row_count(horse_count_dataframe):
+def test_calculate_horse_count_preserves_row_count(
+    horse_count_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_horse_count(horse_count_dataframe)
     assert len(result) == len(horse_count_dataframe)
 
@@ -292,7 +298,7 @@ def test_calculate_horse_count_preserves_row_count(horse_count_dataframe):
 
 
 @pytest.fixture
-def weight_change_dataframe():
+def weight_change_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "WeightInPounds": [130.0, 128.0, 126.0],
@@ -301,20 +307,24 @@ def weight_change_dataframe():
     )
 
 
-def test_calculate_weight_change_adds_column(weight_change_dataframe):
+def test_calculate_weight_change_adds_column(
+    weight_change_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_weight_change(weight_change_dataframe)
     assert "WeightChange" in result.columns
 
 
-def test_calculate_weight_change_computes_correctly(weight_change_dataframe):
+def test_calculate_weight_change_computes_correctly(
+    weight_change_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_weight_change(weight_change_dataframe)
     assert result.iloc[0]["WeightChange"] == pytest.approx(4.0)
     assert result.iloc[1]["WeightChange"] == pytest.approx(-2.0)
 
 
 def test_calculate_weight_change_is_nan_when_last_weight_is_nan(
-    weight_change_dataframe,
-):
+    weight_change_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_weight_change(weight_change_dataframe)
     assert pd.isna(result.iloc[2]["WeightChange"])
 
@@ -323,7 +333,7 @@ def test_calculate_weight_change_is_nan_when_last_weight_is_nan(
 
 
 @pytest.fixture
-def distance_change_dataframe():
+def distance_change_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "DistanceInMeters": [2000.0, 1600.0, 1200.0],
@@ -332,20 +342,24 @@ def distance_change_dataframe():
     )
 
 
-def test_calculate_distance_change_adds_column(distance_change_dataframe):
+def test_calculate_distance_change_adds_column(
+    distance_change_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_distance_change(distance_change_dataframe)
     assert "DistanceChange" in result.columns
 
 
-def test_calculate_distance_change_computes_correctly(distance_change_dataframe):
+def test_calculate_distance_change_computes_correctly(
+    distance_change_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_distance_change(distance_change_dataframe)
     assert result.iloc[0]["DistanceChange"] == pytest.approx(400.0)
     assert result.iloc[1]["DistanceChange"] == pytest.approx(-400.0)
 
 
 def test_calculate_distance_change_is_nan_when_last_distance_is_nan(
-    distance_change_dataframe,
-):
+    distance_change_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_distance_change(distance_change_dataframe)
     assert pd.isna(result.iloc[2]["DistanceChange"])
 
@@ -354,7 +368,7 @@ def test_calculate_distance_change_is_nan_when_last_distance_is_nan(
 
 
 @pytest.fixture
-def surface_switch_dataframe():
+def surface_switch_dataframe() -> pd.DataFrame:
     # Row 0: Turf → Turf (same surface)
     # Row 1: Turf → AllWeather (surface switch)
     # Row 2: AllWeather → AllWeather (same surface)
@@ -371,23 +385,31 @@ def surface_switch_dataframe():
     )
 
 
-def test_calculate_surface_switch_adds_column(surface_switch_dataframe):
+def test_calculate_surface_switch_adds_column(
+    surface_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_surface_switch(surface_switch_dataframe)
     assert "SurfaceSwitch" in result.columns
 
 
-def test_calculate_surface_switch_same_surface_gives_zero(surface_switch_dataframe):
+def test_calculate_surface_switch_same_surface_gives_zero(
+    surface_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_surface_switch(surface_switch_dataframe)
     assert result.iloc[0]["SurfaceSwitch"] == pytest.approx(0.0)
     assert result.iloc[2]["SurfaceSwitch"] == pytest.approx(0.0)
 
 
-def test_calculate_surface_switch_different_surface_gives_one(surface_switch_dataframe):
+def test_calculate_surface_switch_different_surface_gives_one(
+    surface_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_surface_switch(surface_switch_dataframe)
     assert result.iloc[1]["SurfaceSwitch"] == pytest.approx(1.0)
 
 
-def test_calculate_surface_switch_is_nan_when_no_prior_race(surface_switch_dataframe):
+def test_calculate_surface_switch_is_nan_when_no_prior_race(
+    surface_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_surface_switch(surface_switch_dataframe)
     assert pd.isna(result.iloc[3]["SurfaceSwitch"])
 
@@ -396,7 +418,7 @@ def test_calculate_surface_switch_is_nan_when_no_prior_race(surface_switch_dataf
 
 
 @pytest.fixture
-def code_switch_dataframe():
+def code_switch_dataframe() -> pd.DataFrame:
     # Row 0: Flat → Flat (same code)
     # Row 1: Flat → Hurdle (code switch: flat to jumps)
     # Row 2: Hurdle → Flat (code switch: jumps to flat)
@@ -416,32 +438,42 @@ def code_switch_dataframe():
     )
 
 
-def test_calculate_code_switch_adds_column(code_switch_dataframe):
+def test_calculate_code_switch_adds_column(code_switch_dataframe: pd.DataFrame) -> None:
     result = calculate_code_switch(code_switch_dataframe)
     assert "CodeSwitch" in result.columns
 
 
-def test_calculate_code_switch_flat_to_flat_is_zero(code_switch_dataframe):
+def test_calculate_code_switch_flat_to_flat_is_zero(
+    code_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_code_switch(code_switch_dataframe)
     assert result.iloc[0]["CodeSwitch"] == pytest.approx(0.0)
 
 
-def test_calculate_code_switch_flat_to_jumps_is_one(code_switch_dataframe):
+def test_calculate_code_switch_flat_to_jumps_is_one(
+    code_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_code_switch(code_switch_dataframe)
     assert result.iloc[1]["CodeSwitch"] == pytest.approx(1.0)
 
 
-def test_calculate_code_switch_jumps_to_flat_is_one(code_switch_dataframe):
+def test_calculate_code_switch_jumps_to_flat_is_one(
+    code_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_code_switch(code_switch_dataframe)
     assert result.iloc[2]["CodeSwitch"] == pytest.approx(1.0)
 
 
-def test_calculate_code_switch_jumps_to_jumps_is_zero(code_switch_dataframe):
+def test_calculate_code_switch_jumps_to_jumps_is_zero(
+    code_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_code_switch(code_switch_dataframe)
     assert result.iloc[3]["CodeSwitch"] == pytest.approx(0.0)
 
 
-def test_calculate_code_switch_is_nan_when_no_prior_race(code_switch_dataframe):
+def test_calculate_code_switch_is_nan_when_no_prior_race(
+    code_switch_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_code_switch(code_switch_dataframe)
     assert pd.isna(result.iloc[4]["CodeSwitch"])
 
@@ -520,7 +552,7 @@ def test_calculate_age_features_missing_column_gives_nan():
 
 
 @pytest.fixture
-def draw_dataframe():
+def draw_dataframe() -> pd.DataFrame:
     # Row 0: flat, stall 2 of 8 horses → DrawPct 0.25
     # Row 1: flat, stall 6 of 8 horses → DrawPct 0.75
     # Row 2: jumps race → NaN
@@ -534,24 +566,32 @@ def draw_dataframe():
     )
 
 
-def test_calculate_draw_features_flat_race_computes_draw_pct(draw_dataframe):
+def test_calculate_draw_features_flat_race_computes_draw_pct(
+    draw_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_draw_features(draw_dataframe)
     assert result.iloc[0]["DrawPct"] == pytest.approx(0.25)
 
 
-def test_calculate_draw_features_reldraw_is_centered(draw_dataframe):
+def test_calculate_draw_features_reldraw_is_centered(
+    draw_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_draw_features(draw_dataframe)
     assert result.iloc[0]["RelDraw"] == pytest.approx(-0.25)
     assert result.iloc[1]["RelDraw"] == pytest.approx(0.25)
 
 
-def test_calculate_draw_features_jumps_race_gives_nan(draw_dataframe):
+def test_calculate_draw_features_jumps_race_gives_nan(
+    draw_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_draw_features(draw_dataframe)
     assert pd.isna(result.iloc[2]["DrawPct"])
     assert pd.isna(result.iloc[2]["RelDraw"])
 
 
-def test_calculate_draw_features_null_stall_gives_nan(draw_dataframe):
+def test_calculate_draw_features_null_stall_gives_nan(
+    draw_dataframe: pd.DataFrame,
+) -> None:
     result = calculate_draw_features(draw_dataframe)
     assert pd.isna(result.iloc[3]["DrawPct"])
     assert pd.isna(result.iloc[3]["RelDraw"])

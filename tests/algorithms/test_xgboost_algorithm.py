@@ -4,24 +4,30 @@ import pandas as pd
 import pytest
 
 from race_analytics.algorithms.xgboost_algorithm import XGBoostAlgorithm
-from race_analytics.features.race_data import RaceDataBuilder
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 _AS_OF = datetime(2026, 1, 1)
 
 
-def _fit(algo, rows):
+def _fit(algo: XGBoostAlgorithm, rows: list[dict[str, object]]) -> XGBoostAlgorithm:
     algo.fit(RaceDataBuilder().wrap_training(pd.DataFrame(rows)))
     return algo
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # pd.Timestamp accepts a datetime at runtime
     )
 
 
-def _train_row(race_id: int, horse_id: int, speed: float = 16.0) -> dict:
+def _train_row(race_id: int, horse_id: int, speed: float = 16.0) -> dict[str, object]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -67,7 +73,7 @@ def _train_row(race_id: int, horse_id: int, speed: float = 16.0) -> dict:
     }
 
 
-def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
+def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict[str, object]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -80,7 +86,7 @@ def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
     }
 
 
-def _horse_stat(horse_id: int, last_race_speed: float = 16.0) -> dict:
+def _horse_stat(horse_id: int, last_race_speed: float = 16.0) -> dict[str, object]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -104,7 +110,7 @@ def _horse_stat(horse_id: int, last_race_speed: float = 16.0) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, object]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -131,7 +137,9 @@ def trained_algo() -> XGBoostAlgorithm:
 # ================================================================
 
 
-def test_predict_returns_raceId_and_horseId_columns(trained_algo):
+def test_predict_returns_raceId_and_horseId_columns(
+    trained_algo: XGBoostAlgorithm,
+) -> None:
     races = pd.DataFrame([_race_row(10, h, h) for h in [101, 102, 103]])
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
@@ -146,7 +154,7 @@ def test_predict_returns_raceId_and_horseId_columns(trained_algo):
 # ================================================================
 
 
-def test_predict_returns_one_row_per_race(trained_algo):
+def test_predict_returns_one_row_per_race(trained_algo: XGBoostAlgorithm) -> None:
     races = pd.DataFrame(
         [_race_row(10, h, h) for h in [101, 102, 103]]
         + [_race_row(20, h, h) for h in [201, 202, 203]]
@@ -168,7 +176,7 @@ def test_predict_returns_one_row_per_race(trained_algo):
 # ================================================================
 
 
-def test_predict_excludes_races_exceeding_max_horses():
+def test_predict_excludes_races_exceeding_max_horses() -> None:
     algo = XGBoostAlgorithm(max_horses=5)
     rows = [
         _train_row(race_id=r, horse_id=r * 10 + h)

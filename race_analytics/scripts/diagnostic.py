@@ -105,7 +105,7 @@ def _segment_table(picks: pd.DataFrame, col: str) -> pd.DataFrame:
     agg["WinRate"] = agg["_wins"] / agg["Bets"]
     agg["ROI"] = agg["_profit"] / agg["Bets"]
     agg["Coverage"] = agg["Bets"] / total
-    return agg[[col, "Bets", "WinRate", "ROI", "Coverage"]]
+    return agg[[col, "Bets", "WinRate", "ROI", "Coverage"]]  # pyright: ignore[reportReturnType]  # column-list index yields DataFrame
 
 
 # ── I/O helpers ───────────────────────────────────────────────────────────────
@@ -120,7 +120,7 @@ def _load_results_extra(picks: pd.DataFrame) -> pd.DataFrame:
         glob.glob(os.path.join(_DATA_DIR, "Results_*.csv")), reverse=True
     ):
         df = pd.read_csv(path, usecols=lambda c: c in want)
-        df = df[df["RaceId"].isin(race_ids)].drop_duplicates("RaceId")
+        df = df[df["RaceId"].isin(race_ids)].drop_duplicates("RaceId")  # pyright: ignore[reportCallIssue]  # boolean-indexing yields DataFrame
         if not df.empty:
             dfs.append(df)
         if dfs and set(pd.concat(dfs)["RaceId"].unique()) >= race_ids:
@@ -160,7 +160,7 @@ def _print_segment_table(seg: pd.DataFrame, col: str, title: str) -> None:
     print("  " + "-" * 60)
     for _, row in seg.sort_values("ROI", ascending=False).iterrows():
         print(
-            f"  {row[col]!s:<25} {int(row['Bets']):>6} {row['WinRate']:>8.3f}"
+            f"  {row[col]!s:<25} {int(row['Bets']):>6} {row['WinRate']:>8.3f}"  # pyright: ignore[reportArgumentType]  # scalar cell is int-convertible
             f" {row['ROI']:>8.3f} {row['Coverage']:>9.3f}"
         )
 
@@ -209,7 +209,7 @@ def _candidate_rules(picks: pd.DataFrame) -> pd.DataFrame:
         if len(kept) / total < 0.50:
             return
         wr = (kept["FinishingPosition"] == 1).mean() if len(kept) else 0.0
-        r = _roi(kept)
+        r = _roi(kept)  # pyright: ignore[reportArgumentType]  # boolean-indexing yields DataFrame
         rows.append(
             {
                 "Rule": name,
@@ -278,12 +278,14 @@ def _print_candidate_rules(rules: pd.DataFrame) -> None:
 # ── Feature nominations ────────────────────────────────────────────────────────
 
 
-def _feature_nominations(picks: pd.DataFrame, segment_stats: dict) -> list:
+def _feature_nominations(
+    picks: pd.DataFrame, segment_stats: dict[str, pd.DataFrame]
+) -> list[str]:
     baseline_roi = _roi(picks)
     noms = []
     for label, seg in segment_stats.items():
         col = seg.columns[0]
-        weak = seg[seg["ROI"] < baseline_roi - 0.05].sort_values("ROI")
+        weak = seg[seg["ROI"] < baseline_roi - 0.05].sort_values("ROI")  # pyright: ignore[reportCallIssue]  # boolean-indexing yields DataFrame
         for _, row in weak.iterrows():
             noms.append(
                 (

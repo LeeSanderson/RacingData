@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import pandas as pd
 import pytest
@@ -7,20 +8,26 @@ from race_analytics.algorithms.ratings_xgboost import (
     RatingsXGBoostAlgorithm,
     RatingsXGBoostUngatedAlgorithm,
 )
-from race_analytics.features.race_data import RaceDataBuilder
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
 _AS_OF = datetime(2026, 1, 1)
 
 
-def _train():
+def _train() -> RaceData:
     return RaceDataBuilder().wrap_training(_make_train_df())
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted as Timestamp at runtime
     )
 
 
@@ -34,7 +41,7 @@ _LASTRACE_RATINGS = [
 
 def _train_row(
     horse_id: int, race_id: int, wins: int = 0, last_tsr: float | None = 90.0
-) -> dict:
+) -> dict[str, Any]:
     """A training row carrying BOTH current-race ratings and the previous-race
     LastRace* ratings, so a test can prove the current-race ones are dropped."""
     return {
@@ -93,7 +100,7 @@ def _train_row(
     }
 
 
-def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
+def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict[str, Any]:
     """A race card row with NO rating columns — ratings must come from horse_stats."""
     return {
         "RaceId": race_id,
@@ -107,7 +114,7 @@ def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
     }
 
 
-def _horse_stat(horse_id: int, last_tsr: float | None = 90.0) -> dict:
+def _horse_stat(horse_id: int, last_tsr: float | None = 90.0) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -134,7 +141,7 @@ def _horse_stat(horse_id: int, last_tsr: float | None = 90.0) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, Any]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -166,10 +173,10 @@ def trained_algo() -> RatingsXGBoostAlgorithm:
 # ── fit() uses previous-race ratings, never current-race ratings ──────────────
 
 
-def test_fit_uses_lastrace_ratings_and_excludes_current_race_ratings():
+def test_fit_uses_lastrace_ratings_and_excludes_current_race_ratings() -> None:
     algo = RatingsXGBoostAlgorithm(max_horses=10)
     algo.fit(_train())
-    feats = algo._feature_cols
+    feats = algo._feature_cols  # pyright: ignore[reportPrivateUsage]  # test inspects the fitted feature list
     for col in _LASTRACE_RATINGS:
         assert col in feats, f"missing previous-race rating feature: {col}"
         assert f"Rel{col}" in feats, f"missing relative previous-race feature: Rel{col}"
@@ -181,7 +188,7 @@ def test_fit_uses_lastrace_ratings_and_excludes_current_race_ratings():
 # ── require_tsr gate is defined on LastRaceTopSpeedRating coverage ─────────────
 
 
-def test_gate_filters_on_lastrace_tsr_coverage():
+def test_gate_filters_on_lastrace_tsr_coverage() -> None:
     gated = RatingsXGBoostAlgorithm(max_horses=10)
     gated.fit(_train())
     ungated = RatingsXGBoostUngatedAlgorithm(max_horses=10)
@@ -212,7 +219,9 @@ def test_gate_filters_on_lastrace_tsr_coverage():
 # ── predict() sources ratings from horse_stats, not the race card ─────────────
 
 
-def test_predict_works_from_card_without_rating_columns(trained_algo):
+def test_predict_works_from_card_without_rating_columns(
+    trained_algo: RatingsXGBoostAlgorithm,
+) -> None:
     races = pd.DataFrame([_race_row(10, h, h) for h in [101, 102, 103]])
     assert not any(c in races.columns for c in _CURRENT_RATINGS), (
         "card fixture should carry no rating columns"
@@ -229,7 +238,7 @@ def test_predict_works_from_card_without_rating_columns(trained_algo):
 # ── both variants stay registered for comparison ─────────────────────────────
 
 
-def test_both_variants_registered():
+def test_both_variants_registered() -> None:
     from race_analytics.algorithms import ALGORITHMS
 
     names = [type(a).__name__ for a in ALGORITHMS]

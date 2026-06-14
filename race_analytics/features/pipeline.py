@@ -90,14 +90,27 @@ class FeaturePipeline:
         self._race_features = combined.drop("_batch_id", axis=1)
         return result
 
+    def _require_race_features(self) -> pd.DataFrame:
+        """The processed race-features frame, asserting `process()` ran first.
+
+        `_race_features` is None until `process()` populates it; the save_* methods
+        are only valid afterwards. Centralising the guard keeps the precondition in
+        one place and narrows the Optional for the type checker.
+        """
+        if self._race_features is None:
+            raise RuntimeError(
+                "process() must run before saving features — _race_features is unset"
+            )
+        return self._race_features
+
     def save_race_features(self, path: str) -> None:
-        self._race_features.to_csv(path, index=False)
+        self._require_race_features().to_csv(path, index=False)
 
     def save_horse_stats(self, path: str) -> None:
-        extract_horse_stats(self._race_features).to_csv(path, index=False)
+        extract_horse_stats(self._require_race_features()).to_csv(path, index=False)
 
     def save_jockey_stats(self, path: str) -> None:
-        extract_jockey_stats(self._race_features).to_csv(path, index=False)
+        extract_jockey_stats(self._require_race_features()).to_csv(path, index=False)
 
     def save_trainer_stats(self, path: str) -> None:
-        extract_trainer_stats(self._race_features).to_csv(path, index=False)
+        extract_trainer_stats(self._require_race_features()).to_csv(path, index=False)

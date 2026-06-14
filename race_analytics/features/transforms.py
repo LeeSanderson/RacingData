@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 import pandas as pd
 
@@ -98,7 +100,7 @@ def calculate_horse_count(races: pd.DataFrame) -> pd.DataFrame:
     groups = (
         races.groupby(["RaceId"])["HorseId"]
         .agg(["count"])
-        .rename(columns={"count": "HorseCount"})
+        .rename(columns={"count": "HorseCount"})  # pyright: ignore[reportCallIssue]  # rename(columns=) overload gap
     )
     return races.merge(groups, how="left", on=["RaceId"])
 
@@ -184,7 +186,7 @@ def calculate_race_class(races: pd.DataFrame) -> pd.DataFrame:
         races["RaceClass"] = np.nan
         return races
 
-    def _parse(v):
+    def _parse(v: Any) -> float:
         try:
             i = int(str(v).strip())
             return float(i) if 1 <= i <= 7 else 0.0
@@ -222,9 +224,9 @@ def calculate_draw_features(races: pd.DataFrame) -> pd.DataFrame:
         else pd.Series(False, index=races.index)
     )
     count = races["HorseCount"]
-    valid = is_flat & stall.notna() & (count > 0)
+    valid = is_flat & stall.notna() & (count > 0)  # pyright: ignore[reportAttributeAccessIssue]  # to_numeric returns a Series
     draw_pct = pd.Series(np.nan, index=races.index, dtype=float)
-    draw_pct[valid] = stall[valid] / count[valid]
+    draw_pct[valid] = stall[valid] / count[valid]  # pyright: ignore[reportIndexIssue]  # Series supports boolean-mask indexing
     races["DrawPct"] = draw_pct
     races["RelDraw"] = draw_pct - 0.5
     return races

@@ -8,44 +8,52 @@ itself, not an estimator's internals.
 """
 
 from datetime import datetime
+from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from race_analytics.algorithms.regressor import RegressorAlgorithm
-from race_analytics.features.race_data import RaceDataBuilder
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 _AS_OF = datetime(2026, 1, 1)
 
 
-def _rd(df):
+def _rd(df: pd.DataFrame) -> RaceData:
     return RaceDataBuilder().wrap_training(df)
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # pd.Timestamp accepts a datetime at runtime
     )
 
 
 class _RankByLastRaceSpeed:
     """Fake regressor: PredictedSpeed == the row's LastRaceSpeed (higher ranks first)."""
 
-    def fit(self, X, y):
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> "_RankByLastRaceSpeed":
         return self
 
-    def predict(self, X):
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
         return pd.DataFrame(X)["LastRaceSpeed"].to_numpy()
 
 
 class _CharacterizationRegressor(RegressorAlgorithm):
-    def _create_model(self):
+    def _create_model(self) -> Any:
         return _RankByLastRaceSpeed()
 
 
 def _train_row(
     race_id: int, horse_id: int, speed: float, last_race_speed: float
-) -> dict:
+) -> dict[str, object]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -91,7 +99,7 @@ def _train_row(
     }
 
 
-def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
+def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict[str, object]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -104,7 +112,7 @@ def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
     }
 
 
-def _horse_stat(horse_id: int, last_race_speed: float | None) -> dict:
+def _horse_stat(horse_id: int, last_race_speed: float | None) -> dict[str, object]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -128,7 +136,7 @@ def _horse_stat(horse_id: int, last_race_speed: float | None) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, object]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -155,7 +163,7 @@ def _fitted_algo(max_horses: int = 5) -> _CharacterizationRegressor:
 # ── characterization: the pinned top-1 picks across merge/dropna/count gates ──
 
 
-def test_regressor_top1_picks_are_pinned():
+def test_regressor_top1_picks_are_pinned() -> None:
     algo = _fitted_algo(max_horses=5)
 
     # Race 10: complete, LastRaceSpeed 15<16<17 -> horse 103 wins.
@@ -179,7 +187,7 @@ def test_regressor_top1_picks_are_pinned():
     assert result.to_records(index=False).tolist() == [(10, 103)]
 
 
-def test_regressor_full_field_winner_per_complete_race():
+def test_regressor_full_field_winner_per_complete_race() -> None:
     algo = _fitted_algo(max_horses=10)
     races = pd.DataFrame(
         [_race_row(10, h, h) for h in (101, 102, 103)]

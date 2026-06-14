@@ -49,3 +49,26 @@ extend-exclude = ["race_analytics/notebooks"]
 select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "RUF", "NPY", "PD"]
 # PD011 (.values access) is noisy; the formatter owns line length, so E501 is off.
 ignore = ["PD011", "E501"]
+
+[tool.pyright]
+# Single type-checker config (no pyrightconfig.json — it would silently override
+# this block). Pylance reads the same block, so editor squiggles == CLI errors.
+include = ["race_analytics", "tests"]
+# Notebooks are out of scope (PRD), mirroring the ruff extend-exclude.
+exclude = ["**/__pycache__", "race_analytics/notebooks"]
+# Resolve the installed pandas/numpy/sklearn/xgboost from the project venv so the
+# type checker reports real diagnostics, not a flood of missing-import errors.
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.10"
+typeCheckingMode = "strict"
+# Mute the pandas/numpy "no-stubs -> Unknown" family: ~1,250 of strict's 1,505
+# raw diagnostics are library-stub noise. Muting these six leaves the ~200 genuine
+# type issues while preserving strict's param/return-annotation discipline and
+# every real-bug rule.
+reportUnknownMemberType = "none"
+reportUnknownVariableType = "none"
+reportUnknownArgumentType = "none"
+reportUnknownLambdaType = "none"
+reportMissingTypeStubs = "none"
+reportMissingTypeArgument = "none"

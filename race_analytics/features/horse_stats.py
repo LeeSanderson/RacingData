@@ -69,7 +69,7 @@ class CalculateHorsesStats(RaceDataProcessor):
     ) -> None:
         slice_date = np.datetime64(daily_slice["Off"].min().date())
         slice_horses = daily_slice["HorseId"].unique().tolist()
-        horse_history = history[history["HorseId"].isin(slice_horses)].sort_values(
+        horse_history = history[history["HorseId"].isin(slice_horses)].sort_values(  # pyright: ignore[reportCallIssue]  # boolean-indexing yields DataFrame
             ["HorseId", "Off"], ascending=[True, False]
         )
         if len(horse_history) > 0:
@@ -233,5 +233,5 @@ def extract_horse_stats(races: pd.DataFrame) -> pd.DataFrame:
         *going_categories,
         *race_type_categories,
     ]
-    out = last[[c for c in cols if c in last.columns]].rename(columns=rename)
+    out = last[[c for c in cols if c in last.columns]].rename(columns=rename)  # pyright: ignore[reportCallIssue]  # rename(columns=) overload gap
     return out.merge(_extract_last3_stats(races), on="HorseId", how="left")

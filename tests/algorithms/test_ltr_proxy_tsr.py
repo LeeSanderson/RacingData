@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any
 
 import pandas as pd
 
@@ -8,20 +9,26 @@ from race_analytics.algorithms import (
 from race_analytics.algorithms.ranking_classifier import (
     RankingClassifier as LTRProxyTSRAlgorithm,
 )
-from race_analytics.features.race_data import RaceDataBuilder
+from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 D1 = datetime(2021, 1, 1)
 _AS_OF = datetime(2026, 1, 1)
 
 
-def _rd(df):
+def _rd(df: pd.DataFrame) -> RaceData:
     return RaceDataBuilder().wrap_training(df)
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted as Timestamp at runtime
     )
 
 
@@ -31,7 +38,7 @@ def _train_row(
     off: datetime = D1,
     wins: int = 0,
     finishing_position: int = 2,
-) -> dict:
+) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "RaceId": race_id,
@@ -89,7 +96,7 @@ def _train_row(
     }
 
 
-def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
+def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict[str, Any]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -105,7 +112,7 @@ def _race_row(race_id: int, horse_id: int, jockey_id: int) -> dict:
     }
 
 
-def _horse_stat(horse_id: int) -> dict:
+def _horse_stat(horse_id: int) -> dict[str, Any]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -132,7 +139,7 @@ def _horse_stat(horse_id: int) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, Any]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -157,7 +164,7 @@ def _make_train_df() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def test_ltr_fit_and_predict_field_returns_required_columns():
+def test_ltr_fit_and_predict_field_returns_required_columns() -> None:
     algo = LTRProxyTSRAlgorithm(max_horses=10)
     algo.fit(_rd(_make_train_df()))
 
@@ -172,12 +179,12 @@ def test_ltr_fit_and_predict_field_returns_required_columns():
         assert col in result.columns, f"missing column: {col}"
 
 
-def test_gated_ranking_classifier_uses_gap_metric():
+def test_gated_ranking_classifier_uses_gap_metric() -> None:
     algo = AbstainWrapperLTRAlgorithm(max_horses=10)
     assert algo.get_confidence_gate().metric == "gap"
 
 
-def test_ltr_and_abstain_registered_in_algorithms():
+def test_ltr_and_abstain_registered_in_algorithms() -> None:
     from race_analytics.algorithms import ALGORITHMS
 
     names = [type(a).__name__ for a in ALGORITHMS]

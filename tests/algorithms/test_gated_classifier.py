@@ -13,17 +13,25 @@ D1 = datetime(2021, 1, 1)
 _AS_OF = datetime(2026, 1, 1)
 
 
-def _rd(df):
+def _rd(df: pd.DataFrame) -> RaceData:
     return RaceDataBuilder().wrap_training(df)
 
 
-def _serve(races, horse_stats, jockey_stats):
+def _serve(
+    races: pd.DataFrame, horse_stats: pd.DataFrame, jockey_stats: pd.DataFrame
+) -> RaceData:
     return RaceDataBuilder().build_serving_from_stats(
-        races, horse_stats, jockey_stats, None, as_of=_AS_OF
+        races,
+        horse_stats,
+        jockey_stats,
+        None,
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted by Timestamp-typed param at runtime
     )
 
 
-def _train_row(horse_id: int, race_id: int, off: datetime = D1, wins: int = 0) -> dict:
+def _train_row(
+    horse_id: int, race_id: int, off: datetime = D1, wins: int = 0
+) -> dict[str, object]:
     return {
         "HorseId": horse_id,
         "RaceId": race_id,
@@ -88,7 +96,7 @@ def _train_row(horse_id: int, race_id: int, off: datetime = D1, wins: int = 0) -
 
 def _race_row(
     race_id: int, horse_id: int, jockey_id: int, distance_m: float = 1600.0
-) -> dict:
+) -> dict[str, object]:
     return {
         "RaceId": race_id,
         "HorseId": horse_id,
@@ -101,7 +109,7 @@ def _race_row(
     }
 
 
-def _horse_stat(horse_id: int) -> dict:
+def _horse_stat(horse_id: int) -> dict[str, object]:
     return {
         "HorseId": horse_id,
         "LastOff": _LONG_AGO,
@@ -128,7 +136,7 @@ def _horse_stat(horse_id: int) -> dict:
     }
 
 
-def _jockey_stat(jockey_id: int) -> dict:
+def _jockey_stat(jockey_id: int) -> dict[str, object]:
     return {
         "JockeyId": jockey_id,
         "LastOff": _LONG_AGO,
@@ -159,7 +167,9 @@ def trained_gated() -> GatedClassifier:
 # ── 1. fit + predict_field returns expected columns ───────────────────────────
 
 
-def test_fit_predict_field_returns_expected_columns(trained_gated):
+def test_fit_predict_field_returns_expected_columns(
+    trained_gated: GatedClassifier,
+) -> None:
     races = pd.DataFrame([_race_row(10, h, h) for h in [101, 102, 103]])
     horse_stats = pd.DataFrame([_horse_stat(h) for h in [101, 102, 103]])
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
@@ -171,7 +181,7 @@ def test_fit_predict_field_returns_expected_columns(trained_gated):
 # ── 2. predict returns one row per race (rank 1 only) ─────────────────────────
 
 
-def test_predict_returns_one_row_per_race(trained_gated):
+def test_predict_returns_one_row_per_race(trained_gated: GatedClassifier) -> None:
     races = pd.DataFrame(
         [_race_row(10, h, h) for h in [101, 102, 103]]
         + [_race_row(20, h, h) for h in [201, 202, 203]]
@@ -226,7 +236,7 @@ def test_gate_calibrated_after_fit():
     inner = WinClassifier(max_horses=10)
     algo = GatedClassifier(inner, coverage=0.7)
     algo.fit(_rd(_make_train_df()))
-    assert algo.get_confidence_gate()._calib_scores
+    assert algo.get_confidence_gate()._calib_scores  # pyright: ignore[reportPrivateUsage]  # intentional internal-state assertion
 
 
 # ── 6. characterization: threshold matches the legacy round trip on the fixture ─
@@ -247,10 +257,12 @@ class _AsOfScoringInner(FieldPredictorBaseAlgorithm):
     """Fake inner whose in-sample WinProbability encodes data.as_of, so that the
     gate's calibration is observably driven by the RaceData it was handed."""
 
-    def fit(self, data) -> None:
+    def fit(self, data: RaceData) -> None:
         pass
 
-    def predict_field(self, data, *args, **kwargs):
+    def predict_field(
+        self, data: RaceData, *args: object, **kwargs: object
+    ) -> pd.DataFrame:
         out = data.frame[["RaceId", "HorseId"]].copy()
         out["WinProbability"] = (data.as_of.day % 28) / 28.0
         out["PredictedRank"] = 1.0
@@ -267,6 +279,6 @@ def _race_data(as_of: pd.Timestamp) -> RaceData:
 def test_different_as_of_calibrates_differently():
     early = GatedClassifier(_AsOfScoringInner(), coverage=0.7)
     late = GatedClassifier(_AsOfScoringInner(), coverage=0.7)
-    early.fit(_race_data(pd.Timestamp("2021-01-05")))
-    late.fit(_race_data(pd.Timestamp("2021-01-20")))
+    early.fit(_race_data(pd.Timestamp("2021-01-05")))  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
+    late.fit(_race_data(pd.Timestamp("2021-01-20")))  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     assert early.get_confidence_gate().threshold != late.get_confidence_gate().threshold

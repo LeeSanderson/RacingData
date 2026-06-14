@@ -1,4 +1,4 @@
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import numpy as np
 import pandas as pd
@@ -18,7 +18,7 @@ class BinaryWinClassifierAlgorithm(FieldPredictorBaseAlgorithm):
 
     extra_nan_tolerant_features: ClassVar[list[str]] = []
 
-    def __init__(self, classifier, max_horses: int = 10):
+    def __init__(self, classifier: Any, max_horses: int = 10):
         self._classifier = classifier
         super().__init__(max_horses)
 
@@ -29,7 +29,7 @@ class BinaryWinClassifierAlgorithm(FieldPredictorBaseAlgorithm):
         return self._add_race_context(data)
 
     def _fit_estimator(
-        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight
+        self, X: pd.DataFrame, frame: pd.DataFrame, sample_weight: np.ndarray | None
     ) -> None:
         fit_kwargs = (
             {"sample_weight": sample_weight} if sample_weight is not None else {}

@@ -1,13 +1,15 @@
+from typing import Any
+
 import numpy as np
 import pandas as pd
 import pytest
 
 from race_analytics.scripts.diagnostic import (
-    _distance_band,
-    _field_size_band,
-    _identify_picks,
-    _roi,
-    _segment_table,
+    _distance_band,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
+    _field_size_band,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
+    _identify_picks,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
+    _roi,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
+    _segment_table,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
 )
 
 # ================================================================
@@ -15,31 +17,31 @@ from race_analytics.scripts.diagnostic import (
 # ================================================================
 
 
-def test_distance_band_under_6f():
+def test_distance_band_under_6f() -> None:
     assert _distance_band(5 * 201.168) == "<6f"
 
 
-def test_distance_band_6_to_8f():
+def test_distance_band_6_to_8f() -> None:
     assert _distance_band(7 * 201.168) == "6-8f"
 
 
-def test_distance_band_8_to_10f():
+def test_distance_band_8_to_10f() -> None:
     assert _distance_band(9 * 201.168) == "8-10f"
 
 
-def test_distance_band_10_to_12f():
+def test_distance_band_10_to_12f() -> None:
     assert _distance_band(11 * 201.168) == "10-12f"
 
 
-def test_distance_band_12_to_16f():
+def test_distance_band_12_to_16f() -> None:
     assert _distance_band(14 * 201.168) == "12-16f"
 
 
-def test_distance_band_16f_plus():
+def test_distance_band_16f_plus() -> None:
     assert _distance_band(20 * 201.168) == "16f+"
 
 
-def test_distance_band_na_returns_unknown():
+def test_distance_band_na_returns_unknown() -> None:
     assert _distance_band(float("nan")) == "Unknown"
 
 
@@ -48,27 +50,27 @@ def test_distance_band_na_returns_unknown():
 # ================================================================
 
 
-def test_field_size_band_small():
+def test_field_size_band_small() -> None:
     assert _field_size_band(4) == "2-5"
 
 
-def test_field_size_band_medium():
+def test_field_size_band_medium() -> None:
     assert _field_size_band(7) == "6-8"
 
 
-def test_field_size_band_large():
+def test_field_size_band_large() -> None:
     assert _field_size_band(10) == "9-12"
 
 
-def test_field_size_band_very_large():
+def test_field_size_band_very_large() -> None:
     assert _field_size_band(15) == "13-16"
 
 
-def test_field_size_band_huge():
+def test_field_size_band_huge() -> None:
     assert _field_size_band(20) == "17+"
 
 
-def test_field_size_band_boundaries():
+def test_field_size_band_boundaries() -> None:
     assert _field_size_band(5) == "2-5"
     assert _field_size_band(6) == "6-8"
     assert _field_size_band(8) == "6-8"
@@ -79,7 +81,7 @@ def test_field_size_band_boundaries():
     assert _field_size_band(17) == "17+"
 
 
-def test_field_size_band_na_returns_unknown():
+def test_field_size_band_na_returns_unknown() -> None:
     assert _field_size_band(float("nan")) == "Unknown"
 
 
@@ -88,12 +90,12 @@ def test_field_size_band_na_returns_unknown():
 # ================================================================
 
 
-def _race_df(rows):
+def _race_df(rows: list[dict[str, Any]]) -> pd.DataFrame:
     """Helper to build a minimal eval-CSV-shaped DataFrame."""
     return pd.DataFrame(rows)
 
 
-def test_identify_picks_single_horse_per_race():
+def test_identify_picks_single_horse_per_race() -> None:
     df = _race_df(
         [
             {
@@ -111,7 +113,7 @@ def test_identify_picks_single_horse_per_race():
     assert result.iloc[0]["HorseId"] == 10
 
 
-def test_identify_picks_selects_highest_win_probability():
+def test_identify_picks_selects_highest_win_probability() -> None:
     df = _race_df(
         [
             {
@@ -145,7 +147,7 @@ def test_identify_picks_selects_highest_win_probability():
     assert result.iloc[0]["HorseId"] == 11
 
 
-def test_identify_picks_falls_back_to_predicted_score_when_no_probability():
+def test_identify_picks_falls_back_to_predicted_score_when_no_probability() -> None:
     df = _race_df(
         [
             {
@@ -171,7 +173,7 @@ def test_identify_picks_falls_back_to_predicted_score_when_no_probability():
     assert result.iloc[0]["HorseId"] == 11
 
 
-def test_identify_picks_ignores_na_win_probability_rows_if_another_has_value():
+def test_identify_picks_ignores_na_win_probability_rows_if_another_has_value() -> None:
     df = _race_df(
         [
             {
@@ -196,7 +198,7 @@ def test_identify_picks_ignores_na_win_probability_rows_if_another_has_value():
     assert result.iloc[0]["HorseId"] == 11
 
 
-def test_identify_picks_one_pick_per_algo_per_race_per_fold():
+def test_identify_picks_one_pick_per_algo_per_race_per_fold() -> None:
     df = _race_df(
         [
             {
@@ -242,16 +244,16 @@ def test_identify_picks_one_pick_per_algo_per_race_per_fold():
 # ================================================================
 
 
-def _picks_df(rows):
+def _picks_df(rows: list[dict[str, Any]]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-def test_roi_empty_returns_zero():
+def test_roi_empty_returns_zero() -> None:
     df = _picks_df([])
     assert _roi(df) == pytest.approx(0.0)
 
 
-def test_roi_all_wins():
+def test_roi_all_wins() -> None:
     df = _picks_df(
         [
             {"FinishingPosition": 1, "DecimalOdds": 3.0},
@@ -262,7 +264,7 @@ def test_roi_all_wins():
     assert _roi(df) == pytest.approx(3.0)
 
 
-def test_roi_all_losses():
+def test_roi_all_losses() -> None:
     df = _picks_df(
         [
             {"FinishingPosition": 2, "DecimalOdds": 3.0},
@@ -273,7 +275,7 @@ def test_roi_all_losses():
     assert _roi(df) == pytest.approx(-1.0)
 
 
-def test_roi_mixed():
+def test_roi_mixed() -> None:
     df = _picks_df(
         [
             {"FinishingPosition": 1, "DecimalOdds": 4.0},
@@ -302,12 +304,12 @@ def _seg_picks():
     )
 
 
-def test_segment_table_has_required_columns():
+def test_segment_table_has_required_columns() -> None:
     result = _segment_table(_seg_picks(), "RaceType")
     assert list(result.columns) == ["RaceType", "Bets", "WinRate", "ROI", "Coverage"]
 
 
-def test_segment_table_bets_count_per_segment():
+def test_segment_table_bets_count_per_segment() -> None:
     result = _segment_table(_seg_picks(), "RaceType")
     flat_row = result[result["RaceType"] == "Flat"].iloc[0]
     hurdle_row = result[result["RaceType"] == "Hurdle"].iloc[0]
@@ -315,7 +317,7 @@ def test_segment_table_bets_count_per_segment():
     assert hurdle_row["Bets"] == 3
 
 
-def test_segment_table_win_rate_per_segment():
+def test_segment_table_win_rate_per_segment() -> None:
     result = _segment_table(_seg_picks(), "RaceType")
     flat_row = result[result["RaceType"] == "Flat"].iloc[0]
     hurdle_row = result[result["RaceType"] == "Hurdle"].iloc[0]
@@ -323,7 +325,7 @@ def test_segment_table_win_rate_per_segment():
     assert hurdle_row["WinRate"] == pytest.approx(1 / 3)
 
 
-def test_segment_table_roi_per_segment():
+def test_segment_table_roi_per_segment() -> None:
     result = _segment_table(_seg_picks(), "RaceType")
     # Flat: profit = (4-1) + (-1) = 2; roi = 2/2 = 1.0
     flat_row = result[result["RaceType"] == "Flat"].iloc[0]
@@ -333,6 +335,6 @@ def test_segment_table_roi_per_segment():
     assert hurdle_row["ROI"] == pytest.approx(1.0)
 
 
-def test_segment_table_coverage_sums_to_one():
+def test_segment_table_coverage_sums_to_one() -> None:
     result = _segment_table(_seg_picks(), "RaceType")
     assert result["Coverage"].sum() == pytest.approx(1.0)

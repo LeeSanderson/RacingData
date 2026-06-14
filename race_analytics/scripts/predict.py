@@ -5,6 +5,7 @@ from datetime import datetime
 import pandas as pd
 
 from race_analytics.algorithms import ACTIVE_ALGORITHM
+from race_analytics.algorithms.base import FieldPredictor
 from race_analytics.features.race_data import RaceDataBuilder
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -42,7 +43,9 @@ _OUTPUT_COLS = [
 ]
 
 
-def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
+def predict(
+    data_path: str | None = None, algorithm: FieldPredictor | None = None
+) -> pd.DataFrame:
     if data_path is None:
         data_path = _DATA_DIR
     if algorithm is None:
@@ -70,7 +73,7 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
         horse_stats,
         jockey_stats,
         trainer_stats,
-        as_of=pd.Timestamp(datetime.today()),
+        as_of=pd.Timestamp(datetime.today()),  # pyright: ignore[reportArgumentType]  # Timestamp ctor return includes NaTType arm
         max_horses=algorithm.max_horses,
     )
     field = algorithm.predict_field(serve_data)
@@ -78,8 +81,8 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
         winners = pd.DataFrame(columns=["RaceId", "HorseId"])
     else:
         winners = (
-            field[field["PredictedRank"] == 1][["RaceId", "HorseId", "WinProbability"]]
-            .drop_duplicates(subset=["RaceId"])
+            field[field["PredictedRank"] == 1][["RaceId", "HorseId", "WinProbability"]]  # pyright: ignore[reportCallIssue]  # column-list index narrows to DataFrame
+            .drop_duplicates(subset=["RaceId"])  # pyright: ignore[reportAttributeAccessIssue]  # result is a DataFrame
             .reset_index(drop=True)
         )
 
@@ -99,7 +102,7 @@ def predict(data_path: str | None = None, algorithm=None) -> pd.DataFrame:
         drop=True
     )
     predictions.to_csv(output_path, index=False)
-    return predictions
+    return predictions  # pyright: ignore[reportReturnType]  # column-list index yields DataFrame
 
 
 if __name__ == "__main__":

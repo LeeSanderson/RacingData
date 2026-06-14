@@ -6,14 +6,14 @@ from race_analytics.features.trainer_stats import CalculateTrainerStats
 from race_analytics.features.transforms import calculateHorsesPerRace
 
 
-def _smith_on(df, race):
+def _smith_on(df: pd.DataFrame, race: td.Race) -> pd.Series:
     return df[
         (df["TrainerId"] == td.TrainerSmith.TrainerId) & (df["RaceId"] == race.RaceId)
     ].iloc[0]
 
 
 @pytest.fixture
-def three_day_df():
+def three_day_df() -> pd.DataFrame:
     """TrainerSmith: day1=2nd/2, day2=1st/2, day3=1st/3."""
     data = [
         td.RaceResult.new(
@@ -70,13 +70,13 @@ def three_day_df():
     return calculateHorsesPerRace(df)
 
 
-def test_trainer_with_no_prior_races_keeps_default(three_day_df):
+def test_trainer_with_no_prior_races_keeps_default(three_day_df: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(three_day_df)
     row = _smith_on(three_day_df, td.Ballinrobe20thAt1515)
     assert row["TrainerNumberOfPriorRaces"] == pytest.approx(1.0)
 
 
-def test_number_of_prior_races_increments(three_day_df):
+def test_number_of_prior_races_increments(three_day_df: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(three_day_df)
     assert (
         _smith_on(three_day_df, td.Chelmsford21stAt1805)["TrainerNumberOfPriorRaces"]
@@ -88,14 +88,14 @@ def test_number_of_prior_races_increments(three_day_df):
     )
 
 
-def test_win_percentage_no_wins(three_day_df):
+def test_win_percentage_no_wins(three_day_df: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(three_day_df)
     assert _smith_on(three_day_df, td.Chelmsford21stAt1805)[
         "TrainerWinPercentage"
     ] == pytest.approx(0.0)
 
 
-def test_win_percentage_with_wins(three_day_df):
+def test_win_percentage_with_wins(three_day_df: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(three_day_df)
     # day3 history: day1(2nd) + day2(1st) → 1/2 = 0.5
     assert _smith_on(three_day_df, td.Nottingham22ndAt1815)[
@@ -103,7 +103,7 @@ def test_win_percentage_with_wins(three_day_df):
     ] == pytest.approx(0.5)
 
 
-def test_top3_percentage(three_day_df):
+def test_top3_percentage(three_day_df: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(three_day_df)
     # day3 history: day1(2nd<4) + day2(1st<4) → 2/2 = 1.0
     assert _smith_on(three_day_df, td.Nottingham22ndAt1815)[
@@ -111,7 +111,7 @@ def test_top3_percentage(three_day_df):
     ] == pytest.approx(1.0)
 
 
-def test_avg_relative_finishing_position(three_day_df):
+def test_avg_relative_finishing_position(three_day_df: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(three_day_df)
     # day1=2nd/2=1.0, day2=1st/2=0.5 → mean=0.75
     assert _smith_on(three_day_df, td.Nottingham22ndAt1815)[
@@ -119,7 +119,7 @@ def test_avg_relative_finishing_position(three_day_df):
     ] == pytest.approx(0.75)
 
 
-def test_incremental_processing_across_days(three_day_df):
+def test_incremental_processing_across_days(three_day_df: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(three_day_df)
     day1 = _smith_on(three_day_df, td.Ballinrobe20thAt1515)
     day3 = _smith_on(three_day_df, td.Nottingham22ndAt1815)

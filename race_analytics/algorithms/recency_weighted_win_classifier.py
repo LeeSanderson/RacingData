@@ -1,3 +1,5 @@
+from typing import Any
+
 import numpy as np
 import pandas as pd
 
@@ -14,7 +16,7 @@ class RecencyWeightedWinClassifier(WinClassifier):
     decay_lambda=0.01 gives half-weight at ~70 days.
     """
 
-    def __init__(self, decay_lambda: float = 0.01, **kwargs):
+    def __init__(self, decay_lambda: float = 0.01, **kwargs: Any):
         self._decay_lambda = decay_lambda
         super().__init__(**kwargs)
 

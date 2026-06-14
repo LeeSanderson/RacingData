@@ -209,7 +209,12 @@ def _enriched_history() -> pd.DataFrame:
     return df
 
 
-def _legacy_reference_merged(races, horse_stats, jockey_stats, trainer_stats):
+def _legacy_reference_merged(
+    races: pd.DataFrame,
+    horse_stats: pd.DataFrame,
+    jockey_stats: pd.DataFrame,
+    trainer_stats: pd.DataFrame | None,
+) -> pd.DataFrame:
     """Frozen reimplementation of the legacy `_run_prediction` merge + transform
     sequence, independent of production code. `as_of` is pinned to `_AS_OF` so
     `DaysRested` is deterministic."""
@@ -256,36 +261,44 @@ def _legacy_reference_merged(races, horse_stats, jockey_stats, trainer_stats):
 # ── characterization (the must-pass gate) ──────────────────────────────────────
 
 
-def test_build_serving_from_stats_reproduces_merged_intermediate():
+def test_build_serving_from_stats_reproduces_merged_intermediate() -> None:
     races, hs, js, ts = _races(), _horse_stats(), _jockey_stats(), _trainer_stats()
     legacy = _legacy_reference_merged(races, hs, js, ts)
-    rd = RaceDataBuilder().build_serving_from_stats(races, hs, js, ts, as_of=_AS_OF)
+    rd = RaceDataBuilder().build_serving_from_stats(races, hs, js, ts, as_of=_AS_OF)  # pyright: ignore[reportArgumentType]  # datetime accepted at runtime (pd.Timestamp(as_of))
     pd.testing.assert_frame_equal(rd.frame, legacy)
 
 
-def test_build_serving_from_stats_without_trainer_stats():
+def test_build_serving_from_stats_without_trainer_stats() -> None:
     races, hs, js = _races(), _horse_stats(), _jockey_stats()
     legacy = _legacy_reference_merged(races, hs, js, None)
-    rd = RaceDataBuilder().build_serving_from_stats(races, hs, js, None, as_of=_AS_OF)
+    rd = RaceDataBuilder().build_serving_from_stats(races, hs, js, None, as_of=_AS_OF)  # pyright: ignore[reportArgumentType]  # datetime accepted at runtime (pd.Timestamp(as_of))
     pd.testing.assert_frame_equal(rd.frame, legacy)
 
 
-def test_build_serving_from_stats_does_not_mutate_inputs():
+def test_build_serving_from_stats_does_not_mutate_inputs() -> None:
     races = _races()
     before = races.copy()
     RaceDataBuilder().build_serving_from_stats(
-        races, _horse_stats(), _jockey_stats(), _trainer_stats(), as_of=_AS_OF
+        races,
+        _horse_stats(),
+        _jockey_stats(),
+        _trainer_stats(),
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted at runtime (pd.Timestamp(as_of))
     )
     pd.testing.assert_frame_equal(races, before)
 
 
-def test_build_serving_from_stats_clamps_days_rested_to_ten():
+def test_build_serving_from_stats_clamps_days_rested_to_ten() -> None:
     # LastOff far in the past -> raw DaysRested >> 10, must clamp to 10.
     races = _races()
     hs = _horse_stats()
     hs["LastOff"] = pd.Timestamp("2020-01-01")
     rd = RaceDataBuilder().build_serving_from_stats(
-        races, hs, _jockey_stats(), _trainer_stats(), as_of=_AS_OF
+        races,
+        hs,
+        _jockey_stats(),
+        _trainer_stats(),
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted at runtime (pd.Timestamp(as_of))
     )
     assert (rd.frame["DaysRested"] == 10).all()
 
@@ -293,29 +306,31 @@ def test_build_serving_from_stats_clamps_days_rested_to_ten():
 # ── builder parity: training vs serving ────────────────────────────────────────
 
 
-def test_build_serving_matches_build_serving_from_stats_over_decomposed_history():
+def test_build_serving_matches_build_serving_from_stats_over_decomposed_history() -> (
+    None
+):
     hist = _enriched_history()
     card = race_card(hist)
     as_of = pd.Timestamp("2026-06-13")
     builder = RaceDataBuilder()
-    serve = builder.build_serving(card, hist, as_of)
+    serve = builder.build_serving(card, hist, as_of)  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     from_stats = builder.build_serving_from_stats(
         card,
         extract_horse_stats(hist),
         extract_jockey_stats(hist),
         extract_trainer_stats(hist),
-        as_of,
+        as_of,  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     )
     pd.testing.assert_frame_equal(serve.frame, from_stats.frame)
 
 
-def test_build_training_and_serving_expose_same_feature_columns():
+def test_build_training_and_serving_expose_same_feature_columns() -> None:
     hist = _enriched_history()
     card = race_card(hist)
     as_of = pd.Timestamp("2026-06-13")
     builder = RaceDataBuilder()
-    train = builder.build_training(hist, as_of)
-    serve = builder.build_serving(card, hist, as_of)
+    train = builder.build_training(hist, as_of)  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
+    serve = builder.build_serving(card, hist, as_of)  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     universe = REQUIRED_PREDICTORS + OPTIONAL_PREDICTORS
     train_feats = [c for c in universe if c in train.frame.columns]
     serve_feats = [c for c in universe if c in serve.frame.columns]
@@ -323,25 +338,27 @@ def test_build_training_and_serving_expose_same_feature_columns():
     assert train_feats  # non-empty
 
 
-def test_build_training_has_labels_serving_does_not():
+def test_build_training_has_labels_serving_does_not() -> None:
     hist = _enriched_history()
     as_of = pd.Timestamp("2026-06-13")
     builder = RaceDataBuilder()
-    assert builder.build_training(hist, as_of).has_labels is True
-    assert builder.build_serving(race_card(hist), hist, as_of).has_labels is False
+    assert builder.build_training(hist, as_of).has_labels is True  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
+    assert (
+        builder.build_serving(race_card(hist), hist, as_of).has_labels is False  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
+    )
 
 
-def test_build_training_clamps_days_rested():
+def test_build_training_clamps_days_rested() -> None:
     hist = _enriched_history()
     hist["DaysRested"] = 99.0
-    rd = RaceDataBuilder().build_training(hist, pd.Timestamp("2026-06-13"))
+    rd = RaceDataBuilder().build_training(hist, pd.Timestamp("2026-06-13"))  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     assert (rd.frame["DaysRested"] == 10).all()
 
 
 # ── wrap_training: wrap an already-enriched frame WITHOUT re-running the chain ──
 
 
-def test_wrap_training_does_not_re_run_canonical_chain():
+def test_wrap_training_does_not_re_run_canonical_chain() -> None:
     """The harness feeds wrap_training a frame already enriched by _engineer_features
     (which does NOT compute WeightChange/DistanceChange/SurfaceSwitch/CodeSwitch).
     Unlike build_training, wrap_training must NOT add those columns — re-encoding
@@ -354,7 +371,7 @@ def test_wrap_training_does_not_re_run_canonical_chain():
         assert col not in rd.frame.columns, f"{col} was added — chain was re-run"
 
 
-def test_wrap_training_clamps_day_since_features():
+def test_wrap_training_clamps_day_since_features() -> None:
     hist = _enriched_history()
     hist["DaysRested"] = 99.0
     hist["DaysSinceJockeyLastRaced"] = 50.0
@@ -363,14 +380,14 @@ def test_wrap_training_clamps_day_since_features():
     assert (rd.frame["DaysSinceJockeyLastRaced"] == 10).all()
 
 
-def test_wrap_training_as_of_is_one_day_past_last_race():
+def test_wrap_training_as_of_is_one_day_past_last_race() -> None:
     hist = _enriched_history()
     hist.loc[hist.index[-1], "Off"] = pd.Timestamp("2026-05-10 14:00:00")
     rd = RaceDataBuilder().wrap_training(hist, max_horses=10)
     assert rd.as_of == pd.Timestamp("2026-05-11")
 
 
-def test_wrap_training_retains_labels():
+def test_wrap_training_retains_labels() -> None:
     rd = RaceDataBuilder().wrap_training(_enriched_history(), max_horses=10)
     assert rd.has_labels is True
 
@@ -378,39 +395,39 @@ def test_wrap_training_retains_labels():
 # ── RaceData value-object semantics ────────────────────────────────────────────
 
 
-def test_has_labels_detects_label_columns():
+def test_has_labels_detects_label_columns() -> None:
     as_of = pd.Timestamp("2026-06-13")
     assert (
-        RaceData(pd.DataFrame({"RaceId": [1], "Wins": [1]}), as_of).has_labels is True
+        RaceData(pd.DataFrame({"RaceId": [1], "Wins": [1]}), as_of).has_labels is True  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     )
     assert (
-        RaceData(pd.DataFrame({"RaceId": [1], "Speed": [15.0]}), as_of).has_labels
+        RaceData(pd.DataFrame({"RaceId": [1], "Speed": [15.0]}), as_of).has_labels  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
         is True
     )
     assert (
-        RaceData(pd.DataFrame({"RaceId": [1], "HorseId": [2]}), as_of).has_labels
+        RaceData(pd.DataFrame({"RaceId": [1], "HorseId": [2]}), as_of).has_labels  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
         is False
     )
 
 
-def test_feature_frame_selects_requested_columns_in_order():
+def test_feature_frame_selects_requested_columns_in_order() -> None:
     df = pd.DataFrame({"a": [1], "b": [2], "c": [3]})
-    rd = RaceData(df, pd.Timestamp("2026-06-13"))
+    rd = RaceData(df, pd.Timestamp("2026-06-13"))  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     assert list(rd.feature_frame(["c", "a"]).columns) == ["c", "a"]
 
 
-def test_with_columns_is_copy_on_write():
+def test_with_columns_is_copy_on_write() -> None:
     df = pd.DataFrame({"RaceId": [1, 2]})
-    rd = RaceData(df, pd.Timestamp("2026-06-13"), max_horses=8)
+    rd = RaceData(df, pd.Timestamp("2026-06-13"), max_horses=8)  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     rd2 = rd.with_columns(x=[10, 20])
     assert "x" not in rd.frame.columns  # original untouched
     assert list(rd2.frame["x"]) == [10, 20]
     assert rd2.as_of == rd.as_of and rd2.max_horses == 8
 
 
-def test_subset_filters_rows_copy_on_write():
+def test_subset_filters_rows_copy_on_write() -> None:
     df = pd.DataFrame({"RaceId": [1, 2, 3]})
-    rd = RaceData(df, pd.Timestamp("2026-06-13"))
+    rd = RaceData(df, pd.Timestamp("2026-06-13"))  # pyright: ignore[reportArgumentType]  # pd.Timestamp ctor return includes NaTType arm
     rd2 = rd.subset(df["RaceId"] > 1)
     assert list(rd2.frame["RaceId"]) == [2, 3]
     assert len(rd.frame) == 3  # original untouched

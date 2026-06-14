@@ -6,14 +6,14 @@ from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAn
 # --- helpers ---
 
 
-def _make_df(*race_results):
+def _make_df(*race_results: td.RaceResult) -> pd.DataFrame:
     return pd.DataFrame(list(race_results))
 
 
 # --- tests ---
 
 
-def test_first_day_races_are_never_known():
+def test_first_day_races_are_never_known() -> None:
     df = _make_df(
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.ComeSeptember, td.SimonTorrens),
@@ -22,7 +22,7 @@ def test_first_day_races_are_never_known():
     assert df["KnownHorseAndJockey"].tolist() == [False, False]
 
 
-def test_race_with_all_known_horses_and_jockeys_is_marked_known():
+def test_race_with_all_known_horses_and_jockeys_is_marked_known() -> None:
     df = _make_df(
         # Day 1: establish history
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
@@ -36,7 +36,7 @@ def test_race_with_all_known_horses_and_jockeys_is_marked_known():
     assert df["KnownHorseAndJockey"].iloc[3]
 
 
-def test_race_with_unknown_horse_is_not_marked_known():
+def test_race_with_unknown_horse_is_not_marked_known() -> None:
     df = _make_df(
         # Day 1: only SecretSecret/PaulTown seen
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
@@ -49,7 +49,7 @@ def test_race_with_unknown_horse_is_not_marked_known():
     assert not df["KnownHorseAndJockey"].iloc[2]
 
 
-def test_race_with_unknown_jockey_is_not_marked_known():
+def test_race_with_unknown_jockey_is_not_marked_known() -> None:
     df = _make_df(
         # Day 1: SecretSecret/PaulTown and ComeSeptember/SimonTorrens seen
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
@@ -63,7 +63,7 @@ def test_race_with_unknown_jockey_is_not_marked_known():
     assert not df["KnownHorseAndJockey"].iloc[3]
 
 
-def test_incremental_processing_updates_correctly_across_days():
+def test_incremental_processing_updates_correctly_across_days() -> None:
     """Unknown on day 1; fully known by day 3 as prior data accumulates."""
     df = _make_df(
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),

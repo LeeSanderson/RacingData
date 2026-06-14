@@ -16,11 +16,13 @@ from race_analytics.features.loader import (
 _OFF_FMT = "%m/%d/%Y %H:%M:%S"
 
 
-def _write_results_csv(path: Path, rows: list[dict]) -> None:
+def _write_results_csv(path: Path, rows: list[dict[str, object]]) -> None:
     pd.DataFrame(rows).to_csv(path, index=False)
 
 
-def _race_row(race_id: int, off: str, status: str = "CompletedRace") -> dict:
+def _race_row(
+    race_id: int, off: str, status: str = "CompletedRace"
+) -> dict[str, object]:
     return {"RaceId": race_id, "Off": off, "ResultStatus": status}
 
 
@@ -29,7 +31,7 @@ def _race_row(race_id: int, off: str, status: str = "CompletedRace") -> dict:
 # ---------------------------------------------------------------------------
 
 
-def test_load_results_concatenates_multiple_files(tmp_path):
+def test_load_results_concatenates_multiple_files(tmp_path: Path) -> None:
     _write_results_csv(
         tmp_path / "Results_202601.csv",
         [
@@ -48,7 +50,7 @@ def test_load_results_concatenates_multiple_files(tmp_path):
     assert set(df["RaceId"]) == {1, 2, 3}
 
 
-def test_load_results_sorted_chronologically(tmp_path):
+def test_load_results_sorted_chronologically(tmp_path: Path) -> None:
     # Feb file written first, then Jan — output must still be chronological
     _write_results_csv(
         tmp_path / "Results_202602.csv",
@@ -68,7 +70,7 @@ def test_load_results_sorted_chronologically(tmp_path):
     assert df["RaceId"].tolist() == [1, 2, 3]
 
 
-def test_load_results_off_column_is_datetime(tmp_path):
+def test_load_results_off_column_is_datetime(tmp_path: Path) -> None:
     _write_results_csv(
         tmp_path / "Results_202601.csv",
         [
@@ -79,12 +81,12 @@ def test_load_results_off_column_is_datetime(tmp_path):
     assert pd.api.types.is_datetime64_any_dtype(df["Off"])
 
 
-def test_load_results_raises_when_no_files(tmp_path):
+def test_load_results_raises_when_no_files(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         load_results(tmp_path)
 
 
-def test_load_results_months_limits_to_most_recent_files(tmp_path):
+def test_load_results_months_limits_to_most_recent_files(tmp_path: Path) -> None:
     # Three monthly files; months=2 should drop the oldest (Jan).
     _write_results_csv(
         tmp_path / "Results_202601.csv",
@@ -108,7 +110,7 @@ def test_load_results_months_limits_to_most_recent_files(tmp_path):
     assert set(df["RaceId"]) == {2, 3}
 
 
-def test_load_results_months_none_loads_all_files(tmp_path):
+def test_load_results_months_none_loads_all_files(tmp_path: Path) -> None:
     _write_results_csv(
         tmp_path / "Results_202601.csv",
         [
@@ -130,7 +132,7 @@ def test_load_results_months_none_loads_all_files(tmp_path):
 # ---------------------------------------------------------------------------
 
 
-def test_load_race_cards_returns_dataframe(tmp_path):
+def test_load_race_cards_returns_dataframe(tmp_path: Path) -> None:
     pd.DataFrame(
         [
             {"RaceId": 10, "Off": "05/26/2026 14:00:00", "HorseId": 100},
@@ -141,7 +143,7 @@ def test_load_race_cards_returns_dataframe(tmp_path):
     assert df.iloc[0]["RaceId"] == 10
 
 
-def test_load_race_cards_off_column_is_datetime(tmp_path):
+def test_load_race_cards_off_column_is_datetime(tmp_path: Path) -> None:
     pd.DataFrame([{"RaceId": 10, "Off": "05/26/2026 14:00:00"}]).to_csv(
         tmp_path / "TodaysRaceCards.csv", index=False
     )
@@ -149,7 +151,7 @@ def test_load_race_cards_off_column_is_datetime(tmp_path):
     assert pd.api.types.is_datetime64_any_dtype(df["Off"])
 
 
-def test_load_race_cards_raises_when_file_missing(tmp_path):
+def test_load_race_cards_raises_when_file_missing(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         load_race_cards(tmp_path)
 
@@ -159,7 +161,7 @@ def test_load_race_cards_raises_when_file_missing(tmp_path):
 # ---------------------------------------------------------------------------
 
 
-def test_load_stats_returns_correct_file(tmp_path):
+def test_load_stats_returns_correct_file(tmp_path: Path) -> None:
     pd.DataFrame([{"HorseId": 1, "LastOff": "2026-01-10 14:00:00"}]).to_csv(
         tmp_path / "Horse_Stats.csv", index=False
     )
@@ -168,12 +170,12 @@ def test_load_stats_returns_correct_file(tmp_path):
     assert "HorseId" in df.columns
 
 
-def test_load_stats_raises_when_file_missing(tmp_path):
+def test_load_stats_raises_when_file_missing(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         load_stats(tmp_path, "Horse_Stats.csv")
 
 
-def test_load_stats_loads_each_standard_stats_file(tmp_path):
+def test_load_stats_loads_each_standard_stats_file(tmp_path: Path) -> None:
     for name in (
         "Race_Features.csv",
         "Horse_Stats.csv",

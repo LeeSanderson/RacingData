@@ -74,5 +74,5 @@ class GatedClassifier(FieldPredictorBaseAlgorithm):
             return field
         gate = self._confidence_gate
         race_scores = field.groupby("RaceId")["WinProbability"].apply(gate.score)
-        kept = race_scores[race_scores >= gate.threshold].index
+        kept = race_scores[race_scores >= gate.threshold].index  # pyright: ignore[reportAttributeAccessIssue]  # apply yields a Series
         return field[field["RaceId"].isin(kept)].copy()
