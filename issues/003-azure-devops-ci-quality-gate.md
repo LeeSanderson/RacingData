@@ -53,3 +53,28 @@ needed then).
 
 - User story 13 (CI pipeline runs quality checks + tests on every push to `main`)
 - User story 22 (scheduled 6 AM data-refresh pipeline left untouched)
+
+## Progress note — 2026-06-14 (mechanical YAML slice done; portal steps remain)
+
+The AFK-doable part is committed; the two human-only acceptance criteria remain for Lee.
+
+**Done (committed):**
+- `.azuredevops/quality-checks.yml` authored: `trigger: [main]` + `pr: [main]`,
+  `pool: vmImage: 'windows-latest'`, steps `UsePythonVersion@0 (3.12)` →
+  `pip install -e ".[dev]"` → `pre-commit run --all-files` → `python -m pytest tests/`.
+  Uses the default self-checkout (unlike `scheduled-run.yml`, which clones manually to
+  push back). `.[dev]` is quoted so PowerShell doesn't glob the `[dev]` extra.
+- `.azuredevops/scheduled-run.yml` left byte-for-byte unchanged (verified via git status).
+- Locally ran the exact CI steps to de-risk the first run: gate
+  `pre-commit run --all-files` → ruff + ruff-format + pyright (strict, venv) all Passed;
+  `python -m pytest tests/` → 422 passed. Both YAML files parse.
+- NOTE: 006 already added pyright to the pre-commit config, so the gate this pipeline
+  invokes runs ruff **and** pyright now (the issue's "ruff only at this stage" note
+  assumed 003 landed before 006; CI just invokes the gate command, so order is moot).
+
+**Remaining (HITL — Lee, via the Azure DevOps portal):**
+- [ ] Register the pipeline: New Pipeline → GitHub → point at `.azuredevops/quality-checks.yml`
+      → authorize the agent pool / GitHub service connection.
+- [ ] Confirm at least one **green** run on `main`.
+
+Once the green run is confirmed, move this file to `issues/done/`.

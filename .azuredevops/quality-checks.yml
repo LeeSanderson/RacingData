@@ -1,0 +1,52 @@
+# Quality-gate CI pipeline for the race_analytics Python package.
+#
+# Separate from .azuredevops/scheduled-run.yml (the 6 AM data-refresh job, left
+# untouched) — this is the durable safety net: it runs the single gate command plus
+# the test suite on every push to main (and on PRs into main, ready for a future
+# branch workflow), so a forgotten local check is still caught. PRD user story 13.
+#
+# The gate is `pre-commit run --all-files` — the exact same command humans, the commit
+# hook, and AI agents run, so CI never drifts from local. It runs ruff (lint + format)
+# and pyright (strict). pyright is a repo:local/system hook, so it uses the pyright
+# installed by `.[dev]` and resolves the installed pandas/numpy. The test suite is a
+# separate step (too slow to live in the commit hook).
+
+trigger:
+  - main
+
+pr:
+  - main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+  - task: UsePythonVersion@0
+    displayName: Use Python 3.12
+    inputs:
+      versionSpec: '3.12'
+
+  - task: PowerShell@2
+    displayName: Install package + pinned dev toolchain
+    inputs:
+      targetType: inline
+      workingDirectory: '$(Build.SourcesDirectory)'
+      script: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]"
+
+  - task: PowerShell@2
+    displayName: Quality gate — pre-commit run --all-files (ruff + pyright)
+    inputs:
+      targetType: inline
+      workingDirectory: '$(Build.SourcesDirectory)'
+      script: |
+        pre-commit run --all-files
+
+  - task: PowerShell@2
+    displayName: Tests — pytest
+    inputs:
+      targetType: inline
+      workingDirectory: '$(Build.SourcesDirectory)'
+      script: |
+        python -m pytest tests/
