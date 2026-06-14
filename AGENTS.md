@@ -26,9 +26,15 @@ dotnet build && dotnet test
 ```
 
 ### After Python changes
+Run the quality gate, then the tests — both before committing:
 ```powershell
-python -m pytest tests/
+pre-commit run --all-files   # the single gate: ruff (lint + format) + pyright (strict)
+python -m pytest tests/      # behavioural regression suite (kept separate — too slow for the hook)
 ```
+`pre-commit run --all-files` is the one command humans, CI, and AI agents all run, so "clean here" means "passes the gate everywhere." Conventions it enforces:
+- **Ruff** is both formatter and linter (config in `pyproject.toml`); let `ruff format` own layout — never hand-format to fight it.
+- **Pyright** runs in strict mode with the pandas/numpy library-`Unknown` noise muted (`pyproject.toml [tool.pyright]`); Pylance and the CLI read the same config, so editor squiggles match the gate.
+- Suppress a type diagnostic only with a **narrow, rule-specific** `# pyright: ignore[rule]` plus a brief reason, and only where a library genuinely mis-types something — **never** a blanket `# type: ignore`. When a diagnostic reveals a real bug, add a regression test, then fix it.
 
 ### After feature-engineering changes
 Feature logic lives in `race_analytics/features/`. Rebuild the CSVs and check the console for errors:

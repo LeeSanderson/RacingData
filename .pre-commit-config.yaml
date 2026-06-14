@@ -4,7 +4,7 @@
 # hook, and (via issue 003) CI all invoke — PRD's "single gate command" — so the
 # ruff lint + format checks are defined once here and never drift between actors.
 #
-# Scope of this file is ruff only; the venv-pyright hook is added in issue 006.
+# Defines the ruff (lint + format) and pyright (strict) checks.
 # The test suite stays a SEPARATE step (`python -m pytest tests/`) — too slow to
 # run on every commit.
 #
@@ -24,3 +24,22 @@ repos:
         args: [--fix]
       # Formatter (also runs with --force-exclude from the upstream entry).
       - id: ruff-format
+
+  # Type checker. A repo:local / `system` hook so it runs the VENV's pyright (the
+  # one `pip install -e .[dev]` pinned to 1.1.410), NOT pre-commit's default isolated
+  # environment — an isolated env wouldn't see the installed pandas/numpy/sklearn and
+  # pyright would spew false missing-import errors, undermining trust in the gate
+  # (PRD user story 15 / "Further Notes"). `pass_filenames: false` makes pyright analyse
+  # its whole configured scope (`[tool.pyright]` include = race_analytics + tests) as one
+  # program rather than just the changed files — a type change in one module ripples into
+  # others, so the gate must type-check the whole tree. `types: [python]` keeps it from
+  # running when no Python changed.
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright (strict, venv)
+        entry: pyright
+        language: system
+        types: [python]
+        pass_filenames: false
+        require_serial: true
