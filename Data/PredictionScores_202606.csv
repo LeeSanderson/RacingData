@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability
+1,True,1/2F,1.5,CompletedRace,919947,25,Hexham,06/13/2026 14:55:00,3678078,Ghasham IRE,0.33190933
+3,False,7/1,8,CompletedRace,919945,25,Hexham,06/13/2026 16:10:00,3301624,Supreme Yeats IRE,0.31148425
+1,True,EvensF,2,CompletedRace,919946,25,Hexham,06/13/2026 16:42:00,5047968,Passengerontheship IRE,0.3189383
+2,False,11/4,3.75,CompletedRace,920203,54,Sandown,06/13/2026 13:32:00,7784899,Law Court IRE,0.28719288
+6,False,31/10,4.1,CompletedRace,922796,416,Sha Tin,06/13/2026 12:35:00,6171110,Packing Angel NZ,0.24544428
 3,False,6/4J,2.5,CompletedRace,920177,21,Goodwood,06/12/2026 18:04:00,7957272,Three Socks On,0.29108334
 3,False,9/4F,3.25,CompletedRace,922657,184,Gowran Park,06/12/2026 18:33:00,8551781,Son Of Beauty,0.2867137
 1,True,1/12F,1.0833333333333333,CompletedRace,922659,184,Gowran Park,06/12/2026 19:43:00,5079029,Trustyourinstinct,0.30300334
