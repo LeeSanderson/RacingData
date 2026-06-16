@@ -19,14 +19,19 @@ durable safety net: a forgotten local check is still caught.
 
 Concretely:
 
-- Add `.azuredevops/quality-checks.yml` (a new file alongside, not replacing,
-  `scheduled-run.yml`):
+- Add `.azuredevops/ci.yml` (a new file alongside, not replacing, `scheduled-run.yml`).
+  Originally authored as `quality-checks.yml`; renamed to `ci.yml` when the C# job was
+  added (see the 2026-06-16 note) since it now covers more than the Python gate:
   - `trigger: main` (push-to-`main`); add a `pr` trigger too so it is ready if a branch
     workflow is ever adopted (PRD "triggered on push-to-`main` (and PRs if branching is
     ever used)").
   - `pool: vmImage: 'windows-latest'` (consistent with the repo's existing pipeline).
-  - Steps: set up Python → `pip install -e .[dev]` → `pre-commit run --all-files` →
-    `python -m pytest tests/`.
+  - Two parallel jobs:
+    - `python` — set up Python → `pip install -e .[dev]` → `pre-commit run --all-files` →
+      `python -m pytest tests/`.
+    - `csharp` — set up .NET 9 → `dotnet build` → `dotnet test` (Debug, matching the local
+      `dotnet build && dotnet test` loop); publishes TRX results + Cobertura coverage.
+      Build + test only by design — no `dotnet format`/analyzer gate.
 - **Register** the pipeline in Azure DevOps and confirm it runs green on `main`.
 - Leave `.azuredevops/scheduled-run.yml` (the 6 AM `trigger: none, pr: none` data-refresh
   job) **exactly as-is** (PRD user story 22 / Out of Scope).
@@ -37,8 +42,10 @@ needed then).
 
 ## Acceptance criteria
 
-- [ ] `.azuredevops/quality-checks.yml` exists, triggers on push-to-`main`, installs
-      `-e .[dev]`, runs `pre-commit run --all-files`, then `python -m pytest tests/`.
+- [ ] `.azuredevops/ci.yml` exists, triggers on push-to-`main`, with a `python` job that
+      installs `-e .[dev]`, runs `pre-commit run --all-files`, then `python -m pytest tests/`.
+- [ ] `.azuredevops/ci.yml` has a `csharp` job that runs `dotnet build` + `dotnet test`
+      (Debug) on .NET 9 and publishes test results + coverage.
 - [ ] The pipeline is registered in Azure DevOps and has at least one **green** run on `main`.
 - [ ] `.azuredevops/scheduled-run.yml` is byte-for-byte unchanged.
 - [ ] The new pipeline does not interfere with the scheduled 6 AM run (separate pipeline,
@@ -73,8 +80,30 @@ The AFK-doable part is committed; the two human-only acceptance criteria remain 
   assumed 003 landed before 006; CI just invokes the gate command, so order is moot).
 
 **Remaining (HITL — Lee, via the Azure DevOps portal):**
-- [ ] Register the pipeline: New Pipeline → GitHub → point at `.azuredevops/quality-checks.yml`
+- [ ] Register the pipeline: New Pipeline → GitHub → point at `.azuredevops/ci.yml`
       → authorize the agent pool / GitHub service connection.
-- [ ] Confirm at least one **green** run on `main`.
+- [ ] Confirm at least one **green** run on `main` (both the `python` and `csharp` jobs).
 
 Once the green run is confirmed, move this file to `issues/done/`.
+
+## Progress note — 2026-06-16 (extended to C# + renamed to ci.yml)
+
+The mechanical part of the C# extension is committed; the HITL registration step above
+still remains (now pointing at `ci.yml`).
+
+**Done (committed):**
+- Renamed `.azuredevops/quality-checks.yml` → `.azuredevops/ci.yml` via `git mv` (history
+  preserved). The pipeline was not yet registered in the portal, so the rename needed no
+  portal change — just register New Pipeline against `ci.yml` when doing the HITL step.
+- Restructured the single flat `steps:` list into two parallel `jobs:` (both inherit the
+  top-level `pool: windows-latest`):
+  - `python` — the existing gate + pytest, unchanged in substance.
+  - `csharp` — `UseDotNet@2` (`9.0.x`) → `dotnet build RacePredictor.sln` (Debug) →
+    `dotnet test --no-build --logger trx --collect "XPlat Code Coverage"` →
+    `PublishTestResults@2` + `PublishCodeCoverageResults@2` (both `succeededOrFailed()`).
+  - C# is **build + test only** — no `dotnet format`/`-warnaserror` gate (the `.editorconfig`
+    analyzers stay at `warning`). Low risk of an initial red run: `scheduled-run.yml`
+    already runs `dotnet build && dotnet test` daily on the same SDK/config.
+- `.azuredevops/scheduled-run.yml` left byte-for-byte unchanged.
+- Added a one-line note to AGENTS.md ("After C# changes") that the same build+test runs
+  in CI.

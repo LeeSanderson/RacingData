@@ -1,0 +1,106 @@
+# CI pipeline for the RacingData repo (C# + Python).
+#
+# Separate from .azuredevops/scheduled-run.yml (the 6 AM data-refresh job, left
+# untouched) — this is the durable safety net: on every push to main (and on PRs into
+# main, ready for a future branch workflow) it runs two parallel jobs so a forgotten
+# local check is still caught. PRD user story 13.
+#
+# Two jobs, both on windows-latest (consistent with scheduled-run.yml, which runs the
+# C# scraper on Windows):
+#
+#   csharp — `dotnet build` + `dotnet test` (Debug, no -c flag), exactly the local loop
+#            documented in AGENTS.md ("After C# changes"). Build + test only by design:
+#            no format/analyzer gate (the .editorconfig analyzers stay at `warning`).
+#            Test results (TRX) + coverage (Cobertura) are published to the run.
+#
+#   python — the quality gate `pre-commit run --all-files` plus the test suite. The gate
+#            is the exact same command humans, the commit hook, and AI agents run, so CI
+#            never drifts from local. It runs ruff (lint + format) and pyright (strict);
+#            pyright is a repo:local/system hook, so it uses the pyright installed by
+#            `.[dev]` and resolves the installed pandas/numpy. pytest is a separate step
+#            (too slow to live in the commit hook).
+
+trigger:
+  - main
+
+pr:
+  - main
+
+pool:
+  vmImage: 'windows-latest'
+
+jobs:
+  - job: csharp
+    displayName: C# — build + test
+    steps:
+      - task: UseDotNet@2
+        displayName: Use .NET SDK 9.0.x
+        inputs:
+          packageType: sdk
+          version: '9.0.x'
+
+      - task: PowerShell@2
+        displayName: Build — dotnet build (Debug)
+        inputs:
+          targetType: inline
+          workingDirectory: '$(Build.SourcesDirectory)'
+          script: |
+            dotnet build RacePredictor.sln
+
+      - task: PowerShell@2
+        displayName: Tests — dotnet test (+ coverage)
+        inputs:
+          targetType: inline
+          workingDirectory: '$(Build.SourcesDirectory)'
+          script: |
+            dotnet test RacePredictor.sln --no-build `
+              --logger trx `
+              --results-directory "$(Build.SourcesDirectory)/TestResults" `
+              --collect "XPlat Code Coverage"
+
+      - task: PublishTestResults@2
+        displayName: Publish test results (TRX)
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: '$(Build.SourcesDirectory)/TestResults/**/*.trx'
+          failTaskOnFailedTests: true
+
+      - task: PublishCodeCoverageResults@2
+        displayName: Publish code coverage (Cobertura)
+        condition: succeededOrFailed()
+        inputs:
+          summaryFileLocation: '$(Build.SourcesDirectory)/TestResults/**/coverage.cobertura.xml'
+
+  - job: python
+    displayName: Python — quality gate + pytest
+    steps:
+      - task: UsePythonVersion@0
+        displayName: Use Python 3.12
+        inputs:
+          versionSpec: '3.12'
+
+      - task: PowerShell@2
+        displayName: Install package + pinned dev toolchain
+        inputs:
+          targetType: inline
+          workingDirectory: '$(Build.SourcesDirectory)'
+          script: |
+            python -m pip install --upgrade pip
+            pip install -e ".[dev]"
+
+      - task: PowerShell@2
+        displayName: Quality gate — pre-commit run --all-files (ruff + pyright)
+        inputs:
+          targetType: inline
+          workingDirectory: '$(Build.SourcesDirectory)'
+          script: |
+            pre-commit run --all-files
+
+      - task: PowerShell@2
+        displayName: Tests — pytest
+        inputs:
+          targetType: inline
+          workingDirectory: '$(Build.SourcesDirectory)'
+          script: |
+            python -m pytest tests/

@@ -24,6 +24,7 @@ Feature-engineering logic lives in `race_analytics/features/` (the source of tru
 ```powershell
 dotnet build && dotnet test
 ```
+These same two commands run in CI (`.azuredevops/ci.yml`, `csharp` job) on every push/PR to `main`.
 
 ### After Python changes
 Run the quality gate, then the tests — both before committing:
