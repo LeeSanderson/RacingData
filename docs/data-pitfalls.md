@@ -30,26 +30,43 @@ and the 0.78 headline fully collapsed.
 `Race_Features.csv`), reaching algorithms only through the per-horse **stats join**
 (`extract_horse_stats` → `Horse_Stats.csv`) — **never** from the race-day card row.
 
-## Pitfall 2 — market odds are unavailable at prediction time
+## Pitfall 2 — a forecast price now sits on the card; it must not become a feature
 
-`DecimalOdds` / `FractionalOdds` are **not populated when a racecard is downloaded**.
-`Data/TodaysRaceCards.csv` has the columns, but they are empty at download time
-(`FractionalOdds` is the literal string `"SP"`); the market forms closer to the off.
-Starting-price odds appear only later, retrospectively, in `Results_*.csv`.
+**This pitfall changed shape.** It used to read "odds are unavailable at prediction
+time" — `TodaysRaceCards.csv` carried the literal `"SP"` placeholder. That is no
+longer true: the card now carries a real **betting-forecast** price (the RP morning
+"tissue") for every runner at download, so `FractionalOdds`/`DecimalOdds` on the card
+are a genuine pre-race price. See [`docs/odds-capture.md`](odds-capture.md).
 
-**Consequence:** any odds-dependent strategy is undeployable in production —
-market-overlay / value betting, model-vs-market blends, and abstain filters keyed on
-favourite strength or odds entropy all require a price that isn't known when the
-prediction is made.
+That makes this the *more* dangerous pitfall now, not the safer one: a real price
+exists **at prediction time**, so it *could* be fed to the model — and must not be.
 
-**The rule:** never use odds (or anything derived from them) as a model input or a
-selection/filter signal. Odds are usable **only** to *measure* ROI/accuracy after the
-fact in `evaluate.py`. The market-favourite baseline and the ROI metric are therefore
-retrospective evaluation constructs, not signals the model conditions on.
+- The Python predictor currently ignores card odds, so **no leakage occurs today**.
+  This must stay true. The forecast must not silently become a model input or a
+  selection/filter signal unless deliberately and safely introduced (and re-evaluated
+  for the favourite-strength / odds-entropy traps that motivated this rule).
+- The post-race **SP** (`FractionalOdds`/`DecimalOdds` in `Results_*.csv`) is still
+  post-race, and the new `Forecast*` columns there are a *retrospective* record of the
+  morning price. Both remain ROI/accuracy *measurement* constructs in `evaluate.py`,
+  not signals the model conditions on.
+- The **live / market** price (value betting, model-vs-market blends) is still
+  genuinely unavailable early — that is Phase 2, not yet captured (see
+  `docs/odds-capture.md`). So market-overlay strategies remain undeployable for now.
+
+**The rule (unchanged, now load-bearing):** never use odds — forecast, live, or SP,
+or anything derived from them — as a model input or a selection/filter signal. The
+fact that a column is now *populated* at download is not permission to use it.
 
 ## The shared lesson
 
-Both pitfalls are the same "looks available but isn't" trap. When considering a new
-feature, ask: *was this value knowable, for this horse, before this race went off?*
-If not — or if you can't confirm the column is actually populated in the card at
-download time — it cannot be a feature.
+These pitfalls are two faces of the same discipline. Pitfall 1 is "looks available
+but isn't" — a populated column (RPR/TSR) that secretly encodes the result. Pitfall 2
+is now the opposite shape — a column (the card forecast) that genuinely *is* available
+pre-race but still must not be used. So a new feature has to clear **two** bars, not
+one:
+
+1. *Was this value knowable, for this horse, before this race went off?* If not — or
+   if you can't confirm the column is populated in the card at download time — it
+   cannot be a feature.
+2. Even if it passes (1), is feeding it deliberate and safe? Odds clear bar 1 now but
+   are barred at bar 2 by the rule above. **Populated ≠ permitted.**
