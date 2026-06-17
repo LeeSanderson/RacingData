@@ -36,6 +36,15 @@ internal static class MockRacingDataDownloader
         return downloader;
     }
 
+    public static IRacingDataDownloader MockReturnHappyValleyRaceCardWithNoForecast(this IRacingDataDownloader downloader)
+    {
+        var html = FakeData.HappyValleyRaceCardFor1140RaceOn20260520
+            .Replace("data-testid=\"Link__BettingForecastHorse\"", "data-testid=\"Link__BettingForecastHorseRemoved\"", StringComparison.Ordinal);
+        var mockRaceCard = new RaceCardParser().Parse(html);
+        downloader.DownloadRaceCard(HappyValleyRaceCardUrl).Returns(mockRaceCard);
+        return downloader;
+    }
+
     public static IRacingDataDownloader MockRaceResultUrls(this IRacingDataDownloader downloader)
     {
         var mockRaceResultUrls = new[] { RaceResultUrl };
