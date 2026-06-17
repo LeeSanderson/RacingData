@@ -107,3 +107,17 @@ still remains (now pointing at `ci.yml`).
 - `.azuredevops/scheduled-run.yml` left byte-for-byte unchanged.
 - Added a one-line note to AGENTS.md ("After C# changes") that the same build+test runs
   in CI.
+
+## Completion note — 2026-06-17 (done; registered + green run confirmed by Lee)
+
+The two HITL acceptance criteria are now met:
+
+- [x] Pipeline **registered** in Azure DevOps against `.azuredevops/ci.yml` (New Pipeline →
+      GitHub → existing YAML on `main`).
+- [x] At least one **green** run on `main`, with both the `csharp` (build + test) and `python`
+      (`pre-commit run --all-files` + `pytest`) jobs passing — confirmed by Lee.
+
+`.azuredevops/scheduled-run.yml` was left byte-for-byte unchanged, and the new pipeline is a
+separate registration with its own `trigger: main` / `pr: main`, so it does not interfere with
+the scheduled 6 AM data-refresh job. All acceptance criteria satisfied — this closes the
+Type Safety & Static Analysis PRD (`issues/prd.md`); every issue 001–006 is now in `issues/done/`.
