@@ -23,6 +23,8 @@ _RACE_CARD_COLS = [
     "AgeBand",
     "SexRestriction",
     "HeadGear",
+    "DecimalOdds",
+    "ForecastDecimalOdds",
 ]
 
 D1 = datetime(2021, 1, 1)
@@ -142,3 +144,14 @@ def test_race_card_excludes_feature_columns() -> None:
     result = race_card(df)
     for col in ["LastRaceSpeed", "DaysRested", "JockeyWinPercentage", "Speed"]:
         assert col not in result.columns, f"feature column leaked into card: {col}"
+
+
+def test_race_card_retains_decimal_odds_for_market_prob() -> None:
+    # The decimal-odds columns must survive into the eval card subset so the canonical
+    # calculate_market_prob transform has its input at serve time.
+    df = _make_enriched_df()
+    df["DecimalOdds"] = 3.0
+    df["ForecastDecimalOdds"] = 2.5
+    result = race_card(df)
+    assert "DecimalOdds" in result.columns
+    assert "ForecastDecimalOdds" in result.columns

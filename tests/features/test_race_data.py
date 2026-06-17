@@ -13,6 +13,7 @@ from datetime import datetime
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from race_analytics.algorithms.base import OPTIONAL_PREDICTORS, REQUIRED_PREDICTORS
 from race_analytics.features.horse_stats import extract_horse_stats
@@ -26,6 +27,7 @@ from race_analytics.features.transforms import (
     calculate_distance_change,
     calculate_draw_features,
     calculate_is_handicap,
+    calculate_market_prob,
     calculate_race_class,
     calculate_surface_switch,
     calculate_weight_change,
@@ -255,6 +257,7 @@ def _legacy_reference_merged(
     if "HorseCount" not in merged.columns:
         merged["HorseCount"] = merged.groupby("RaceId")["HorseId"].transform("count")
     merged = calculate_draw_features(merged)
+    merged = calculate_market_prob(merged)
     return merged
 
 
@@ -273,6 +276,28 @@ def test_build_serving_from_stats_without_trainer_stats() -> None:
     legacy = _legacy_reference_merged(races, hs, js, None)
     rd = RaceDataBuilder().build_serving_from_stats(races, hs, js, None, as_of=_AS_OF)  # pyright: ignore[reportArgumentType]  # datetime accepted at runtime (pd.Timestamp(as_of))
     pd.testing.assert_frame_equal(rd.frame, legacy)
+
+
+def test_build_serving_carries_market_prob_from_card_decimal_odds() -> None:
+    # The live card carries the morning forecast in DecimalOdds; the canonical chain
+    # must materialize a dense, per-race-normalized MarketProb on serving output.
+    races = _races()
+    races["DecimalOdds"] = [2.0, 4.0, 4.0, 2.0, 4.0, 4.0]
+    rd = RaceDataBuilder().build_serving_from_stats(
+        races,
+        _horse_stats(),
+        _jockey_stats(),
+        _trainer_stats(),
+        as_of=_AS_OF,  # pyright: ignore[reportArgumentType]  # datetime accepted at runtime (pd.Timestamp(as_of))
+    )
+    assert "MarketProb" in rd.frame.columns
+    assert rd.frame["MarketProb"].notna().all()
+    for race_id in (1, 2):
+        race = rd.frame[rd.frame["RaceId"] == race_id]
+        assert race["MarketProb"].sum() == pytest.approx(1.0)
+    # Race 1 implied [0.5, 0.25, 0.25] already sums to 1 -> overround-free, unchanged.
+    race1 = rd.frame[rd.frame["RaceId"] == 1]["MarketProb"].tolist()
+    assert race1 == pytest.approx([0.5, 0.25, 0.25])
 
 
 def test_build_serving_from_stats_does_not_mutate_inputs() -> None:

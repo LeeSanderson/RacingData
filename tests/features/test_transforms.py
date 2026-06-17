@@ -10,6 +10,7 @@ from race_analytics.features.transforms import (
     calculate_draw_features,
     calculate_horse_count,
     calculate_is_handicap,
+    calculate_market_prob,
     calculate_race_class,
     calculate_speed,
     calculate_surface_switch,
@@ -773,3 +774,28 @@ def test_encode_headgear_all_columns_present():
     result = encode_headgear(df)
     for col in headgear_columns:
         assert col in result.columns
+
+
+# --- calculate_market_prob ---
+
+
+def test_calculate_market_prob_adds_dense_column_on_card_frame() -> None:
+    # A live card carries the morning forecast in DecimalOdds and has no
+    # ForecastDecimalOdds column at all. The canonical-chain transform must still
+    # produce a dense, per-race-normalized MarketProb purely from the card.
+    card = pd.DataFrame(
+        {
+            "RaceId": [1, 1, 2, 2, 2],
+            "HorseId": [10, 11, 20, 21, 22],
+            "DecimalOdds": [2.0, 4.0, 2.0, 4.0, 4.0],
+        }
+    )
+    result = calculate_market_prob(card)
+    assert "MarketProb" in result.columns
+    assert result["MarketProb"].notna().all()
+    for race_id in (1, 2):
+        race = result[result["RaceId"] == race_id]
+        assert race["MarketProb"].sum() == pytest.approx(1.0)
+    # Race 1 implied [0.5, 0.25] -> overround removed -> [2/3, 1/3].
+    race1 = result[result["RaceId"] == 1]["MarketProb"].tolist()
+    assert race1 == pytest.approx([2 / 3, 1 / 3])

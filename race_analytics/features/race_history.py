@@ -18,6 +18,11 @@ _RACE_CARD_COLS = [
     "AgeBand",
     "SexRestriction",
     "HeadGear",
+    # Not features: carried only so calculate_market_prob has its input at serve time
+    # (forecast preferred over SP). ForecastDecimalOdds is absent across historic
+    # results today, so the `if c in columns` filter drops it gracefully.
+    "DecimalOdds",
+    "ForecastDecimalOdds",
 ]
 
 

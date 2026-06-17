@@ -30,6 +30,7 @@ from race_analytics.features.transforms import (
     calculate_distance_change,
     calculate_draw_features,
     calculate_is_handicap,
+    calculate_market_prob,
     calculate_race_class,
     calculate_surface_switch,
     calculate_weight_change,
@@ -78,6 +79,7 @@ CANONICAL_TRANSFORMS = (
     encode_headgear,
     _add_race_context,
     calculate_draw_features,
+    calculate_market_prob,
 )
 
 

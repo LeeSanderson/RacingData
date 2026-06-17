@@ -31,6 +31,11 @@ _RACE_CARD_COLS = [
     "AgeBand",
     "SexRestriction",
     "HeadGear",
+    # Not features: carried only so calculate_market_prob has its input at serve time.
+    # On the live card the morning forecast already occupies DecimalOdds, so production
+    # serves the forecast-derived MarketProb with no SP involved.
+    "DecimalOdds",
+    "ForecastDecimalOdds",
 ]
 _OUTPUT_COLS = [
     "RaceId",

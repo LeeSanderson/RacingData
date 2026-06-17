@@ -3,7 +3,19 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from race_analytics.features.market_prob import add_market_prob
+
 surface_categories = ["Surface_AllWeather", "Surface_Dirt", "Surface_Turf"]
+
+
+def calculate_market_prob(races: pd.DataFrame) -> pd.DataFrame:
+    """Canonical-chain link that adds the dense per-race ``MarketProb`` column.
+
+    A thin delegation to ``market_prob.add_market_prob`` — the single home of the
+    forecast/SP coalesce and overround-removing normalization — so the serving
+    transform chain materializes ``MarketProb`` without duplicating the odds rule.
+    """
+    return add_market_prob(races)
 
 
 def encode_surfaces(races: pd.DataFrame) -> pd.DataFrame:
