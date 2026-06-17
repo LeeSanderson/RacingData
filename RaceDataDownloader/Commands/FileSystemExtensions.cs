@@ -1,8 +1,11 @@
 using System.Globalization;
 using System.IO.Abstractions;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CsvHelper;
+using CsvHelper.Configuration;
+using CsvHelper.Configuration.Attributes;
 using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace RaceDataDownloader.Commands;
@@ -59,8 +62,41 @@ public static class FileSystemExtensions
     public static async Task<List<TRecord>> FromCsvString<TRecord>(this string data)
     {
         using var reader = new StringReader(data);
-        using var csvReader = new CsvReader(reader, CultureInfo.InvariantCulture);
+        using var csvReader = new CsvReader(reader, CreateReaderConfiguration<TRecord>());
         return await csvReader.GetRecordsAsync<TRecord>().ToListAsync();
+    }
+
+    private static CsvConfiguration CreateReaderConfiguration<TRecord>()
+    {
+        var configuration = new CsvConfiguration(CultureInfo.InvariantCulture);
+
+        // CsvHelper honours [Optional] for name-mapped members but still throws
+        // MissingFieldException for [Index]-mapped members whose column is absent
+        // (e.g. a legacy Results_YYYYMM.csv written before the Forecast* columns existed).
+        // Tolerate exactly those optional + indexed columns while keeping every other
+        // column strict, so a genuinely truncated/malformed file still fails fast.
+        var optionalIndexes = typeof(TRecord)
+            .GetProperties()
+            .Where(p => p.GetCustomAttribute<OptionalAttribute>() != null
+                        && p.GetCustomAttribute<IndexAttribute>() != null)
+            .Select(p => p.GetCustomAttribute<IndexAttribute>()!.Index)
+            .ToHashSet();
+
+        if (optionalIndexes.Count > 0)
+        {
+            var defaultHandler = configuration.MissingFieldFound;
+            configuration.MissingFieldFound = args =>
+            {
+                if (optionalIndexes.Contains(args.Index))
+                {
+                    return;
+                }
+
+                defaultHandler?.Invoke(args);
+            };
+        }
+
+        return configuration;
     }
 
     public static async Task WriteRecordsToJsonFile<TRecord>(this IFileSystem fileSystem, string outputFileName, List<TRecord> records)
