@@ -1361,3 +1361,125 @@ def test_evaluate_with_zero_folds_returns_without_unbound_error() -> None:
     result = evaluate(folds=0)
 
     assert isinstance(result, dict)
+
+
+# ================================================================
+# _engineer_features — MarketProb materialized on the training path
+# (PRD: "Materialize in two non-shared places" — place (a))
+# ================================================================
+
+
+def _raw_results_frame() -> pd.DataFrame:
+    """A minimal `Results_*.csv`-shaped frame (the input to `_engineer_features`).
+
+    Two runners in one race on a single day. Carries the SP (DecimalOdds) and a
+    forward-merged forecast (ForecastDecimalOdds) on the favourite only, so the
+    resolver's forecast-then-SP coalesce is exercised. Single-day, so the per-day
+    stats processors leave their columns at defaults — MarketProb depends only on the
+    odds columns, so the engineered stats are irrelevant to it."""
+    base = {
+        "CourseId": 1,
+        "CourseName": "Ascot",
+        "RaceType": "Flat",
+        "Class": "3",
+        "OfficialRating": 80.0,
+        "RacingPostRating": 100.0,
+        "TopSpeedRating": 90.0,
+        "DistanceInMeters": 1600.0,
+        "Going": "Good",
+        "Surface": "Turf",
+        "Age": 4,
+        "HeadGear": "",
+        "WeightInPounds": 126.0,
+        "Pattern": "",
+        "RatingBand": "0-100",
+        "AgeBand": "3yo+",
+        "SexRestriction": "",
+        "OverallBeatenDistance": 1.0,
+        "RaceTimeInSeconds": 100.0,
+        "ResultStatus": "CompletedRace",
+        "Off": pd.Timestamp("2026-05-10 14:30:00"),
+    }
+    return pd.DataFrame(
+        [
+            {
+                **base,
+                "RaceId": 1,
+                "HorseId": 10,
+                "HorseName": "H10",
+                "JockeyId": 100,
+                "JockeyName": "J100",
+                "TrainerId": 1000,
+                "TrainerName": "T1000",
+                "RaceCardNumber": 1,
+                "StallNumber": 1,
+                "FinishingPosition": 1,
+                "DecimalOdds": 3.0,
+                "ForecastDecimalOdds": 2.0,  # forecast present -> preferred over SP
+            },
+            {
+                **base,
+                "RaceId": 1,
+                "HorseId": 11,
+                "HorseName": "H11",
+                "JockeyId": 101,
+                "JockeyName": "J101",
+                "TrainerId": 1001,
+                "TrainerName": "T1001",
+                "RaceCardNumber": 2,
+                "StallNumber": 2,
+                "FinishingPosition": 2,
+                "DecimalOdds": 4.0,
+                "ForecastDecimalOdds": float("nan"),  # no forecast -> SP fallback
+            },
+        ]
+    )
+
+
+def test_keep_cols_includes_forecast_decimal_odds() -> None:
+    from race_analytics.scripts.evaluate import (
+        _KEEP_COLS,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal constant
+    )
+
+    assert "ForecastDecimalOdds" in _KEEP_COLS
+    # The SP column is still carried alongside it (the resolver's fallback input).
+    assert "DecimalOdds" in _KEEP_COLS
+
+
+def test_engineer_features_materializes_dense_market_prob() -> None:
+    from race_analytics.scripts.evaluate import (
+        _engineer_features,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    engineered = _engineer_features(_raw_results_frame())
+    assert "MarketProb" in engineered.columns
+    assert engineered["MarketProb"].notna().all()
+    for _, race in engineered.groupby("RaceId"):
+        assert race["MarketProb"].sum() == pytest.approx(1.0)
+
+
+def test_market_prob_parity_between_training_and_serving_paths() -> None:
+    """A runner's MarketProb is identical whether materialized via the harness
+    training path (`_engineer_features`) or the canonical serving transform
+    (`calculate_market_prob`), so the documented two-place materialization can't drift.
+    """
+    from race_analytics.features.transforms import calculate_market_prob
+    from race_analytics.scripts.evaluate import (
+        _engineer_features,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    raw = _raw_results_frame()
+
+    # Training path: full in-memory feature engineering.
+    train = _engineer_features(raw)[["RaceId", "HorseId", "MarketProb"]]
+
+    # Serving path: the canonical-chain transform on the equivalent odds input.
+    serve = calculate_market_prob(
+        raw[["RaceId", "HorseId", "DecimalOdds", "ForecastDecimalOdds"]].copy()
+    )[["RaceId", "HorseId", "MarketProb"]]
+
+    merged = train.merge(serve, on=["RaceId", "HorseId"], suffixes=("_train", "_serve"))
+    assert len(merged) == len(raw)
+    assert merged["MarketProb_train"].tolist() == pytest.approx(
+        merged["MarketProb_serve"].tolist()
+    )

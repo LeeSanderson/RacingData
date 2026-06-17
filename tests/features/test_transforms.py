@@ -799,3 +799,24 @@ def test_calculate_market_prob_adds_dense_column_on_card_frame() -> None:
     # Race 1 implied [0.5, 0.25] -> overround removed -> [2/3, 1/3].
     race1 = result[result["RaceId"] == 1]["MarketProb"].tolist()
     assert race1 == pytest.approx([2 / 3, 1 / 3])
+
+
+def test_calculate_market_prob_on_results_frame_prefers_forecast() -> None:
+    # A Results-shaped frame carries BOTH the SP (DecimalOdds) and the forward-merged
+    # forecast (ForecastDecimalOdds). The transform must resolve forecast-when-present
+    # and fall back to SP otherwise, then normalize per race — exactly the rule the
+    # harness training path materializes (PRD Testing Decisions: Results-shaped frame).
+    results = pd.DataFrame(
+        {
+            "RaceId": [1, 1],
+            "HorseId": [10, 11],
+            "ForecastDecimalOdds": [2.0, float("nan")],  # B has no forecast
+            "DecimalOdds": [3.0, 4.0],  # SP fallback
+        }
+    )
+    result = calculate_market_prob(results)
+    assert "MarketProb" in result.columns
+    assert result["MarketProb"].notna().all()
+    # Resolved odds [2.0 (forecast), 4.0 (SP)] -> implied [0.5, 0.25] -> [2/3, 1/3].
+    assert result["MarketProb"].tolist() == pytest.approx([2 / 3, 1 / 3])
+    assert result["MarketProb"].sum() == pytest.approx(1.0)

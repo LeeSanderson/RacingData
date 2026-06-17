@@ -24,6 +24,7 @@ from race_analytics.features.transforms import (
     calculate_draw_features,
     calculate_horse_count,
     calculate_is_handicap,
+    calculate_market_prob,
     calculate_race_class,
     calculate_speed,
     clean_weight,
@@ -280,6 +281,7 @@ _KEEP_COLS = [
     "Class",
     "Off",
     "DecimalOdds",
+    "ForecastDecimalOdds",
     "OfficialRating",
     "RacingPostRating",
     "TopSpeedRating",
@@ -334,6 +336,11 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
     races = encode_age_band(races)
     races = encode_sex_restriction(races)
     races = calculate_draw_features(races)
+    # Materialize MarketProb LAST via the SAME transform the canonical serving chain
+    # uses, so the harness training path and the serving path resolve odds identically
+    # (forecast -> SP, per-race normalized). MarketProb depends only on the raw odds
+    # columns, so order vs. the other transforms is irrelevant; last mirrors the chain.
+    races = calculate_market_prob(races)
     return races
 
 
