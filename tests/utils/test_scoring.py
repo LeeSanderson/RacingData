@@ -118,3 +118,33 @@ def test_roi_excludes_void_races() -> None:
         ]
     )
     assert roi(preds, results) == pytest.approx(3.0)
+
+
+def _results_with_forecast(rows: list[tuple[Any, ...]]) -> pd.DataFrame:
+    return pd.DataFrame(
+        rows,
+        columns=[
+            "RaceId",
+            "HorseId",
+            "FinishingPosition",
+            "DecimalOdds",
+            "ForecastDecimalOdds",
+            "ResultStatus",
+        ],
+    )
+
+
+def test_roi_values_winner_at_forecast_when_present() -> None:
+    # Winner has a forecast price (2.0) that differs from its SP (3.0); the forecast
+    # is preferred, so winnings=2.0, stakes=1, earnings=1.0.
+    preds = _predictions([(1, 10)])
+    results = _results_with_forecast([(1, 10, 1, 3.0, 2.0, "CompletedRace")])
+    assert roi(preds, results) == pytest.approx(1.0)
+
+
+def test_roi_falls_back_to_sp_when_forecast_absent() -> None:
+    # Forecast column present but NaN for this winner -> resolver falls back to SP (5.0);
+    # winnings=5.0, stakes=1, earnings=4.0.
+    preds = _predictions([(1, 10)])
+    results = _results_with_forecast([(1, 10, 1, 5.0, float("nan"), "CompletedRace")])
+    assert roi(preds, results) == pytest.approx(4.0)

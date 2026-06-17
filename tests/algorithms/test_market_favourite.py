@@ -47,3 +47,18 @@ def test_returns_empty_dataframe_when_no_valid_races() -> None:
     result = MarketFavouriteBaseline().predict([1], df)
     assert list(result.columns) == ["RaceId", "HorseId"]
     assert len(result) == 0
+
+
+def _odds_df_with_forecast(rows: list[tuple[Any, ...]]) -> pd.DataFrame:
+    return pd.DataFrame(
+        rows, columns=["RaceId", "HorseId", "DecimalOdds", "ForecastDecimalOdds"]
+    )
+
+
+def test_picks_favourite_by_resolved_odds_forecast_preferred() -> None:
+    # SP alone makes 101 the favourite (2.0 vs 5.0), but 102 carries a forecast (1.5)
+    # that is preferred over its SP. Resolved odds: 101=2.0, 102=1.5 -> 102 is the
+    # favourite. Forecast flips the pick away from the SP-only choice.
+    df = _odds_df_with_forecast([(1, 101, 2.0, float("nan")), (1, 102, 5.0, 1.5)])
+    result = MarketFavouriteBaseline().predict([1], df)
+    assert result.iloc[0]["HorseId"] == 102

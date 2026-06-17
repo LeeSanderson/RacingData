@@ -345,9 +345,12 @@ def _engineer_features(races: pd.DataFrame) -> pd.DataFrame:
 
 
 def _results(fold_df: pd.DataFrame) -> pd.DataFrame:
-    return fold_df[
-        ["RaceId", "HorseId", "FinishingPosition", "DecimalOdds", "ResultStatus"]
-    ].copy()
+    cols = ["RaceId", "HorseId", "FinishingPosition", "DecimalOdds", "ResultStatus"]
+    # Forward the forecast price when present so the resolver (ROI / favourite baseline)
+    # has both of its inputs. Historic SP-only frames lack the column and degrade to SP.
+    if "ForecastDecimalOdds" in fold_df.columns:
+        cols.append("ForecastDecimalOdds")
+    return fold_df[cols].copy()
 
 
 def _print_race_results(preds: pd.DataFrame, known_fold: pd.DataFrame) -> None:

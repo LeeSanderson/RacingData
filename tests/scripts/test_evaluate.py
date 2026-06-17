@@ -1483,3 +1483,52 @@ def test_market_prob_parity_between_training_and_serving_paths() -> None:
     assert merged["MarketProb_train"].tolist() == pytest.approx(
         merged["MarketProb_serve"].tolist()
     )
+
+
+def test_results_carries_forecast_odds_when_present() -> None:
+    """`_results` forwards ForecastDecimalOdds so the resolver (ROI / favourite
+    baseline) has both of its inputs."""
+    from race_analytics.scripts.evaluate import (
+        _results,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    fold = pd.DataFrame(
+        {
+            "RaceId": [1, 1],
+            "HorseId": [10, 11],
+            "FinishingPosition": [1, 2],
+            "DecimalOdds": [3.0, 4.0],
+            "ForecastDecimalOdds": [2.0, float("nan")],
+            "ResultStatus": ["CompletedRace", "CompletedRace"],
+        }
+    )
+    out = _results(fold)
+    assert "ForecastDecimalOdds" in out.columns
+    assert out["ForecastDecimalOdds"].tolist()[0] == pytest.approx(2.0)
+
+
+def test_results_graceful_when_forecast_odds_absent() -> None:
+    """Historic SP-only frames carry no ForecastDecimalOdds column; `_results` returns
+    the original projection without erroring."""
+    from race_analytics.scripts.evaluate import (
+        _results,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    fold = pd.DataFrame(
+        {
+            "RaceId": [1],
+            "HorseId": [10],
+            "FinishingPosition": [1],
+            "DecimalOdds": [3.0],
+            "ResultStatus": ["CompletedRace"],
+        }
+    )
+    out = _results(fold)
+    assert "ForecastDecimalOdds" not in out.columns
+    assert list(out.columns) == [
+        "RaceId",
+        "HorseId",
+        "FinishingPosition",
+        "DecimalOdds",
+        "ResultStatus",
+    ]
