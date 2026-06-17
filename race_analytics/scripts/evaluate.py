@@ -15,6 +15,7 @@ from race_analytics.algorithms.confidence_gate import ConfidenceGate
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
 from race_analytics.features.horse_stats import CalculateHorsesStats
 from race_analytics.features.jockey_stats import CalculateJockeyStats
+from race_analytics.features.market_prob import MARKET_PROB, resolve_decimal_odds
 from race_analytics.features.race_data import RaceDataBuilder
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 from race_analytics.features.race_history import race_card
@@ -67,8 +68,10 @@ _CSV_COLUMNS = [
     "DistanceInMeters",
     "FinishingPosition",
     "DecimalOdds",
+    "ResolvedOdds",
     "PredictedScore",
     "WinProbability",
+    "MarketProb",
     "FieldSize",
     "RaceClass",
 ]
@@ -104,11 +107,24 @@ def _build_csv_rows(
         "Going",
         "RaceType",
         "DistanceInMeters",
+        # MarketProb is materialized on the fold frame by _engineer_features (the same
+        # transform the serving path uses), so it rides through the known-fold meta join.
+        MARKET_PROB,
     ]
     meta = known_fold[[c for c in meta_cols if c in known_fold.columns]].copy()
 
-    result_cols = ["RaceId", "HorseId", "FinishingPosition", "DecimalOdds"]
+    # Carry the forecast price (when present) so the resolver can prefer it over the SP;
+    # the resolved odds are the price the ROI/favourite measurement also values winners at.
+    result_cols = [
+        "RaceId",
+        "HorseId",
+        "FinishingPosition",
+        "DecimalOdds",
+        "ForecastDecimalOdds",
+    ]
     result_info = results_df[[c for c in result_cols if c in results_df.columns]].copy()
+    result_info["ResolvedOdds"] = resolve_decimal_odds(result_info)
+    result_info = result_info.drop(columns=["ForecastDecimalOdds"], errors="ignore")
 
     field_sizes = (
         known_fold.groupby("RaceId")["HorseId"]
@@ -137,6 +153,9 @@ def _build_csv_rows(
 
     if "WinProbability" not in merged.columns:
         merged["WinProbability"] = pd.NA
+
+    if MARKET_PROB not in merged.columns:
+        merged[MARKET_PROB] = pd.NA
 
     merged["FoldDate"] = fold_date
     merged["Algorithm"] = algo_name

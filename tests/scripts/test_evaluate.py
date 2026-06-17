@@ -667,8 +667,10 @@ _CSV_COLUMNS = [
     "DistanceInMeters",
     "FinishingPosition",
     "DecimalOdds",
+    "ResolvedOdds",
     "PredictedScore",
     "WinProbability",
+    "MarketProb",
     "FieldSize",
     "RaceClass",
 ]
@@ -926,6 +928,82 @@ def test_build_csv_rows_race_class_na_when_no_class_column() -> None:
         _minimal_results(),
     )
     assert pd.isna(rows.iloc[0]["RaceClass"])
+
+
+def test_build_csv_rows_resolved_odds_prefers_forecast() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    results = pd.DataFrame(
+        [
+            {
+                "RaceId": 2,
+                "HorseId": 20,
+                "FinishingPosition": 1,
+                "DecimalOdds": 3.5,
+                "ForecastDecimalOdds": 2.0,
+                "ResultStatus": "CompletedRace",
+            }
+        ]
+    )
+    rows = _build_csv_rows(
+        date(2026, 5, 29),
+        "_StubAlgo",
+        _minimal_preds(),
+        _minimal_known_fold(),
+        results,
+    )
+    assert rows.iloc[0]["ResolvedOdds"] == pytest.approx(2.0)
+
+
+def test_build_csv_rows_resolved_odds_falls_back_to_sp_when_no_forecast() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    # _minimal_results carries no ForecastDecimalOdds column (historic SP-only frame).
+    rows = _build_csv_rows(
+        date(2026, 5, 29),
+        "_StubAlgo",
+        _minimal_preds(),
+        _minimal_known_fold(),
+        _minimal_results(),
+    )
+    assert rows.iloc[0]["ResolvedOdds"] == pytest.approx(3.5)
+
+
+def test_build_csv_rows_market_prob_carried_from_known_fold() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    known_fold = _minimal_known_fold()
+    known_fold["MarketProb"] = 0.6
+    rows = _build_csv_rows(
+        date(2026, 5, 29),
+        "_StubAlgo",
+        _minimal_preds(),
+        known_fold,
+        _minimal_results(),
+    )
+    assert rows.iloc[0]["MarketProb"] == pytest.approx(0.6)
+
+
+def test_build_csv_rows_market_prob_na_when_absent_from_known_fold() -> None:
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    # _minimal_known_fold carries no MarketProb column.
+    rows = _build_csv_rows(
+        date(2026, 5, 29),
+        "_StubAlgo",
+        _minimal_preds(),
+        _minimal_known_fold(),
+        _minimal_results(),
+    )
+    assert pd.isna(rows.iloc[0]["MarketProb"])
 
 
 # ================================================================
@@ -1212,12 +1290,16 @@ def _enriched_fold_frame(fold_date: date) -> pd.DataFrame:
                 "HorseCount": 3,
                 "Speed": 16.0,
                 "Wins": 1 if h == 0 else 0,
-                "DecimalOdds": 3.5,
+                "DecimalOdds": 3.0 + h,
                 "CourseName": "York",
                 "HorseName": f"H{hid}",
             }
         )
-    return pd.DataFrame(rows)
+    # Materialize MarketProb exactly as the real `_engineer_features` does (last step),
+    # so this stand-in carries the column the harness training path would produce.
+    from race_analytics.features.transforms import calculate_market_prob
+
+    return calculate_market_prob(pd.DataFrame(rows))
 
 
 def test_evaluate_end_to_end_with_real_builder_and_active_algorithm(
@@ -1255,6 +1337,10 @@ def test_evaluate_end_to_end_with_real_builder_and_active_algorithm(
     assert (
         df["WinProbability"].notna().all()
     )  # the gated win-classifier carries probabilities
+    # Diagnostic columns (issue 006): MarketProb rides through from the engineered fold
+    # frame (dense), and the resolved odds (forecast -> SP) are populated per runner.
+    assert df["MarketProb"].notna().all()
+    assert df["ResolvedOdds"].notna().all()
 
 
 # ================================================================
