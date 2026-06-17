@@ -20,6 +20,9 @@ public class ValidateRaceCardPredictionsCommandHandler(
     protected override async Task InternalRunAsync(ValidateRaceCardPredictionsOptions options)
     {
         _dataFolder = ValidateAndCreateOutputFolder(options.DataDirectory);
+
+        await MergeForecastOddsIntoResults();
+
         var predictions = await FileSystem.ReadRecordsFromCsvFile<RaceCardPrediction>(Path.Combine(_dataFolder, "TodaysPredictions.csv"));
         Logger.LogInformation("Scoring {PredictionCount} predictions for today", predictions.Count);
 
@@ -41,6 +44,74 @@ public class ValidateRaceCardPredictionsCommandHandler(
                 losses,
                 winnings,
                 percentageGains);
+        }
+    }
+
+    /// <summary>
+    /// Folds yesterday's betting-forecast prices from the (still un-overwritten) <c>TodaysRaceCards.csv</c>
+    /// into the month's <c>Results_YYYYMM.csv</c>, matching on (RaceId, HorseId) — the same key the scorer uses.
+    /// The merge is idempotent (only blank forecast cells are filled, and only from a card row that carries a
+    /// real forecast), forward-only (no historical backfill), and resilient to either file being absent.
+    /// </summary>
+    private async Task MergeForecastOddsIntoResults()
+    {
+        var cardFileName = Path.Combine(_dataFolder, "TodaysRaceCards.csv");
+        if (!FileSystem.File.Exists(cardFileName))
+        {
+            Logger.LogInformation("No race card file at {CardFile}; skipping forecast-odds merge.", cardFileName);
+            return;
+        }
+
+        var cards = await FileSystem.ReadRecordsFromCsvFile<RaceCardRecord>(cardFileName);
+
+        // Only card rows with a real forecast (non-null decimal) are merge sources; a runner with no forecast
+        // keeps the "SP"/empty default on the card and must never overwrite a results row.
+        var forecastByRunner = cards
+            .Where(c => c.DecimalOdds != null)
+            .GroupBy(c => (c.RaceId, c.HorseId))
+            .ToDictionary(g => g.Key, g => g.Last());
+
+        if (forecastByRunner.Count == 0)
+        {
+            Logger.LogInformation("No forecast odds present on {CardFile}; nothing to merge into results.", cardFileName);
+            return;
+        }
+
+        var resultsFileNames = cards
+            .Select(c => FileSystem.GetResultsFileName(_dataFolder, DateOnly.FromDateTime(c.Off)))
+            .Distinct();
+
+        foreach (var resultsFileName in resultsFileNames)
+        {
+            if (!FileSystem.File.Exists(resultsFileName))
+            {
+                Logger.LogInformation("No results file at {ResultsFile}; skipping forecast-odds merge for it.", resultsFileName);
+                continue;
+            }
+
+            var results = await FileSystem.ReadRecordsFromCsvFile<RaceResultRecord>(resultsFileName);
+            var filled = 0;
+            foreach (var result in results)
+            {
+                if (result.ForecastDecimalOdds != null || !string.IsNullOrEmpty(result.ForecastFractionalOdds))
+                {
+                    continue; // already populated - keep the merge idempotent
+                }
+
+                if (forecastByRunner.TryGetValue((result.RaceId, result.HorseId), out var forecast))
+                {
+                    result.ForecastFractionalOdds = forecast.FractionalOdds;
+                    result.ForecastDecimalOdds = forecast.DecimalOdds;
+                    filled++;
+                }
+            }
+
+            if (filled > 0)
+            {
+                await FileSystem.WriteRecordsToCsvFile(resultsFileName, results);
+            }
+
+            Logger.LogInformation("Merged forecast odds into {Filled} of {Total} result rows in {ResultsFile}.", filled, results.Count, resultsFileName);
         }
     }
 
