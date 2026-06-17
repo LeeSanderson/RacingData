@@ -214,7 +214,6 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
     [Fact]
     public async Task CompleteSuccessfullyAndLeaveResultsUnchangedWhenCardFileIsMissing()
     {
-        // No TodaysRaceCards.csv in the store - the merge must skip gracefully.
         var store = ConfigureStatefulFiles(
             (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
             (ResultsFileForMay2022, await _resultsWhereHorse1Won.ToCsvString()));
@@ -287,12 +286,8 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
             DecimalOdds = decimalOdds
         };
 
-    /// <summary>
-    /// Wires the mock filesystem to behave like a real one for the supplied files: Exists/ReadAllText
-    /// are backed by a mutable store, Delete removes from it and WriteAllText writes back to it. This lets
-    /// the merge rewrite the results file (DeleteFileIfExists then WriteAllText) without brittle call-count
-    /// sequencing. Returns the store so a test can read back what was written.
-    /// </summary>
+    // Backs the mock filesystem with a mutable store so Exists/Read/Delete/Write behave like a real one.
+    // Lets the merge rewrite the results file without brittle call-count sequencing on the mock.
     private Dictionary<string, string> ConfigureStatefulFiles(params (string name, string content)[] files)
     {
         var store = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

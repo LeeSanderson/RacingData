@@ -47,12 +47,8 @@ public class ValidateRaceCardPredictionsCommandHandler(
         }
     }
 
-    /// <summary>
-    /// Folds yesterday's betting-forecast prices from the (still un-overwritten) <c>TodaysRaceCards.csv</c>
-    /// into the month's <c>Results_YYYYMM.csv</c>, matching on (RaceId, HorseId) — the same key the scorer uses.
-    /// The merge is idempotent (only blank forecast cells are filled, and only from a card row that carries a
-    /// real forecast), forward-only (no historical backfill), and resilient to either file being absent.
-    /// </summary>
+    // Runs before TodaysRaceCards.csv is overwritten: copies the morning forecast onto matching
+    // (RaceId, HorseId) result rows. Idempotent — only blank cells are filled.
     private async Task MergeForecastOddsIntoResults()
     {
         var cardFileName = Path.Combine(_dataFolder, "TodaysRaceCards.csv");
@@ -64,8 +60,7 @@ public class ValidateRaceCardPredictionsCommandHandler(
 
         var cards = await FileSystem.ReadRecordsFromCsvFile<RaceCardRecord>(cardFileName);
 
-        // Only card rows with a real forecast (non-null decimal) are merge sources; a runner with no forecast
-        // keeps the "SP"/empty default on the card and must never overwrite a results row.
+        // A non-null decimal marks a real forecast; runners left at the "SP" default must not overwrite results.
         var forecastByRunner = cards
             .Where(c => c.DecimalOdds != null)
             .GroupBy(c => (c.RaceId, c.HorseId))
@@ -95,7 +90,7 @@ public class ValidateRaceCardPredictionsCommandHandler(
             {
                 if (result.ForecastDecimalOdds != null || !string.IsNullOrEmpty(result.ForecastFractionalOdds))
                 {
-                    continue; // already populated - keep the merge idempotent
+                    continue;
                 }
 
                 if (forecastByRunner.TryGetValue((result.RaceId, result.HorseId), out var forecast))

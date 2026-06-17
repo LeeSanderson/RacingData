@@ -71,6 +71,13 @@ RaceDataDownloader.exe validate --output Data
 
 ## C# Conventions
 
+### Comments (applies to all code, C# and Python)
+Prefer self-describing code over comments. Only comment when the code can't speak for itself:
+- **Comment the *why*, not the *what*** — non-obvious intent, external-system quirks (racingpost.com markup, CsvHelper behaviour), timing constraints, or invariants like idempotency. Never restate what the code or an assertion already says.
+- **Delete a comment that paraphrases the line below it.** If a comment is only needed because a name is unclear, rename instead.
+- **Keep explanatory blocks to 1–2 lines.** If you need a paragraph, the code is probably too complex — simplify it, or move the rationale to a doc under `docs/`.
+- **No ephemeral references** (PRD phase numbers, "legacy X test", ticket IDs) — they rot. Reserve XML doc comments (`/// <summary>`) for public API surface, not private methods or test helpers.
+
 ### Command handler pattern
 All CLI commands extend `FileCommandHandlerBase<THandler, TOptions>`:
 ```csharp

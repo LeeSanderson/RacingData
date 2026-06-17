@@ -8,9 +8,8 @@ public class RaceResultRecordShould
     [Fact]
     public async Task LoadLegacyResultsCsvWithoutForecastColumns()
     {
-        // A legacy Results_YYYYMM.csv predates the Forecast* columns: it carries only
-        // the original 40 columns (Index 0-39). Build one faithfully by serialising a
-        // record and dropping the two new trailing columns, then prove it still loads.
+        // Simulate a legacy file (original 40 columns, no Forecast*) by serialising a record
+        // and dropping the two new trailing columns.
         var record = new RaceResultRecord
         {
             RaceId = 809925,
@@ -25,8 +24,8 @@ public class RaceResultRecordShould
         var loaded = await legacyCsv.FromCsvString<RaceResultRecord>();
 
         var single = loaded.Single();
-        single.HorseId.Should().Be(3116615);              // positional mapping still aligned
-        single.DecimalOdds.Should().Be(7.5);              // last pre-existing columns unaffected
+        single.HorseId.Should().Be(3116615);
+        single.DecimalOdds.Should().Be(7.5);
         single.ForecastFractionalOdds.Should().BeNullOrEmpty();
         single.ForecastDecimalOdds.Should().BeNull();
     }
@@ -38,7 +37,7 @@ public class RaceResultRecordShould
         {
             RaceId = 809925,
             HorseId = 3116615,
-            FractionalOdds = "13/2",   // post-race SP, unchanged meaning
+            FractionalOdds = "13/2",
             DecimalOdds = 7.5,
             ForecastFractionalOdds = "11/2",
             ForecastDecimalOdds = 6.5

@@ -7,6 +7,7 @@ After a TDD cycle, look for:
 - **Shallow modules** → Combine or [deepen](deep-modules.md). Watch for parser helpers that only exist to be called once.
 - **Feature envy** → Move logic to where the data lives. A method on `UpdateResultsCommandHandler` that mostly reads from `RaceResultRecord` belongs on (or near) `RaceResultRecord`.
 - **Primitive obsession** → Introduce value objects. The project already does this with `RaceDistance`, `RaceWeight`, `RaceClassification`, `DateRange` — prefer adding to that vocabulary rather than passing tuples of primitives.
+- **Noisy comments** → Delete comments that restate the code or an assertion; keep only the non-obvious *why* (external-system quirks, invariants), 1–2 lines max. Prefer a clearer name over a clarifying comment. Full policy: AGENTS.md "Comments".
 - **Existing code** that the new code reveals as problematic — note it, raise it as a follow-up issue under `issues/`, don't expand scope mid-cycle.
 
 After each refactor step run `dotnet test` (fast) or `.\run.ps1` (full pipeline). Verified snapshots may need updating — review the `.received.txt` vs `.verified.txt` diff carefully and rename only when the new output is actually what you wanted.

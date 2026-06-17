@@ -66,10 +66,8 @@ public record RaceResultRecord : RaceCardRecord
     [Index(39)]
     public double RaceTimeInSeconds { get; set; }
 
-    // Phase 1 forecast-odds columns. Appended at the highest indices and marked
-    // [Optional] so historical results files written before these columns still load
-    // (the columns default to empty/null). The pre-existing FractionalOdds/DecimalOdds
-    // continue to hold the post-race SP; these hold the morning betting forecast.
+    // Appended at the highest indices and [Optional] so results files written before these columns
+    // still load. Unlike FractionalOdds/DecimalOdds (post-race SP), these hold the morning forecast.
     [Optional]
     [Index(40)]
     public string? ForecastFractionalOdds { get; set; }

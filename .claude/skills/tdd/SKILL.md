@@ -98,6 +98,7 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 - [ ] Extract duplication (often into `FileSystemExtensions`, `StringExtensions`, or a new helper)
 - [ ] Deepen modules (move complexity behind simple interfaces)
 - [ ] Apply SOLID principles where natural
+- [ ] Trim comments — keep only non-obvious *why*; delete any that restate the code (AGENTS.md "Comments")
 - [ ] Consider what new code reveals about existing code
 - [ ] Run `dotnet test` (or `.\run.ps1` for the full pipeline) after each refactor step
 

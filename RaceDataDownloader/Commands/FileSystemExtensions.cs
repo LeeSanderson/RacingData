@@ -70,11 +70,9 @@ public static class FileSystemExtensions
     {
         var configuration = new CsvConfiguration(CultureInfo.InvariantCulture);
 
-        // CsvHelper honours [Optional] for name-mapped members but still throws
-        // MissingFieldException for [Index]-mapped members whose column is absent
-        // (e.g. a legacy Results_YYYYMM.csv written before the Forecast* columns existed).
-        // Tolerate exactly those optional + indexed columns while keeping every other
-        // column strict, so a genuinely truncated/malformed file still fails fast.
+        // CsvHelper honours [Optional] for name-mapped members but still throws on absent
+        // [Index]-mapped columns. Tolerate only those (e.g. a legacy file written before the
+        // Forecast* columns) so a genuinely truncated file still fails fast.
         var optionalIndexes = typeof(TRecord)
             .GetProperties()
             .Where(p => p.GetCustomAttribute<OptionalAttribute>() != null

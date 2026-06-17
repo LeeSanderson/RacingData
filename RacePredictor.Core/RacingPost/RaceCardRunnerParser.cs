@@ -10,17 +10,18 @@ internal partial class RaceCardRunnerParser : RunnerParser
     private static readonly Regex WeightRegex = WeightRegexGenerator();
     private static readonly Regex HeadgearRegex = HeadgearRegexGenerator();
 
+    private readonly HtmlDocument _document;
     private readonly HtmlNodeFinder _find;
-    private readonly IReadOnlyDictionary<int, RaceOdds> _forecastOdds;
 
     public RaceCardRunnerParser(HtmlDocument document)
     {
+        _document = document;
         _find = new HtmlNodeFinder(document.DocumentNode);
-        _forecastOdds = ParseForecastOdds(document);
     }
 
     public IEnumerable<RaceRunner> Parse()
     {
+        var forecastOdds = ParseForecastOdds(_document);
         var rowNodes = _find.AnyElement().WithAttribute("data-testid", "Container__RunnerRowDesktop").GetNodes();
         var seenHorseIds = new HashSet<int>();
 
@@ -54,7 +55,7 @@ internal partial class RaceCardRunnerParser : RunnerParser
             var age = ExtractAge(rowText);
             var weight = ExtractWeight(rowText);
             var headgear = ExtractHeadgear(row);
-            var stats = ExtractStats(rowFind, horse.Id);
+            var stats = ExtractStats(rowFind, forecastOdds, horse.Id);
 
             yield return new RaceRunner(
                 horse,
@@ -73,8 +74,7 @@ internal partial class RaceCardRunnerParser : RunnerParser
 
     private static RaceEntity AnchorToNamedEntity(HtmlNode anchor)
     {
-        // Race-card anchors wrap the name in <span> elements and may also contain <sup> badges
-        // (jockey booking count, trainer win-rate). Take only the span content as the name.
+        // Anchors may include <sup> badges (booking count, win-rate); take only <span> text as the name.
         var id = @"/(\d+)/".GetMatch(anchor.GetAttributeValue("href", string.Empty)).AsInt();
         var spans = anchor.SelectNodes(".//span");
         var name = spans is null
@@ -139,9 +139,8 @@ internal partial class RaceCardRunnerParser : RunnerParser
 
     private static string? ExtractHeadgear(HtmlNode rowNode)
     {
-        // Headgear is a short lowercase code (e.g., "t", "b", "p", "v", "tb", "tp") in a small <span>
-        // sibling near the days-since-last-run sup. There's no data-testid, so scan spans inside the
-        // horse-info section for the first short-alpha-only span that isn't a known label.
+        // Headgear has no data-testid; it's a short lowercase code (e.g. "t", "tb", "p") in a leaf
+        // <span>. Scan the horse-info spans for the first short-alpha-only one that isn't a known label.
         var horseInfo = rowNode.SelectSingleNode(".//*[@data-testid='Container__HorseInfo']");
         if (horseInfo == null)
         {
@@ -151,7 +150,6 @@ internal partial class RaceCardRunnerParser : RunnerParser
 
         foreach (var span in horseInfo.SelectNodes(".//span") ?? Enumerable.Empty<HtmlNode>())
         {
-            // Skip spans with children — we only want leaf spans.
             if (span.ChildNodes.Any(c => c.NodeType == HtmlNodeType.Element))
             {
                 continue;
@@ -173,22 +171,20 @@ internal partial class RaceCardRunnerParser : RunnerParser
         return null;
     }
 
-    private RaceRunnerStats ExtractStats(HtmlNodeFinder rowFind, int horseId)
+    private static RaceRunnerStats ExtractStats(HtmlNodeFinder rowFind, IReadOnlyDictionary<int, RaceOdds> forecastOdds, int horseId)
     {
         var statsNode = rowFind.Optional().AnyElement().WithAttribute("data-testid", "Container__RunnerStats").GetNode();
         var text = statsNode?.InnerText ?? string.Empty;
         var or = ExtractIntStat(text, "OR");
         var ts = ExtractIntStat(text, "TS");
         var rpr = ExtractIntStat(text, "RPR");
-        var odds = _forecastOdds.TryGetValue(horseId, out var forecast) ? forecast : new RaceOdds("SP");
+        var odds = forecastOdds.TryGetValue(horseId, out var forecast) ? forecast : new RaceOdds("SP");
         return new RaceRunnerStats(odds, or, rpr, ts);
     }
 
-    // The race-card page carries a server-rendered betting forecast: a sequence of groups, each a
-    // single price span followed by one or more horse anchors that share that price
-    // (e.g. "6/1 Spicy Spangle, Taihang Scenery"). Build a horseId -> forecast price map keyed off
-    // the horse id in each anchor's href, taking the price from the anchor's nearest preceding
-    // sibling span so shared prices fan out to every anchor under them.
+    // In the betting forecast a single price span precedes one or more horse anchors that share it
+    // (e.g. "6/1 Spicy Spangle, Taihang Scenery"). Key each anchor's horse id to the price in its
+    // nearest preceding-sibling span, so a shared price fans out to every horse under it.
     private static IReadOnlyDictionary<int, RaceOdds> ParseForecastOdds(HtmlDocument document)
     {
         var map = new Dictionary<int, RaceOdds>();
