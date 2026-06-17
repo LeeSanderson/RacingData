@@ -2,8 +2,8 @@ trigger: none
 pr: none
 
 schedules:
-  - cron: '0 6 * * *' 
-    displayName: 'Daily 6AM run'
+  - cron: '0 9 * * *'
+    displayName: 'Daily 9AM run'
     branches:
       include:
         - main
