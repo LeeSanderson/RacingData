@@ -12,9 +12,9 @@
       "todays"
     ],
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnSave": true
   },
   "notebook.formatOnSave.enabled": true,
-  "notebook.defaultFormatter": "ms-python.black-formatter"
+  "notebook.defaultFormatter": "charliermarsh.ruff"
 }

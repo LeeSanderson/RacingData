@@ -55,3 +55,21 @@ fully realized once 005 adds the pyright config.
 - User story 1 (editor type squiggles match the CLI — partial; completed with 005's pyright config)
 - User story 2 (auto-formatting reproducible outside the editor)
 - User story 21 (VS Code Ruff extension + recommended-extensions list updated)
+
+## Completion note — 2026-06-17 (done; verified in-editor by Lee)
+
+**Done (committed):**
+- `.vscode/settings.json`: `[python]` `editor.defaultFormatter` swapped `ms-python.black-formatter`
+  → `charliermarsh.ruff`, `editor.formatOnSave` kept `true`.
+- `.vscode/extensions.json`: recommendation `ms-python.black-formatter` → `charliermarsh.ruff`.
+
+**Notebook-formatter decision (the "decide and note" the issue called for):**
+- Pointed `notebook.defaultFormatter` at `charliermarsh.ruff` too (rather than leaving the black
+  reference), so nothing silently invokes a tool the project no longer endorses. Notebooks are in
+  Ruff's `extend-exclude` (`pyproject.toml`), so `ruff format` effectively no-ops on them — which is
+  consistent with the PRD treating notebooks as out of scope. The win is that the black reference is
+  gone entirely.
+
+**Verified (in-editor, Lee, 2026-06-17):** reload-window picks up the settings; Ruff is the recommended
+extension; format-on-save uses Ruff; lint/type squiggles match the CLI (`[tool.pyright]` from 005 is in
+place, so Pylance == pyright). All four acceptance criteria met.
