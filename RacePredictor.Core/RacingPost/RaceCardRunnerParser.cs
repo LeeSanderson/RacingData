@@ -11,10 +11,12 @@ internal partial class RaceCardRunnerParser : RunnerParser
     private static readonly Regex HeadgearRegex = HeadgearRegexGenerator();
 
     private readonly HtmlNodeFinder _find;
+    private readonly IReadOnlyDictionary<int, RaceOdds> _forecastOdds;
 
     public RaceCardRunnerParser(HtmlDocument document)
     {
         _find = new HtmlNodeFinder(document.DocumentNode);
+        _forecastOdds = ParseForecastOdds(document);
     }
 
     public IEnumerable<RaceRunner> Parse()
@@ -52,7 +54,7 @@ internal partial class RaceCardRunnerParser : RunnerParser
             var age = ExtractAge(rowText);
             var weight = ExtractWeight(rowText);
             var headgear = ExtractHeadgear(row);
-            var stats = ExtractStats(rowFind);
+            var stats = ExtractStats(rowFind, horse.Id);
 
             yield return new RaceRunner(
                 horse,
@@ -171,14 +173,49 @@ internal partial class RaceCardRunnerParser : RunnerParser
         return null;
     }
 
-    private static RaceRunnerStats ExtractStats(HtmlNodeFinder rowFind)
+    private RaceRunnerStats ExtractStats(HtmlNodeFinder rowFind, int horseId)
     {
         var statsNode = rowFind.Optional().AnyElement().WithAttribute("data-testid", "Container__RunnerStats").GetNode();
         var text = statsNode?.InnerText ?? string.Empty;
         var or = ExtractIntStat(text, "OR");
         var ts = ExtractIntStat(text, "TS");
         var rpr = ExtractIntStat(text, "RPR");
-        return new RaceRunnerStats(new RaceOdds("SP"), or, rpr, ts);
+        var odds = _forecastOdds.TryGetValue(horseId, out var forecast) ? forecast : new RaceOdds("SP");
+        return new RaceRunnerStats(odds, or, rpr, ts);
+    }
+
+    // The race-card page carries a server-rendered betting forecast: a sequence of groups, each a
+    // single price span followed by one or more horse anchors that share that price
+    // (e.g. "6/1 Spicy Spangle, Taihang Scenery"). Build a horseId -> forecast price map keyed off
+    // the horse id in each anchor's href, taking the price from the anchor's nearest preceding
+    // sibling span so shared prices fan out to every anchor under them.
+    private static IReadOnlyDictionary<int, RaceOdds> ParseForecastOdds(HtmlDocument document)
+    {
+        var map = new Dictionary<int, RaceOdds>();
+        var anchors = document.DocumentNode.SelectNodes("//a[@data-testid='Link__BettingForecastHorse']");
+        if (anchors is null)
+        {
+            return map;
+        }
+
+        foreach (var anchor in anchors)
+        {
+            var horseId = @"/(\d+)/".FindMatch(anchor.GetAttributeValue("href", string.Empty)).AsOptionalInt();
+            if (horseId is null)
+            {
+                continue;
+            }
+
+            var fractional = anchor.SelectSingleNode("preceding-sibling::span[1]")?.InnerText.TrimAllWhiteSpace();
+            if (string.IsNullOrEmpty(fractional))
+            {
+                continue;
+            }
+
+            map[horseId.Value] = new RaceOdds(fractional);
+        }
+
+        return map;
     }
 
     private static int? ExtractIntStat(string text, string label)

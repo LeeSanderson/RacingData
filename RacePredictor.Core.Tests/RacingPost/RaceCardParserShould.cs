@@ -82,6 +82,50 @@ public class RaceCardParserShould
     }
 
     [Fact]
+    public async Task AssignBettingForecastOddsToRunners()
+    {
+        var actualRaceParseResult = await GetRaceCard("racecard_kempton_20260520_2000_headgear.html");
+
+        var rockIguana = actualRaceParseResult.Runners.Single(r => r.Horse.Id == 7374167);
+        rockIguana.Statistics.Odds.FractionalOdds.Should().Be("11/2");
+        rockIguana.Statistics.Odds.DecimalOdds.Should().Be(6.5);
+    }
+
+    [Fact]
+    public async Task ShareForecastPriceAcrossEveryRunnerListedUnderIt()
+    {
+        // In the forecast block one price span can be followed by several horse anchors
+        // ("20/1 Bell Shot, Tiger Crusade"); every horse under it must get that price.
+        var actualRaceParseResult = await GetRaceCard("racecard_kempton_20260520_2000_headgear.html");
+
+        var bellShot = actualRaceParseResult.Runners.Single(r => r.Horse.Id == 3609039);
+        var tigerCrusade = actualRaceParseResult.Runners.Single(r => r.Horse.Id == 2783578);
+
+        bellShot.Statistics.Odds.FractionalOdds.Should().Be("20/1");
+        bellShot.Statistics.Odds.DecimalOdds.Should().Be(21);
+        tigerCrusade.Statistics.Odds.FractionalOdds.Should().Be("20/1");
+        tigerCrusade.Statistics.Odds.DecimalOdds.Should().Be(21);
+    }
+
+    [Fact]
+    public async Task FallBackToDefaultOddsWhenRunnerHasNoForecast()
+    {
+        // Synthesise a missing forecast by removing Rock Iguana's forecast anchor so the parser
+        // cannot find a price for it; it must fall back to the "SP"/empty default.
+        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_kempton_20260520_2000_headgear.html");
+        var modified = RemoveForecastForHorse(html, 7374167);
+
+        var card = await new RaceCardParser().Parse(modified);
+
+        var rockIguana = card.Runners.Single(r => r.Horse.Id == 7374167);
+        rockIguana.Statistics.Odds.FractionalOdds.Should().Be("SP");
+        rockIguana.Statistics.Odds.DecimalOdds.Should().BeNull();
+
+        // Other runners are unaffected and still receive their forecast.
+        card.Runners.Single(r => r.Horse.Id == 4518765).Statistics.Odds.FractionalOdds.Should().Be("6/1");
+    }
+
+    [Fact]
     public async Task ParseWarwickRaceCardWithExpectedHurdles()
     {
         var actualRaceParseResult = await GetRaceCard("racecard_warwick_20260520_1700_hurdles.html");
@@ -170,6 +214,19 @@ public class RaceCardParserShould
         }
         var replacement = $"{match.Groups[1].Value}R{match.Groups[2].Value}{match.Groups[3].Value}";
         return html[..match.Index] + replacement + html[(match.Index + match.Length)..];
+    }
+
+    private static string RemoveForecastForHorse(string html, int horseId)
+    {
+        // Rename only the betting-forecast anchor for this horse (the runner-row Link__Horse anchor
+        // for the same id is left intact) so the forecast parser no longer matches it.
+        var pattern = new Regex($"Link__BettingForecastHorse(\"[^>]*?href=\"/profile/horse/{horseId}/)");
+        if (!pattern.IsMatch(html))
+        {
+            throw new InvalidOperationException($"Could not find forecast anchor for horse {horseId} to remove.");
+        }
+        // The race-card page renders its content twice, so neutralise every copy of the anchor.
+        return pattern.Replace(html, "Link__BettingForecastHorseRemoved$1");
     }
 
     private static string RemoveGoingLink(string html) =>

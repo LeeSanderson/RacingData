@@ -54,7 +54,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "4/1",
+            "DecimalOdds": 5
           },
           "OfficialRating": 40,
           "RacingPostRating": 55
@@ -85,7 +86,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "8/1",
+            "DecimalOdds": 9
           },
           "OfficialRating": 38,
           "RacingPostRating": 54
@@ -117,7 +119,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "14/1",
+            "DecimalOdds": 15
           },
           "OfficialRating": 38,
           "RacingPostRating": 58
@@ -149,7 +152,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "16/1",
+            "DecimalOdds": 17
           },
           "OfficialRating": 37,
           "RacingPostRating": 58
@@ -180,7 +184,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "7/1",
+            "DecimalOdds": 8
           },
           "OfficialRating": 36,
           "RacingPostRating": 56
@@ -212,7 +217,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "12/1",
+            "DecimalOdds": 13
           },
           "OfficialRating": 34,
           "RacingPostRating": 49
@@ -244,7 +250,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "5/1",
+            "DecimalOdds": 6
           },
           "OfficialRating": 33,
           "RacingPostRating": 60
@@ -276,7 +283,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "6/1",
+            "DecimalOdds": 7
           },
           "OfficialRating": 33,
           "RacingPostRating": 62
@@ -308,7 +316,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "14/1",
+            "DecimalOdds": 15
           },
           "OfficialRating": 32,
           "RacingPostRating": 60
@@ -340,7 +349,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "14/1",
+            "DecimalOdds": 15
           },
           "OfficialRating": 30,
           "RacingPostRating": 61
@@ -372,7 +382,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "6/1",
+            "DecimalOdds": 7
           },
           "OfficialRating": 22,
           "RacingPostRating": 61
@@ -404,7 +415,8 @@
         },
         "Statistics": {
           "Odds": {
-            "FractionalOdds": "SP"
+            "FractionalOdds": "33/1",
+            "DecimalOdds": 34
           },
           "OfficialRating": 19,
           "RacingPostRating": 60
