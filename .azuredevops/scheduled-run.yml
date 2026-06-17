@@ -52,7 +52,10 @@ steps:
     targetType: inline
     workingDirectory: '$(Build.SourcesDirectory)/SiteSource'
     script: |
-      git config core.autocrlf false
+      # Line endings are governed by the committed .gitattributes (* text=auto),
+      # which normalizes text files to LF on commit. Do NOT set core.autocrlf here:
+      # forcing it false made `git add *` stage the agent's CRLF working-tree files
+      # verbatim, re-committing every unmodified source file as CRLF (line-ending churn).
       git config user.email lee.sndrsn@gmail.com
       git config user.name LeeSanderson
       git add *

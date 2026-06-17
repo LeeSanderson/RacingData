@@ -1,0 +1,39 @@
+# Line-ending normalization.
+#
+# All text files are stored with LF in the repository. Git normalizes line endings
+# on commit, so the working-tree convention (e.g. CRLF on a Windows checkout) never
+# leaks into a commit.
+#
+# Why this exists: the scheduled Azure DevOps job (.azuredevops/scheduled-run.yml)
+# clones on a windows-latest agent (core.autocrlf=true => CRLF working tree) and then
+# runs `git add *`. Without these rules that re-committed every unmodified source file
+# with CRLF endings on each "Data Update" commit, producing whole-file line-ending
+# churn and recurring merge conflicts. `text=auto` makes commits LF regardless of any
+# core.autocrlf setting on the committing machine, so the churn cannot happen.
+* text=auto
+
+# Byte-sensitive golden test data — freeze exactly as committed, never EOL-convert.
+*.html         -text
+*.verified.txt -text
+*.received.txt -text
+
+# Match .editorconfig: Windows batch files keep CRLF, shell scripts keep LF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+*.sh  text eol=lf
+
+# Binary assets: never apply end-of-line conversion (future-proofing; text=auto also
+# auto-detects binary content, these just make intent explicit).
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.pdf     binary
+*.zip     binary
+*.pkl     binary
+*.joblib  binary
+*.parquet binary
+*.xlsx    binary
+*.onnx    binary
