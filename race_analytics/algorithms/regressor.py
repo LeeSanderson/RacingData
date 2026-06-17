@@ -9,6 +9,7 @@ from race_analytics.algorithms.base import (
     REQUIRED_PREDICTORS,
     FieldPredictorBaseAlgorithm,
 )
+from race_analytics.features.market_prob import MARKET_PROB
 from race_analytics.features.race_data import RaceData
 
 
@@ -43,7 +44,17 @@ class RegressorAlgorithm(FieldPredictorBaseAlgorithm):
     def _select_features(self, data: RaceData) -> list[str]:
         required = [c for c in REQUIRED_PREDICTORS if c in data.frame.columns]
         tolerated = [c for c in self.nan_tolerant_predictors if c in data.frame.columns]
-        self._fitted_predictors = required + tolerated
+        # MarketProb is the one optional feature the whole regressor family always
+        # takes: the uniform-prior imputation keeps it dense, so even a plain Ridge
+        # (empty nan_tolerant_predictors) gets the market signal with no NaN reaching
+        # the estimator. De-duped so XGBoost (nan_tolerant_predictors == OPTIONAL) is
+        # not double-counted.
+        market = (
+            [MARKET_PROB]
+            if MARKET_PROB in data.frame.columns and MARKET_PROB not in tolerated
+            else []
+        )
+        self._fitted_predictors = required + tolerated + market
         return self._fitted_predictors
 
     def _fit_estimator(

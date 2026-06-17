@@ -9,6 +9,7 @@ from race_analytics.algorithms.win_classifier import (
     WinClassifier as ProxyTSRXGBoostAlgorithm,
 )
 from race_analytics.algorithms.xgboost_algorithm import XGBoostAlgorithm
+from race_analytics.features.market_prob import MARKET_PROB
 from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
@@ -121,6 +122,9 @@ def _train_row(
         "SexRestriction_F": 0.0,
         "SexRestriction_FM": 0.0,
         "SexRestriction_Open": 1.0,
+        # The harness training frame carries MarketProb (issue 003); a varying value
+        # mirrors the per-race normalized market signal the estimator fits on.
+        "MarketProb": round(0.2 + (horse_id % 3) * 0.1, 3),
     }
 
 
@@ -247,9 +251,15 @@ def test_xgboost_predict_tolerates_nan_last3_in_one_horse():
 
 
 def test_ridge_fitted_predictors_exclude_last3_columns():
+    # Ridge has empty nan_tolerant_predictors, so it takes no NaN-tolerant optional
+    # predictor — except MarketProb, the one optional the whole regressor family always
+    # selects (dense via the uniform prior; its inclusion is covered in
+    # test_market_prob_predictor.py).
     algo = RidgeRegressionAlgorithm()
     algo.fit(_rd(_make_train_df()))
     for col in OPTIONAL_PREDICTORS:
+        if col == MARKET_PROB:
+            continue
         assert col not in algo._fitted_predictors, (  # pyright: ignore[reportPrivateUsage]  # intentional internal-state assertion
             f"{col} should not be in Ridge _fitted_predictors"
         )

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, ClassVar, Protocol, runtime_checkable
 import numpy as np
 import pandas as pd
 
+from race_analytics.features.market_prob import MARKET_PROB
 from race_analytics.features.race_data import RaceData
 
 if TYPE_CHECKING:
@@ -90,6 +91,7 @@ OPTIONAL_PREDICTORS = [
     "SexRestriction_F",
     "SexRestriction_FM",
     "SexRestriction_Open",
+    MARKET_PROB,
 ]
 
 PREDICTORS = REQUIRED_PREDICTORS + OPTIONAL_PREDICTORS
