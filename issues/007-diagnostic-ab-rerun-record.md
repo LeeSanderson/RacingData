@@ -43,3 +43,61 @@ the SP placeholder, not the forecast feature production will serve on.
 - User story 15 (results recorded under a flagged SP-placeholder/diagnostic section)
 - User story 16 (production `ACTIVE_ALGORITHM` left untouched)
 - User story 19 (known SP-vs-forecast divergence documented)
+
+---
+
+## Progress — PAUSED 2026-06-18 (resume instructions)
+
+Depth chosen: **14 folds**, 7-month training window, all 16 registered algorithms.
+Run command was:
+`python -m race_analytics.scripts.evaluate --folds 14 --training-months 7 --save-results --results-file evaluation_results_20260618.csv`
+
+The run was stopped early (laptop shutdown). Partial results are in
+**`evaluation_results_20260618.csv`** (repo working tree, **untracked** — it survives a
+shutdown; do NOT `git clean`). The CSV is the reliable record: it is flushed atomically
+once per fold *after* all 16 algorithms run, so any fold present in it is complete.
+(Run stdout is block-buffered and unreliable for the final fold.)
+
+### Fold status (fold dates run newest-first from yesterday=2026-06-17)
+
+| Fold date | Status |
+|---|---|
+| 2026-06-17 | **Skipped** — "No known races". No rerun needed; not a gap. |
+| 2026-06-16 | ✅ Complete (16 algos). |
+| 2026-06-15 | ✅ Complete (16 algos). |
+| 2026-06-14 | ✅ Complete (16 algos; smaller race day → fewer rows). |
+| 2026-06-13 → 2026-06-04 | ⏳ **Not run** (killed at the start of 06-13). 10 folds remain. |
+
+Note: some completed folds show <16 *distinct* algorithms in the CSV — that is normal,
+an abstain algorithm emitting 0 rows on a low-confidence day, not incompleteness.
+
+### To resume
+
+`evaluate.py` derives fold dates from *yesterday* at run time, so the resume flags
+depend on the resume date. Target the remaining dates **2026-06-13 → 2026-06-04** and
+**append** to the same CSV. Compute (whole days):
+
+- `offset = (resume_date − 1 day) − 2026-06-13`
+- `folds  = offset + 10`
+- Run (omit `--algorithms` to run all 16):
+  `python -m race_analytics.scripts.evaluate --folds <folds> --training-months 7 --save-results --results-file evaluation_results_20260618.csv --fold-offset <offset>`
+
+Worked examples:
+- Resume **2026-06-19** → `offset = 5`, `folds = 15` → `--folds 15 --fold-offset 5`.
+- Resume **2026-06-18** (same day) → `offset = 4`, `folds = 14` → `--folds 14 --fold-offset 4`.
+
+After the append, verify the CSV's `FoldDate` set is exactly 2026-06-16 → 2026-06-04 (13
+usable folds; 06-17 has no races) with no duplicate (FoldDate, Algorithm, RaceId,
+HorseId) rows. If the offset was off and 06-14 got re-run, dedupe keeping the last
+occurrence before aggregating.
+
+### Then (remaining 007 work)
+
+1. Aggregate per-algorithm **accuracy / ROI / coverage** from the CSV (and the
+   favourite baseline), e.g. via `race_analytics/utils/scoring.py`.
+2. Record them in `evaluations.md` under a clearly-flagged **"SP-placeholder /
+   diagnostic"** section with the **"following-the-favourite"** caveat (the accuracy
+   jump reflects classifiers leaning on the SP-defined favourite, not a forecast-time
+   edge). Reference the raw CSV `evaluation_results_20260618.csv`.
+3. Verify `race_analytics/algorithms/__init__.py` `ACTIVE_ALGORITHM` is **unchanged**.
+4. Commit the CSV + `evaluations.md`, then move this issue to `issues/done/`.
