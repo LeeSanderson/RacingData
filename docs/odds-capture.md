@@ -33,9 +33,16 @@ the old `"SP"` placeholder:
   settle the schedule ahead of Phase 2; `run.ps1` step order is unchanged.
 
 **Leakage guardrail:** a forecast price now exists on the card *at prediction
-time*. The Python predictor ignores card odds today, and it must stay that way —
-the forecast must not silently become a model feature or selection/filter unless
-deliberately and safely introduced. Full reasoning in `docs/data-pitfalls.md`.
+time*, and the predictor no longer ignores it — the market-prob work introduced
+`MarketProb` (forecast-when-present-else-SP, per-race normalized) as a deliberately
+sanctioned model feature, fed through a single resolver and evaluated honestly. The
+SP fallback is transitional: with near-zero forecast coverage in history `MarketProb`
+is mostly SP-derived today, and the fallback retires itself as forecast coverage
+accrues. Raw card / SP / forecast prices remain barred as direct features, and no
+odds-presence selection gate was added. A fully forecast-fed 7-month training window
+is ~7 months away (a ~1-month checkpoint is still roughly six-sevenths SP), so the
+re-eval that reconsiders adoption is gated on a coverage threshold, not a hard date.
+Full reasoning in `docs/data-pitfalls.md` (Pitfall 2).
 
 ## Phase 2 — live / market odds (deferred)
 

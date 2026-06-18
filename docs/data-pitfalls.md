@@ -30,32 +30,49 @@ and the 0.78 headline fully collapsed.
 `Race_Features.csv`), reaching algorithms only through the per-horse **stats join**
 (`extract_horse_stats` → `Horse_Stats.csv`) — **never** from the race-day card row.
 
-## Pitfall 2 — a forecast price now sits on the card; it must not become a feature
+## Pitfall 2 — odds enter the model *only* through the sanctioned `MarketProb` resolver
 
-**This pitfall changed shape.** It used to read "odds are unavailable at prediction
-time" — `TodaysRaceCards.csv` carried the literal `"SP"` placeholder. That is no
-longer true: the card now carries a real **betting-forecast** price (the RP morning
+**This pitfall changed shape twice.** It first read "odds are unavailable at prediction
+time" — `TodaysRaceCards.csv` carried the literal `"SP"` placeholder. That stopped
+being true when the card gained a real **betting-forecast** price (the RP morning
 "tissue") for every runner at download, so `FractionalOdds`/`DecimalOdds` on the card
-are a genuine pre-race price. See [`docs/odds-capture.md`](odds-capture.md).
+are a genuine pre-race price (see [`docs/odds-capture.md`](odds-capture.md)). For a
+while the rule then read "a real price exists at prediction time, so it *could* be fed
+to the model — and must not be."
 
-That makes this the *more* dangerous pitfall now, not the safer one: a real price
-exists **at prediction time**, so it *could* be fed to the model — and must not be.
+**That blanket ban has now been consciously and narrowly relaxed.** The market-prob
+work introduced **`MarketProb`** — the per-race-normalized, market-implied win
+probability — as a **deliberately sanctioned** model feature. It is the *only* channel
+through which odds may reach a model, and it enters behind a single resolver
+(`race_analytics/features/market_prob.py`):
 
-- The Python predictor currently ignores card odds, so **no leakage occurs today**.
-  This must stay true. The forecast must not silently become a model input or a
-  selection/filter signal unless deliberately and safely introduced (and re-evaluated
-  for the favourite-strength / odds-entropy traps that motivated this rule).
-- The post-race **SP** (`FractionalOdds`/`DecimalOdds` in `Results_*.csv`) is still
-  post-race, and the new `Forecast*` columns there are a *retrospective* record of the
-  morning price. Both remain ROI/accuracy *measurement* constructs in `evaluate.py`,
-  not signals the model conditions on.
+- `MarketProb` resolves each runner's price **forecast-when-present-else-SP**, converts
+  it to an implied probability, and normalizes within each race so the field sums to 1.
+  The forecast clears bar 1 (knowable before the off) and the PRD consciously clears
+  bar 2 (introduced deliberately, behind a resolver, with honest evaluation and
+  deferred adoption) — so `MarketProb` is a permitted feature.
+- The **SP fallback is a transitional placeholder, not a sanctioned feature.** With
+  near-zero forecast coverage in history, `MarketProb` is today mostly computed from the
+  post-race SP, so the current eval reads an SP placeholder, not the forecast production
+  will serve on — the same eval/production divergence that once inflated a ratings model
+  (Pitfall 1). The mitigation is structural: no promotion is made off the SP-placeholder
+  eval, which is flagged diagnostic in [`evaluations.md`](../evaluations.md). As forecast
+  coverage accrues the fallback retires itself.
+- The post-race **SP** (`FractionalOdds`/`DecimalOdds` in `Results_*.csv`) and the
+  `Forecast*` results columns remain **barred as direct features** — SP because it is
+  post-race, the `Forecast*` results columns because they are a *retrospective* record.
+  They stay ROI/accuracy *measurement* constructs in `evaluate.py` (now valued through
+  the same resolver, so model and measurement share one notion of "the market").
 - The **live / market** price (value betting, model-vs-market blends) is still
   genuinely unavailable early — that is Phase 2, not yet captured (see
   `docs/odds-capture.md`). So market-overlay strategies remain undeployable for now.
 
-**The rule (unchanged, now load-bearing):** never use odds — forecast, live, or SP,
-or anything derived from them — as a model input or a selection/filter signal. The
-fact that a column is now *populated* at download is not permission to use it.
+**The rule (now precise):** the only odds-derived signal a model may condition on is
+`MarketProb`, through its resolver. Raw card / SP / forecast prices — and anything else
+derived from them — must never be a direct model input or a selection/filter signal.
+Sanctioning `MarketProb` added **no** odds-presence race-selection gate; the predicted
+population is unchanged. The fact that a column is *populated* at download is still not
+blanket permission to use it — permission is granted feature by feature, deliberately.
 
 ## The shared lesson
 
@@ -68,5 +85,8 @@ one:
 1. *Was this value knowable, for this horse, before this race went off?* If not — or
    if you can't confirm the column is populated in the card at download time — it
    cannot be a feature.
-2. Even if it passes (1), is feeding it deliberate and safe? Odds clear bar 1 now but
-   are barred at bar 2 by the rule above. **Populated ≠ permitted.**
+2. Even if it passes (1), is feeding it deliberate and safe? The forecast price clears
+   bar 1 (it exists at download), and `MarketProb` is the one odds-derived signal that
+   has consciously cleared bar 2 — introduced deliberately, behind a resolver, with
+   honest evaluation and deferred adoption. Raw SP / forecast prices stay barred at bar
+   2. **Populated ≠ permitted — permission is granted feature by feature.**
