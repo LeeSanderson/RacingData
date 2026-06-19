@@ -101,3 +101,27 @@ occurrence before aggregating.
    edge). Reference the raw CSV `evaluation_results_20260618.csv`.
 3. Verify `race_analytics/algorithms/__init__.py` `ACTIVE_ALGORITHM` is **unchanged**.
 4. Commit the CSV + `evaluations.md`, then move this issue to `issues/done/`.
+
+---
+
+## Completed — 2026-06-19
+
+Resumed on 2026-06-18 with `--folds 14 --fold-offset 4` (the plan's worked example for that
+date); the run finished cleanly (exit 0), appending folds 2026-06-13 → 2026-06-04 to
+`evaluation_results_20260618.csv`. Final CSV: **13 usable folds** (2026-06-16 → 2026-06-04;
+06-17 had no races), 14,576 rows, all **16 algorithms**, **0 duplicate** (FoldDate,
+Algorithm, RaceId, HorseId) rows.
+
+Per-algorithm accuracy / ROI / coverage + the favourite baseline were aggregated from the
+CSV (reusing `scoring.py` + `MarketFavouriteBaseline`), **validated to 0.000 against the
+evaluator's own printed 10-fold Summary** before applying to all 13 folds. Results recorded
+in `evaluations.md` under the flagged **"SP-placeholder / diagnostic"** section with the
+**following-the-favourite** caveat.
+
+`ACTIVE_ALGORITHM` (`GatedRecencyWeightedWinClassifier`, `ALGORITHMS[13]`) **unchanged**
+(verified: no git diff on `race_analytics/algorithms/__init__.py`).
+
+Acceptance criteria all met. Headline: gated classifiers ~0.39–0.41 accuracy vs favourite
+0.325, but ROI is negative across all full-coverage algorithms (favourite −£31.89) — the
+accuracy lift is favourite-tracking via the SP-defined `MarketProb`, not a forecast-time
+edge.

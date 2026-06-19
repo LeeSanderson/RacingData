@@ -1,5 +1,59 @@
 # Algorithm Evaluation Findings
 
+## 13-fold MarketProb diagnostic — 2026-06-04 → 2026-06-16 (⚠️ SP-PLACEHOLDER / DIAGNOSTIC — NOT a promotion decision)
+
+> **Read this before using these numbers.** This is the issue-007 A/B re-run of **all 16
+> registered algorithms with `MarketProb` available**. It is a **diagnostic only** and did
+> **not** change `ACTIVE_ALGORITHM`. Forecast-odds coverage in history is ~zero, so
+> `MarketProb` here is computed from the **post-race SP**, not the morning forecast price
+> production will actually serve. **These accuracy/ROI figures therefore measure the SP
+> placeholder, not the forecast feature.** Read the *relative* picture, not the absolute
+> numbers, and do not promote on this basis.
+
+13 usable folds (2026-06-04 → 2026-06-16; 2026-06-17 had no races), 7-month training window
+per fold, all 16 registered algorithms. 212 predictable races (the set every ungated
+algorithm covers). Raw per-fold predictions: `evaluation_results_20260618.csv`. Aggregated
+with the same `race_analytics/utils/scoring.py` accuracy/ROI definitions and the
+`MarketFavouriteBaseline`, validated to reproduce the evaluator's own cross-fold Summary
+exactly on the folds the run printed.
+
+| Algorithm | Accuracy | Net £ ROI | Races | Coverage | Fav accuracy | Fav ROI |
+|---|---|---|---|---|---|---|
+| RidgeRegressionAlgorithm | 0.236 | −22.56 | 212 | 100% | 0.325 | −31.89 |
+| XGBoostAlgorithm | 0.236 | −19.59 | 212 | 100% | 0.325 | −31.89 |
+| RatingsXGBoostAlgorithm (TSR-gated) | 0.471 | +0.86 | 17 | 8.0% | 0.353 | −4.84 |
+| RatingsXGBoostUngatedAlgorithm | 0.340 | −21.94 | 212 | 100% | 0.325 | −31.89 |
+| WinClassifier | 0.349 | −12.60 | 212 | 100% | 0.325 | −31.89 |
+| TunedWinClassifier | 0.330 | −26.90 | 212 | 100% | 0.325 | −31.89 |
+| GatedWinClassifier | 0.394 | −14.33 | 99 | 46.7% | 0.364 | −24.78 |
+| GatedGapWinClassifier | 0.392 | −19.81 | 74 | 34.9% | 0.392 | −19.81 |
+| PositionWeightedWinClassifier | 0.321 | −36.32 | 212 | 100% | 0.325 | −31.89 |
+| GatedPositionWeightedWinClassifier | 0.409 | −13.20 | 93 | 43.9% | 0.398 | −15.90 |
+| RankingClassifier | 0.302 | −51.10 | 212 | 100% | 0.325 | −31.89 |
+| GatedRankingClassifier | 0.366 | −21.29 | 101 | 47.6% | 0.366 | −19.53 |
+| RecencyWeightedWinClassifier | 0.344 | −19.68 | 212 | 100% | 0.325 | −31.89 |
+| **GatedRecencyWeightedWinClassifier** ← active | **0.410** | **−11.53** | **100** | **47.2%** | 0.380 | −19.40 |
+| SplitDisciplineWinClassifier | 0.344 | −18.44 | 212 | 100% | 0.325 | −31.89 |
+| GatedSplitDisciplineWinClassifier | 0.404 | −12.20 | 99 | 46.7% | 0.374 | −21.90 |
+
+`Accuracy`, `ROI`, `Races`, `Fav accuracy` and `Fav ROI` reproduce the evaluator's own
+cross-fold Summary exactly (validated to 0.000 against the 10-fold subset the run printed
+before it was interrupted). `Coverage` = races bet ÷ 212.
+
+### Following the favourite — why the accuracy looks better than it is
+
+The gated classifiers reach ~0.39–0.41 accuracy against the market favourite's 0.325 — an
+apparent edge. It is **not a forecast-time edge.** On historic data `MarketProb` is derived
+from the **SP**, and the SP *defines* the favourite, so the models are effectively leaning
+on the favourite signal they were handed — **"following the favourite"**, not finding an
+independent one. In production the morning **forecast** price (not the SP) would feed
+`MarketProb`, and forecast coverage in history is ~zero, so this measured lift will not
+carry over to forecast-time serving. ROI is **negative across every full-coverage
+algorithm** (the favourite baseline itself is −£31.89 over these 13 folds), confirming
+there is no profitable edge here — only the favourite-tracking accuracy bump. **No
+promotion is implied; `ACTIVE_ALGORITHM` (`GatedRecencyWeightedWinClassifier`,
+`ALGORITHMS[13]`) is unchanged.**
+
 ## 180-fold walk-forward results — 2025-12-08 → 2026-06-05 (wrapped-variant comparison)
 
 173 folds with usable data (7 of 180 fold dates had no races), 7-month training window per fold.
