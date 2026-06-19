@@ -44,6 +44,15 @@ public class ValidateRaceCardPredictionsCommandHandler(
                 losses,
                 winnings,
                 percentageGains);
+
+            // Staked performance using the advised per-pick Stake; falls back to the flat-£1 figure above
+            // when no stakes are present (legacy file / no-bet day).
+            var advisedStake = scores.Sum(x => x.Stake ?? 0);
+            var stakeWeightedGains = StakeWeightedReturnPercentage(scores);
+            Logger.LogInformation(
+                "Stake-weighted: across £{AdvisedStake:0.00} advised on staked picks, the return would be {StakeWeightedGains:00}% gain/loss.",
+                advisedStake,
+                stakeWeightedGains);
         }
     }
 
@@ -112,6 +121,29 @@ public class ValidateRaceCardPredictionsCommandHandler(
 
     private static bool StakeReturnedFor(ResultStatus resultStatus) =>
         resultStatus is ResultStatus.RaceVoid or ResultStatus.NonRunner;
+
+    // Stake-weighted return: (Σ stake·odds of winners + Σ returned stake [void/non-runner] − Σ stake of losers) / Σ stake.
+    // Degrades gracefully to the flat-£1-per-pick figure when no advised stakes are present (legacy file / no-bet day),
+    // rather than dividing by zero.
+    public static double StakeWeightedReturnPercentage(IReadOnlyCollection<RaceCardPredictionScore> scores) =>
+        scores.Sum(x => x.Stake ?? 0) > 0
+            ? ReturnPercentage(scores, x => x.Stake ?? 0)
+            : ReturnPercentage(scores, _ => 1.0);
+
+    // The shared return formula; the flat-£1 figure is just every pick staked at 1 (stakeOf => 1.0).
+    private static double ReturnPercentage(IReadOnlyCollection<RaceCardPredictionScore> scores, Func<RaceCardPredictionScore, double> stakeOf)
+    {
+        var totalStake = scores.Sum(stakeOf);
+        if (totalStake <= 0)
+        {
+            return 0.0;
+        }
+
+        var loserStake = scores.Where(x => !x.Won && !StakeReturnedFor(x.ResultStatus)).Sum(stakeOf);
+        var returnedStake = scores.Where(x => StakeReturnedFor(x.ResultStatus)).Sum(stakeOf);
+        var winnings = scores.Where(x => x.Won).Sum(x => stakeOf(x) * (x.DecimalOdds ?? 0)) + returnedStake;
+        return (winnings - loserStake) / totalStake * 100.0;
+    }
 
     private async Task MergePredictionScores(List<RaceCardPredictionScore> scores)
     {

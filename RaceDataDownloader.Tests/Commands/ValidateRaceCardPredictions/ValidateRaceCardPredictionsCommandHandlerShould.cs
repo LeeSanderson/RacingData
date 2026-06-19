@@ -151,6 +151,51 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
     }
 
     [Fact]
+    public void ComputeAStakeWeightedReturnFromPerPickStakesAndOdds()
+    {
+        var scores = new List<RaceCardPredictionScore>
+        {
+            new() { Stake = 2.0, Won = true, DecimalOdds = 5.0, ResultStatus = ResultStatus.CompletedRace },
+            new() { Stake = 3.0, Won = false, ResultStatus = ResultStatus.CompletedRace }
+        };
+
+        // (2·5 winnings − 3 loser stake) / 5 total staked = 1.40 -> 140%
+        ValidateRaceCardPredictionsCommandHandler.StakeWeightedReturnPercentage(scores)
+            .Should().Be(140.0);
+    }
+
+    [Fact]
+    public void ReturnTheStakeForVoidOrNonRunnerPicksInTheStakeWeightedReturn()
+    {
+        var scores = new List<RaceCardPredictionScore>
+        {
+            new() { Stake = 2.0, Won = true, DecimalOdds = 6.0, ResultStatus = ResultStatus.CompletedRace },
+            new() { Stake = 4.0, Won = false, ResultStatus = ResultStatus.CompletedRace },
+            new() { Stake = 4.0, Won = false, ResultStatus = ResultStatus.RaceVoid }
+        };
+
+        // (2·6 winnings + 4 returned void stake − 4 loser stake) / 10 total staked = 1.20 -> 120%
+        ValidateRaceCardPredictionsCommandHandler.StakeWeightedReturnPercentage(scores)
+            .Should().Be(120.0);
+    }
+
+    [Fact]
+    public void FallBackToTheFlatOnePoundReturnWhenNoStakesArePresent()
+    {
+        var scores = new List<RaceCardPredictionScore>
+        {
+            new() { Stake = null, Won = true, DecimalOdds = 11.0, ResultStatus = ResultStatus.CompletedRace },
+            new() { Stake = null, Won = false, ResultStatus = ResultStatus.CompletedRace }
+        };
+
+        // No advised stakes -> treat each pick as a flat £1 bet: (11 winnings − 1 loser) / 2 = 500%.
+        // The point is graceful degradation: a real number, never a divide-by-zero NaN.
+        var result = ValidateRaceCardPredictionsCommandHandler.StakeWeightedReturnPercentage(scores);
+        result.Should().Be(500.0);
+        double.IsNaN(result).Should().BeFalse();
+    }
+
+    [Fact]
     public async Task HandleLegacyPredictionsFileMissingWinProbabilityWithoutThrowing()
     {
         // Simulate a legacy TodaysPredictions.csv that has no WinProbability column
