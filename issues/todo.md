@@ -61,17 +61,13 @@ grows daily):
 
 ## Model improvements
 
-### Odds + confidence in TodaysPredictions.csv → bet sizing
-Include the resolved odds (`MarketProb` and/or the decimal odds) alongside the model's
-confidence score in `Data/TodaysPredictions.csv`. With both values in the output file a
-punter can use Kelly-style or edge-fraction staking: stake is proportional to
-`(model_prob - market_prob) / (decimal_odds - 1)` — bet more when the model's edge over
-the market is large, less when it's marginal. Pre-requisites: `MarketProb` already lands
-in the eval CSV (market-prob PRD, 2026-06-18); `predict.py` needs to carry the odds
-columns through to the output and the active algorithm needs to expose a per-horse
-confidence/probability alongside its single winner pick. Start by checking what
-`TodaysPredictions.csv` currently contains and what `FieldPredictorBaseAlgorithm.predict()`
-already returns — the wiring may be simpler than it looks.
+### Odds + confidence in TodaysPredictions.csv → bet sizing — ✅ SCOPED into `issues/prd.md`
+**Now scoped** (PRD written 2026-06-19): an advisory `Stake` column in
+`Data/TodaysPredictions.csv` via fractional Kelly + a value gate (gross-pay /
+de-overround-judge), normalized-but-uncalibrated probabilities, fixed-scale £1-typical
+staking with a cap, a pure testable staking module called from `predict.py`, a
+diagnostic SP-placeholder backtest, and forward staked-outcome logging through the C#
+validate step. See `issues/prd.md` for the full design and decisions.
 
 ### Value-betting / market-overlay strategy
 Bet only when model win-probability exceeds market-implied probability; stake by edge.
