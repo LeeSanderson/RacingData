@@ -154,3 +154,9 @@ Key decisions:
 - Gated algorithms abstain on low-confidence races (trading coverage for accuracy/ROI); `evaluate.py` prints a ROI-vs-coverage frontier for them
 
 Full methodology, the algorithm class hierarchy, filters, metric definitions, timing, and run commands: [`docs/evaluation-pipeline.md`](docs/evaluation-pipeline.md). Current active algorithm and latest measured results: `evaluations.md`.
+
+## Issue Queue & Backlog
+
+Active numbered issues live in `issues/` (e.g. `issues/007-...md`). Completed issues move to `issues/done/`.
+
+Future ideas and deferred work that are not yet scoped into issues are tracked in [`issues/todo.md`](issues/todo.md). Read it when the active queue is empty, the user asks what to do next, or you need context on longer-term direction.

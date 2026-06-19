@@ -54,6 +54,16 @@ there is no profitable edge here — only the favourite-tracking accuracy bump. 
 promotion is implied; `ACTIVE_ALGORITHM` (`GatedRecencyWeightedWinClassifier`,
 `ALGORITHMS[13]`) is unchanged.**
 
+### ⏰ Re-eval trigger (issue 009)
+
+These numbers are superseded once `ForecastDecimalOdds` coverage in the 7-month training
+window reaches **≥ 80%** real-forecast rows (not the SP fallback) — expected ~Jan 2027
+(forecast capture is forward-only and began ~2026-06; an optional ~mid-Jul 2026 checkpoint
+is still ~6/7 SP, informational-only). At that point re-run this A/B on forecast-fed data
+and reconsider `ACTIVE_ALGORITHM` against the normal **ROI + early/late stability** gate,
+not accuracy. The trigger is a coverage condition, not a hard date. Durable reminder:
+`issues/todo.md` → "Re-evaluate MarketProb on honest forecast-fed data".
+
 ## 180-fold walk-forward results — 2025-12-08 → 2026-06-05 (wrapped-variant comparison)
 
 173 folds with usable data (7 of 180 fold dates had no races), 7-month training window per fold.
