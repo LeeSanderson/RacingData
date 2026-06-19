@@ -19,9 +19,9 @@ Cross-link `docs/data-pitfalls.md` (the MarketProb / SP-placeholder pitfall) and
 
 ## Acceptance criteria
 
-- [ ] `docs/staking.md` exists, documenting the strategy, the config knobs + defaults, and the three honesty caveats (uncalibrated probabilities, SP-placeholder backtest, not real-money validated).
-- [ ] It cross-references `docs/data-pitfalls.md` and the `evaluations.md` staking diagnostic section, in the same caveat style as the MarketProb docs.
-- [ ] It states the deferred-calibration decision and that the forward staked-outcome log is what makes calibration revisitable.
+- [x] `docs/staking.md` exists, documenting the strategy, the config knobs + defaults, and the three honesty caveats (uncalibrated probabilities, SP-placeholder backtest, not real-money validated).
+- [x] It cross-references `docs/data-pitfalls.md` and the `evaluations.md` staking diagnostic section, in the same caveat style as the MarketProb docs.
+- [x] It states the deferred-calibration decision and that the forward staked-outcome log is what makes calibration revisitable.
 
 ## Blocked by
 

@@ -68,7 +68,8 @@ not accuracy. The trigger is a coverage condition, not a hard date. Durable remi
 
 > **Read this before using these numbers.** This replays the advisory-`Stake` plan
 > (fractional Kelly behind a value gate — `race_analytics/betting/staking.py`, PRD
-> `issues/prd.md`) over the saved walk-forward picks via
+> `issues/prd.md`; strategy and honesty caveats in [`docs/staking.md`](docs/staking.md))
+> over the saved walk-forward picks via
 > `race_analytics/scripts/backtest_staking.py`. It is a **diagnostic only** and did **not**
 > change `ACTIVE_ALGORITHM` — that section documents the *prediction algorithm*, not the
 > *staking strategy*. Forecast-odds coverage in history is ~zero, so the `MarketProb` (the
