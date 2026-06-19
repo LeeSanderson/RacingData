@@ -11,4 +11,5 @@ public class RaceCardPrediction
     public int HorseId { get; set; }
     public string HorseName { get; set; } = string.Empty;
     [Optional] public double? WinProbability { get; set; }
+    [Optional] public double? Stake { get; set; }
 }
