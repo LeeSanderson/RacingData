@@ -9,17 +9,20 @@ from race_analytics.scripts.backtest_staking import (
 )
 
 # ================================================================
-# Fixture: a tiny eval-results-shaped frame.
+# Fixture: a tiny eval-results-shaped frame. Stakes use the production default
+# BANKROLL (calibrated to ≈ £1 median), so the value bet below is sized as a
+# modest sub-cap bet rather than a strong edge that would clip at the £5 CAP.
 #
 # Race 1 (value bet, pick WINS):
-#   Horse A: WinProbability 0.6 -> ModelProb 0.6, MarketProb 0.4 -> edge 0.20 > MIN_EDGE
-#            odds 3.0 -> f* = (0.6*3-1)/(3-1) = 0.4 -> stake 0.25*0.4*25 = 2.50
-#   Horse B: WinProbability 0.4 -> ModelProb 0.4, MarketProb 0.4 -> edge 0 -> no bet
-#   Pick = A (highest prob), FinishingPosition 1.
+#   Horse A: WinProbability 0.40 -> ModelProb 0.40, MarketProb 0.30 -> edge 0.10 > MIN_EDGE
+#            odds 3.0 -> f* = (0.40*3-1)/(3-1) = 0.1 -> stake 0.25*0.1*120 = 3.00
+#   Horse B: WinProbability 0.35 -> ModelProb 0.35, MarketProb 0.35 -> edge 0 -> no bet
+#   Horse C: WinProbability 0.25 -> ModelProb 0.25, MarketProb 0.35 -> edge -0.10 -> no bet
+#   Pick = A (highest prob), FinishingPosition 1, odds 3.0.
 # Race 2 (no value, pick LOSES):
-#   Horse C: WinProbability 0.55 -> ModelProb 0.55, MarketProb 0.55 -> edge 0 -> no bet
-#   Horse D: WinProbability 0.45 -> ModelProb 0.45, MarketProb 0.45 -> edge 0 -> no bet
-#   Pick = C (highest prob), FinishingPosition 3, odds 4.0.
+#   Horse D: WinProbability 0.55 -> ModelProb 0.55, MarketProb 0.55 -> edge 0 -> no bet
+#   Horse E: WinProbability 0.45 -> ModelProb 0.45, MarketProb 0.45 -> edge 0 -> no bet
+#   Pick = D (highest prob), FinishingPosition 3, odds 4.0.
 # ================================================================
 
 
@@ -31,9 +34,9 @@ def _fixture() -> pd.DataFrame:
                 "Algorithm": "Algo",
                 "RaceId": 1,
                 "HorseId": 10,
-                "WinProbability": 0.6,
+                "WinProbability": 0.40,
                 "PredictedScore": np.nan,
-                "MarketProb": 0.4,
+                "MarketProb": 0.30,
                 "ResolvedOdds": 3.0,
                 "FinishingPosition": 1,
             },
@@ -42,11 +45,22 @@ def _fixture() -> pd.DataFrame:
                 "Algorithm": "Algo",
                 "RaceId": 1,
                 "HorseId": 11,
-                "WinProbability": 0.4,
+                "WinProbability": 0.35,
                 "PredictedScore": np.nan,
-                "MarketProb": 0.4,
+                "MarketProb": 0.35,
                 "ResolvedOdds": 5.0,
                 "FinishingPosition": 2,
+            },
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": "Algo",
+                "RaceId": 1,
+                "HorseId": 12,
+                "WinProbability": 0.25,
+                "PredictedScore": np.nan,
+                "MarketProb": 0.35,
+                "ResolvedOdds": 4.0,
+                "FinishingPosition": 3,
             },
             {
                 "FoldDate": "2026-01-01",
@@ -82,8 +96,9 @@ def _fixture() -> pd.DataFrame:
 def test_attach_stakes_sizes_the_value_bet_and_zeroes_the_rest() -> None:
     staked = _attach_stakes(_fixture())
     by_horse = staked.set_index("HorseId")["Stake"]
-    assert by_horse[10] == 2.50  # value bet, full-field-normalized Kelly
+    assert by_horse[10] == 3.00  # value bet, full-field-normalized Kelly (sub-cap)
     assert by_horse[11] == 0.0  # no edge
+    assert by_horse[12] == 0.0  # negative edge
     assert by_horse[20] == 0.0  # no edge
     assert by_horse[21] == 0.0  # no edge
 
@@ -98,7 +113,7 @@ def test_identify_picks_takes_highest_probability_horse_with_its_stake() -> None
     assert len(picks) == 2  # one per race
     by_race = picks.set_index("RaceId")
     assert by_race.loc[1, "HorseId"] == 10  # highest prob in race 1
-    assert by_race.loc[1, "Stake"] == 2.50  # carries the value-bet stake
+    assert by_race.loc[1, "Stake"] == 3.00  # carries the value-bet stake
     assert by_race.loc[2, "HorseId"] == 20  # highest prob in race 2
     assert by_race.loc[2, "Stake"] == 0.0  # no-bet pick
 
@@ -148,16 +163,17 @@ def test_summarise_coverage_is_a_valid_fraction() -> None:
 
 def test_summarise_kelly_roi_uses_staked_returns() -> None:
     summary = _summarise(_identify_picks(_attach_stakes(_fixture())))
-    # Only the 2.50 value bet is live: it wins at 3.0 -> profit 2.50*(3-1) = 5.0.
-    assert summary["kelly_profit"] == 5.0
-    assert summary["kelly_roi"] == 2.0  # 5.0 / 2.50 staked
-    assert summary["stake_median"] == 2.50
-    assert summary["stake_mean"] == 2.50
+    # Only the 3.00 value bet is live: it wins at 3.0 -> profit 3.00*(3-1) = 6.0.
+    assert summary["kelly_profit"] == 6.0
+    assert summary["kelly_roi"] == 2.0  # 6.0 / 3.00 staked
+    assert summary["stake_median"] == 3.00
+    assert summary["stake_mean"] == 3.00
 
 
 def test_summarise_handles_no_bets_without_dividing_by_zero() -> None:
     # A frame whose only pick fails the value gate -> zero coverage.
-    no_value = _fixture().iloc[2:].copy()  # only race 2 (no edge anywhere)
+    fixture = _fixture()
+    no_value = fixture[fixture["RaceId"] == 2].copy()  # only race 2 (no edge anywhere)
     summary = _summarise(_identify_picks(_attach_stakes(no_value)))
     assert summary["bets"] == 0
     assert summary["coverage"] == 0.0

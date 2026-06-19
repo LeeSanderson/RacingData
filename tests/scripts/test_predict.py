@@ -415,17 +415,17 @@ def _staking_card_row(
 def test_predict_value_bet_gets_full_field_normalized_stake(
     tmp_path: pathlib.Path,
 ) -> None:
-    # One race, three runners. The model rates horse 101 (0.6) well above its
-    # market price (forecast 3.0 -> de-overround MarketProb ~ 0.364), so it clears
-    # the value gate; the other two are below it. The stake is sized from the
-    # FULL-field-normalized ModelProb (0.6), not the winner-row-only prob (1.0):
-    #   f* = (0.6*3 - 1)/(3 - 1) = 0.4
-    #   stake = min(0.25 * 0.4 * 25, 5) = 2.50
-    # Winner-row-only normalization would instead give the capped 5.00, so the
-    # 2.50 value is what proves the normalization spans the field.
+    # One race, three runners. The model rates horse 101 (0.40) above its market
+    # price (forecast 3.0 -> de-overround MarketProb ~ 0.339), so it clears the
+    # value gate; the other two are at/below it. The stake is sized from the
+    # FULL-field-normalized ModelProb (0.40), not the winner-row-only prob (1.0):
+    #   f* = (0.40*3 - 1)/(3 - 1) = 0.1
+    #   stake = min(0.25 * 0.1 * 120, 5) = 3.00
+    # Winner-row-only normalization would instead give the capped 5.00 (f* = 1.0),
+    # so the sub-cap 3.00 value is what proves the normalization spans the field.
     rows = [
         _staking_card_row(101, "Alpha", 201, 3.0),
-        _staking_card_row(201, "Bravo", 202, 3.0),
+        _staking_card_row(201, "Bravo", 202, 2.5),
         _staking_card_row(301, "Charlie", 203, 4.0),
     ]
     _write_race_features(str(tmp_path))
@@ -434,13 +434,13 @@ def test_predict_value_bet_gets_full_field_normalized_stake(
     _write_trainer_stats(str(tmp_path))
     _write_race_cards(str(tmp_path), rows=rows)
 
-    algo = _FullFieldAlgo(probs={101: 0.6, 201: 0.2, 301: 0.2})
+    algo = _FullFieldAlgo(probs={101: 0.40, 201: 0.35, 301: 0.25})
     result = predict(data_path=str(tmp_path), algorithm=algo)
 
     assert "Stake" in result.columns
     winner = result[result["RaceId"] == 10].iloc[0]
     assert winner["HorseId"] == 101
-    assert winner["Stake"] == 2.5
+    assert winner["Stake"] == 3.0
 
 
 def test_predict_no_value_race_retained_with_zero_stake(

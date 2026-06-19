@@ -64,6 +64,60 @@ and reconsider `ACTIVE_ALGORITHM` against the normal **ROI + early/late stabilit
 not accuracy. The trigger is a coverage condition, not a hard date. Durable reminder:
 `issues/todo.md` → "Re-evaluate MarketProb on honest forecast-fed data".
 
+## Staking diagnostic (Kelly + value gate) — 2026-06-19 (⚠️ SP-PLACEHOLDER / DIAGNOSTIC — NOT a promotion decision)
+
+> **Read this before using these numbers.** This replays the advisory-`Stake` plan
+> (fractional Kelly behind a value gate — `race_analytics/betting/staking.py`, PRD
+> `issues/prd.md`) over the saved walk-forward picks via
+> `race_analytics/scripts/backtest_staking.py`. It is a **diagnostic only** and did **not**
+> change `ACTIVE_ALGORITHM` — that section documents the *prediction algorithm*, not the
+> *staking strategy*. Forecast-odds coverage in history is ~zero, so the `MarketProb` (the
+> value gate) and `ResolvedOdds` (the Kelly payout) here are derived from the **post-race
+> SP**, not the morning forecast the predict step will actually serve on. **These figures
+> therefore measure the SP placeholder — the staking *mechanics* — not real forecast-time
+> profitability.** Do not read the positive Kelly ROI as an edge.
+
+Source picks: `evaluation_results_20260618.csv` (the same 13-fold run as the MarketProb
+diagnostic above, 2026-06-04 → 2026-06-16). Stakes are computed per algorithm over its full
+field by the production `compute_stakes`, then settled on the rank-1 pick's resolved price
+exactly as the live predict→validate path would. ROI is profit per £1 staked: flat-£1 bets
+every settleable pick; Kelly bets only the gated subset (`Stake > 0`).
+
+**Active algorithm — `GatedRecencyWeightedWinClassifier`** (100 settleable picks):
+
+| Metric | Value |
+|---|---|
+| Bets placed (coverage) | 18 (18.0%) |
+| Flat-£1 ROI | −0.115 per £1 (net −£11.53) |
+| Kelly-staked ROI | +0.331 per £1 (net +£8.27) |
+| Stake distribution (£, placed bets) | min 0.07 · p25 0.38 · **median 1.02** · mean 1.39 · p75 1.84 · p90 3.04 · max 5.00 |
+
+### Chosen `BANKROLL` = 120
+
+`BANKROLL` is the fixed, stateless notional scale that lands the **median advised stake ≈
+£1** — the bankroll-agnostic anchor of the PRD, so the punter can scale points to whatever
+real bankroll they use. At the provisional `BANKROLL = 25` the active algorithm's median
+stake was £0.21; stake scales linearly with `BANKROLL` below the £5 `CAP`, so
+`25 × (1 / 0.21) ≈ 119` puts the median at £1 — rounded to **120** (median lands at £1.02).
+At 120 the `CAP` now binds on the top tail (p90 ≈ £3, max £5), the intended bound on
+short-priced high-confidence picks. `KELLY_FRACTION = 0.25`, `MIN_EDGE = 0.03`, `CAP = £5`
+are unchanged. (Other algorithms' distributions varied — e.g. the high-coverage
+`RankingClassifier`/`GatedRankingClassifier` saturate at the £5 cap on most bets — but the
+scale was calibrated on the active algorithm's picks, the ones production actually serves.)
+
+### Why this can't validate profitability
+
+Forecast-odds capture is forward-only and began ~2026-06, so the historical folds resolve
+`MarketProb` and the settlement odds almost entirely from **post-race SP**, not the morning
+forecast price the predict step serves on (the same eval/production divergence as the
+MarketProb diagnostic above — `docs/data-pitfalls.md`, Pitfall 2). The positive Kelly ROI
+(+0.331) is a small-sample artefact of the value gate concentrating 18 bets on SP-defined
+edges that happened to land — **not** a forecast-time edge; the flat-£1 ROI is −0.115,
+negative in line with every full-coverage algorithm in the MarketProb diagnostic. The honest
+staked track record accrues only from the forward log (the `Stake` carried through the C#
+validate step, `issues/003`) on real forecast-priced days. **No promotion is implied;
+`ACTIVE_ALGORITHM` (`GatedRecencyWeightedWinClassifier`, `ALGORITHMS[13]`) is unchanged.**
+
 ## 180-fold walk-forward results — 2025-12-08 → 2026-06-05 (wrapped-variant comparison)
 
 173 folds with usable data (7 of 180 fold dates had no races), 7-month training window per fold.

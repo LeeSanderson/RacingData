@@ -144,6 +144,25 @@ def test_stakes_are_rounded_to_two_decimal_places() -> None:
     assert compute_stakes(field, bankroll=10.0).tolist() == pytest.approx([0.83, 0.83])
 
 
+def test_default_bankroll_is_calibrated_to_a_roughly_one_pound_typical_stake() -> None:
+    # issues/005: BANKROLL is calibrated from the diagnostic backtest's stake distribution
+    # so the typical advised stake lands near the familiar £1 unit (PRD user story 5), not
+    # the sub-£1 placeholder the provisional BANKROLL=25 produced. A representative value
+    # bet (ModelProb 0.52 vs de-overrounded MarketProb 0.48 -> edge 0.04, gross odds 2.0,
+    # f* = (0.52·2 - 1)/(2 - 1) = 0.04) must therefore stake on the order of £1 at the
+    # *default* bankroll — it stakes only ~£0.25 at the old provisional 25.
+    field = pd.DataFrame(
+        {
+            "RaceId": [1, 1],
+            "WinProbability": [0.52, 0.48],
+            "MarketProb": [0.48, 0.52],
+            "ResolvedOdds": [2.0, 2.0],
+        }
+    )
+    top_stake = compute_stakes(field).iloc[0]
+    assert 0.5 <= top_stake <= 2.0
+
+
 def test_normalization_is_per_race_across_a_multi_race_frame() -> None:
     # Race 1's WinProbability sums to 0.8 (-> ModelProb [0.75, 0.25]) and race 2's to 1.0
     # (-> [0.5, 0.5]); each race must normalize on its own total, not the frame's.

@@ -26,10 +26,13 @@ RESOLVED_ODDS = "ResolvedOdds"
 KELLY_FRACTION = 0.25  # fraction of full Kelly; the primary miscalibration buffer.
 MIN_EDGE = 0.03  # minimum ModelProb-MarketProb edge required to place a bet.
 CAP = 5.0  # maximum single stake (£), bounding short-priced high-confidence tails.
-# Provisional placeholder. The shipped value is finalized in issues/005 from the
-# diagnostic backtest's stake distribution (chosen so the median advised stake ≈ £1);
-# until then this keeps typical stakes in a plausible sub-£5 range for wiring and tests.
-BANKROLL = 25.0
+# Calibrated so the median advised stake lands ≈ £1 (the bankroll-agnostic anchor): the
+# diagnostic backtest (backtest_staking.py) over the active algorithm's picks in
+# evaluation_results_20260618.csv gave a median stake of £0.21 at the provisional
+# BANKROLL=25. Stake scales linearly with BANKROLL below the CAP, so 25 * (1 / 0.21) ≈ 119
+# lands the median at £1; rounded to 120 (median ≈ £1.01). A fixed, stateless notional
+# scale — no running-balance tracking. Re-derive if the stake distribution shifts.
+BANKROLL = 120.0
 
 
 def _numeric(values: pd.Series) -> pd.Series:
