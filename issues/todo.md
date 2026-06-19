@@ -38,6 +38,25 @@ SP-placeholder diagnostic in `evaluations.md` (section "13-fold MarketProb diagn
 favourite-tracking via the SP-defined `MarketProb`, and ROI is negative across every
 full-coverage algorithm, so a genuine promotion needs a real forecast-time ROI edge.
 
+### ⏰ Recheck forecast<->SP fidelity as coverage grows — RECHECK REMINDER
+Run `python -m race_analytics.scripts.forecast_vs_sp` to compare the morning
+`ForecastDecimalOdds` against the post-race SP (`DecimalOdds`) for runners where both
+are present. This tells us how trustworthy forecast-derived `MarketProb` is, and feeds
+the coverage-gated re-eval above.
+
+**Baseline (2026-06-19, first populated day — 06/18, 45 races / 468 runners):**
+strong *ordering* agreement (log-odds & implied-prob Pearson ~0.89, within-race rank
+corr ~0.79, favourite match 62%) but loose *price* agreement (median runner ~33% off SP,
+only ~13% within 10%); forecast is typically ~10% shorter than SP (median ratio 0.90).
+
+**Recheck cadence** (forecast capture is forward-only, began ~2026-06, so the sample
+grows daily):
+- **~mid-Jul 2026** — first meaningful read once ~2-3 weeks of forecast-fed days exist;
+  confirm the ~0.89 / 62% / 10%-shorter pattern holds beyond a single day.
+- **Monthly thereafter** — watch for drift; a falling favourite-match or rank-corr would
+  undermine forecast-derived `MarketProb` before the ≥80%-coverage re-eval even fires.
+- Fold the latest figures back into this entry when re-run, so the baseline stays current.
+
 ---
 
 ## Model improvements
