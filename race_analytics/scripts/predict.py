@@ -6,7 +6,16 @@ import pandas as pd
 
 from race_analytics.algorithms import ACTIVE_ALGORITHM
 from race_analytics.algorithms.base import FieldPredictor
+from race_analytics.betting.staking import (
+    MARKET_PROB,
+    RESOLVED_ODDS,
+    WIN_PROBABILITY,
+    compute_stakes,
+)
+from race_analytics.features.market_prob import resolve_decimal_odds
 from race_analytics.features.race_data import RaceDataBuilder
+
+_STAKE = "Stake"
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
@@ -45,7 +54,39 @@ _OUTPUT_COLS = [
     "HorseId",
     "HorseName",
     "WinProbability",
+    _STAKE,
 ]
+
+
+def _attach_stakes(field: pd.DataFrame, serve_frame: pd.DataFrame) -> pd.DataFrame:
+    """Add the advisory ``Stake`` column to the full scored field.
+
+    Sourced from the serving frame so it works whatever columns the algorithm's
+    ``predict_field`` chooses to return: the canonical chain has already
+    materialized the de-overround ``MarketProb`` (the value-gate input) there, and
+    the resolved forecast-when-present-else-SP gross odds (the Kelly payout input)
+    come from ``resolve_decimal_odds`` over the same frame. Stakes are computed over
+    the WHOLE field so the within-race probability normalization the value gate
+    needs spans every runner, not just the published winner row.
+    """
+    field = field.reset_index(drop=True)
+    if WIN_PROBABILITY not in field.columns:
+        field[_STAKE] = 0.0
+        return field
+    if field.empty:
+        field[_STAKE] = pd.Series(dtype=float)
+        return field
+
+    priced = serve_frame[["RaceId", "HorseId"]].copy()
+    priced[MARKET_PROB] = serve_frame[MARKET_PROB]
+    priced[RESOLVED_ODDS] = resolve_decimal_odds(serve_frame)
+    priced = priced.drop_duplicates(subset=["RaceId", "HorseId"])
+
+    staking_input = field[["RaceId", "HorseId", WIN_PROBABILITY]].merge(
+        priced, on=["RaceId", "HorseId"], how="left"
+    )
+    field[_STAKE] = compute_stakes(staking_input).to_numpy()
+    return field
 
 
 def predict(
@@ -82,11 +123,14 @@ def predict(
         max_horses=algorithm.max_horses,
     )
     field = algorithm.predict_field(serve_data)
+    field = _attach_stakes(field, serve_data.frame)
     if field.empty or "PredictedRank" not in field.columns:
         winners = pd.DataFrame(columns=["RaceId", "HorseId"])
     else:
         winners = (
-            field[field["PredictedRank"] == 1][["RaceId", "HorseId", "WinProbability"]]  # pyright: ignore[reportCallIssue]  # column-list index narrows to DataFrame
+            field[field["PredictedRank"] == 1][  # pyright: ignore[reportCallIssue]  # column-list index narrows to DataFrame
+                ["RaceId", "HorseId", "WinProbability", _STAKE]
+            ]
             .drop_duplicates(subset=["RaceId"])  # pyright: ignore[reportAttributeAccessIssue]  # result is a DataFrame
             .reset_index(drop=True)
         )
