@@ -28,7 +28,35 @@ and the 0.78 headline fully collapsed.
 **The rule:** anything ratings-related must come from a horse's **previous** race
 (`LastRace{Official,RacingPost,TopSpeed}Rating`, already leak-free in
 `Race_Features.csv`), reaching algorithms only through the per-horse **stats join**
-(`extract_horse_stats` → `Horse_Stats.csv`) — **never** from the race-day card row.
+(`extract_horse_stats` → `Horse_Stats.csv`) — **never** the post-race result ratings.
+
+**Pre-race card ratings are the exception — and they *are* safe.** The OR/RPR/TSR
+shown on the *morning racecard* are genuine pre-race figures (the rating standing
+before the race is run), unlike the result-page ratings above which are recomputed
+after it. Those card ratings are now captured and written back into `Results_*.csv`
+as the **`Card*`** columns — `CardOfficialRating`, `CardRacingPostRating`,
+`CardTopSpeedRating` — kept deliberately distinct from the inherited
+`OfficialRating`/`RacingPostRating`/`TopSpeedRating`, which retain their
+**post-race, leaky** meaning in results. So the "never the result ratings" rule above
+is about the *post-race* figures, not these pre-race `Card*` values: **`Card*` clears
+bar 1 and may be used directly as a feature** once enough have accumulated; the
+un-prefixed rating columns must not. (`Card*` is a clean *current-race* pre-race
+rating source, alongside the previous-race `LastRace*` values from the stats join.)
+
+Two caveats apply to the `Card*` columns and the other newly-captured pre-race fields
+(`DaysSinceLastRun`, `FormFigures`, `PrizeMoney`/`PrizeMoneyValue`):
+
+- **Forward-only coverage.** They populate from *deployment forward* via the
+  card→result write-back (see [`docs/odds-capture.md`](odds-capture.md)); coverage
+  starts at the deployment date and **historical rows are blank by design** (no
+  racecard backfill). Treat them as features only once accumulated coverage is
+  sufficient — a model trained across the blank history would see them as
+  mostly-missing.
+- **Prize money is not currency-normalised.** `PrizeMoneyValue` is the raw figure with
+  the currency symbol and thousands separators stripped; the displayed currency is
+  **not** converted across countries, so a £-card and a €-card yield numbers on
+  different scales. The raw `PrizeMoney` string preserves the original symbol for any
+  later normalisation.
 
 ## Pitfall 2 — odds enter the model *only* through the sanctioned `MarketProb` resolver
 

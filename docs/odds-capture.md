@@ -44,6 +44,32 @@ is ~7 months away (a ~1-month checkpoint is still roughly six-sevenths SP), so t
 re-eval that reconsiders adoption is gated on a coverage threshold, not a hard date.
 Full reasoning in `docs/data-pitfalls.md` (Pitfall 2).
 
+### The forecast merge is now one path among six fields
+
+The `validate` write-back is **no longer forecast-specific**. It has been generalised
+into a single **card→result data merge** — one read of `TodaysRaceCards.csv`, one
+write per results file — that copies the forecast odds *plus* six new pre-race fields
+from each card runner into the matching `(RaceId, HorseId)` result row:
+
+| Card source | Result target |
+| --- | --- |
+| forecast `FractionalOdds` / `DecimalOdds` | `ForecastFractionalOdds` / `ForecastDecimalOdds` |
+| pre-race `OfficialRating` | `CardOfficialRating` |
+| pre-race `RacingPostRating` | `CardRacingPostRating` |
+| pre-race `TopSpeedRating` | `CardTopSpeedRating` |
+| `DaysSinceLastRun` | `DaysSinceLastRun` |
+| `FormFigures` | `FormFigures` |
+| `PrizeMoney` / `PrizeMoneyValue` | `PrizeMoney` / `PrizeMoneyValue` |
+
+The character of the mechanism is unchanged from the forecast precedent: keyed on
+`(RaceId, HorseId)`, **forward-only** (no backfill), and **per-field idempotent** —
+each column is copied only when the card value is present *and* the result cell is
+still blank, and a results file is rewritten only when at least one cell was filled.
+The forecast odds are now simply one field on this one well-understood path, and their
+original two-column blank rule is preserved exactly. Why the `Card*` ratings are
+*pre-race and safe* (and the inherited result-page ratings are not) lives in
+[`docs/data-pitfalls.md`](data-pitfalls.md) — Pitfall 1.
+
 ## Phase 2 — live / market odds (deferred)
 
 Capturing the live bookmaker market (the Diffusion-fed "betting-odds" tab) is

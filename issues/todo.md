@@ -112,6 +112,17 @@ design. A one-time backfill pass using the Racing Post historical odds API (if a
 would increase MarketProb training coverage immediately. Non-trivial scraping work; assess
 data availability first.
 
+### Backfill form / days-since / prize money into historic Results
+Sibling to the ForecastDecimalOdds backfill above. The same `validate` write-back also
+lands `FormFigures`, `DaysSinceLastRun` and `PrizeMoney`/`PrizeMoneyValue`, and is
+likewise forward-only, so historic result rows are blank. Unlike the ratings, these
+three are **pre-race facts that may already appear on the daily-scraped result pages**,
+so a single re-scrape of historic result pages could backfill them across all history —
+no racecard archive needed. The `Card*` ratings are **deliberately excluded**: result
+pages carry only the **post-race** OR/RPR/TSR, so there is no pre-race rating to recover
+there (exactly why they must be captured from the card going forward). Assess whether the
+result-page markup actually exposes form / days-since / prize before scoping.
+
 ### Going encoding robustness
 `encode_going()` defaults missing `Going` to `"Good"`. Audit whether this is the most
 common value in the data or just a safe placeholder — replace with the empirical mode if

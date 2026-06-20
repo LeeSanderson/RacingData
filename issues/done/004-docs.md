@@ -17,10 +17,10 @@ Document the new pre-race columns and record the deferred backfill idea. This sl
 
 ## Acceptance criteria
 
-- [ ] `docs/data-pitfalls.md` distinguishes `Card*` (pre-race, safe-to-use) from inherited results ratings (post-race, leaky), and documents the forward-only coverage caveat and the prize-money currency caveat.
-- [ ] `AGENTS.md` no-leakage constraints reference `Card*` as the pre-race-safe rating source.
-- [ ] `docs/odds-capture.md` describes the generalised one-mechanism, six-column write-back.
-- [ ] `issues/todo.md` has the backfill future-idea entry sibling to the ForecastDecimalOdds backfill item, scoped to the three non-rating fields and explaining why the ratings are excluded.
+- [x] `docs/data-pitfalls.md` distinguishes `Card*` (pre-race, safe-to-use) from inherited results ratings (post-race, leaky), and documents the forward-only coverage caveat and the prize-money currency caveat.
+- [x] `AGENTS.md` no-leakage constraints reference `Card*` as the pre-race-safe rating source.
+- [x] `docs/odds-capture.md` describes the generalised one-mechanism, six-column write-back.
+- [x] `issues/todo.md` has the backfill future-idea entry sibling to the ForecastDecimalOdds backfill item, scoped to the three non-rating fields and explaining why the ratings are excluded.
 
 ## Blocked by
 
