@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 
@@ -102,8 +103,30 @@ public partial class RaceCardParser : RaceParser
     [GeneratedRegex(@"\d+-\d+", RegexOptions.Compiled)]
     private static partial Regex RatingRangeRegex();
 
-    private RaceAttributes GetRaceAttributes(RaceClassification classification) =>
-        new(GetOff(), GetDistance(), classification, GetGoing(), GetNumberOfRunners());
+    private RaceAttributes GetRaceAttributes(RaceClassification classification)
+    {
+        var (prizeMoney, prizeMoneyValue) = GetPrizeMoney();
+        return new(GetOff(), GetDistance(), classification, GetGoing(), GetNumberOfRunners(), prizeMoney, prizeMoneyValue);
+    }
+
+    private (string? raw, decimal? value) GetPrizeMoney()
+    {
+        var raw = _find.Optional().AnyElement().WithAttribute("data-testid", "Text__RaceDetailsPrizeMoney").GetText();
+        if (string.IsNullOrEmpty(raw))
+        {
+            return (null, null);
+        }
+
+        var match = PrizeMoneyValueRegex().Match(raw);
+        decimal? value = match.Success &&
+            decimal.TryParse(match.Value.Replace(",", string.Empty), NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed)
+            ? parsed
+            : null;
+        return (raw, value);
+    }
+
+    [GeneratedRegex(@"[\d,]+(\.\d+)?", RegexOptions.Compiled)]
+    private static partial Regex PrizeMoneyValueRegex();
 
     private DateTime GetOff()
     {

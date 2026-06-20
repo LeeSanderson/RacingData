@@ -55,13 +55,15 @@ internal partial class RaceCardRunnerParser : RunnerParser
             var age = ExtractAge(rowText);
             var weight = ExtractWeight(rowText);
             var headgear = ExtractHeadgear(row);
+            var daysSinceLastRun = ExtractDaysSinceLastRun(rowFind);
+            var formFigures = ExtractFormFigures(rowFind);
             var stats = ExtractStats(rowFind, forecastOdds, horse.Id);
 
             yield return new RaceRunner(
                 horse,
                 jockey,
                 trainer,
-                new RaceRunnerAttributes(cardNumber, draw, age, weight, headgear),
+                new RaceRunnerAttributes(cardNumber, draw, age, weight, headgear, daysSinceLastRun, formFigures),
                 stats);
         }
     }
@@ -170,6 +172,12 @@ internal partial class RaceCardRunnerParser : RunnerParser
         }
         return null;
     }
+
+    private static int? ExtractDaysSinceLastRun(HtmlNodeFinder rowFind) =>
+        rowFind.Optional().AnyElement().WithAttribute("data-testid", "Text__DaysSinceLastRun").GetText().AsOptionalInt();
+
+    private static string? ExtractFormFigures(HtmlNodeFinder rowFind) =>
+        rowFind.Optional().AnyElement().WithAttribute("data-testid", "Container__RunnerRowFormFigures").GetText();
 
     private static RaceRunnerStats ExtractStats(HtmlNodeFinder rowFind, IReadOnlyDictionary<int, RaceOdds> forecastOdds, int horseId)
     {

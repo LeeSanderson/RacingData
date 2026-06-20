@@ -52,6 +52,8 @@ public class RaceCardParserShould
         actualRaceParseResult.Attributes.Distance.Should().BeEquivalentTo(new RaceDistance("1m6f"));
         actualRaceParseResult.Attributes.Going.Should().Be("Good");
         actualRaceParseResult.Attributes.NumberOfRunners.Should().Be(6);
+        actualRaceParseResult.Attributes.PrizeMoney.Should().Be("£4,397");
+        actualRaceParseResult.Attributes.PrizeMoneyValue.Should().Be(4397m);
         actualRaceParseResult.Attributes.Classification.RaceType.Should().Be(RaceType.Other);
         actualRaceParseResult.Attributes.Classification.Class.Should().Be("Class 5");
         actualRaceParseResult.Attributes.Classification.AgeBand.Should().Be("4yo+");
@@ -64,6 +66,8 @@ public class RaceCardParserShould
         first.Attributes.RaceCardNumber.Should().Be(1);
         first.Attributes.StallNumber.Should().Be(4);
         first.Attributes.Weight.Should().BeEquivalentTo(new RaceWeight(9, 9));
+        first.Attributes.DaysSinceLastRun.Should().Be(32);
+        first.Attributes.FormFigures.Should().Be("3-1958");
     }
 
     [Fact]
@@ -192,11 +196,52 @@ public class RaceCardParserShould
         card.Runners.Count(r => r.Attributes.Weight.TotalPounds == 0).Should().Be(1);
     }
 
+    [Fact]
+    public async Task ParseAFirstTimeRunnerWithNoFormOrDaysSinceAsNull()
+    {
+        // No fixture has a genuine first-time runner, so synthesise one by stripping the
+        // days-since-last-run and form-figures markup from the first runner's row. Absence is
+        // normal (debut runners) and must parse to null rather than throw.
+        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_yarmouth_20260520_1910.html");
+        var modified = MakeFirstRunnerAFirstTimer(html);
+
+        var card = await new RaceCardParser().Parse(modified);
+
+        card.Runners.Length.Should().Be(6);
+        var firstTimer = card.Runners.Single(r => r.Horse.Name == "Relocal FR");
+        firstTimer.Attributes.DaysSinceLastRun.Should().BeNull();
+        firstTimer.Attributes.FormFigures.Should().BeNull();
+
+        // The surgical mutation leaves every other runner's pre-race form intact.
+        card.Runners.Where(r => r.Horse.Name != "Relocal FR")
+            .Should().OnlyContain(r => r.Attributes.DaysSinceLastRun != null && r.Attributes.FormFigures != null);
+    }
+
     private static async Task<RaceCard> GetRaceCard(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadRacingPostExampleResource(resourceFileName);
         var parser = new RaceCardParser();
         return await parser.Parse(raceResultHtmlPage);
+    }
+
+    private static string MakeFirstRunnerAFirstTimer(string html)
+    {
+        var rowIdx = html.IndexOf("Container__RunnerRowDesktop", StringComparison.Ordinal);
+        if (rowIdx < 0)
+        {
+            throw new InvalidOperationException("Could not find first runner row to mutate.");
+        }
+        // Confine the edit to the first runner's row (up to the next desktop row) so other runners
+        // keep their form.
+        var nextRowIdx = html.IndexOf("Container__RunnerRowDesktop", rowIdx + 1, StringComparison.Ordinal);
+        if (nextRowIdx < 0)
+        {
+            nextRowIdx = html.Length;
+        }
+        var region = html[rowIdx..nextRowIdx]
+            .Replace("data-testid=\"Text__DaysSinceLastRun\"", "data-testid=\"Text__DaysSinceLastRunRemoved\"", StringComparison.Ordinal)
+            .Replace("data-testid=\"Container__RunnerRowFormFigures\"", "data-testid=\"Container__RunnerRowFormFiguresRemoved\"", StringComparison.Ordinal);
+        return html[..rowIdx] + region + html[nextRowIdx..];
     }
 
     private static string MarkFirstRunnerNumberAsReserve(string html)

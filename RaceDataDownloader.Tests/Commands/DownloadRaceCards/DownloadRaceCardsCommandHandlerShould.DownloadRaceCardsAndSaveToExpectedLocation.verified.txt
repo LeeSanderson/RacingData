@@ -25,7 +25,9 @@
       },
       "Going": "Good",
       "Surface": "Turf",
-      "NumberOfRunners": 12
+      "NumberOfRunners": 12,
+      "PrizeMoney": "\u00A346,711",
+      "PrizeMoneyValue": 46711
     },
     "Runners": [
       {
@@ -50,7 +52,9 @@
             "Pounds": 9,
             "TotalPounds": 153
           },
-          "HeadGear": "tb"
+          "HeadGear": "tb",
+          "DaysSinceLastRun": 21,
+          "FormFigures": "0-3584"
         },
         "Statistics": {
           "Odds": {
@@ -82,7 +86,9 @@
             "Stones": 9,
             "Pounds": 7,
             "TotalPounds": 151
-          }
+          },
+          "DaysSinceLastRun": 44,
+          "FormFigures": "-58000"
         },
         "Statistics": {
           "Odds": {
@@ -115,7 +121,9 @@
             "Pounds": 7,
             "TotalPounds": 151
           },
-          "HeadGear": "t"
+          "HeadGear": "t",
+          "DaysSinceLastRun": 3,
+          "FormFigures": "521645"
         },
         "Statistics": {
           "Odds": {
@@ -148,7 +156,9 @@
             "Pounds": 6,
             "TotalPounds": 150
           },
-          "HeadGear": "tb"
+          "HeadGear": "tb",
+          "DaysSinceLastRun": 119,
+          "FormFigures": "0000-8"
         },
         "Statistics": {
           "Odds": {
@@ -180,7 +190,9 @@
             "Stones": 9,
             "Pounds": 5,
             "TotalPounds": 149
-          }
+          },
+          "DaysSinceLastRun": 35,
+          "FormFigures": "5-0705"
         },
         "Statistics": {
           "Odds": {
@@ -213,7 +225,9 @@
             "Pounds": 3,
             "TotalPounds": 147
           },
-          "HeadGear": "b"
+          "HeadGear": "b",
+          "DaysSinceLastRun": 189,
+          "FormFigures": "07000-"
         },
         "Statistics": {
           "Odds": {
@@ -246,7 +260,9 @@
             "Pounds": 2,
             "TotalPounds": 146
           },
-          "HeadGear": "b"
+          "HeadGear": "b",
+          "DaysSinceLastRun": 17,
+          "FormFigures": "-63343"
         },
         "Statistics": {
           "Odds": {
@@ -279,7 +295,9 @@
             "Pounds": 2,
             "TotalPounds": 146
           },
-          "HeadGear": "ht"
+          "HeadGear": "ht",
+          "DaysSinceLastRun": 14,
+          "FormFigures": "-45736"
         },
         "Statistics": {
           "Odds": {
@@ -312,7 +330,9 @@
             "Pounds": 1,
             "TotalPounds": 145
           },
-          "HeadGear": "tb"
+          "HeadGear": "tb",
+          "DaysSinceLastRun": 31,
+          "FormFigures": "-36090"
         },
         "Statistics": {
           "Odds": {
@@ -345,7 +365,9 @@
             "Pounds": 13,
             "TotalPounds": 141
           },
-          "HeadGear": "tb"
+          "HeadGear": "tb",
+          "DaysSinceLastRun": 17,
+          "FormFigures": "0-7757"
         },
         "Statistics": {
           "Odds": {
@@ -378,7 +400,9 @@
             "Pounds": 5,
             "TotalPounds": 133
           },
-          "HeadGear": "t"
+          "HeadGear": "t",
+          "DaysSinceLastRun": 28,
+          "FormFigures": "-20844"
         },
         "Statistics": {
           "Odds": {
@@ -411,7 +435,9 @@
             "Pounds": 3,
             "TotalPounds": 131
           },
-          "HeadGear": "t"
+          "HeadGear": "t",
+          "DaysSinceLastRun": 14,
+          "FormFigures": "-50008"
         },
         "Statistics": {
           "Odds": {
