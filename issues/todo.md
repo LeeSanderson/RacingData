@@ -61,13 +61,17 @@ grows daily):
 
 ## Model improvements
 
-### Odds + confidence in TodaysPredictions.csv → bet sizing — ✅ SCOPED into `issues/prd.md`
-**Now scoped** (PRD written 2026-06-19): an advisory `Stake` column in
+### Odds + confidence in TodaysPredictions.csv → bet sizing — ✅ DONE (shipped 2026-06-20)
+**Shipped** (PRD closed 2026-06-20): an advisory `Stake` column in
 `Data/TodaysPredictions.csv` via fractional Kelly + a value gate (gross-pay /
 de-overround-judge), normalized-but-uncalibrated probabilities, fixed-scale £1-typical
-staking with a cap, a pure testable staking module called from `predict.py`, a
-diagnostic SP-placeholder backtest, and forward staked-outcome logging through the C#
-validate step. See `issues/prd.md` for the full design and decisions.
+staking with a cap, a pure testable staking module (`race_analytics/betting/`) called
+from `predict.py`, a diagnostic SP-placeholder backtest
+(`race_analytics/scripts/backtest_staking.py`), and forward staked-outcome logging
+through the C# validate step. Strategy + honesty caveats in `docs/staking.md`; the
+SP-placeholder backtest diagnostic is recorded in `evaluations.md`. The honest staked-ROI
+track record now accrues forward from real forecast-priced days; calibration stays
+deferred until that log makes it measurable.
 
 ### Value-betting / market-overlay strategy
 Bet only when model win-probability exceeds market-implied probability; stake by edge.
