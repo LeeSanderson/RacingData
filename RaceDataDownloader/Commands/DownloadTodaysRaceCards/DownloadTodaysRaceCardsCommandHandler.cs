@@ -23,6 +23,7 @@ public class DownloadTodaysRaceCardsCommandHandler(
 
         EnsureGoingDataIsPresent(raceResults);
         LogForecastFillRate(raceResults);
+        LogRatingsFillRate(raceResults);
 
         await FileSystem.WriteRecordsToCsvFile(
             Path.Combine(dataFolder, "TodaysRaceCards.csv"),
@@ -49,6 +50,45 @@ public class DownloadTodaysRaceCardsCommandHandler(
                 "No runners across the {CardCount} downloaded race card(s) have forecast odds. " +
                 "The Racing Post betting-forecast structure may have changed.",
                 raceCards.Count);
+        }
+    }
+
+    // Soft canary for a Racing Post runner-stats markup change, mirroring the forecast fill-rate log:
+    // count how many runners carry each pre-race rating (the Card* source for the results write-back)
+    // and warn (never throw) when a non-empty card yields none of a field. Absence on individual
+    // runners is normal (unrated races), so only a whole-field shortfall is worth a warning.
+    private void LogRatingsFillRate(List<RaceCard> raceCards)
+    {
+        var totalRunners = raceCards.Sum(c => c.Runners.Length);
+        if (totalRunners == 0)
+        {
+            return;
+        }
+
+        var withOfficialRating = raceCards.Sum(c => c.Runners.Count(r => r.Statistics.OfficialRating.HasValue));
+        var withRacingPostRating = raceCards.Sum(c => c.Runners.Count(r => r.Statistics.RacingPostRating.HasValue));
+        var withTopSpeedRating = raceCards.Sum(c => c.Runners.Count(r => r.Statistics.TopSpeedRating.HasValue));
+        Logger.LogInformation(
+            "Pre-race ratings present for {Total} runners: OR {OfficialRating}, RPR {RacingPostRating}, TSR {TopSpeedRating}.",
+            totalRunners,
+            withOfficialRating,
+            withRacingPostRating,
+            withTopSpeedRating);
+
+        WarnWhenRatingAbsent(withOfficialRating, "official ratings (OR)", raceCards.Count);
+        WarnWhenRatingAbsent(withRacingPostRating, "Racing Post ratings (RPR)", raceCards.Count);
+        WarnWhenRatingAbsent(withTopSpeedRating, "top speed ratings (TSR)", raceCards.Count);
+    }
+
+    private void WarnWhenRatingAbsent(int withRating, string ratingLabel, int cardCount)
+    {
+        if (withRating == 0)
+        {
+            Logger.LogWarning(
+                "No runners across the {CardCount} downloaded race card(s) have {RatingLabel}. " +
+                "The Racing Post runner-stats structure may have changed.",
+                cardCount,
+                ratingLabel);
         }
     }
 

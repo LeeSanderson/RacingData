@@ -74,4 +74,36 @@ public record RaceResultRecord : RaceCardRecord
     [Optional]
     [Index(41)]
     public double? ForecastDecimalOdds { get; set; }
+
+    // The base RaceCardRecord places these at indices 34-37 for the (daily-rewritten) card file, but
+    // results already use 34-41 for post-race + forecast columns. Re-declare them with `new` so they
+    // append after the forecast columns in the results layout. CsvHelper's auto-map binds the most-
+    // derived property, so the hidden base index is ignored and no column is duplicated. [Optional]
+    // so results files written before these columns still load. Populated by the validate write-back
+    // (Issue 003), not the result parser — blank until then.
+    [Optional]
+    [Index(42)]
+    public new int? DaysSinceLastRun { get; set; }
+    [Optional]
+    [Index(43)]
+    public new string? FormFigures { get; set; }
+    [Optional]
+    [Index(44)]
+    public new string? PrizeMoney { get; set; }
+    [Optional]
+    [Index(45)]
+    public new decimal? PrizeMoneyValue { get; set; }
+
+    // Pre-race OR/RPR/TSR copied from the card by the write-back. The `Card` prefix distinguishes them
+    // from the inherited post-race OfficialRating/RacingPostRating/TopSpeedRating: the Card* values are
+    // non-leaky (known before the race) whereas the inherited ones are recomputed afterwards.
+    [Optional]
+    [Index(46)]
+    public int? CardOfficialRating { get; set; }
+    [Optional]
+    [Index(47)]
+    public int? CardRacingPostRating { get; set; }
+    [Optional]
+    [Index(48)]
+    public int? CardTopSpeedRating { get; set; }
 }

@@ -43,7 +43,11 @@ public record RaceCardRecord
                 DecimalOdds = d.Runner.Statistics.Odds.DecimalOdds,
                 OfficialRating = d.Runner.Statistics.OfficialRating,
                 RacingPostRating = d.Runner.Statistics.RacingPostRating,
-                TopSpeedRating = d.Runner.Statistics.TopSpeedRating
+                TopSpeedRating = d.Runner.Statistics.TopSpeedRating,
+                DaysSinceLastRun = d.Runner.Attributes.DaysSinceLastRun,
+                FormFigures = d.Runner.Attributes.FormFigures,
+                PrizeMoney = d.Race.Attributes.PrizeMoney,
+                PrizeMoneyValue = d.Race.Attributes.PrizeMoneyValue
             });
 
     [Index(0)]
@@ -114,4 +118,18 @@ public record RaceCardRecord
     public int? RacingPostRating { get; set; }
     [Index(33)]
     public int? TopSpeedRating { get; set; }
+
+    // Pre-race facts collected at card parse (Issue 001 domain model). No prefix — they have no
+    // post-race counterpart to collide with. TodaysRaceCards.csv is rewritten daily, so these append
+    // contiguously here; RaceResultRecord re-declares them at higher indices for the results layout.
+    [Index(34)]
+    public int? DaysSinceLastRun { get; set; }
+    [Index(35)]
+    public string? FormFigures { get; set; }
+    // Raw display string (currency symbol + thousands separators preserved; not normalised across
+    // countries) alongside the numeric value (symbol/commas stripped).
+    [Index(36)]
+    public string? PrizeMoney { get; set; }
+    [Index(37)]
+    public decimal? PrizeMoneyValue { get; set; }
 }
