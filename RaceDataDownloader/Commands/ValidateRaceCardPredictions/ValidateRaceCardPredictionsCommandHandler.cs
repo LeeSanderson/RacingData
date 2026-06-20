@@ -21,7 +21,7 @@ public class ValidateRaceCardPredictionsCommandHandler(
     {
         _dataFolder = ValidateAndCreateOutputFolder(options.DataDirectory);
 
-        await MergeForecastOddsIntoResults();
+        await MergeCardDataIntoResults();
 
         var predictions = await FileSystem.ReadRecordsFromCsvFile<RaceCardPrediction>(Path.Combine(_dataFolder, "TodaysPredictions.csv"));
         Logger.LogInformation("Scoring {PredictionCount} predictions for today", predictions.Count);
@@ -56,28 +56,32 @@ public class ValidateRaceCardPredictionsCommandHandler(
         }
     }
 
-    // Runs before TodaysRaceCards.csv is overwritten: copies the morning forecast onto matching
-    // (RaceId, HorseId) result rows. Idempotent — only blank cells are filled.
-    private async Task MergeForecastOddsIntoResults()
+    // Runs before TodaysRaceCards.csv is overwritten: copies the morning racecard's pre-race data onto
+    // matching (RaceId, HorseId) result rows. Forward-only and idempotent — each field is filled only
+    // when the card has it AND the result cell is still blank. Generalises the original forecast-odds-only
+    // merge: the forecast odds are now one field among several (forecast odds, the four base pre-race
+    // fields, and the three Card* ratings), all carried by this single card→result path.
+    private async Task MergeCardDataIntoResults()
     {
         var cardFileName = Path.Combine(_dataFolder, "TodaysRaceCards.csv");
         if (!FileSystem.File.Exists(cardFileName))
         {
-            Logger.LogInformation("No race card file at {CardFile}; skipping forecast-odds merge.", cardFileName);
+            Logger.LogInformation("No race card file at {CardFile}; skipping card-data merge.", cardFileName);
             return;
         }
 
         var cards = await FileSystem.ReadRecordsFromCsvFile<RaceCardRecord>(cardFileName);
 
-        // A non-null decimal marks a real forecast; runners left at the "SP" default must not overwrite results.
-        var forecastByRunner = cards
-            .Where(c => c.DecimalOdds != null)
+        // Index ALL card runners (not just those carrying a forecast price): ratings/form/prize merge even
+        // for a runner left at the "SP" forecast default. The forecast-odds copy itself still gates on a
+        // real (non-null) decimal inside MergeCardRunnerIntoResult, so its behaviour is unchanged.
+        var cardByRunner = cards
             .GroupBy(c => (c.RaceId, c.HorseId))
             .ToDictionary(g => g.Key, g => g.Last());
 
-        if (forecastByRunner.Count == 0)
+        if (cardByRunner.Count == 0)
         {
-            Logger.LogInformation("No forecast odds present on {CardFile}; nothing to merge into results.", cardFileName);
+            Logger.LogInformation("No runners on {CardFile}; nothing to merge into results.", cardFileName);
             return;
         }
 
@@ -89,34 +93,88 @@ public class ValidateRaceCardPredictionsCommandHandler(
         {
             if (!FileSystem.File.Exists(resultsFileName))
             {
-                Logger.LogInformation("No results file at {ResultsFile}; skipping forecast-odds merge for it.", resultsFileName);
+                Logger.LogInformation("No results file at {ResultsFile}; skipping card-data merge for it.", resultsFileName);
                 continue;
             }
 
             var results = await FileSystem.ReadRecordsFromCsvFile<RaceResultRecord>(resultsFileName);
-            var filled = 0;
+            var cellsFilled = 0;
             foreach (var result in results)
             {
-                if (result.ForecastDecimalOdds != null || !string.IsNullOrEmpty(result.ForecastFractionalOdds))
+                if (cardByRunner.TryGetValue((result.RaceId, result.HorseId), out var card))
                 {
-                    continue;
-                }
-
-                if (forecastByRunner.TryGetValue((result.RaceId, result.HorseId), out var forecast))
-                {
-                    result.ForecastFractionalOdds = forecast.FractionalOdds;
-                    result.ForecastDecimalOdds = forecast.DecimalOdds;
-                    filled++;
+                    cellsFilled += MergeCardRunnerIntoResult(card, result);
                 }
             }
 
-            if (filled > 0)
+            if (cellsFilled > 0)
             {
                 await FileSystem.WriteRecordsToCsvFile(resultsFileName, results);
             }
 
-            Logger.LogInformation("Merged forecast odds into {Filled} of {Total} result rows in {ResultsFile}.", filled, results.Count, resultsFileName);
+            Logger.LogInformation("Merged card data: filled {Filled} blank cell(s) across {Total} result rows in {ResultsFile}.", cellsFilled, results.Count, resultsFileName);
         }
+    }
+
+    // Copies each pre-race field from the card runner onto the result row only when the card carries the
+    // value AND the result cell is still blank (per-field presence + per-field blank-fill). Returns the
+    // number of cells filled, so the caller rewrites a results file only when at least one cell changed.
+    private static int MergeCardRunnerIntoResult(RaceCardRecord card, RaceResultRecord result)
+    {
+        var filled = 0;
+
+        // Forecast odds — the original two-column rule, preserved exactly: a non-null decimal marks a real
+        // forecast (runners left at the "SP" default must not overwrite results), and the fractional and
+        // decimal columns are treated as a single unit gated on the two-column blank check.
+        if (card.DecimalOdds != null &&
+            result.ForecastDecimalOdds == null && string.IsNullOrEmpty(result.ForecastFractionalOdds))
+        {
+            result.ForecastFractionalOdds = card.FractionalOdds;
+            result.ForecastDecimalOdds = card.DecimalOdds;
+            filled++;
+        }
+
+        // Pre-race ratings: card OR/RPR/TSR → result Card* columns, kept distinct from the inherited
+        // post-race OfficialRating/RacingPostRating/TopSpeedRating so the non-leaky figures are preserved.
+        if (card.OfficialRating != null && result.CardOfficialRating == null)
+        {
+            result.CardOfficialRating = card.OfficialRating;
+            filled++;
+        }
+        if (card.RacingPostRating != null && result.CardRacingPostRating == null)
+        {
+            result.CardRacingPostRating = card.RacingPostRating;
+            filled++;
+        }
+        if (card.TopSpeedRating != null && result.CardTopSpeedRating == null)
+        {
+            result.CardTopSpeedRating = card.TopSpeedRating;
+            filled++;
+        }
+
+        // The four base pre-race fields map name-to-name (the result re-declares them with `new`).
+        if (card.DaysSinceLastRun != null && result.DaysSinceLastRun == null)
+        {
+            result.DaysSinceLastRun = card.DaysSinceLastRun;
+            filled++;
+        }
+        if (!string.IsNullOrEmpty(card.FormFigures) && string.IsNullOrEmpty(result.FormFigures))
+        {
+            result.FormFigures = card.FormFigures;
+            filled++;
+        }
+        if (!string.IsNullOrEmpty(card.PrizeMoney) && string.IsNullOrEmpty(result.PrizeMoney))
+        {
+            result.PrizeMoney = card.PrizeMoney;
+            filled++;
+        }
+        if (card.PrizeMoneyValue != null && result.PrizeMoneyValue == null)
+        {
+            result.PrizeMoneyValue = card.PrizeMoneyValue;
+            filled++;
+        }
+
+        return filled;
     }
 
     private static bool StakeReturnedFor(ResultStatus resultStatus) =>

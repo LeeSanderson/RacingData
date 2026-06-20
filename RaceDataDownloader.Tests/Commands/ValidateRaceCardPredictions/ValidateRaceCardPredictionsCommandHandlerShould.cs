@@ -334,6 +334,124 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         mergedResults.Single(r => r.HorseId == 3).ForecastFractionalOdds.Should().BeNullOrEmpty();
     }
 
+    [Fact]
+    public async Task MergeAllPreRaceCardColumnsIntoMatchedResultRows()
+    {
+        // One card runner carrying every pre-race field; the result row is blank for all of them.
+        var cards = new List<RaceCardRecord>
+        {
+            CardRunner(raceId: 1, horseId: 1, fractionalOdds: "11/2", decimalOdds: 6.5,
+                officialRating: 95, racingPostRating: 102, topSpeedRating: 88,
+                daysSinceLastRun: 21, formFigures: "1-234", prizeMoney: "£4,397", prizeMoneyValue: 4397m)
+        };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await _resultsWhereHorse1Won.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        var horse1 = mergedResults.Single(r => r.HorseId == 1);
+        // Forecast odds (unchanged precedent) plus the five other pre-race columns all land on the result row.
+        horse1.ForecastFractionalOdds.Should().Be("11/2");
+        horse1.ForecastDecimalOdds.Should().Be(6.5);
+        horse1.CardOfficialRating.Should().Be(95);
+        horse1.CardRacingPostRating.Should().Be(102);
+        horse1.CardTopSpeedRating.Should().Be(88);
+        horse1.DaysSinceLastRun.Should().Be(21);
+        horse1.FormFigures.Should().Be("1-234");
+        horse1.PrizeMoney.Should().Be("£4,397");
+        horse1.PrizeMoneyValue.Should().Be(4397m);
+    }
+
+    [Fact]
+    public async Task LeaveAlreadyPopulatedCardDataCellsUntouchedButFillStillBlankOnes()
+    {
+        // The result already has some pre-race cells filled (a prior run) and some still blank.
+        var resultsWithSomeCardData = new List<RaceResultRecord>
+        {
+            new()
+            {
+                RaceId = 1, RaceName = "Race1", CourseId = 1, CourseName = "Course1", HorseId = 1,
+                Off = new DateTime(2022, 05, 13, 13, 40, 0), FinishingPosition = 1,
+                FractionalOdds = "10/1", DecimalOdds = 11, ResultStatus = ResultStatus.CompletedRace,
+                CardOfficialRating = 50, DaysSinceLastRun = 7, FormFigures = "9-9",
+                PrizeMoney = "£1", PrizeMoneyValue = 1m
+                // CardRacingPostRating and CardTopSpeedRating left blank
+            }
+        };
+        var cards = new List<RaceCardRecord>
+        {
+            CardRunner(raceId: 1, horseId: 1, fractionalOdds: "11/2", decimalOdds: 6.5,
+                officialRating: 95, racingPostRating: 102, topSpeedRating: 88,
+                daysSinceLastRun: 21, formFigures: "1-234", prizeMoney: "£4,397", prizeMoneyValue: 4397m)
+        };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await resultsWithSomeCardData.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        var horse1 = mergedResults.Single(r => r.HorseId == 1);
+        // Per-field idempotency: already-populated cells keep their own values, not the card's.
+        horse1.CardOfficialRating.Should().Be(50);
+        horse1.DaysSinceLastRun.Should().Be(7);
+        horse1.FormFigures.Should().Be("9-9");
+        horse1.PrizeMoney.Should().Be("£1");
+        horse1.PrizeMoneyValue.Should().Be(1m);
+        // Per-field blank-fill: still-blank cells DO fill from the card.
+        horse1.CardRacingPostRating.Should().Be(102);
+        horse1.CardTopSpeedRating.Should().Be(88);
+    }
+
+    [Fact]
+    public async Task SourceCardRatingsFromTheCardNotThePostRaceResultRatings()
+    {
+        // The result already carries POST-RACE OR/RPR/TSR; the card carries the (different) PRE-RACE ones.
+        var resultsWithPostRaceRatings = new List<RaceResultRecord>
+        {
+            new()
+            {
+                RaceId = 1, RaceName = "Race1", CourseId = 1, CourseName = "Course1", HorseId = 1,
+                Off = new DateTime(2022, 05, 13, 13, 40, 0), FinishingPosition = 1,
+                FractionalOdds = "10/1", DecimalOdds = 11, ResultStatus = ResultStatus.CompletedRace,
+                OfficialRating = 130, RacingPostRating = 140, TopSpeedRating = 120
+            }
+        };
+        var cards = new List<RaceCardRecord>
+        {
+            // No forecast price (SP), but the card does carry pre-race ratings — a rated race without a forecast.
+            CardRunner(raceId: 1, horseId: 1, fractionalOdds: "SP", decimalOdds: null,
+                officialRating: 95, racingPostRating: 102, topSpeedRating: 88)
+        };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await resultsWithPostRaceRatings.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        var horse1 = mergedResults.Single(r => r.HorseId == 1);
+        // Card* columns are sourced from the card's PRE-RACE figures...
+        horse1.CardOfficialRating.Should().Be(95);
+        horse1.CardRacingPostRating.Should().Be(102);
+        horse1.CardTopSpeedRating.Should().Be(88);
+        // ...while the inherited POST-RACE ratings on the result are left untouched (no leakage).
+        horse1.OfficialRating.Should().Be(130);
+        horse1.RacingPostRating.Should().Be(140);
+        horse1.TopSpeedRating.Should().Be(120);
+    }
+
     private static RaceResultRecord ResultRunner(int horseId, string fractionalOdds, double decimalOdds, int finishingPosition) =>
         new()
         {
@@ -349,7 +467,9 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
             ResultStatus = ResultStatus.CompletedRace
         };
 
-    private static RaceCardRecord CardRunner(int raceId, int horseId, string fractionalOdds, double? decimalOdds) =>
+    private static RaceCardRecord CardRunner(int raceId, int horseId, string fractionalOdds, double? decimalOdds,
+        int? officialRating = null, int? racingPostRating = null, int? topSpeedRating = null,
+        int? daysSinceLastRun = null, string? formFigures = null, string? prizeMoney = null, decimal? prizeMoneyValue = null) =>
         new()
         {
             RaceId = raceId,
@@ -359,7 +479,14 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
             HorseId = horseId,
             Off = new DateTime(2022, 05, 13, 13, 40, 0),
             FractionalOdds = fractionalOdds,
-            DecimalOdds = decimalOdds
+            DecimalOdds = decimalOdds,
+            OfficialRating = officialRating,
+            RacingPostRating = racingPostRating,
+            TopSpeedRating = topSpeedRating,
+            DaysSinceLastRun = daysSinceLastRun,
+            FormFigures = formFigures,
+            PrizeMoney = prizeMoney,
+            PrizeMoneyValue = prizeMoneyValue
         };
 
     // Backs the mock filesystem with a mutable store so Exists/Read/Delete/Write behave like a real one.
