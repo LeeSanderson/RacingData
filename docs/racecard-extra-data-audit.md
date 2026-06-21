@@ -6,8 +6,9 @@
 > - **Issue 001 (this pass — offline foundation):** the Method note, the raw ignored-`data-testid`
 >   appendix, and the *draft candidate inventory* with the columns derivable offline (field /
 >   source, backfill-able?). The judgement columns carry explicit stubs.
-> - **Issue 002 (live evidence):** fills **Availability** and **Coverage** from two fresh live
->   pulls + the fixtures. Stub marker: `TBD-002`.
+> - **Issue 002 (live evidence — done):** filled **Availability** and **Coverage** from two fresh
+>   logged-out live pulls (Brighton flat handicap + Hexham jumps, 2026-06-21) plus the fixtures;
+>   confirmed `__NEXT_DATA__` and the structured soft set ship in the public DOM. `TBD-002` cleared.
 > - **Issue 003 (judgement):** fills **Leakage**, **Type & parse difficulty**, **Predictive
 >   rationale**, and the **Verdict**; adds the ranked *Recommended-to-capture-next* shortlist.
 >   Stub marker: `TBD-003`.
@@ -56,11 +57,34 @@ pick fields off a ranked list without re-auditing the page.
   - `racecard_warwick_20260520_1700_hurdles.html` — GB jumps (hurdles)
   - `racecard_gowran_park_20260520_1820_unrated.html` — IRE, unrated
   - `racecard_happyvalley_20260520_1140.html` — HK
-- *Supplement (live, issue 002 — TBD)* — two fresh live GB pulls (one flat handicap, one jumps)
-  via `RacePredictor.Core/RacingPost/PuppeteerHtmlLoader.cs` (plain HTTP is 429-blocked per
-  `AGENTS.md`). Pull dates and meeting/race types to be recorded here by issue 002. These are
-  needed because the soft fields may be **members-only or absent** from the public DOM — and a
-  thin midweek fixture could give a false "not available".
+- *Supplement (live, issue 002)* — two fresh **logged-out** GB pulls taken **2026-06-21** via
+  `RacePredictor.Core/RacingPost/PuppeteerHtmlLoader.cs` (plain HTTP is 429-blocked per
+  `AGENTS.md`; the loader emulates an iPad and runs no login), through a throwaway harness that
+  reuses the loader:
+  - **Flat handicap** — Brighton, race `921242`, *"Flat Turf, Handicap, Class 5"* (GB),
+    `https://www.racingpost.com/racecards/7/brighton/2026-06-21/921242/`
+  - **Jumps** — Hexham, race `921033`, *"Chase Turf, Handicap, Class 4"* (GB summer NH),
+    `https://www.racingpost.com/racecards/25/hexham/2026-06-21/921033/`
+  - *(supplementary)* a third pull — Brighton race `921240`, *"Flat Turf, Maiden, Class 4"* — was
+    taken to separate "field absent from the card" from "signal merely didn't fire in this race".
+
+  The live pulls were needed because the soft fields could have been **members-only or absent**
+  from the public DOM. **Headline result: they are not.** Both logged-out pulls embed
+  `__NEXT_DATA__`, and the entire structured per-runner soft set (owner / breeding / headgear &
+  gelding first-time / wind-surgery / jockey allowance & first-time / `trainerRtf` /
+  `newTrainerRacesCount` / `countryOrigin` / **`spotlight` prose**) is present per runner in the
+  logged-out JSON — see the live-pull findings folded into the inventory's Availability/Coverage
+  columns and the soft-set notes below. The network was reachable and headless Puppeteer
+  succeeded, so the AFK fixture-only fallback was **not** needed.
+
+  *Reproducibility / retention.* The three pulled HTML files are retained in the session
+  scratchpad rather than committed (third-party card HTML, ~0.45 MB each, and today's race URLs
+  are transient) — the durable record is the URLs + date + race types above plus the
+  count-matrix method, all re-runnable against the loader. Two brittleness caveats surfaced:
+  (1) the `<sup>` badge classes `sc-25f6462b-7`/`-9` are build-generated styled-component hashes —
+  they happened to be **stable** across 2026-05-20 → 2026-06-21, but a future RP build can rotate
+  them; (2) the live odds section only renders when a market is open at capture time (present on
+  the Brighton handicap pull, absent on Hexham) — consistent with `odds-capture.md`.
 
 **Backfill presence-check (method).** "Backfill-able?" asks whether a candidate field *also*
 appears on daily **result** pages, so it could be backfilled into historic `Results` rather than
@@ -89,48 +113,68 @@ issue 003) — backfill is **not** implemented here.
 
 ## Draft candidate inventory
 
-One row per ignored pre-race signal. **Field / source** and **Backfill-able?** are filled now
-(offline, grounded in the fixtures above). **Availability** and **Coverage** are filled by issue
-002 (`TBD-002`); **Leakage**, **Type & parse difficulty**, **Predictive rationale**, and
-**Verdict** by issue 003 (`TBD-003`). The `<sup>` badges and every named soft field
+One row per ignored pre-race signal. **Field / source** and **Backfill-able?** are offline
+columns (grounded in the fixtures above). **Availability** and **Coverage** are now filled by
+issue 002 (logged-out live pulls + the 5 fixtures); **Leakage**, **Type & parse difficulty**,
+**Predictive rationale**, and **Verdict** remain for issue 003 (`TBD-003`). The `<sup>` badges and every named soft field
 (hot-trainer/jockey form, Spotlight, RP verdict, breeding, owner, headgear-change / wind-op,
 jockey allowance) appear as explicit rows.
 
 | # | Field / signal | Source (DOM hook · `__NEXT_DATA__` key · `<sup>`) | Backfill-able? (result fixtures) | Availability | Coverage | Leakage | Type & parse difficulty | Predictive rationale | Verdict |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | Owner (id + name) | `Link__OwnerSilk` href · `ownerId`/`ownerName` | **Yes** — owner appears on result pages (12× in Southwell 2026) | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 2 | Breeding — sire | `sireName`/`sireCountry` (`__NEXT_DATA__`; sample `Time Test`/`GB`) | **No** — absent from result fixtures (0) | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 3 | Breeding — dam | `damName` (`__NEXT_DATA__`) | **No** — absent from result fixtures (0) | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 4 | Headgear first-time flag | `horseHeadGearFirstTime` (bool, `__NEXT_DATA__`) | **No** — headgear code present on results but first-time flag not distinguished | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 5 | Gelding first-time flag | `geldingFirstTime` (bool, `__NEXT_DATA__`) | **No** — not on result pages | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 6 | Wind-surgery flag (+ count) | `Container__WindSurgery` (`w` + `<sup>` count) · `windSurgery` | **No** — "wind op" absent from result fixtures (0) | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 7 | Jockey allowance / claim (lbs) | `weightAllowanceLbs`/`extraWeightLbs` (`__NEXT_DATA__`) | **Likely (partial)** — weight-carried + "allowance" appear on result pages; needs result-parser confirm | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 8 | Jockey first-time on horse | `jockeyFirstTime` (bool, `__NEXT_DATA__`) | **No** — not on result pages | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 9 | Trainer form — "RTF" / win-rate | `trainerRtf` (`__NEXT_DATA__`) · trainer win-rate `<sup class="sc-25f6462b-9">` (e.g. `59%`) | **No** — current-form stat, not on result pages | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 10 | Jockey/trainer booking-count badge | `<sup class="sc-25f6462b-7">` (small int) on `Link__Jockey`/`Link__Trainer` | **No** — derived meeting stat, not on result pages | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 11 | New-trainer races count (recent yard switch) | `newTrainerRacesCount` (`__NEXT_DATA__`) | **No** — not on result pages | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 12 | Country of origin | `countryOrigin` (`__NEXT_DATA__`) | **No** — not on result pages | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 13 | Silks / racing colours (image) | `Image__SilkImage`/`Container__SilkImage` (owner silk svg) | **No** — silk svg keyed by owner; not a result-page field | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 14 | RP Spotlight (per-runner analyst comment) | `Button__ActionButtonSpotlight` · `spotlight`/`spotlightLucky` (`__NEXT_DATA__`) | **No** — pre-race spotlight not on result pages (result `comment` is post-race in-running) | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 15 | RP Verdict (race-level analyst verdict + selection) | `Container__Verdict` · race-level `verdict` (`__NEXT_DATA__`); byline + named selection (sample `BIG CYPRESS preferred…`) | **No** — absent from result fixtures (0) | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 16 | Weather | `Container__Weather` | **No** — not on result fixtures | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 17 | Race conditions / eligibility prose | `Container__RaceConditionsContent` (+ `Header__RaceDetails`, `Button__RaceConditionsToggle`) | **Maybe** — mostly static eligibility text; partly reconstructable | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
-| 18 | Advisory info (reserves / non-runner notes) | `Section__RaceDetailsBottomAdvisoryInformation` · `Link__RaceDetailsBottomAdvisoryHorse` | **No** — not on result fixtures | TBD-002 | TBD-002 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 1 | Owner (id + name) | `Link__OwnerSilk` href · `ownerId`/`ownerName` | **Yes** — owner appears on result pages (12× in Southwell 2026) | Public DOM — `ownerName` + `Link__OwnerSilk` per runner, both live pulls | Universal — per-runner on all 8 cards (flat/jumps/IRE/HK) | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 2 | Breeding — sire | `sireName`/`sireCountry` (`__NEXT_DATA__`; sample `Time Test`/`GB`) | **No** — absent from result fixtures (0) | Public DOM — `sireName`/`sireCountry` per runner, both live pulls | Universal — all 8 cards incl HK | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 3 | Breeding — dam | `damName` (`__NEXT_DATA__`) | **No** — absent from result fixtures (0) | Public DOM — `damName` per runner, both live pulls | Universal — all 8 cards incl HK | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 4 | Headgear first-time flag | `horseHeadGearFirstTime` (bool, `__NEXT_DATA__`) | **No** — headgear code present on results but first-time flag not distinguished | Public DOM — `horseHeadGearFirstTime` bool per runner, both live pulls | Field universal (all 8); fires only when headgear is first-time (sparse) | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 5 | Gelding first-time flag | `geldingFirstTime` (bool, `__NEXT_DATA__`) | **No** — not on result pages | Public DOM — `geldingFirstTime` bool per runner, both live pulls | Field universal; `true` **rare** — 0 in both live pulls + 4/5 fixtures; 2 trues on Gowran (IRE) | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 6 | Wind-surgery flag (+ count) | `Container__WindSurgery` (`w` + `<sup>` count) · `windSurgery` | **No** — "wind op" absent from result fixtures (0) | Public DOM — `Container__WindSurgery` + `windSurgery` confirmed on live Hexham; JSON key per runner on all cards | Field universal; flag fires mainly on **jumps** (Hexham live, Warwick) + occasional flat (Brighton maiden); 0 on Yarmouth/Kempton/Gowran/HK | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 7 | Jockey allowance / claim (lbs) | `weightAllowanceLbs`/`extraWeightLbs` (`__NEXT_DATA__`) | **Likely (partial)** — weight-carried + "allowance" appear on result pages; needs result-parser confirm | Public DOM — `weightAllowanceLbs` per runner; non-zero claims on live Brighton hcap (5, 7 lb) & Hexham | Field universal (flat/jumps/IRE/HK); non-zero only for claimers → sparse, race-dependent (0 in maiden/Yarmouth/Kempton) | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 8 | Jockey first-time on horse | `jockeyFirstTime` (bool, `__NEXT_DATA__`) | **No** — not on result pages | Public DOM — `jockeyFirstTime` bool per runner; trues in live pulls | Field universal; fires across all types | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 9 | Trainer form — "RTF" / win-rate | `trainerRtf` (`__NEXT_DATA__`) · trainer win-rate `<sup class="sc-25f6462b-9">` (e.g. `59%`) | **No** — current-form stat, not on result pages | Public DOM — `trainerRtf` per runner (sample 54/53/43/null/29) + win-rate `<sup>` in both live pulls | `trainerRtf` universal (all 8); win-rate `<sup>` present GB/IRE but **absent on HK** | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 10 | Jockey/trainer booking-count badge | `<sup class="sc-25f6462b-7">` (small int) on `Link__Jockey`/`Link__Trainer` | **No** — derived meeting stat, not on result pages | Public DOM — booking-count `<sup>` in both live pulls | Universal incl HK (all 8); class hash brittle (see Method) | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 11 | New-trainer races count (recent yard switch) | `newTrainerRacesCount` (`__NEXT_DATA__`) | **No** — not on result pages | Public DOM — `newTrainerRacesCount` per runner; non-zero on live Brighton (2) & Hexham | Field universal; non-zero **rare** (recent yard switch) — 0–2 per card | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 12 | Country of origin | `countryOrigin` (`__NEXT_DATA__`) | **No** — not on result pages | Public DOM — `countryOrigin` per runner (sample "GB"/"IRE") | Universal — all 8 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 13 | Silks / racing colours (image) | `Image__SilkImage`/`Container__SilkImage` (owner silk svg) | **No** — silk svg keyed by owner; not a result-page field | Public DOM — `Image__SilkImage` present everywhere | Universal — all 8 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 14 | RP Spotlight (per-runner analyst comment) | `Button__ActionButtonSpotlight` · `spotlight`/`spotlightLucky` (`__NEXT_DATA__`) | **No** — pre-race spotlight not on result pages (result `comment` is post-race in-running) | **Public DOM, NOT members-only** — `spotlight` carries full per-runner prose in both logged-out pulls (sample in notes) | Universal — `spotlight` non-null per runner on all 8 incl HK | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 15 | RP Verdict (race-level analyst verdict + selection) | `Container__Verdict` (rendered prose + named selection, sample `PENTONVILLE…`); `__NEXT_DATA__` `verdict` key is **null** | **No** — absent from result fixtures (0) | Public DOM **as rendered `Container__Verdict` text**, not JSON (`verdict` key null in all 8) | **Partial** — present Brighton (hcap+maiden, live), Gowran (IRE), HK; **absent on live Hexham** + Yarmouth/Kempton/Warwick. Per-race, not a flat/jumps split | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 16 | Weather | `Container__Weather` | **No** — not on result fixtures | Public DOM — `Container__Weather` in both live pulls | GB/IRE present; **absent on HK** (Happy Valley) | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 17 | Race conditions / eligibility prose | `Container__RaceConditionsContent` (+ `Header__RaceDetails`, `Button__RaceConditionsToggle`) | **Maybe** — mostly static eligibility text; partly reconstructable | Public DOM — `Container__RaceConditionsContent` everywhere | Universal — all 8 | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
+| 18 | Advisory info (reserves / non-runner notes) | `Section__RaceDetailsBottomAdvisoryInformation` · `Link__RaceDetailsBottomAdvisoryHorse` | **No** — not on result fixtures | Public DOM where rendered | **Rare** — only HK fixture; absent from all GB/IRE incl both live pulls (conditional: reserves/NR notes) | TBD-003 | TBD-003 | TBD-003 | TBD-003 |
 | 19 | Live bookmaker odds | `Container__OddsSection` · `odds-button-*` · `oddsValue`/`oddsDesc` | **N/A — tracked separately** | n/a | n/a | see [`odds-capture.md`](odds-capture.md) | see odds-capture | see odds-capture | **Out of scope** — live-odds capture is `odds-capture.md` Phase 2, not a new card field |
 
-**Notes on the soft set (for issues 002/003).**
+**Notes on the soft set (live-pull findings, issue 002 — for 003).**
 
-- **"Hot-trainer / hot-jockey form flag"** as a dedicated flame/icon was **not found** in the
-  card DOM. The concrete in-form signals that *do* exist are row 9 (`trainerRtf` + the trainer
-  win-rate `<sup>` badge) and row 11 (`newTrainerRacesCount`). Issue 003 should resolve the
-  PRD's "hot form flag" candidate against these, rather than a non-existent flag.
-- Rows 2–12 are dominantly sourced from `__NEXT_DATA__` (structured), so their parse difficulty
-  is expected to be low — but their **availability** (does the public/logged-out DOM still ship
-  `__NEXT_DATA__`, or is part of it members-gated?) must be confirmed by the live pulls in 002,
-  since these fixtures may have been captured under a particular session state.
-- The pre-race **Spotlight** and **Verdict** *text* (rows 14, 15) are the highest-NLP-risk
-  candidates; whether their prose is in the static `__NEXT_DATA__`/DOM or lazy-loaded on
-  interaction is exactly what 002's live pull must settle.
+- **`__NEXT_DATA__` availability — RESOLVED.** Both **logged-out** live pulls (Brighton handicap,
+  Hexham jumps) embed `__NEXT_DATA__`, and the full structured per-runner soft set is present in
+  it (owner, breeding, headgear/gelding first-time, wind-surgery, jockey allowance & first-time,
+  `trainerRtf`, `newTrainerRacesCount`, `countryOrigin`). The fixtures were **not** captured
+  under a privileged session — none of the structured candidates is members-gated. So for rows
+  1–14 the parse path really is "read a JSON property", which 003 should weight as low difficulty.
+- **Spotlight — RESOLVED, public.** The per-runner `spotlight` value is full analyst prose in the
+  logged-out JSON, e.g. *"In cheekpieces the last twice; pushed the long odds-on favourite close
+  on his handicap debut (1m2f, good to firm) and then won as he liked at Wolverhampton on Tuesday
+  … this 295,000gns yearling could easily rate much higher."* It is **not** members-only and is a
+  JSON read, not a DOM/NLP scrape — though it is free text, so any *feature* extraction (vs raw
+  capture) is still an NLP problem for the follow-on PRD.
+- **Verdict — RESOLVED, but a correction to issue 001.** The race-level RP Verdict prose is in the
+  **rendered `Container__Verdict` DOM** (e.g. *"VERDICT by Alistair Jones … PENTONVILLE looks
+  well-in under a penalty for his AW win on Tuesday"* + a named selection via
+  `Container__HorseSelection__<horseId>`), **not** a `__NEXT_DATA__` JSON property — the `verdict`
+  JSON key is **null in all 5 fixtures and both live pulls**. So issue 001's "race-level `verdict`
+  key in `__NEXT_DATA__`" was imprecise; capturing the Verdict means DOM scraping plus light NLP
+  to pull the named selection, **not** a cheap JSON read. It is also **not on every card** (absent
+  from the live Hexham jumps card and 3/5 fixtures) — 003 should weight both the higher parse cost
+  and the patchy coverage.
+- **"Hot-trainer / hot-jockey form flag"** as a dedicated flame/icon is **not found** in the card
+  DOM (confirmed again live). The concrete in-form signals that *do* exist and are **public** are
+  row 9 (`trainerRtf` + the trainer win-rate `<sup>` badge) and row 11 (`newTrainerRacesCount`).
+  Note the win-rate `<sup>` badge is **absent on the HK (Happy Valley) card** while present on
+  GB/IRE; 003 should resolve the PRD's "hot form flag" candidate against these, not a non-existent
+  flag.
+- **Coverage gaps worth carrying into 003's ranking:** the HK card lacks the trainer win-rate
+  `<sup>` (row 9), `Container__Weather` (row 16), and the verdict is patchy (row 15); wind-surgery
+  (row 6) skews jumps; several booleans (gelding/headgear first-time, new-trainer count) are
+  *present everywhere as fields* but fire only sparsely, so their effective signal density is low.
 
 ## Appendix — raw ignored `data-testid` inventory
 
