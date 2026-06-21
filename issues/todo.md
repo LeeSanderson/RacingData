@@ -61,18 +61,6 @@ grows daily):
 
 ## Model improvements
 
-### Odds + confidence in TodaysPredictions.csv → bet sizing — ✅ DONE (shipped 2026-06-20)
-**Shipped** (PRD closed 2026-06-20): an advisory `Stake` column in
-`Data/TodaysPredictions.csv` via fractional Kelly + a value gate (gross-pay /
-de-overround-judge), normalized-but-uncalibrated probabilities, fixed-scale £1-typical
-staking with a cap, a pure testable staking module (`race_analytics/betting/`) called
-from `predict.py`, a diagnostic SP-placeholder backtest
-(`race_analytics/scripts/backtest_staking.py`), and forward staked-outcome logging
-through the C# validate step. Strategy + honesty caveats in `docs/staking.md`; the
-SP-placeholder backtest diagnostic is recorded in `evaluations.md`. The honest staked-ROI
-track record now accrues forward from real forecast-priced days; calibration stays
-deferred until that log makes it measurable.
-
 ### Value-betting / market-overlay strategy
 Bet only when model win-probability exceeds market-implied probability; stake by edge.
 Pre-requisite: a trustworthy live price (Phase 2 above) and a model with a demonstrated
@@ -94,15 +82,20 @@ signal-to-noise ratio is useful.
 
 ### Research extra data available on Racing Post today's race cards
 Audit what the Racing Post website exposes on the today's races / race card pages that the
-C# scraper currently ignores. The `todaysracecards` command captures a defined set of
-columns into `TodaysPredictions.csv` — there may be additional signals on the page (e.g.
-horse form summaries, draw/stall, weight, age, trainer/jockey form flags, race class,
-distance, prize money) that would be useful predictors but are simply not being collected.
+C# scraper currently ignores. The `todaysracecards` command already captures form figures,
+draw/stall, weight, age, headgear, days-since-last-run, race class, distance, prize money,
+and the three pre-race `Card*` ratings (OR/RPR/TSR) — so the obvious structured signals are
+done. The residual surface is largely **soft/textual or lower-signal**: trainer/jockey
+recent-form flags (RP "hot trainer" / jockey strike-rate badges), commentary (Spotlight,
+RP verdict, race comments), breeding (sire/dam) and owner, headgear-*change* flags
+(first-time blinkers, wind-surgery markers — distinct from the static `HeadGear` already
+stored), and jockey claim/allowance.
 Approach: use `PuppeteerHtmlLoader` (see `AGENTS.md` — plain HTTP gets 429-blocked) to
 load a sample card page and inspect the DOM for fields not already captured. Cross-check
 against what `Results_*.csv` already has so you're not re-scraping what comes in via
 `updateresults`. Log findings as candidates; only promote to an issue once data quality and
-historical availability have been assessed.
+historical availability have been assessed. Lower priority than its original wording
+suggested — the high-value pre-race signals were captured by the pre-race racecard-data PRD.
 
 ## Data quality & pipeline
 
