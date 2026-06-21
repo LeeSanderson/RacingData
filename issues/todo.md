@@ -80,22 +80,23 @@ signal-to-noise ratio is useful.
 
 ## Data sourcing & scraping
 
-### Research extra data available on Racing Post today's race cards
-Audit what the Racing Post website exposes on the today's races / race card pages that the
-C# scraper currently ignores. The `todaysracecards` command already captures form figures,
-draw/stall, weight, age, headgear, days-since-last-run, race class, distance, prize money,
-and the three pre-race `Card*` ratings (OR/RPR/TSR) — so the obvious structured signals are
-done. The residual surface is largely **soft/textual or lower-signal**: trainer/jockey
-recent-form flags (RP "hot trainer" / jockey strike-rate badges), commentary (Spotlight,
-RP verdict, race comments), breeding (sire/dam) and owner, headgear-*change* flags
-(first-time blinkers, wind-surgery markers — distinct from the static `HeadGear` already
-stored), and jockey claim/allowance.
-Approach: use `PuppeteerHtmlLoader` (see `AGENTS.md` — plain HTTP gets 429-blocked) to
-load a sample card page and inspect the DOM for fields not already captured. Cross-check
-against what `Results_*.csv` already has so you're not re-scraping what comes in via
-`updateresults`. Log findings as candidates; only promote to an issue once data quality and
-historical availability have been assessed. Lower priority than its original wording
-suggested — the high-value pre-race signals were captured by the pre-race racecard-data PRD.
+### Research extra data available on Racing Post today's race cards — ✅ RESEARCHED (2026-06-21)
+Audited and written up in **[`../docs/racecard-extra-data-audit.md`](../docs/racecard-extra-data-audit.md)**
+(durable findings doc, alongside `odds-capture.md` / `data-pitfalls.md`). The audit diffed the
+card `data-testid` inventory against the parsers, decoded the discarded `<sup>` badges, and — the
+key finding — established that a `__NEXT_DATA__` JSON island (present in the **public/logged-out**
+DOM, confirmed by live Brighton-flat + Hexham-jumps pulls) carries structured per-runner versions
+of nearly every soft field. 18 candidates were ranked with availability / coverage / leakage /
+parse-difficulty / verdict; **no candidate is leakage-suspect** (all are morning-card pre-race
+facts).
+**Outcome — honest:** the high-value structured signals were already captured by the pre-race
+racecard-data PRD, so the residual is soft/lower-signal and every recommendation is a small, mostly
+forward-only increment. The `go` shortlist (copy-paste ready in the doc): trainer current form
+(`trainerRtf`), a first-time-flags bundle (`horseHeadGearFirstTime`/`geldingFirstTime`/`jockeyFirstTime`),
+breeding (`sireName`), wind-surgery (`windSurgery`), and **owner id** (the only backfill-able field).
+RP Verdict and Spotlight are **deferred** pending an NLP/text pipeline.
+**Next step (separate PRD):** a follow-on capture PRD can take the shortlist directly — this
+research item is closed.
 
 ## Data quality & pipeline
 
@@ -115,6 +116,11 @@ no racecard archive needed. The `Card*` ratings are **deliberately excluded**: r
 pages carry only the **post-race** OR/RPR/TSR, so there is no pre-race rating to recover
 there (exactly why they must be captured from the card going forward). Assess whether the
 result-page markup actually exposes form / days-since / prize before scoping.
+**Newly-found sibling field (from the race-card audit, 2026-06-21):** **owner** is also
+backfill-able — it appears on daily result pages (12× in the Southwell 2026 fixture) where the
+breeding/verdict/wind-op fields do not. If this backfill pass happens, fold `ownerId`/`ownerName`
+in alongside form / days-since / prize. See
+[`../docs/racecard-extra-data-audit.md`](../docs/racecard-extra-data-audit.md) (row 1).
 
 ### Going encoding robustness
 `encode_going()` defaults missing `Going` to `"Good"`. Audit whether this is the most
