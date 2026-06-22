@@ -110,9 +110,8 @@ public record RaceResultRecord : RaceCardRecord
     // The base RaceCardRecord places owner at indices 38-39, which the results layout already uses for
     // RaceTime / RaceTimeInSeconds. Re-declare with `new` so owner appends at the end of the results
     // layout instead of colliding (same shadowing pattern as DaysSinceLastRun..PrizeMoneyValue above).
-    // Owner is the one new card field that is also backfill-able from historic result pages, but no
-    // backfill is performed here (Issue 003) -- see issues/todo.md "Backfill form / days-since / prize
-    // money into historic Results"; these stay blank until such a write-back lands.
+    // Owner is captured forward-only from the card (Issue 003) and is not part of the card->result
+    // write-back, so these stay blank in the results layout.
     [Optional]
     [Index(49)]
     public new int? OwnerId { get; set; }
@@ -123,8 +122,8 @@ public record RaceResultRecord : RaceCardRecord
     // The base RaceCardRecord places breeding at indices 40-42, which the results layout already uses
     // for ForecastFractionalOdds / ForecastDecimalOdds / DaysSinceLastRun. Re-declare with `new` so
     // breeding appends at the end of the results layout instead of colliding (same shadowing pattern as
-    // DaysSinceLastRun..PrizeMoneyValue and Owner above). Breeding is NOT backfill-able (absent from
-    // result pages), so these stay blank in the results layout.
+    // DaysSinceLastRun..PrizeMoneyValue and Owner above). Breeding is captured forward-only from the
+    // card and is not part of the card->result write-back, so these stay blank in the results layout.
     [Optional]
     [Index(51)]
     public new string? SireName { get; set; }
@@ -138,7 +137,8 @@ public record RaceResultRecord : RaceCardRecord
     // The base RaceCardRecord places the per-runner extras at indices 43-51, which the results layout
     // already uses for FormFigures..SireName. Re-declare with `new` so they append at the end of the
     // results layout instead of colliding (same shadowing pattern as DaysSinceLastRun..DamName above).
-    // Extras are NOT backfill-able (absent from result pages), so these stay blank in the results layout.
+    // Extras are captured forward-only from the card and are not part of the card->result write-back,
+    // so these stay blank in the results layout.
     [Optional]
     [Index(54)]
     public new bool? HeadgearFirstTime { get; set; }

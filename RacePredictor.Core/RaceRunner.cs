@@ -33,13 +33,13 @@ public class RaceRunner
 
     // Breeding (sire/dam) is a forward-only racecard fact like Owner: null on the DOM-oracle reading
     // and excluded from cross-validation. Trailing optional so the DOM parser and results layout are
-    // unaffected. Unlike Owner it is NOT backfill-able (absent from result pages).
+    // unaffected.
     public RaceRunnerBreeding? Breeding { get; }
 
     // Per-runner extras (first-time flags, trainerRtf, jockey allowance, new-trainer count, country,
     // Spotlight prose) — like Owner/Breeding a forward-only JSON-only fact, null on the DOM-oracle
     // reading and excluded from cross-validation. Trailing optional so the DOM parser and results
-    // layout are unaffected. NOT backfill-able (absent from result pages).
+    // layout are unaffected.
     public RaceRunnerExtras? Extras { get; }
 
     public RaceRunnerAttributes Attributes { get; }

@@ -65,7 +65,7 @@ in parentheses.
 
 | New column(s) | `__NEXT_DATA__` key | Tier | Note |
 |---|---|---|---|
-| `OwnerId`, `OwnerName` | `ownerId` / `ownerName` | go (1) | Identity key; only **backfill-able** field (backfill itself out of scope — see below) |
+| `OwnerId`, `OwnerName` | `ownerId` / `ownerName` | go (1) | Identity key for future owner-strike-rate features |
 | `SireName`, `SireCountry` | `sireName` / `sireCountry` | go (2) | Aptitude signal |
 | `HeadgearFirstTime` | `horseHeadGearFirstTime` | go (4) | Bool; complements the static `HeadGear` already captured |
 | `GeldingFirstTime` | `geldingFirstTime` | go (5) | Bool; rare-but-strong |
@@ -133,9 +133,6 @@ in parentheses.
 21. As the operator of the daily capture, I want a structural RP change to stop the run rather than
     quietly produce a thinner CSV, so that I find out immediately and no day is silently captured
     wrong.
-22. As the owner of the pipeline, I want the owner-backfill opportunity recorded but **not**
-    implemented here, so that the sibling `todo.md` backfill item remains the single home for that
-    work.
 
 ## Implementation Decisions
 
@@ -236,9 +233,6 @@ in parentheses.
   `Race_Features.csv` or `TodaysPredictions.csv` changes. Capture only.
 - **The RP Verdict (#15).** Deferred to a future text/NLP PRD: it is rendered DOM (not JSON), needs
   light NLP for the named selection, and is patchy across cards. Not captured here.
-- **Owner backfill into historic `Results`.** Owner is the only backfill-able field, but backfilling
-  it is the sibling `todo.md` item *"Backfill form / days-since / prize money into historic Results"*;
-  this PRD only forward-captures `OwnerId`/`OwnerName` and records the cross-reference.
 - **All no-go rows:** booking-count `<sup>` badge, silks image (needs vision), weather,
   race-conditions prose, advisory info.
 - **Live bookmaker odds** — tracked separately in [`../docs/odds-capture.md`](../docs/odds-capture.md)
@@ -266,8 +260,7 @@ in parentheses.
   columns — would defeat the PRD's purpose.
 - **Forward-only is expected, not a defect.** These columns will be sparsely/again-null on historic
   rows that predate capture; that is the whole reason for starting now. The first useful modelling
-  window arrives only after enough forward days accrue — owner is the one field that *could* later be
-  retro-filled via the separate backfill item.
+  window arrives only after enough forward days accrue.
 - **Coverage realism.** Per the audit, several fields fire sparsely (gelding-first-time, wind-surgery,
   new-trainer count) and some are absent on certain jurisdictions (HK lacks the win-rate badge and
   weather). Capture must treat absence as null and never as an error.

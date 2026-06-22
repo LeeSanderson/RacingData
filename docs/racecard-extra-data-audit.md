@@ -28,16 +28,15 @@
 
 Decision-ready output of the audit — a follow-on capture PRD can take this list directly. Ranked
 by the PRD key: predictive plausibility × (availability × coverage), penalised by parse difficulty;
-**leakage-suspect candidates capped at no-go** (none were — see below); **backfill-able fields jump
-the queue** (usable immediately vs forward-only starvation). Full reasoning per candidate is in the
-[inventory](#draft-candidate-inventory) Verdict column.
+**leakage-suspect candidates capped at no-go** (none were — see below). Full reasoning per candidate
+is in the [inventory](#draft-candidate-inventory) Verdict column.
 
 **Honest framing first.** The high-value structured pre-race signals (form figures, draw, weight,
 age, headgear code, days-since, class, distance, prize, the `Card*` ratings) were already captured
 by the prior PRD. The residual surface audited here is genuinely **soft / lower-signal**, and every
-"go" below is a small, cheap increment — all but one is **forward-only** (card capture has no
-archive, so each yields *zero* training rows until forward data accrues). The realistic near-term
-win is modest; the single strongest item is trainer current form.
+"go" below is a small, cheap increment — all are **forward-only** (card capture has no archive, so
+each yields *zero* training rows until forward data accrues). The realistic near-term win is modest;
+the single strongest item is trainer current form.
 
 Ranked go-list (all are `__NEXT_DATA__` JSON reads from the per-runner object the scraper already
 locates, so marginal parse cost is low):
@@ -56,12 +55,9 @@ locates, so marginal parse cost is low):
 4. **Wind-surgery — `windSurgery`** (row 6). Recognised sharp-improvement angle, mainly NH; cheap
    but **sparse and jumps-skewed**, so value concentrates on jumps cards. The JSON value is an
    **integer** (e.g. `2`; null otherwise), **not** a bool — see the correction note. *Forward-only.*
-5. **Owner id — `ownerId`** (row 1). The **only backfill-able** candidate, so by the ranking key it
-   jumps the queue on *immediacy*: capturing **and backfilling** it from result pages seeds future
-   owner-strike-rate features without the forward-only starvation that handicaps 1–4. Low direct
-   signal — treat it as a low-regret **enabler/identity key**, not a standalone feature. Feeds the
-   sibling backlog item *"Backfill form / days-since / prize money into historic Results"* in
-   [`../issues/todo.md`](../issues/todo.md).
+5. **Owner id — `ownerId`** (row 1). Captured forward-only like 1–4. Low direct signal — treat it as
+   a low-regret **enabler/identity key** that seeds future owner-strike-rate features, not a
+   standalone feature.
 
 **Deferred-but-attractive (revisit when a text/NLP pipeline exists):** the **RP Verdict**'s named
 selection (row 15) is effectively a published tipster pick — a potentially strong meta-signal — but
@@ -174,11 +170,9 @@ counts in `results_southwell_20260218_1655.html` (2026, current result-page era)
 | `comment` | 24 | present, but these are **post-race** in-running comments, not the pre-race spotlight |
 | `RPR` / `OR ` | 15 / 42 | present but **post-race** on results (leaky — see `data-pitfalls.md`) |
 
-The one newly-found backfill-able field is **owner** (row 1): it appears on result pages, so it
-could be backfilled across history rather than starving forward-only. It is recorded as **input to**
-the sibling `todo.md` item *"Backfill form / days-since / prize money into historic Results"* — a
-cross-reference now sits in [`../issues/todo.md`](../issues/todo.md). Backfill is **not** implemented
-here.
+Of the audited card-extra fields, only **owner** (row 1) also appears on result pages — breeding,
+verdict and wind-op do not. Owner is nonetheless captured **forward-only** alongside the rest of the
+shortlist; no historic backfill of owner is planned.
 
 ## Draft candidate inventory
 
@@ -192,7 +186,7 @@ jockey allowance) appear as explicit rows.
 
 | # | Field / signal | Source (DOM hook · `__NEXT_DATA__` key · `<sup>`) | Backfill-able? (result fixtures) | Availability | Coverage | Leakage | Type & parse difficulty | Predictive rationale | Verdict |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | Owner (id + name) | `Link__OwnerSilk` href · `ownerId`/`ownerName` | **Yes** — owner appears on result pages (12× in Southwell 2026) | Public DOM — `ownerName` + `Link__OwnerSilk` per runner, both live pulls | Universal — per-runner on all 8 cards (flat/jumps/IRE/HK) | Clean — static pre-race identity | Low — `ownerId`/`ownerName` JSON read | Weak proxy for stable quality; only useful aggregated (owner strike-rate), largely re-encoded by ratings | **go (low-regret enabler)** — the **only backfill-able** field; capture `ownerId` to seed future owner-stats without forward-only starvation; not a standalone feature |
+| 1 | Owner (id + name) | `Link__OwnerSilk` href · `ownerId`/`ownerName` | **Yes** — owner appears on result pages (12× in Southwell 2026) | Public DOM — `ownerName` + `Link__OwnerSilk` per runner, both live pulls | Universal — per-runner on all 8 cards (flat/jumps/IRE/HK) | Clean — static pre-race identity | Low — `ownerId`/`ownerName` JSON read | Weak proxy for stable quality; only useful aggregated (owner strike-rate), largely re-encoded by ratings | **go (low-regret enabler)** — capture `ownerId` forward-only to seed future owner-stats; not a standalone feature |
 | 2 | Breeding — sire | `sireName`/`sireCountry` (`__NEXT_DATA__`; sample `Time Test`/`GB`) | **No** — absent from result fixtures (0) | Public DOM — `sireName`/`sireCountry` per runner, both live pulls | Universal — all 8 cards incl HK | Clean — pedigree is a static pre-race fact | Low — `sireName`/`sireCountry` JSON read | Sire biases progeny toward surface/going/distance aptitude; strong for lightly-raced types where form is thin | **go** — classic pre-race signal, cheap JSON, universal coverage |
 | 3 | Breeding — dam | `damName` (`__NEXT_DATA__`) | **No** — absent from result fixtures (0) | Public DOM — `damName` per runner, both live pulls | Universal — all 8 cards incl HK | Clean — static | Low — `damName` JSON read | Damline adds aptitude signal; weaker/noisier than sire (higher cardinality, fewer progeny each) | **defer** — capture only as a cheap add-on to sire; low standalone signal |
 | 4 | Headgear first-time flag | `horseHeadGearFirstTime` (bool, `__NEXT_DATA__`) | **No** — headgear code present on results but first-time flag not distinguished | Public DOM — `horseHeadGearFirstTime` bool per runner, both live pulls | Field universal (all 8); fires only when headgear is first-time (sparse) | Clean — headgear declared pre-race | Low — `horseHeadGearFirstTime` JSON bool | First-time blinkers/cheekpieces/hood often sharpen a disappointing horse; recognised positive angle | **go** — high-signal-when-fires, trivial bool; complements the static HeadGear already captured |

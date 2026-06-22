@@ -71,11 +71,10 @@ model features from these columns is this follow-on. Candidate features: owner s
 sire/dam aptitude (for lightly-raced types whose form is thin), the first-time
 headgear/gelding/wind-op angles, and a "yard in form" feature off `TrainerRtf` (a capture-time
 snapshot, leak-free).
-**Forward-only constraint:** capture began ~2026-06 with no archive/backfill (owner is the lone
-backfill-able field — see the backfill item below), so every field yields *zero* training rows
-until forward history accrues, and several fire sparsely (gelding-first-time, wind-surgery,
-new-trainer count). A useful modelling window is months out — assess per-field coverage before
-scoping any feature.
+**Forward-only constraint:** capture began ~2026-06 with no archive/backfill, so every field yields
+*zero* training rows until forward history accrues, and several fire sparsely (gelding-first-time,
+wind-surgery, new-trainer count). A useful modelling window is months out — assess per-field coverage
+before scoping any feature.
 
 ### NLP over the banked Spotlight corpus + capture RP Verdict — DEFERRED (corpus now accruing)
 Issue 005 banks the per-runner `Spotlight` analyst prose **verbatim** (raw, no parsing) on
@@ -117,7 +116,7 @@ facts).
 racecard-data PRD, so the residual is soft/lower-signal and every recommendation is a small, mostly
 forward-only increment. The `go` shortlist (copy-paste ready in the doc): trainer current form
 (`trainerRtf`), a first-time-flags bundle (`horseHeadGearFirstTime`/`geldingFirstTime`/`jockeyFirstTime`),
-breeding (`sireName`), wind-surgery (`windSurgery`), and **owner id** (the only backfill-able field).
+breeding (`sireName`), wind-surgery (`windSurgery`), and **owner id**.
 RP Verdict and Spotlight are **deferred** pending an NLP/text pipeline.
 **Next step — ✅ CAPTURE SHIPPED (2026-06-22):** the follow-on capture PRD took the shortlist
 directly and is now fully implemented (issues 001–005, commits `b705b12`..`baff799`). All 14
@@ -148,13 +147,6 @@ no racecard archive needed. The `Card*` ratings are **deliberately excluded**: r
 pages carry only the **post-race** OR/RPR/TSR, so there is no pre-race rating to recover
 there (exactly why they must be captured from the card going forward). Assess whether the
 result-page markup actually exposes form / days-since / prize before scoping.
-**Newly-found sibling field (from the race-card audit, 2026-06-21):** **owner** is also
-backfill-able — it appears on daily result pages (12× in the Southwell 2026 fixture) where the
-breeding/verdict/wind-op fields do not. If this backfill pass happens, fold `ownerId`/`ownerName`
-in alongside form / days-since / prize. See
-[`../docs/racecard-extra-data-audit.md`](../docs/racecard-extra-data-audit.md) (row 1).
-**Update (2026-06-22):** **forward** capture of `OwnerId`/`OwnerName` shipped (issues 003/005), so
-today onward is covered — this backfill now concerns only the **pre-capture historic** result rows.
 
 ### Going encoding robustness
 `encode_going()` defaults missing `Going` to `"Good"`. Audit whether this is the most

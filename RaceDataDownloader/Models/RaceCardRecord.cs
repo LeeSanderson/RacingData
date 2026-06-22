@@ -156,9 +156,8 @@ public record RaceCardRecord
     [Index(37)]
     public decimal? PrizeMoneyValue { get; set; }
 
-    // Owner identity, captured forward-only from the racecard JSON island (Issue 003). Owner is the one
-    // new field that is also backfill-able from historic result pages -- see issues/todo.md "Backfill
-    // form / days-since / prize money into historic Results"; no backfill is performed here.
+    // Owner identity, captured forward-only from the racecard JSON island (Issue 003); like the other
+    // new card fields it stays null on rows that predate capture.
     [Optional]
     [Index(38)]
     public int? OwnerId { get; set; }
@@ -166,9 +165,8 @@ public record RaceCardRecord
     [Index(39)]
     public string? OwnerName { get; set; }
 
-    // Breeding (sire/dam) captured forward-only from the racecard JSON island (Issue 004). Unlike owner
-    // this is NOT backfill-able -- it is absent from historic result pages -- so it stays null on rows
-    // that predate capture. RaceResultRecord re-declares these at higher indices for the results layout.
+    // Breeding (sire/dam) captured forward-only from the racecard JSON island (Issue 004); it stays null
+    // on rows that predate capture. RaceResultRecord re-declares these at higher indices for the results layout.
     [Optional]
     [Index(40)]
     public string? SireName { get; set; }
@@ -179,11 +177,10 @@ public record RaceCardRecord
     [Index(42)]
     public string? DamName { get; set; }
 
-    // Per-runner extras captured forward-only from the racecard JSON island (Issue 005). Like breeding
-    // these are NOT backfill-able (absent from historic result pages), so they stay null on rows that
-    // predate capture. WindSurgery and TrainerRtf are integers in the JSON (a wind-op indicator and a
-    // trainer current-form snapshot), not bool flags. RaceResultRecord re-declares these at higher
-    // indices for the results layout.
+    // Per-runner extras captured forward-only from the racecard JSON island (Issue 005); like breeding
+    // they stay null on rows that predate capture. WindSurgery and TrainerRtf are integers in the JSON
+    // (a wind-op indicator and a trainer current-form snapshot), not bool flags. RaceResultRecord
+    // re-declares these at higher indices for the results layout.
     [Optional]
     [Index(43)]
     public bool? HeadgearFirstTime { get; set; }

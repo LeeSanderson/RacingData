@@ -26,26 +26,23 @@ internal static class NextDataRunnerMapper
             ToBreeding(r),
             ToExtras(r));
 
-    // Owner is the one new field that is also backfill-able: it appears on daily result pages, unlike
-    // breeding/verdict/wind-op. A historic-results re-scrape could fold ownerId/ownerName in alongside
-    // form / days-since / prize money -- see issues/todo.md "Backfill form / days-since / prize money
-    // into historic Results". Recorded only; no historic backfill is performed here.
+    // Owner is captured forward-only from the JSON island, like breeding and the extras below.
     // A present-but-null owner (id and name both absent) stays a clean null rather than a 0/empty entity.
     private static RaceEntity? ToOwner(NextDataRunner r) =>
         r.OwnerId is null && r.OwnerName is null
             ? null
             : new RaceEntity(r.OwnerId ?? 0, r.OwnerName ?? string.Empty);
 
-    // Breeding is forward-only and NOT backfill-able (absent from result pages). When every breeding
-    // field is absent the runner carries a clean null rather than an all-null value object.
+    // Breeding is captured forward-only from the JSON island. When every breeding field is absent the
+    // runner carries a clean null rather than an all-null value object.
     private static RaceRunnerBreeding? ToBreeding(NextDataRunner r) =>
         r.SireName is null && r.SireCountry is null && r.DamName is null
             ? null
             : new RaceRunnerBreeding(r.SireName, r.SireCountry, r.DamName);
 
-    // Extras are forward-only and NOT backfill-able (absent from result pages). When every extra field
-    // is absent the runner carries a clean null rather than an all-null value object. In practice
-    // CountryOfOrigin is present for nearly every runner, so this null guard rarely fires.
+    // Extras are captured forward-only from the JSON island. When every extra field is absent the
+    // runner carries a clean null rather than an all-null value object. In practice CountryOfOrigin
+    // is present for nearly every runner, so this null guard rarely fires.
     private static RaceRunnerExtras? ToExtras(NextDataRunner r) =>
         r.HeadgearFirstTime is null && r.GeldingFirstTime is null && r.WindSurgery is null &&
         r.TrainerRtf is null && r.JockeyAllowanceLbs is null && r.JockeyFirstTime is null &&
