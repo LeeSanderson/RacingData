@@ -61,6 +61,30 @@ grows daily):
 
 ## Model improvements
 
+### Features from the newly-captured racecard fields — NEW (capture shipped 2026-06-22)
+The forward-capture PRD (issues 001–005) now banks 14 pre-race card fields on `TodaysRaceCards.csv`
+that no algorithm yet consumes: owner (`OwnerId`/`OwnerName`), breeding (`SireName`/`SireCountry`/
+`DamName`), first-time flags (`HeadgearFirstTime`/`GeldingFirstTime`/`JockeyFirstTime`),
+`WindSurgery`, `TrainerRtf`, `JockeyAllowanceLbs`, `NewTrainerRacesCount`, `CountryOfOrigin`, and
+`Spotlight`. **Feature engineering was explicitly out of scope of the capture PRD** — deriving
+model features from these columns is this follow-on. Candidate features: owner strike-rate,
+sire/dam aptitude (for lightly-raced types whose form is thin), the first-time
+headgear/gelding/wind-op angles, and a "yard in form" feature off `TrainerRtf` (a capture-time
+snapshot, leak-free).
+**Forward-only constraint:** capture began ~2026-06 with no archive/backfill (owner is the lone
+backfill-able field — see the backfill item below), so every field yields *zero* training rows
+until forward history accrues, and several fire sparsely (gelding-first-time, wind-surgery,
+new-trainer count). A useful modelling window is months out — assess per-field coverage before
+scoping any feature.
+
+### NLP over the banked Spotlight corpus + capture RP Verdict — DEFERRED (corpus now accruing)
+Issue 005 banks the per-runner `Spotlight` analyst prose **verbatim** (raw, no parsing) on
+`TodaysRaceCards.csv`, so a forward text corpus is now accruing daily. A future text/NLP pipeline
+could mine it for sentiment / named-selection / pace signals — still genuinely deferred, no NLP
+work scoped. The race-level **RP Verdict** remains **uncaptured** (it is rendered DOM, not in
+`__NEXT_DATA__`, needs light NLP for the named selection, and is patchy across cards — explicitly
+out of scope of the capture PRD); capturing it belongs in this same future text PRD.
+
 ### Value-betting / market-overlay strategy
 Bet only when model win-probability exceeds market-implied probability; stake by edge.
 Pre-requisite: a trustworthy live price (Phase 2 above) and a model with a demonstrated
@@ -95,8 +119,16 @@ forward-only increment. The `go` shortlist (copy-paste ready in the doc): traine
 (`trainerRtf`), a first-time-flags bundle (`horseHeadGearFirstTime`/`geldingFirstTime`/`jockeyFirstTime`),
 breeding (`sireName`), wind-surgery (`windSurgery`), and **owner id** (the only backfill-able field).
 RP Verdict and Spotlight are **deferred** pending an NLP/text pipeline.
-**Next step (separate PRD):** a follow-on capture PRD can take the shortlist directly — this
-research item is closed.
+**Next step — ✅ CAPTURE SHIPPED (2026-06-22):** the follow-on capture PRD took the shortlist
+directly and is now fully implemented (issues 001–005, commits `b705b12`..`baff799`). All 14
+audited go + defer fields are forward-captured as new trailing columns on `TodaysRaceCards.csv`
+via a `__NEXT_DATA__` JSON reader with throwing schema validation + a DOM cross-validation oracle.
+Both this research item and the capture PRD are closed. **Data-shape correction the build found:**
+the audit assumed `windSurgery` was a bool, but the live JSON carries it (and `trainerRtf`) as an
+**integer** — both are captured faithfully as `int?` (see issue 005's completion note); the audit
+doc still reads "bool" and should be corrected when next touched. The downstream **feature
+engineering** the capture enables was out of scope of that PRD — see *Model improvements →
+"Features from the newly-captured racecard fields"* below.
 
 ## Data quality & pipeline
 
@@ -121,6 +153,8 @@ backfill-able — it appears on daily result pages (12× in the Southwell 2026 f
 breeding/verdict/wind-op fields do not. If this backfill pass happens, fold `ownerId`/`ownerName`
 in alongside form / days-since / prize. See
 [`../docs/racecard-extra-data-audit.md`](../docs/racecard-extra-data-audit.md) (row 1).
+**Update (2026-06-22):** **forward** capture of `OwnerId`/`OwnerName` shipped (issues 003/005), so
+today onward is covered — this backfill now concerns only the **pre-capture historic** result rows.
 
 ### Going encoding robustness
 `encode_going()` defaults missing `Going` to `"Good"`. Audit whether this is the most
