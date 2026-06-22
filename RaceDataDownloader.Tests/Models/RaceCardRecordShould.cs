@@ -17,7 +17,9 @@ public class RaceCardRecordShould
             DaysSinceLastRun = 32,
             FormFigures = "3-1958",
             PrizeMoney = "£4,397",
-            PrizeMoneyValue = 4397m
+            PrizeMoneyValue = 4397m,
+            OwnerId = 322703,
+            OwnerName = "Li Xiting"
         };
 
         var single = (await (await new[] { record }.ToCsvString()).FromCsvString<RaceCardRecord>()).Single();
@@ -26,6 +28,8 @@ public class RaceCardRecordShould
         single.FormFigures.Should().Be("3-1958");
         single.PrizeMoney.Should().Be("£4,397");
         single.PrizeMoneyValue.Should().Be(4397m);
+        single.OwnerId.Should().Be(322703);
+        single.OwnerName.Should().Be("Li Xiting");
     }
 
     [Fact]
@@ -50,6 +54,8 @@ public class RaceCardRecordShould
         records[0].FormFigures.Should().BeNullOrEmpty();
         records[0].PrizeMoney.Should().BeNullOrEmpty();
         records[0].PrizeMoneyValue.Should().BeNull();
+        records[0].OwnerId.Should().BeNull();
+        records[0].OwnerName.Should().BeNullOrEmpty();
     }
 
     [Fact]
@@ -66,5 +72,8 @@ public class RaceCardRecordShould
         // Prize money is race-level, so every record on this single-race fixture shares it.
         records.Should().OnlyContain(r => !string.IsNullOrEmpty(r.PrizeMoney));
         records.Should().OnlyContain(r => r.PrizeMoneyValue.HasValue);
+        // Owner is captured per-runner; every runner on this card carries one.
+        records.Should().OnlyContain(r => r.OwnerId.HasValue && !string.IsNullOrEmpty(r.OwnerName));
+        records.Should().Contain(r => r.HorseId == 4043909 && r.OwnerId == 322703 && r.OwnerName == "Li Xiting");
     }
 }

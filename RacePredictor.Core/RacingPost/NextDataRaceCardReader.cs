@@ -24,6 +24,7 @@ public sealed class NextDataRaceCardReader
     {
         "horseId", "horseName", "countryOrigin",
         "jockeyId", "jockeyName", "trainerId", "trainerName",
+        "ownerId", "ownerName",
         "age", "startNumber", "draw",
         "formattedWeightStones", "formattedWeightPounds",
         "daysSinceLastRun", "formFiguresData",
@@ -227,6 +228,8 @@ public sealed class NextDataRaceCardReader
             ReconstructJockeyName(fields.StringOrNull("jockeyName"), fields.NumberAllowingMissing("weightAllowanceLbs")),
             fields.NumberOrNull("trainerId"),
             fields.StringOrNull("trainerName"),
+            fields.NumberOrNull("ownerId"),
+            fields.StringOrNull("ownerName"),
             fields.NumberOrNull("age") ?? 0,
             new RaceWeight(fields.NumberOrNull("formattedWeightStones") ?? 0, fields.NumberOrNull("formattedWeightPounds") ?? 0),
             fields.NumberOrNull("startNumber") ?? 0,

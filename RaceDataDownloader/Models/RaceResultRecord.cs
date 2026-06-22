@@ -106,4 +106,17 @@ public record RaceResultRecord : RaceCardRecord
     [Optional]
     [Index(48)]
     public int? CardTopSpeedRating { get; set; }
+
+    // The base RaceCardRecord places owner at indices 38-39, which the results layout already uses for
+    // RaceTime / RaceTimeInSeconds. Re-declare with `new` so owner appends at the end of the results
+    // layout instead of colliding (same shadowing pattern as DaysSinceLastRun..PrizeMoneyValue above).
+    // Owner is the one new card field that is also backfill-able from historic result pages, but no
+    // backfill is performed here (Issue 003) -- see issues/todo.md "Backfill form / days-since / prize
+    // money into historic Results"; these stay blank until such a write-back lands.
+    [Optional]
+    [Index(49)]
+    public new int? OwnerId { get; set; }
+    [Optional]
+    [Index(50)]
+    public new string? OwnerName { get; set; }
 }

@@ -43,6 +43,10 @@
           "Id": 17998,
           "Name": "Y S Tsui"
         },
+        "Owner": {
+          "Id": 322703,
+          "Name": "Li Xiting"
+        },
         "Attributes": {
           "RaceCardNumber": 1,
           "StallNumber": 3,
@@ -78,6 +82,10 @@
           "Id": 26238,
           "Name": "Brett Crawford"
         },
+        "Owner": {
+          "Id": 353563,
+          "Name": "Ng Sun Wah, Au Yau Lin \u0026 Alan Leung Wai Zen"
+        },
         "Attributes": {
           "RaceCardNumber": 2,
           "StallNumber": 2,
@@ -111,6 +119,10 @@
         "Trainer": {
           "Id": 41761,
           "Name": "David Eustace"
+        },
+        "Owner": {
+          "Id": 356254,
+          "Name": "Matthew Ma Hing Chuen"
         },
         "Attributes": {
           "RaceCardNumber": 3,
@@ -147,6 +159,10 @@
           "Id": 28673,
           "Name": "W Y So"
         },
+        "Owner": {
+          "Id": 178562,
+          "Name": "HKJC Racing Club Limited"
+        },
         "Attributes": {
           "RaceCardNumber": 4,
           "StallNumber": 4,
@@ -182,6 +198,10 @@
           "Id": 12739,
           "Name": "J Size"
         },
+        "Owner": {
+          "Id": 147023,
+          "Name": "HK Country Club Racing Syndicate"
+        },
         "Attributes": {
           "RaceCardNumber": 5,
           "StallNumber": 7,
@@ -215,6 +235,10 @@
         "Trainer": {
           "Id": 15856,
           "Name": "C H Yip"
+        },
+        "Owner": {
+          "Id": 263629,
+          "Name": "Royal Elitist Team Syndicate"
         },
         "Attributes": {
           "RaceCardNumber": 6,
@@ -251,6 +275,10 @@
           "Id": 35035,
           "Name": "Jimmy Ting"
         },
+        "Owner": {
+          "Id": 354711,
+          "Name": "Lun Ka Leung \u0026 Yeung Hiu Yu"
+        },
         "Attributes": {
           "RaceCardNumber": 7,
           "StallNumber": 1,
@@ -285,6 +313,10 @@
         "Trainer": {
           "Id": 40731,
           "Name": "W K Mo"
+        },
+        "Owner": {
+          "Id": 242398,
+          "Name": "Wong Man"
         },
         "Attributes": {
           "RaceCardNumber": 8,
@@ -321,6 +353,10 @@
           "Id": 39762,
           "Name": "P C Ng"
         },
+        "Owner": {
+          "Id": 163409,
+          "Name": "Ng To"
+        },
         "Attributes": {
           "RaceCardNumber": 9,
           "StallNumber": 10,
@@ -355,6 +391,10 @@
         "Trainer": {
           "Id": 12787,
           "Name": "K L Man"
+        },
+        "Owner": {
+          "Id": 300332,
+          "Name": "Henry Cheung Kun Tong"
         },
         "Attributes": {
           "RaceCardNumber": 10,
@@ -391,6 +431,10 @@
           "Id": 16058,
           "Name": "C S Shum"
         },
+        "Owner": {
+          "Id": 217804,
+          "Name": "Gui Shengyue"
+        },
         "Attributes": {
           "RaceCardNumber": 11,
           "StallNumber": 5,
@@ -425,6 +469,10 @@
         "Trainer": {
           "Id": 36353,
           "Name": "Douglas Whyte"
+        },
+        "Owner": {
+          "Id": 300614,
+          "Name": "Augustine Wong Ho Ming"
         },
         "Attributes": {
           "RaceCardNumber": 12,

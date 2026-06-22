@@ -42,6 +42,8 @@ public sealed class NextDataRunner
         string? jockeyName,
         int? trainerId,
         string? trainerName,
+        int? ownerId,
+        string? ownerName,
         int age,
         RaceWeight weight,
         int raceCardNumber,
@@ -62,6 +64,8 @@ public sealed class NextDataRunner
         JockeyName = jockeyName;
         TrainerId = trainerId;
         TrainerName = trainerName;
+        OwnerId = ownerId;
+        OwnerName = ownerName;
         Age = age;
         Weight = weight;
         RaceCardNumber = raceCardNumber;
@@ -83,6 +87,13 @@ public sealed class NextDataRunner
     public string? JockeyName { get; }
     public int? TrainerId { get; }
     public string? TrainerName { get; }
+
+    /// <summary>The owning party's Racing Post id; null when the card carries no owner for the runner.</summary>
+    public int? OwnerId { get; }
+
+    /// <summary>The owning party's display name (may name a syndicate or several owners); null when absent.</summary>
+    public string? OwnerName { get; }
+
     public int Age { get; }
     public RaceWeight Weight { get; }
     public int RaceCardNumber { get; }

@@ -21,5 +21,16 @@ internal static class NextDataRunnerMapper
             new RaceEntity(r.JockeyId ?? 0, r.JockeyName ?? "Unknown Jockey"),
             new RaceEntity(r.TrainerId ?? 0, r.TrainerName ?? "Unknown Trainer"),
             new RaceRunnerAttributes(r.RaceCardNumber, r.Draw, r.Age, r.Weight, r.HeadGear, r.DaysSinceLastRun, r.FormFigures),
-            new RaceRunnerStats(new RaceOdds(r.ForecastFractionalOdds ?? "SP"), r.OfficialRating, r.RacingPostRating, r.TopSpeedRating));
+            new RaceRunnerStats(new RaceOdds(r.ForecastFractionalOdds ?? "SP"), r.OfficialRating, r.RacingPostRating, r.TopSpeedRating),
+            ToOwner(r));
+
+    // Owner is the one new field that is also backfill-able: it appears on daily result pages, unlike
+    // breeding/verdict/wind-op. A historic-results re-scrape could fold ownerId/ownerName in alongside
+    // form / days-since / prize money -- see issues/todo.md "Backfill form / days-since / prize money
+    // into historic Results". Recorded only; no historic backfill is performed here.
+    // A present-but-null owner (id and name both absent) stays a clean null rather than a 0/empty entity.
+    private static RaceEntity? ToOwner(NextDataRunner r) =>
+        r.OwnerId is null && r.OwnerName is null
+            ? null
+            : new RaceEntity(r.OwnerId ?? 0, r.OwnerName ?? string.Empty);
 }

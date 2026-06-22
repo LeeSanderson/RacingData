@@ -47,7 +47,11 @@ public record RaceCardRecord
                 DaysSinceLastRun = d.Runner.Attributes.DaysSinceLastRun,
                 FormFigures = d.Runner.Attributes.FormFigures,
                 PrizeMoney = d.Race.Attributes.PrizeMoney,
-                PrizeMoneyValue = d.Race.Attributes.PrizeMoneyValue
+                PrizeMoneyValue = d.Race.Attributes.PrizeMoneyValue,
+                // Owner is null on the DOM-oracle reading; the JSON island is the sole capture source.
+                // A clean null owner (genuinely absent) leaves both columns blank.
+                OwnerId = d.Runner.Owner?.Id,
+                OwnerName = d.Runner.Owner?.Name
             });
 
     [Index(0)]
@@ -137,4 +141,14 @@ public record RaceCardRecord
     [Optional]
     [Index(37)]
     public decimal? PrizeMoneyValue { get; set; }
+
+    // Owner identity, captured forward-only from the racecard JSON island (Issue 003). Owner is the one
+    // new field that is also backfill-able from historic result pages -- see issues/todo.md "Backfill
+    // form / days-since / prize money into historic Results"; no backfill is performed here.
+    [Optional]
+    [Index(38)]
+    public int? OwnerId { get; set; }
+    [Optional]
+    [Index(39)]
+    public string? OwnerName { get; set; }
 }
