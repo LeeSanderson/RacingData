@@ -134,4 +134,36 @@ public record RaceResultRecord : RaceCardRecord
     [Optional]
     [Index(53)]
     public new string? DamName { get; set; }
+
+    // The base RaceCardRecord places the per-runner extras at indices 43-51, which the results layout
+    // already uses for FormFigures..SireName. Re-declare with `new` so they append at the end of the
+    // results layout instead of colliding (same shadowing pattern as DaysSinceLastRun..DamName above).
+    // Extras are NOT backfill-able (absent from result pages), so these stay blank in the results layout.
+    [Optional]
+    [Index(54)]
+    public new bool? HeadgearFirstTime { get; set; }
+    [Optional]
+    [Index(55)]
+    public new bool? GeldingFirstTime { get; set; }
+    [Optional]
+    [Index(56)]
+    public new int? WindSurgery { get; set; }
+    [Optional]
+    [Index(57)]
+    public new int? TrainerRtf { get; set; }
+    [Optional]
+    [Index(58)]
+    public new int? JockeyAllowanceLbs { get; set; }
+    [Optional]
+    [Index(59)]
+    public new bool? JockeyFirstTime { get; set; }
+    [Optional]
+    [Index(60)]
+    public new int? NewTrainerRacesCount { get; set; }
+    [Optional]
+    [Index(61)]
+    public new string? CountryOfOrigin { get; set; }
+    [Optional]
+    [Index(62)]
+    public new string? Spotlight { get; set; }
 }

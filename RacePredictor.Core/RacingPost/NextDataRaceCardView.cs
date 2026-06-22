@@ -59,7 +59,16 @@ public sealed class NextDataRunner
         string? headGear,
         string? forecastFractionalOdds,
         double? forecastDecimalOdds,
-        bool isNonRunner)
+        bool isNonRunner,
+        bool? headgearFirstTime,
+        bool? geldingFirstTime,
+        int? windSurgery,
+        int? trainerRtf,
+        int? jockeyAllowanceLbs,
+        bool? jockeyFirstTime,
+        int? newTrainerRacesCount,
+        string? countryOfOrigin,
+        string? spotlight)
     {
         HorseId = horseId;
         HorseName = horseName;
@@ -85,6 +94,15 @@ public sealed class NextDataRunner
         ForecastFractionalOdds = forecastFractionalOdds;
         ForecastDecimalOdds = forecastDecimalOdds;
         IsNonRunner = isNonRunner;
+        HeadgearFirstTime = headgearFirstTime;
+        GeldingFirstTime = geldingFirstTime;
+        WindSurgery = windSurgery;
+        TrainerRtf = trainerRtf;
+        JockeyAllowanceLbs = jockeyAllowanceLbs;
+        JockeyFirstTime = jockeyFirstTime;
+        NewTrainerRacesCount = newTrainerRacesCount;
+        CountryOfOrigin = countryOfOrigin;
+        Spotlight = spotlight;
     }
 
     public int? HorseId { get; }
@@ -129,4 +147,31 @@ public sealed class NextDataRunner
 
     /// <summary>True when the runner is a declared non-runner or reserve (excluded by the DOM parser).</summary>
     public bool IsNonRunner { get; }
+
+    /// <summary>First-time headgear flag; null when the card carries no flag, false = not set, true = fired.</summary>
+    public bool? HeadgearFirstTime { get; }
+
+    /// <summary>First-time gelding flag; null/false/true as above.</summary>
+    public bool? GeldingFirstTime { get; }
+
+    /// <summary>Wind-surgery indicator carried as an integer in the JSON (e.g. 2); null when absent.</summary>
+    public int? WindSurgery { get; }
+
+    /// <summary>Trainer current-form ("runs to form") rolling stat; a capture-time snapshot, null when absent.</summary>
+    public int? TrainerRtf { get; }
+
+    /// <summary>The claiming jockey's weight allowance in pounds; null when the jockey claims nothing.</summary>
+    public int? JockeyAllowanceLbs { get; }
+
+    /// <summary>First-time-jockey-on-horse flag; null/false/true as above.</summary>
+    public bool? JockeyFirstTime { get; }
+
+    /// <summary>Number of recent runs for a newly-switched trainer; null when not applicable.</summary>
+    public int? NewTrainerRacesCount { get; }
+
+    /// <summary>The horse's country of origin (e.g. "GB", "FR", "AUS"); null when absent.</summary>
+    public string? CountryOfOrigin { get; }
+
+    /// <summary>The raw per-runner Spotlight analyst prose, banked verbatim; null when absent.</summary>
+    public string? Spotlight { get; }
 }

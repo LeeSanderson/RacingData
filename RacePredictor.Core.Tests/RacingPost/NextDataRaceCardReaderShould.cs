@@ -15,6 +15,8 @@ public class NextDataRaceCardReaderShould
         "\"age\":5,\"startNumber\":1,\"draw\":3,\"formattedWeightStones\":9,\"formattedWeightPounds\":7," +
         "\"daysSinceLastRun\":\"21\",\"formFiguresData\":[{\"figure\":\"1\",\"position\":0}]," +
         "\"officialRatingToday\":70,\"rpPostmark\":80,\"rpTopspeed\":60,\"horseHeadGear\":\"t\"," +
+        "\"horseHeadGearFirstTime\":true,\"geldingFirstTime\":false,\"windSurgery\":1,\"trainerRtf\":7," +
+        "\"weightAllowanceLbs\":5,\"jockeyFirstTime\":true,\"newTrainerRacesCount\":2,\"spotlight\":\"Synthetic prose\"," +
         "\"forecastOddsValue\":4,\"nonRunner\":false,\"irishReserve\":false}";
 
     private static string WrapScript(string scriptContent) =>
@@ -56,6 +58,16 @@ public class NextDataRaceCardReaderShould
         relocal.SireName.Should().Be("Siyouni");
         relocal.SireCountry.Should().Be("FR");
         relocal.DamName.Should().Be("Inconceivable");
+        // Per-runner extras (issue 005). windSurgery and trainerRtf are integers in the JSON, not bools.
+        relocal.HeadgearFirstTime.Should().BeFalse();
+        relocal.GeldingFirstTime.Should().BeFalse();
+        relocal.WindSurgery.Should().BeNull();
+        relocal.TrainerRtf.Should().Be(59);
+        relocal.JockeyAllowanceLbs.Should().BeNull();
+        relocal.JockeyFirstTime.Should().BeTrue();
+        relocal.NewTrainerRacesCount.Should().Be(1);
+        relocal.CountryOfOrigin.Should().Be("FR");
+        relocal.Spotlight.Should().StartWith("The winner of one of his 11 starts for Roger Varian");
     }
 
     [Fact]
@@ -282,6 +294,14 @@ public class NextDataRaceCardReaderShould
             .Replace("\"sireName\":\"S Test\",", "\"sireName\":null,")
             .Replace("\"sireCountry\":\"GB\",", "\"sireCountry\":null,")
             .Replace("\"damName\":\"D Test\",", "\"damName\":null,")
+            .Replace("\"horseHeadGearFirstTime\":true,", "\"horseHeadGearFirstTime\":null,")
+            .Replace("\"geldingFirstTime\":false,", "\"geldingFirstTime\":null,")
+            .Replace("\"windSurgery\":1,", "\"windSurgery\":null,")
+            .Replace("\"trainerRtf\":7,", "\"trainerRtf\":null,")
+            .Replace("\"weightAllowanceLbs\":5,", "\"weightAllowanceLbs\":null,")
+            .Replace("\"jockeyFirstTime\":true,", "\"jockeyFirstTime\":null,")
+            .Replace("\"newTrainerRacesCount\":2,", "\"newTrainerRacesCount\":null,")
+            .Replace("\"spotlight\":\"Synthetic prose\",", "\"spotlight\":null,")
             .Replace("\"forecastOddsValue\":4,", "\"forecastOddsValue\":null,");
 
         var view = new NextDataRaceCardReader().Read(WrapDocument("[" + nulledRunner + "]"));
@@ -298,5 +318,64 @@ public class NextDataRaceCardReaderShould
         runner.SireName.Should().BeNull();
         runner.SireCountry.Should().BeNull();
         runner.DamName.Should().BeNull();
+        // Extras: a present-but-null flag stays a clean null, distinct from false (issue 005).
+        runner.HeadgearFirstTime.Should().BeNull();
+        runner.GeldingFirstTime.Should().BeNull();
+        runner.WindSurgery.Should().BeNull();
+        runner.TrainerRtf.Should().BeNull();
+        runner.JockeyAllowanceLbs.Should().BeNull();
+        runner.JockeyFirstTime.Should().BeNull();
+        runner.NewTrainerRacesCount.Should().BeNull();
+        runner.Spotlight.Should().BeNull();
+    }
+
+    [Fact]
+    public void ReadGeldingFirstTimeTruesOnTheUnratedIrishCard()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_gowran_park_20260520_1820_unrated.html");
+
+        var view = new NextDataRaceCardReader().Read(html);
+
+        // Gowran carries first-time-gelding trues — a coverage edge the audit flagged (issue 005).
+        view.RunnerByHorseId(7708580)!.GeldingFirstTime.Should().BeTrue();   // Rolltight
+        view.RunnerByHorseId(8236301)!.GeldingFirstTime.Should().BeTrue();   // Hello Garda
+        // A gelding flag that did not fire stays a clean false, not null.
+        view.Runners.Should().Contain(r => r.GeldingFirstTime == false);
+    }
+
+    [Fact]
+    public void ReadTheWindSurgeryIndicatorAsAnIntegerOnTheJumpsCard()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_warwick_20260520_1700_hurdles.html");
+
+        var view = new NextDataRaceCardReader().Read(html);
+
+        // windSurgery is carried as an integer in the JSON (Mojito Des Mottes -> 2), not a bool flag,
+        // so it is captured faithfully as int? rather than coerced (issue 005).
+        view.RunnerByHorseId(8330889)!.WindSurgery.Should().Be(2);
+        // Runners with no wind op carry a clean null.
+        view.Runners.Should().Contain(r => r.WindSurgery == null);
+    }
+
+    [Fact]
+    public void ExposeNullTrainerRtfWhereTheJurisdictionLacksTheWinRateBadge()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_happyvalley_20260520_1140.html");
+
+        var view = new NextDataRaceCardReader().Read(html);
+
+        // Happy Valley (HK) has no trainer win-rate badge, so trainerRtf is a clean null, not a failure.
+        view.Runners.Should().OnlyContain(r => r.TrainerRtf == null);
+    }
+
+    [Fact]
+    public void ThrowNamingTheKeyWhenAnExtrasKeyIsMissing()
+    {
+        var runnerWithoutSpotlight = ValidRunner.Replace("\"spotlight\":\"Synthetic prose\",", string.Empty);
+        var html = WrapDocument("[" + runnerWithoutSpotlight + "]");
+
+        var read = () => new NextDataRaceCardReader().Read(html);
+
+        read.Should().Throw<ValidationException>().WithMessage("*spotlight*");
     }
 }

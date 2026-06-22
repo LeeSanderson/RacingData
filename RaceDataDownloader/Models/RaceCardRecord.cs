@@ -55,7 +55,17 @@ public record RaceCardRecord
                 // Breeding is likewise JSON-only and forward-only; a clean null leaves the columns blank.
                 SireName = d.Runner.Breeding?.SireName,
                 SireCountry = d.Runner.Breeding?.SireCountry,
-                DamName = d.Runner.Breeding?.DamName
+                DamName = d.Runner.Breeding?.DamName,
+                // Per-runner extras (JSON-only, forward-only); a clean null leaves the columns blank.
+                HeadgearFirstTime = d.Runner.Extras?.HeadgearFirstTime,
+                GeldingFirstTime = d.Runner.Extras?.GeldingFirstTime,
+                WindSurgery = d.Runner.Extras?.WindSurgery,
+                TrainerRtf = d.Runner.Extras?.TrainerRtf,
+                JockeyAllowanceLbs = d.Runner.Extras?.JockeyAllowanceLbs,
+                JockeyFirstTime = d.Runner.Extras?.JockeyFirstTime,
+                NewTrainerRacesCount = d.Runner.Extras?.NewTrainerRacesCount,
+                CountryOfOrigin = d.Runner.Extras?.CountryOfOrigin,
+                Spotlight = d.Runner.Extras?.Spotlight
             });
 
     [Index(0)]
@@ -168,4 +178,38 @@ public record RaceCardRecord
     [Optional]
     [Index(42)]
     public string? DamName { get; set; }
+
+    // Per-runner extras captured forward-only from the racecard JSON island (Issue 005). Like breeding
+    // these are NOT backfill-able (absent from historic result pages), so they stay null on rows that
+    // predate capture. WindSurgery and TrainerRtf are integers in the JSON (a wind-op indicator and a
+    // trainer current-form snapshot), not bool flags. RaceResultRecord re-declares these at higher
+    // indices for the results layout.
+    [Optional]
+    [Index(43)]
+    public bool? HeadgearFirstTime { get; set; }
+    [Optional]
+    [Index(44)]
+    public bool? GeldingFirstTime { get; set; }
+    [Optional]
+    [Index(45)]
+    public int? WindSurgery { get; set; }
+    [Optional]
+    [Index(46)]
+    public int? TrainerRtf { get; set; }
+    [Optional]
+    [Index(47)]
+    public int? JockeyAllowanceLbs { get; set; }
+    [Optional]
+    [Index(48)]
+    public bool? JockeyFirstTime { get; set; }
+    [Optional]
+    [Index(49)]
+    public int? NewTrainerRacesCount { get; set; }
+    [Optional]
+    [Index(50)]
+    public string? CountryOfOrigin { get; set; }
+    // Raw analyst prose, banked verbatim (CSV-escaped by CsvHelper); no parsing or feature derivation.
+    [Optional]
+    [Index(51)]
+    public string? Spotlight { get; set; }
 }

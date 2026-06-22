@@ -9,7 +9,8 @@ public class RaceRunner
         RaceRunnerAttributes attributes,
         RaceRunnerStats statistics,
         RaceEntity? owner = null,
-        RaceRunnerBreeding? breeding = null)
+        RaceRunnerBreeding? breeding = null,
+        RaceRunnerExtras? extras = null)
     {
         Horse = horse;
         Jockey = jockey;
@@ -18,6 +19,7 @@ public class RaceRunner
         Statistics = statistics;
         Owner = owner;
         Breeding = breeding;
+        Extras = extras;
     }
 
     public RaceEntity Horse { get; }
@@ -33,6 +35,12 @@ public class RaceRunner
     // and excluded from cross-validation. Trailing optional so the DOM parser and results layout are
     // unaffected. Unlike Owner it is NOT backfill-able (absent from result pages).
     public RaceRunnerBreeding? Breeding { get; }
+
+    // Per-runner extras (first-time flags, trainerRtf, jockey allowance, new-trainer count, country,
+    // Spotlight prose) — like Owner/Breeding a forward-only JSON-only fact, null on the DOM-oracle
+    // reading and excluded from cross-validation. Trailing optional so the DOM parser and results
+    // layout are unaffected. NOT backfill-able (absent from result pages).
+    public RaceRunnerExtras? Extras { get; }
 
     public RaceRunnerAttributes Attributes { get; }
     public RaceRunnerStats Statistics { get; }

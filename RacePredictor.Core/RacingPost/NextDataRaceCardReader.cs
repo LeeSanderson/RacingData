@@ -31,6 +31,8 @@ public sealed class NextDataRaceCardReader
         "daysSinceLastRun", "formFiguresData",
         "officialRatingToday", "rpPostmark", "rpTopspeed",
         "horseHeadGear", "forecastOddsValue", "nonRunner", "irishReserve",
+        "horseHeadGearFirstTime", "geldingFirstTime", "windSurgery", "trainerRtf",
+        "weightAllowanceLbs", "jockeyFirstTime", "newTrainerRacesCount", "spotlight",
     };
 
     public NextDataRaceCardView Read(string html)
@@ -222,11 +224,15 @@ public sealed class NextDataRaceCardReader
         // horse id; absent there leaves the runner at SP.
         var forecastFractional = horseId.HasValue && forecastOdds.TryGetValue(horseId.Value, out var desc) ? desc : null;
 
+        // A claiming jockey's allowance is both folded into the rendered jockey name (for DOM fidelity)
+        // and captured in its own column (issue 005), so it is read once here.
+        var jockeyAllowanceLbs = fields.NumberOrNull("weightAllowanceLbs");
+
         return new NextDataRunner(
             horseId,
             ReconstructHorseName(rawName, country, raceCountryCode),
             fields.NumberOrNull("jockeyId"),
-            ReconstructJockeyName(fields.StringOrNull("jockeyName"), fields.NumberAllowingMissing("weightAllowanceLbs")),
+            ReconstructJockeyName(fields.StringOrNull("jockeyName"), jockeyAllowanceLbs),
             fields.NumberOrNull("trainerId"),
             fields.StringOrNull("trainerName"),
             fields.NumberOrNull("ownerId"),
@@ -246,7 +252,16 @@ public sealed class NextDataRaceCardReader
             fields.StringOrNull("horseHeadGear"),
             forecastFractional,
             forecastRatio.HasValue ? forecastRatio.Value + 1.0 : null,
-            fields.Bool("nonRunner") || fields.Bool("irishReserve"));
+            fields.Bool("nonRunner") || fields.Bool("irishReserve"),
+            fields.BoolOrNull("horseHeadGearFirstTime"),
+            fields.BoolOrNull("geldingFirstTime"),
+            fields.NumberOrNull("windSurgery"),
+            fields.NumberOrNull("trainerRtf"),
+            jockeyAllowanceLbs,
+            fields.BoolOrNull("jockeyFirstTime"),
+            fields.NumberOrNull("newTrainerRacesCount"),
+            country,
+            fields.StringOrNull("spotlight"));
     }
 
     // Racing Post appends a horse's country of origin to its name only when that country differs
@@ -311,23 +326,6 @@ public sealed class NextDataRaceCardReader
             };
         }
 
-        // For keys outside the sentinel set (consumed but not schema-guarded): a missing key is
-        // treated as a clean null rather than a structural failure.
-        public int? NumberAllowingMissing(string key)
-        {
-            if (!runner.TryGetProperty(key, out var value))
-            {
-                return null;
-            }
-
-            return value.ValueKind switch
-            {
-                JsonValueKind.Null => null,
-                JsonValueKind.Number => value.GetInt32(),
-                _ => throw WrongType(key, value.ValueKind, "a number"),
-            };
-        }
-
         public double? NumberAsDoubleOrNull(string key)
         {
             var value = runner.GetProperty(key);
@@ -358,6 +356,20 @@ public sealed class NextDataRaceCardReader
                 JsonValueKind.True => true,
                 JsonValueKind.False => false,
                 JsonValueKind.Null => false,
+                _ => throw WrongType(key, value.ValueKind, "a boolean"),
+            };
+        }
+
+        // Like Bool but null-preserving: a present-but-null flag stays a clean null (absent from the
+        // card) rather than collapsing to false, so "flag absent" and "flag not set" stay distinct.
+        public bool? BoolOrNull(string key)
+        {
+            var value = runner.GetProperty(key);
+            return value.ValueKind switch
+            {
+                JsonValueKind.True => true,
+                JsonValueKind.False => false,
+                JsonValueKind.Null => null,
                 _ => throw WrongType(key, value.ValueKind, "a boolean"),
             };
         }

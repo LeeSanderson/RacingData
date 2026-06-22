@@ -24,6 +24,7 @@ public class DownloadTodaysRaceCardsCommandHandler(
         EnsureGoingDataIsPresent(raceResults);
         LogForecastFillRate(raceResults);
         LogRatingsFillRate(raceResults);
+        LogExtrasFillRate(raceResults);
 
         await FileSystem.WriteRecordsToCsvFile(
             Path.Combine(dataFolder, "TodaysRaceCards.csv"),
@@ -78,6 +79,38 @@ public class DownloadTodaysRaceCardsCommandHandler(
         WarnWhenRatingAbsent(withOfficialRating, "official ratings (OR)", raceCards.Count);
         WarnWhenRatingAbsent(withRacingPostRating, "Racing Post ratings (RPR)", raceCards.Count);
         WarnWhenRatingAbsent(withTopSpeedRating, "top speed ratings (TSR)", raceCards.Count);
+    }
+
+    // Informational fill-rate datapoint for the per-runner extras (Issue 005). Unlike the forecast and
+    // ratings canaries this never warns: the extras are legitimately sparse (first-time flags rarely
+    // fire; trainerRtf is absent on some jurisdictions such as HK; wind-surgery is jumps-skewed), so a
+    // zero count is normal data, not a structural alarm. The throw on a vanished key is owned by the
+    // reader's schema validation, so this canary only ever logs at the information level and never throws.
+    private void LogExtrasFillRate(List<RaceCard> raceCards)
+    {
+        var totalRunners = raceCards.Sum(c => c.Runners.Length);
+        if (totalRunners == 0)
+        {
+            return;
+        }
+
+        int Count(Func<RaceRunnerExtras, bool> present) =>
+            raceCards.Sum(c => c.Runners.Count(r => r.Extras is not null && present(r.Extras)));
+
+        Logger.LogInformation(
+            "Racecard extras present for {Total} runners: headgear-first {HeadgearFirstTime}, gelding-first {GeldingFirstTime}, " +
+            "wind-surgery {WindSurgery}, trainerRtf {TrainerRtf}, jockey-allowance {JockeyAllowanceLbs}, jockey-first {JockeyFirstTime}, " +
+            "new-trainer-count {NewTrainerRacesCount}, country {CountryOfOrigin}, spotlight {Spotlight}.",
+            totalRunners,
+            Count(e => e.HeadgearFirstTime.HasValue),
+            Count(e => e.GeldingFirstTime.HasValue),
+            Count(e => e.WindSurgery.HasValue),
+            Count(e => e.TrainerRtf.HasValue),
+            Count(e => e.JockeyAllowanceLbs.HasValue),
+            Count(e => e.JockeyFirstTime.HasValue),
+            Count(e => e.NewTrainerRacesCount.HasValue),
+            Count(e => !string.IsNullOrEmpty(e.CountryOfOrigin)),
+            Count(e => !string.IsNullOrEmpty(e.Spotlight)));
     }
 
     private void WarnWhenRatingAbsent(int withRating, string ratingLabel, int cardCount)

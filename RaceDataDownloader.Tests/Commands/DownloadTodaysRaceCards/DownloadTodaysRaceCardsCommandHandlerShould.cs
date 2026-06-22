@@ -137,6 +137,32 @@ public class DownloadTodaysRaceCardsCommandHandlerShould(ITestOutputHelper outpu
     }
 
     [Fact]
+    public async Task LogTheExtrasFillRateForTheNewFieldsWithoutThrowing()
+    {
+        var mockFileSystemBuilder = new MockFileSystemBuilder();
+        var mockRacingDataDownloader = MockRacingDataDownloader
+            .New()
+            .MockReturnHappyValleyRaceCardUrls()
+            .MockReturnHappyValleyRaceCard();
+        var clock = Substitute.For<IClock>();
+        clock.Today.Returns(new DateOnly(2026, 05, 20));
+        var logger = new RecordingLogger<DownloadTodaysRaceCardsCommandHandler>(output);
+
+        var handler = new DownloadTodaysRaceCardsCommandHandler(mockFileSystemBuilder.FileSystem, mockRacingDataDownloader, clock, logger);
+        var options = new DownloadTodaysRaceCardsOptions { DataDirectory = MockFileSystemBuilder.OutputDirectory };
+        var result = await handler.RunAsync(options);
+
+        result.Should().Be(ExitCodes.Success);
+        // An informational fill-rate line for the new extras is emitted. The canary never warns or
+        // throws: these fields are legitimately sparse (HK has no trainerRtf, no first-time flags fired),
+        // and the throw on a vanished key is owned by the reader's schema validation, not this canary.
+        logger.Entries.Should().Contain(e =>
+            e.Level == LogLevel.Information && e.Message.Contains("extras", StringComparison.OrdinalIgnoreCase));
+        logger.Entries.Should().NotContain(e =>
+            e.Level == LogLevel.Warning && e.Message.Contains("extras", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public async Task LogTheForecastFillRateWithoutWarningWhenForecastsArePresent()
     {
         var mockFileSystemBuilder = new MockFileSystemBuilder();
