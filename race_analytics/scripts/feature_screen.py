@@ -115,8 +115,7 @@ def screen(
 
     print("  Fitting XGBoost...", flush=True)
     algo = XGBoostAlgorithm(max_horses=10)
-    # fit() takes a RaceData (RFC-001); wrap the engineered training frame exactly
-    # as the harness does. Previously this passed the raw DataFrame, which now fails.
+    # fit() takes a RaceData; wrap the engineered training frame exactly as the harness does.
     algo.fit(RaceDataBuilder().wrap_training(races))
 
     model = algo._model  # pyright: ignore[reportPrivateUsage]  inspecting fitted internals

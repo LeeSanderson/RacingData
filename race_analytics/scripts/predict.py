@@ -21,7 +21,7 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 
 # No rating columns: ratings reach the algorithms only through the per-horse
-# stats join (previous-race LastRace* ratings), never the card — see issues/prd.md.
+# stats join (previous-race LastRace* ratings), never the card.
 _RACE_CARD_COLS = [
     "RaceId",
     "HorseId",
@@ -105,8 +105,6 @@ def predict(
     race_cards = pd.read_csv(os.path.join(data_path, "TodaysRaceCards.csv"))
     race_cards["Off"] = pd.to_datetime(race_cards["Off"], format="%m/%d/%Y %H:%M:%S")
 
-    # Build the canonical RaceData and drive the algorithm through the FieldPredictor
-    # contract. `wrap_training` wraps the enriched Race_Features frame;
     # `build_serving_from_stats` joins today's card to the precomputed per-entity stats
     # CSVs as-of now (the Stats CSVs are extract_*_stats(Race_Features), so this matches
     # build_serving over the same history).

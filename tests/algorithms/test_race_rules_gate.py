@@ -16,9 +16,6 @@ def _race(
     return row
 
 
-# ── Sprint rule ───────────────────────────────────────────────────────────────
-
-
 def test_sprint_race_is_excluded() -> None:
     gate = RaceRulesGate()
     races = pd.DataFrame([_race(1, distance_m=1000.0)])  # ~5f
@@ -41,9 +38,6 @@ def test_missing_distance_is_not_excluded() -> None:
     gate = RaceRulesGate()
     races = pd.DataFrame([{"RaceId": 1, "HorseId": 10}])
     assert 1 not in gate.excluded_race_ids(races)
-
-
-# ── Class 6 rule ──────────────────────────────────────────────────────────────
 
 
 def test_class6_race_is_excluded() -> None:
@@ -77,9 +71,6 @@ def test_nan_class_is_not_excluded() -> None:
     assert 1 not in gate.excluded_race_ids(races)
 
 
-# ── Combined ──────────────────────────────────────────────────────────────────
-
-
 def test_sprint_and_class6_race_is_excluded() -> None:
     gate = RaceRulesGate()
     races = pd.DataFrame([_race(1, distance_m=1000.0, cls="Class 6")])
@@ -95,9 +86,6 @@ def test_non_sprint_non_class6_is_kept() -> None:
 def test_empty_dataframe_returns_empty_set() -> None:
     gate = RaceRulesGate()
     assert gate.excluded_race_ids(pd.DataFrame()) == set()
-
-
-# ── Multi-horse race (dedup) ──────────────────────────────────────────────────
 
 
 def test_multi_horse_sprint_race_excluded_once() -> None:

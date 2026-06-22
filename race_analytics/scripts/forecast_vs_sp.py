@@ -24,9 +24,6 @@ _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 
 
-# ── I/O ─────────────────────────────────────────────────────────────────────
-
-
 def _load_comparable(data_dir: str) -> pd.DataFrame:
     """Every completed runner that carries BOTH a forecast price and an SP.
 
@@ -68,9 +65,6 @@ def _load_comparable(data_dir: str) -> pd.DataFrame:
     ].copy()
     df["Day"] = df["Off"].str.slice(0, 10)
     return df
-
-
-# ── Pure helpers ──────────────────────────────────────────────────────────────
 
 
 def _pearson(x: np.ndarray, y: np.ndarray) -> float:
@@ -143,13 +137,10 @@ def _differences(df: pd.DataFrame) -> dict[str, float]:
         "within_25pct": float((rel_diff <= 0.25).mean()),
         "within_50pct": float((rel_diff <= 0.50).mean()),
         "ratio_median": float(ratio.median()),
-        "shorter_rate": float((ratio < 0.95).mean()),  # forecast shorter than SP
+        "shorter_rate": float((ratio < 0.95).mean()),
         "same_rate": float(((ratio >= 0.95) & (ratio <= 1.05)).mean()),
         "longer_rate": float((ratio > 1.05).mean()),
     }
-
-
-# ── Display ────────────────────────────────────────────────────────────────────
 
 
 def analyse(data_dir: str) -> None:

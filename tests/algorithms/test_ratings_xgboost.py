@@ -170,9 +170,6 @@ def trained_algo() -> RatingsXGBoostAlgorithm:
     return algo
 
 
-# ── fit() uses previous-race ratings, never current-race ratings ──────────────
-
-
 def test_fit_uses_lastrace_ratings_and_excludes_current_race_ratings() -> None:
     algo = RatingsXGBoostAlgorithm(max_horses=10)
     algo.fit(_train())
@@ -183,9 +180,6 @@ def test_fit_uses_lastrace_ratings_and_excludes_current_race_ratings() -> None:
     for col in _CURRENT_RATINGS:
         assert col not in feats, f"current-race rating leaked into features: {col}"
         assert f"Rel{col}" not in feats, f"current-race relative leaked in: Rel{col}"
-
-
-# ── require_tsr gate is defined on LastRaceTopSpeedRating coverage ─────────────
 
 
 def test_gate_filters_on_lastrace_tsr_coverage() -> None:
@@ -233,9 +227,6 @@ def test_predict_works_from_card_without_rating_columns(
 
     assert list(result.columns) == ["RaceId", "HorseId"]
     assert result["RaceId"].tolist() == [10]
-
-
-# ── both variants stay registered for comparison ─────────────────────────────
 
 
 def test_both_variants_registered() -> None:

@@ -8,9 +8,8 @@ public class RaceResultRecordShould
     [Fact]
     public async Task LoadLegacyResultsCsvWithoutForecastOrCardColumns()
     {
-        // Simulate the original 40-column file (no Forecast*, no card-data columns) by serialising a
-        // record and dropping the nine new trailing columns (Forecast* + the four base card fields +
-        // the three Card* ratings).
+        // Simulate an original results file written before the Forecast*/card-data columns existed by
+        // serialising a record and dropping those new trailing columns.
         var record = new RaceResultRecord
         {
             RaceId = 809925,
@@ -41,8 +40,8 @@ public class RaceResultRecordShould
     [Fact]
     public async Task LoadResultsCsvWithForecastButWithoutCardColumns()
     {
-        // The realistic upgrade path: a 42-column file written after Forecast* shipped but before the
-        // card-data columns. Dropping the seven card columns must still load, with forecast preserved.
+        // The realistic upgrade path: an intermediate-schema file written after Forecast* shipped but
+        // before the card-data columns. Dropping the card columns must still load, with forecast preserved.
         var record = new RaceResultRecord
         {
             RaceId = 809925,

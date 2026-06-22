@@ -132,11 +132,6 @@ def trained_algo() -> XGBoostAlgorithm:
     return _fit(algo, rows)
 
 
-# ================================================================
-# Correct output columns and shape
-# ================================================================
-
-
 def test_predict_returns_raceId_and_horseId_columns(
     trained_algo: XGBoostAlgorithm,
 ) -> None:
@@ -147,11 +142,6 @@ def test_predict_returns_raceId_and_horseId_columns(
     result = trained_algo.predict(_serve(races, horse_stats, jockey_stats))
 
     assert list(result.columns) == ["RaceId", "HorseId"]
-
-
-# ================================================================
-# One winner per race
-# ================================================================
 
 
 def test_predict_returns_one_row_per_race(trained_algo: XGBoostAlgorithm) -> None:
@@ -169,11 +159,6 @@ def test_predict_returns_one_row_per_race(trained_algo: XGBoostAlgorithm) -> Non
     assert len(result) == 2
     assert set(result["RaceId"]) == {10, 20}
     assert result["RaceId"].nunique() == len(result)
-
-
-# ================================================================
-# max_horses filter
-# ================================================================
 
 
 def test_predict_excludes_races_exceeding_max_horses() -> None:

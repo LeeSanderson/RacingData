@@ -137,10 +137,8 @@ public record RaceCardRecord
     [Index(33)]
     public int? TopSpeedRating { get; set; }
 
-    // Pre-race facts collected at card parse (Issue 001 domain model). No prefix — they have no
-    // post-race counterpart to collide with. TodaysRaceCards.csv is rewritten daily, so these append
-    // contiguously here; RaceResultRecord re-declares them at higher indices for the results layout.
-    // [Optional] lets CreateReaderConfiguration tolerate files written before these columns existed.
+    // Pre-race facts collected at card parse. No prefix — they have no post-race counterpart to
+    // collide with. [Optional] lets CreateReaderConfiguration tolerate files written before these columns existed.
     [Optional]
     [Index(34)]
     public int? DaysSinceLastRun { get; set; }
@@ -156,7 +154,7 @@ public record RaceCardRecord
     [Index(37)]
     public decimal? PrizeMoneyValue { get; set; }
 
-    // Owner identity, captured forward-only from the racecard JSON island (Issue 003); like the other
+    // Owner identity, captured forward-only from the racecard JSON island; like the other
     // new card fields it stays null on rows that predate capture.
     [Optional]
     [Index(38)]
@@ -165,7 +163,7 @@ public record RaceCardRecord
     [Index(39)]
     public string? OwnerName { get; set; }
 
-    // Breeding (sire/dam) captured forward-only from the racecard JSON island (Issue 004); it stays null
+    // Breeding (sire/dam) captured forward-only from the racecard JSON island; it stays null
     // on rows that predate capture. RaceResultRecord re-declares these at higher indices for the results layout.
     [Optional]
     [Index(40)]
@@ -177,7 +175,7 @@ public record RaceCardRecord
     [Index(42)]
     public string? DamName { get; set; }
 
-    // Per-runner extras captured forward-only from the racecard JSON island (Issue 005); like breeding
+    // Per-runner extras captured forward-only from the racecard JSON island; like breeding
     // they stay null on rows that predate capture. WindSurgery and TrainerRtf are integers in the JSON
     // (a wind-op indicator and a trainer current-form snapshot), not bool flags. RaceResultRecord
     // re-declares these at higher indices for the results layout.

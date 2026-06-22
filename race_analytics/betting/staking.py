@@ -22,16 +22,11 @@ WIN_PROBABILITY = "WinProbability"
 MARKET_PROB = "MarketProb"
 RESOLVED_ODDS = "ResolvedOdds"
 
-# Configuration knobs — PRD defaults, all overridable per call.
 KELLY_FRACTION = 0.25  # fraction of full Kelly; the primary miscalibration buffer.
-MIN_EDGE = 0.03  # minimum ModelProb-MarketProb edge required to place a bet.
+MIN_EDGE = 0.03
 CAP = 5.0  # maximum single stake (£), bounding short-priced high-confidence tails.
-# Calibrated so the median advised stake lands ≈ £1 (the bankroll-agnostic anchor): the
-# diagnostic backtest (backtest_staking.py) over the active algorithm's picks in
-# evaluation_results_20260618.csv gave a median stake of £0.21 at the provisional
-# BANKROLL=25. Stake scales linearly with BANKROLL below the CAP, so 25 * (1 / 0.21) ≈ 119
-# lands the median at £1; rounded to 120 (median ≈ £1.01). A fixed, stateless notional
-# scale — no running-balance tracking. Re-derive if the stake distribution shifts.
+# Calibrated so the median advised stake lands ≈ £1 (a fixed, stateless notional scale;
+# no running-balance tracking). Re-derive if the stake distribution shifts.
 BANKROLL = 120.0
 
 

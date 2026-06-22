@@ -85,9 +85,6 @@ def _fitted_engine(
     return algo
 
 
-# ── fit / predict_field / predict over RaceData ────────────────────────────────
-
-
 def test_predict_field_empty_before_fit():
     algo = _EngineClassifier()
     result = algo.predict_field(_race_data(with_label=False))
@@ -109,16 +106,12 @@ def test_predict_returns_top1_per_race():
     preds = algo.predict(_race_data(n_races=2, horses=3, with_label=False))
     assert len(preds) == 2
     assert list(preds.columns) == ["RaceId", "HorseId"]
-    # horse[0] (id r*10) ranks first in each race
     assert set(preds["HorseId"]) == {10, 20}
 
 
 def test_fit_selects_required_predictors_as_feature_cols():
     algo = _fitted_engine()
     assert set(algo._feature_cols) == set(REQUIRED_PREDICTORS)  # pyright: ignore[reportPrivateUsage]  # intentional internal-state assertion
-
-
-# ── filters ────────────────────────────────────────────────────────────────────
 
 
 def test_oversized_field_is_dropped():
@@ -131,7 +124,6 @@ def test_oversized_field_is_dropped():
 def test_incomplete_race_dropped_when_a_runner_has_nan_required():
     algo = _fitted_engine()
     serve = _race_data(n_races=2, horses=3, with_label=False)
-    # blank a required predictor for one runner in race 1 -> whole race excluded
     serve.frame.loc[
         (serve.frame["RaceId"] == 1) & (serve.frame["HorseId"] == 12),
         "DistanceInMeters",
@@ -175,9 +167,6 @@ def test_return_full_field_false_yields_only_rank1_rows():
     assert (field["PredictedRank"] == 1).all()
 
 
-# ── the engine ranks a full field for any (estimator, weighting) combination ────
-
-
 class _FakeRanker:
     """A ranker-style estimator: fit(group=...) and predict (no predict_proba)."""
 
@@ -195,7 +184,7 @@ class _FakeRanker:
         return self
 
     def predict(self, X: pd.DataFrame) -> np.ndarray:
-        return np.arange(len(X), 0, -1)  # decreasing -> row[0] ranks first
+        return np.arange(len(X), 0, -1)
 
 
 class _RankerEngine(FieldPredictorBaseAlgorithm):
@@ -233,14 +222,10 @@ def test_engine_ranks_full_field_for_any_estimator_and_weighting(
     assert {"RaceId", "HorseId", "WinProbability", "PredictedRank"} <= set(
         field.columns
     )
-    # exactly one rank-1 pick per race, regardless of estimator/weighting
     rank1_per_race = field.groupby("RaceId")["PredictedRank"].apply(
         lambda r: (r == 1).sum()
     )
     assert (rank1_per_race == 1).all()
-
-
-# ── declared contracts ─────────────────────────────────────────────────────────
 
 
 def test_engine_satisfies_field_predictor_protocol():

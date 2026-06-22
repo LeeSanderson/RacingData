@@ -3,14 +3,9 @@ import pandas as pd
 import tests.utils.test_data as td
 from race_analytics.features.race_filters import CalculateRacesWithKnownHorsesAndJockeys
 
-# --- helpers ---
-
 
 def _make_df(*race_results: td.RaceResult) -> pd.DataFrame:
     return pd.DataFrame(list(race_results))
-
-
-# --- tests ---
 
 
 def test_first_day_races_are_never_known() -> None:
@@ -24,10 +19,8 @@ def test_first_day_races_are_never_known() -> None:
 
 def test_race_with_all_known_horses_and_jockeys_is_marked_known() -> None:
     df = _make_df(
-        # Day 1: establish history
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.ComeSeptember, td.SimonTorrens),
-        # Day 2: same horses and jockeys → all known
         td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.SimonTorrens),
         td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown),
     )
@@ -38,9 +31,7 @@ def test_race_with_all_known_horses_and_jockeys_is_marked_known() -> None:
 
 def test_race_with_unknown_horse_is_not_marked_known() -> None:
     df = _make_df(
-        # Day 1: only SecretSecret/PaulTown seen
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
-        # Day 2: LaylaDaffodil is a new horse → whole race unknown
         td.RaceResult.new(td.Chelmsford21stAt1805, td.LaylaDaffodil, td.PaulTown),
         td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.SimonTorrens),
     )
@@ -51,10 +42,8 @@ def test_race_with_unknown_horse_is_not_marked_known() -> None:
 
 def test_race_with_unknown_jockey_is_not_marked_known() -> None:
     df = _make_df(
-        # Day 1: SecretSecret/PaulTown and ComeSeptember/SimonTorrens seen
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.ComeSeptember, td.SimonTorrens),
-        # Day 2: ShaneFitzgerald is a new jockey → whole race unknown
         td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.ShaneFitzgerald),
         td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown),
     )

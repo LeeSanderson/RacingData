@@ -11,7 +11,7 @@ from race_analytics.features.race_data import RaceData
 
 # Previous-race ratings sourced from the per-horse stats join (leak-free); the
 # current-race OfficialRating/RacingPostRating/TopSpeedRating are post-race
-# figures and must never enter the model — see issues/prd.md.
+# figures and must never enter the model.
 RATING_COLS = [
     "LastRaceOfficialRating",
     "LastRaceRacingPostRating",

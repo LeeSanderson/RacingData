@@ -189,8 +189,6 @@ def _backtest(df: pd.DataFrame) -> dict[str, dict[str, float]]:
     }
 
 
-# ── I/O + display ──────────────────────────────────────────────────────────────
-
 _CAVEAT = (
     "  SP-PLACEHOLDER / DIAGNOSTIC-ONLY / NOT A PROMOTION DECISION\n"
     "  Historical eval results carry ~0% real forecast prices, so MarketProb and\n"

@@ -9,10 +9,6 @@ from race_analytics.features.loader import (
     load_stats,
 )
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
 _OFF_FMT = "%m/%d/%Y %H:%M:%S"
 
 
@@ -24,11 +20,6 @@ def _race_row(
     race_id: int, off: str, status: str = "CompletedRace"
 ) -> dict[str, object]:
     return {"RaceId": race_id, "Off": off, "ResultStatus": status}
-
-
-# ---------------------------------------------------------------------------
-# load_results
-# ---------------------------------------------------------------------------
 
 
 def test_load_results_concatenates_multiple_files(tmp_path: Path) -> None:
@@ -87,7 +78,6 @@ def test_load_results_raises_when_no_files(tmp_path: Path) -> None:
 
 
 def test_load_results_months_limits_to_most_recent_files(tmp_path: Path) -> None:
-    # Three monthly files; months=2 should drop the oldest (Jan).
     _write_results_csv(
         tmp_path / "Results_202601.csv",
         [
@@ -127,11 +117,6 @@ def test_load_results_months_none_loads_all_files(tmp_path: Path) -> None:
     assert set(df["RaceId"]) == {1, 2}
 
 
-# ---------------------------------------------------------------------------
-# load_race_cards
-# ---------------------------------------------------------------------------
-
-
 def test_load_race_cards_returns_dataframe(tmp_path: Path) -> None:
     pd.DataFrame(
         [
@@ -154,11 +139,6 @@ def test_load_race_cards_off_column_is_datetime(tmp_path: Path) -> None:
 def test_load_race_cards_raises_when_file_missing(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         load_race_cards(tmp_path)
-
-
-# ---------------------------------------------------------------------------
-# load_stats
-# ---------------------------------------------------------------------------
 
 
 def test_load_stats_returns_correct_file(tmp_path: Path) -> None:

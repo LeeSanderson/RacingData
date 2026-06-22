@@ -50,7 +50,7 @@ public class NextDataRaceCardReaderShould
         relocal.OfficialRating.Should().Be(70);
         relocal.RacingPostRating.Should().Be(84);
         relocal.TopSpeedRating.Should().Be(46);
-        relocal.HeadGear.Should().BeNull();             // Relocal wears no headgear
+        relocal.HeadGear.Should().BeNull();
         relocal.ForecastFractionalOdds.Should().Be("7/1");
         relocal.ForecastDecimalOdds.Should().Be(8.0);   // forecast "7/1" -> decimal 8.0
         relocal.OwnerId.Should().Be(372779);
@@ -58,7 +58,7 @@ public class NextDataRaceCardReaderShould
         relocal.SireName.Should().Be("Siyouni");
         relocal.SireCountry.Should().Be("FR");
         relocal.DamName.Should().Be("Inconceivable");
-        // Per-runner extras (issue 005). windSurgery and trainerRtf are integers in the JSON, not bools.
+        // windSurgery and trainerRtf are integers in the JSON, not bools.
         relocal.HeadgearFirstTime.Should().BeFalse();
         relocal.GeldingFirstTime.Should().BeFalse();
         relocal.WindSurgery.Should().BeNull();
@@ -318,7 +318,7 @@ public class NextDataRaceCardReaderShould
         runner.SireName.Should().BeNull();
         runner.SireCountry.Should().BeNull();
         runner.DamName.Should().BeNull();
-        // Extras: a present-but-null flag stays a clean null, distinct from false (issue 005).
+        // A present-but-null flag stays a clean null, distinct from false.
         runner.HeadgearFirstTime.Should().BeNull();
         runner.GeldingFirstTime.Should().BeNull();
         runner.WindSurgery.Should().BeNull();
@@ -336,7 +336,6 @@ public class NextDataRaceCardReaderShould
 
         var view = new NextDataRaceCardReader().Read(html);
 
-        // Gowran carries first-time-gelding trues — a coverage edge the audit flagged (issue 005).
         view.RunnerByHorseId(7708580)!.GeldingFirstTime.Should().BeTrue();   // Rolltight
         view.RunnerByHorseId(8236301)!.GeldingFirstTime.Should().BeTrue();   // Hello Garda
         // A gelding flag that did not fire stays a clean false, not null.
@@ -351,7 +350,7 @@ public class NextDataRaceCardReaderShould
         var view = new NextDataRaceCardReader().Read(html);
 
         // windSurgery is carried as an integer in the JSON (Mojito Des Mottes -> 2), not a bool flag,
-        // so it is captured faithfully as int? rather than coerced (issue 005).
+        // so it is captured faithfully as int?.
         view.RunnerByHorseId(8330889)!.WindSurgery.Should().Be(2);
         // Runners with no wind op carry a clean null.
         view.Runners.Should().Contain(r => r.WindSurgery == null);

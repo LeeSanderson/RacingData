@@ -79,8 +79,8 @@ public record RaceResultRecord : RaceCardRecord
     // results already use 34-41 for post-race + forecast columns. Re-declare them with `new` so they
     // append after the forecast columns in the results layout. CsvHelper's auto-map binds the most-
     // derived property, so the hidden base index is ignored and no column is duplicated. [Optional]
-    // so results files written before these columns still load. Populated by the validate write-back
-    // (Issue 003), not the result parser — blank until then.
+    // so results files written before these columns still load. Populated by the validate write-back,
+    // not the result parser — blank until then.
     [Optional]
     [Index(42)]
     public new int? DaysSinceLastRun { get; set; }
@@ -110,7 +110,7 @@ public record RaceResultRecord : RaceCardRecord
     // The base RaceCardRecord places owner at indices 38-39, which the results layout already uses for
     // RaceTime / RaceTimeInSeconds. Re-declare with `new` so owner appends at the end of the results
     // layout instead of colliding (same shadowing pattern as DaysSinceLastRun..PrizeMoneyValue above).
-    // Owner is captured forward-only from the card (Issue 003) and is not part of the card->result
+    // Owner is captured forward-only from the card and is not part of the card->result
     // write-back, so these stay blank in the results layout.
     [Optional]
     [Index(49)]

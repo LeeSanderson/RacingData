@@ -32,7 +32,7 @@ class _NanTolerantAlgo(RegressorAlgorithm):
         return self._cap
 
 
-_REQUIRED_COL = REQUIRED_PREDICTORS[0]  # "DistanceInMeters"
+_REQUIRED_COL = REQUIRED_PREDICTORS[0]
 
 
 def _row(
@@ -52,7 +52,6 @@ def test_nan_in_optional_col_is_kept_for_fitting() -> None:
     rows = [_row(i) for i in range(7)]
     rows += [_row(i + 7, some_col=None) for i in range(3)]
     algo.fit(_rd(pd.DataFrame(rows)))
-    # captured fit_X is set by fit; test reaches the capturing stub's private attr
     assert len(algo._cap.fit_X) == 10  # pyright: ignore[reportPrivateUsage, reportArgumentType]
 
 
@@ -68,6 +67,5 @@ def test_fitted_predictors_includes_optional_col() -> None:
     algo = _NanTolerantAlgo()
     rows = [_row(i) for i in range(5)]
     algo.fit(_rd(pd.DataFrame(rows)))
-    # _fitted_predictors is the two-tier feature list set during fit
     assert "SomeCol" in algo._fitted_predictors  # pyright: ignore[reportPrivateUsage]
     assert _REQUIRED_COL in algo._fitted_predictors  # pyright: ignore[reportPrivateUsage]

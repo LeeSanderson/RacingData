@@ -241,7 +241,6 @@ def test_extract_horse_stats_carries_previous_race_ratings(
     assert "LastRaceRacingPostRating" in stats.columns
     assert "LastRaceTopSpeedRating" in stats.columns
     row = stats[stats["HorseId"] == td.SecretSecret.HorseId].iloc[0]
-    # Most-recent completed race for SecretSecret is Chelmsford (July 21).
     assert row["LastRaceOfficialRating"] == pytest.approx(92.0)
     assert row["LastRaceRacingPostRating"] == pytest.approx(110.0)
     assert row["LastRaceTopSpeedRating"] == pytest.approx(101.0)

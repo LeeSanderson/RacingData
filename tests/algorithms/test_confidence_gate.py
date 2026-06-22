@@ -3,8 +3,6 @@ import pytest
 
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
 
-# ── score() ──────────────────────────────────────────────────────────────────
-
 
 class TestScore:
     def test_top_prob_returns_highest(self) -> None:
@@ -35,9 +33,6 @@ class TestScore:
     def test_invalid_metric_raises(self) -> None:
         with pytest.raises(ValueError, match="metric must be"):
             ConfidenceGate("invalid")
-
-
-# ── calibrate() / keep() ─────────────────────────────────────────────────────
 
 
 class TestCalibrate:
@@ -80,5 +75,5 @@ class TestCalibrate:
     def test_keep_at_threshold_boundary(self) -> None:
         gate = ConfidenceGate("top_prob")
         gate.calibrate([0.5], coverage=1.0)
-        assert gate.keep(0.5)  # exactly at threshold → kept
-        assert not gate.keep(0.4)  # below threshold → abstain
+        assert gate.keep(0.5)
+        assert not gate.keep(0.4)

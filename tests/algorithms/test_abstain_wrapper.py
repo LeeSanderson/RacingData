@@ -172,24 +172,15 @@ def trained_wrapper() -> GatedWinClassifier:
     return algo
 
 
-# ── 1. fit ────────────────────────────────────────────────────────────────────
-
-
 def test_fit_completes_without_error() -> None:
     algo = GatedWinClassifier(max_horses=10)
     algo.fit(_rd(_make_train_df()))
-
-
-# ── 2. gate calibrated after fit ─────────────────────────────────────────────
 
 
 def test_confidence_gate_calibrated_after_fit() -> None:
     algo = GatedWinClassifier(max_horses=10, coverage=0.7)
     algo.fit(_rd(_make_train_df()))
     assert algo.get_confidence_gate()._calib_scores  # pyright: ignore[reportPrivateUsage]  # test inspects calibration state
-
-
-# ── 3. predict returns ["RaceId", "HorseId"] ─────────────────────────────────
 
 
 def test_predict_returns_raceId_horseId_columns(
@@ -200,9 +191,6 @@ def test_predict_returns_raceId_horseId_columns(
     jockey_stats = pd.DataFrame([_jockey_stat(h) for h in [101, 102, 103]])
     result = trained_wrapper.predict(_serve(races, horse_stats, jockey_stats))
     assert list(result.columns) == ["RaceId", "HorseId"]
-
-
-# ── 4. coverage=0 suppresses most/all predictions ────────────────────────────
 
 
 def test_lower_coverage_predicts_fewer_or_equal_races() -> None:
@@ -233,9 +221,6 @@ def test_lower_coverage_predicts_fewer_or_equal_races() -> None:
     assert len(tight_preds) <= len(full_preds)
 
 
-# ── 5. predict_field_unfiltered >= predict_field ─────────────────────────────
-
-
 def test_predict_field_unfiltered_has_at_least_as_many_rows_as_filtered(
     trained_wrapper: GatedWinClassifier,
 ) -> None:
@@ -254,17 +239,11 @@ def test_predict_field_unfiltered_has_at_least_as_many_rows_as_filtered(
     assert len(unfiltered) >= len(filtered)
 
 
-# ── 6. registered in ALGORITHMS list ─────────────────────────────────────────
-
-
 def test_registered_in_algorithms_list() -> None:
     from race_analytics.algorithms import ALGORITHMS
 
     types = [type(a).__name__ for a in ALGORITHMS]
     assert "GatedWinClassifier" in types
-
-
-# ── 7. Rules gate: sprint races excluded from predict_field ───────────────────
 
 
 def test_sprint_race_excluded_from_predict_field(
@@ -284,9 +263,6 @@ def test_sprint_race_excluded_from_predict_field(
     assert 99 not in result["RaceId"].values
 
 
-# ── 8. Rules gate: Class 6 races excluded from predict_field ─────────────────
-
-
 def test_class6_race_excluded_from_predict_field(
     trained_wrapper: GatedWinClassifier,
 ) -> None:
@@ -300,9 +276,6 @@ def test_class6_race_excluded_from_predict_field(
 
     result = trained_wrapper.predict_field(_serve(races, horse_stats, jockey_stats))
     assert 99 not in result["RaceId"].values
-
-
-# ── 9. predict_field_unfiltered: rules gate still active ─────────────────────
 
 
 def test_sprint_race_excluded_from_predict_field_unfiltered(

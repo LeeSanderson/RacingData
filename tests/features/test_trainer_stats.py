@@ -123,7 +123,5 @@ def test_incremental_processing_across_days(three_day_df: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(three_day_df)
     day1 = _smith_on(three_day_df, td.Ballinrobe20thAt1515)
     day3 = _smith_on(three_day_df, td.Nottingham22ndAt1815)
-    assert day1["TrainerNumberOfPriorRaces"] == pytest.approx(
-        1.0
-    )  # default (no history)
-    assert day3["TrainerNumberOfPriorRaces"] == 2  # 2 prior races
+    assert day1["TrainerNumberOfPriorRaces"] == pytest.approx(1.0)
+    assert day3["TrainerNumberOfPriorRaces"] == 2

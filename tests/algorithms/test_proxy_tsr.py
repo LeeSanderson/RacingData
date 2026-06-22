@@ -67,17 +67,11 @@ def basic_train_df() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ── 1. fit completes on mixed data ────────────────────────────────────────────
-
-
 def test_fit_completes_on_mixed_labelled_and_unlabelled_data(
     basic_train_df: pd.DataFrame,
 ) -> None:
     model = ProxyTSRModel()
     model.fit(basic_train_df)  # must not raise
-
-
-# ── 2. compute_horse_proxy_tsr returns correct columns ───────────────────────
 
 
 def test_compute_horse_proxy_tsr_returns_required_columns(
@@ -89,9 +83,6 @@ def test_compute_horse_proxy_tsr_returns_required_columns(
 
     assert list(result.columns) == ["HorseId", "LastProxyTSR"]
     assert result["HorseId"].nunique() == len(result)  # one row per horse
-
-
-# ── 5. LastProxyTSR comes from most recent race ───────────────────────────────
 
 
 def test_last_proxy_tsr_reflects_most_recent_race() -> None:
@@ -119,9 +110,6 @@ def test_last_proxy_tsr_reflects_most_recent_race() -> None:
     assert abs(horse1_r["LastProxyTSR"] - last) < 1e-6
 
 
-# ── 5b. As-of-date proxy depends only on a horse's PRIOR races ───────────────
-
-
 def test_as_of_proxy_ignores_future_races(basic_train_df: pd.DataFrame) -> None:
     """A training row's proxy must come only from that horse's earlier races, so
     adding a later (future) race cannot change an earlier row's proxy."""
@@ -146,9 +134,6 @@ def test_as_of_proxy_ignores_future_races(basic_train_df: pd.DataFrame) -> None:
     assert pd.isna(proxy_two.loc[0])
 
 
-# ── 6. Unseen CourseName does not raise ───────────────────────────────────────
-
-
 def test_unseen_course_name_does_not_raise(basic_train_df: pd.DataFrame) -> None:
     model = ProxyTSRModel()
     model.fit(basic_train_df)
@@ -164,9 +149,6 @@ def test_unseen_course_name_does_not_raise(basic_train_df: pd.DataFrame) -> None
     assert len(result) > 0
 
 
-# ── 7. fit raises ValueError when no labelled rows ────────────────────────────
-
-
 def test_fit_raises_when_no_labelled_rows() -> None:
     rows = [
         _row(1, 101, D1, tsr=None),
@@ -176,15 +158,9 @@ def test_fit_raises_when_no_labelled_rows() -> None:
         ProxyTSRModel().fit(pd.DataFrame(rows))
 
 
-# ── 8. tune completes without error ───────────────────────────────────────────
-
-
 def test_tune_completes_without_error(basic_train_df: pd.DataFrame) -> None:
     model = ProxyTSRModel()
     model.tune(basic_train_df, n_iter=2, cv=2)  # must not raise
-
-
-# ── 9. fit works correctly after tune ────────────────────────────────────────
 
 
 def test_fit_works_after_tune(basic_train_df: pd.DataFrame) -> None:
@@ -194,10 +170,7 @@ def test_fit_works_after_tune(basic_train_df: pd.DataFrame) -> None:
     result = model.compute_horse_proxy_tsr(basic_train_df)
 
     assert list(result.columns) == ["HorseId", "LastProxyTSR"]
-    assert len(result) == 3  # 3 horses in basic_train_df
-
-
-# ── 10. tune silently skips when data is too small ───────────────────────────
+    assert len(result) == 3
 
 
 def test_tune_skips_gracefully_on_insufficient_data() -> None:

@@ -67,7 +67,6 @@ def test_each_race_is_normalized_independently() -> None:
     for race_id in (1, 2):
         race = result[result["RaceId"] == race_id]
         assert race["MarketProb"].sum() == pytest.approx(1.0)
-    # Race 2 implied [0.5, 0.25, 0.25] sums to 1.0 already -> unchanged.
     race2 = result[result["RaceId"] == 2]["MarketProb"].tolist()
     assert race2 == pytest.approx([0.5, 0.25, 0.25])
 

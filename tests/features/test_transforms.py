@@ -31,8 +31,6 @@ from race_analytics.features.transforms import (
     surface_categories,
 )
 
-# --- encode_surfaces ---
-
 
 @pytest.fixture
 def surface_dataframe() -> pd.DataFrame:
@@ -40,15 +38,9 @@ def surface_dataframe() -> pd.DataFrame:
         1, "Test", 2, "Test Course", td.dt("01/01/2021 12:00:00"), "Unknown"
     )
     data = [
-        td.RaceResult.new(
-            td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown
-        ),  # Turf
-        td.RaceResult.new(
-            td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown
-        ),  # AllWeather
-        td.RaceResult.new(
-            td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown
-        ),  # Dirt
+        td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
+        td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),
+        td.RaceResult.new(td.Wolverhampton24thAt1300, td.SecretSecret, td.PaulTown),
         race_with_unknown_surface,
     ]
     return pd.DataFrame(data)
@@ -73,9 +65,6 @@ def test_encode_surfaces_has_expected_values(surface_dataframe: pd.DataFrame) ->
 def test_encode_surfaces_drops_unknown_surface(surface_dataframe: pd.DataFrame) -> None:
     result = encode_surfaces(surface_dataframe)
     assert "Surface_Unknown" not in result.columns
-
-
-# --- encode_going ---
 
 
 @pytest.fixture
@@ -151,9 +140,6 @@ def test_encode_going_defaults_empty_to_good():
             assert result.iloc[0][col] == 0.0
 
 
-# --- encode_race_type ---
-
-
 @pytest.fixture
 def race_type_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
@@ -185,9 +171,6 @@ def test_encode_race_type_unknown_produces_all_zeros():
     for col in race_type_categories:
         assert col in result.columns
         assert result.iloc[0][col] == 0.0
-
-
-# --- calculate_speed ---
 
 
 @pytest.fixture
@@ -226,9 +209,6 @@ def test_calculate_speed_preserves_exactly_20(speed_dataframe: pd.DataFrame) -> 
     assert result.iloc[2]["Speed"] == pytest.approx(20.0)
 
 
-# --- clean_weight ---
-
-
 @pytest.fixture
 def weight_dataframe() -> pd.DataFrame:
     return pd.DataFrame({"WeightInPounds": [126.0, 9.0, 0.0, 130.0, 10.0]})
@@ -249,9 +229,6 @@ def test_clean_weight_preserves_valid_weights(weight_dataframe: pd.DataFrame) ->
 def test_clean_weight_preserves_boundary_value(weight_dataframe: pd.DataFrame) -> None:
     result = clean_weight(weight_dataframe)
     assert result.iloc[4]["WeightInPounds"] == 10.0
-
-
-# --- calculate_horse_count ---
 
 
 @pytest.fixture
@@ -295,9 +272,6 @@ def test_calculate_horse_count_preserves_row_count(
     assert len(result) == len(horse_count_dataframe)
 
 
-# --- calculate_weight_change ---
-
-
 @pytest.fixture
 def weight_change_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
@@ -330,9 +304,6 @@ def test_calculate_weight_change_is_nan_when_last_weight_is_nan(
     assert pd.isna(result.iloc[2]["WeightChange"])
 
 
-# --- calculate_distance_change ---
-
-
 @pytest.fixture
 def distance_change_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
@@ -363,9 +334,6 @@ def test_calculate_distance_change_is_nan_when_last_distance_is_nan(
 ) -> None:
     result = calculate_distance_change(distance_change_dataframe)
     assert pd.isna(result.iloc[2]["DistanceChange"])
-
-
-# --- calculate_surface_switch ---
 
 
 @pytest.fixture
@@ -413,9 +381,6 @@ def test_calculate_surface_switch_is_nan_when_no_prior_race(
 ) -> None:
     result = calculate_surface_switch(surface_switch_dataframe)
     assert pd.isna(result.iloc[3]["SurfaceSwitch"])
-
-
-# --- calculate_code_switch ---
 
 
 @pytest.fixture
@@ -479,9 +444,6 @@ def test_calculate_code_switch_is_nan_when_no_prior_race(
     assert pd.isna(result.iloc[4]["CodeSwitch"])
 
 
-# --- calculate_race_class ---
-
-
 def test_calculate_race_class_numeric_class_is_encoded_as_float():
     df = pd.DataFrame({"Class": ["3"]})
     result = calculate_race_class(df)
@@ -515,9 +477,6 @@ def test_calculate_race_class_missing_column_gives_nan():
     assert pd.isna(result.iloc[0]["RaceClass"])
 
 
-# --- calculate_age_features ---
-
-
 def test_calculate_age_features_adds_relage_column():
     df = pd.DataFrame({"RaceId": [1, 1], "Age": [3, 5]})
     result = calculate_age_features(df)
@@ -547,9 +506,6 @@ def test_calculate_age_features_missing_column_gives_nan():
     df = pd.DataFrame({"RaceId": [1, 2], "Other": [3, 4]})
     result = calculate_age_features(df)
     assert pd.isna(result.iloc[0]["RelAge"])
-
-
-# --- calculate_draw_features ---
 
 
 @pytest.fixture
@@ -605,9 +561,6 @@ def test_calculate_draw_features_missing_stall_column_gives_nan():
     assert pd.isna(result.iloc[0]["RelDraw"])
 
 
-# --- encode_pattern ---
-
-
 def test_encode_pattern_group1_is_encoded():
     df = pd.DataFrame({"Pattern": ["Group 1", "G1", "Grade 1"]})
     result = encode_pattern(df)
@@ -644,9 +597,6 @@ def test_encode_pattern_missing_column_all_zeros():
         assert result.iloc[0][col] == pytest.approx(0.0)
 
 
-# --- calculate_is_handicap ---
-
-
 def test_calculate_is_handicap_non_empty_gives_one():
     df = pd.DataFrame({"RatingBand": ["0-70", "71-90"]})
     result = calculate_is_handicap(df)
@@ -672,9 +622,6 @@ def test_calculate_is_handicap_missing_column_gives_nan():
     assert pd.isna(result.iloc[0]["IsHandicap"])
 
 
-# --- encode_age_band ---
-
-
 def test_encode_age_band_2yo_is_encoded():
     df = pd.DataFrame({"AgeBand": ["2yo"]})
     result = encode_age_band(df)
@@ -696,9 +643,6 @@ def test_encode_age_band_all_categories_present():
         assert col in result.columns
 
 
-# --- encode_sex_restriction ---
-
-
 def test_encode_sex_restriction_fillies_is_encoded():
     df = pd.DataFrame({"SexRestriction": ["F", "Fillies"]})
     result = encode_sex_restriction(df)
@@ -718,9 +662,6 @@ def test_encode_sex_restriction_all_categories_present():
     result = encode_sex_restriction(df)
     for col in sex_restriction_categories:
         assert col in result.columns
-
-
-# --- encode_headgear ---
 
 
 def test_encode_headgear_b1_sets_blinkers_and_first_time():
@@ -776,9 +717,6 @@ def test_encode_headgear_all_columns_present():
         assert col in result.columns
 
 
-# --- calculate_market_prob ---
-
-
 def test_calculate_market_prob_adds_dense_column_on_card_frame() -> None:
     # A live card carries the morning forecast in DecimalOdds and has no
     # ForecastDecimalOdds column at all. The canonical-chain transform must still
@@ -802,16 +740,14 @@ def test_calculate_market_prob_adds_dense_column_on_card_frame() -> None:
 
 
 def test_calculate_market_prob_on_results_frame_prefers_forecast() -> None:
-    # A Results-shaped frame carries BOTH the SP (DecimalOdds) and the forward-merged
-    # forecast (ForecastDecimalOdds). The transform must resolve forecast-when-present
-    # and fall back to SP otherwise, then normalize per race — exactly the rule the
-    # harness training path materializes (PRD Testing Decisions: Results-shaped frame).
+    # A frame carrying both SP (DecimalOdds) and forecast (ForecastDecimalOdds) must
+    # resolve forecast-when-present, fall back to SP otherwise, then normalize per race.
     results = pd.DataFrame(
         {
             "RaceId": [1, 1],
             "HorseId": [10, 11],
-            "ForecastDecimalOdds": [2.0, float("nan")],  # B has no forecast
-            "DecimalOdds": [3.0, 4.0],  # SP fallback
+            "ForecastDecimalOdds": [2.0, float("nan")],
+            "DecimalOdds": [3.0, 4.0],
         }
     )
     result = calculate_market_prob(results)

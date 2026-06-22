@@ -143,7 +143,6 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     algorithm never re-implements it.
     """
 
-    # ── convention knobs (override by class assignment) ──
     label_col: ClassVar[str] = "Wins"
     score_col: ClassVar[str] = "WinProbability"
     return_full_field: ClassVar[bool] = True
@@ -153,7 +152,6 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
         super().__init__(max_horses)
         self._feature_cols: list[str] = []
 
-    # ── variation-point hooks (identity / None / not-implemented defaults) ──
     def _prepare_training(self, data: RaceData) -> RaceData:
         return data
 
@@ -174,7 +172,6 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
     def _score(self, X: pd.DataFrame) -> np.ndarray:
         raise NotImplementedError("engine subclasses must implement _score")
 
-    # ── the one training data-path ──
     def fit(self, data: RaceData) -> None:
         data = self._prepare_training(data)
         self._feature_cols = self._select_features(data)
@@ -185,7 +182,6 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
             self._sample_weight(train.frame),
         )
 
-    # ── the one serving data-path ──
     def predict_field(self, data: RaceData) -> pd.DataFrame:
         if not self._feature_cols:
             return self._empty()
@@ -222,7 +218,6 @@ class FieldPredictorBaseAlgorithm(BaseAlgorithm):
                 ].transform("mean")
         return replace(data, frame=frame)
 
-    # ── shared helpers (implemented once) ──
     def _feature_universe(self) -> list[str]:
         extra = list(self.extra_nan_tolerant_features)
         rel_extra = [f"Rel{c}" for c in extra]

@@ -176,7 +176,6 @@ def test_flat_model_available_with_sufficient_flat_races() -> None:
     algo = SplitDisciplineWinClassifier(max_horses=10)
     algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))
 
-    # availability flags are set during fit (private attrs)
     assert algo._flat_available  # pyright: ignore[reportPrivateUsage]
     assert algo._jumps_available  # pyright: ignore[reportPrivateUsage]
 
@@ -244,16 +243,13 @@ def _race_data(card: pd.DataFrame, as_of: datetime = D1) -> RaceData:
     )
 
 
-# ── RaceData contract: fit/predict_field take a RaceData ───────────────────────
-
-
 def test_gated_split_discipline_fit_does_not_raise() -> None:
     """GatedClassifier feeds its inner a RaceData; SplitDiscipline must accept it.
     Regression for the AttributeError introduced when the gate moved to RaceData."""
     from race_analytics.algorithms import GatedSplitDisciplineWinClassifier
 
     algo = GatedSplitDisciplineWinClassifier(max_horses=10)
-    algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))  # must not raise
+    algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))
 
     gate = algo.get_confidence_gate()
     assert (
@@ -272,7 +268,6 @@ def test_fit_and_predict_field_accept_racedata() -> None:
         _make_train_df(110, 110), max_horses=10
     )
     algo.fit(train_data)
-    # availability flags set during fit (private attrs)
     assert algo._flat_available and algo._jumps_available  # pyright: ignore[reportPrivateUsage]
 
     card = pd.DataFrame(
@@ -320,7 +315,6 @@ def test_inner_class_param_accepts_recency_weighted() -> None:
     )
     algo.fit(_rd(_make_train_df(n_flat=110, n_jumps=110)))
 
-    # the three inner models are private attrs assembled during construction/fit
     assert isinstance(algo._flat_model, RecencyWeightedWinClassifier)  # pyright: ignore[reportPrivateUsage]
     assert isinstance(algo._jumps_model, RecencyWeightedWinClassifier)  # pyright: ignore[reportPrivateUsage]
     assert isinstance(algo._fallback_model, RecencyWeightedWinClassifier)  # pyright: ignore[reportPrivateUsage]

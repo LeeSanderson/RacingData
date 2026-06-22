@@ -15,9 +15,6 @@ _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 _FURLONG_M = 201.168
 
 
-# ── Pure helpers ──────────────────────────────────────────────────────────────
-
-
 def _distance_band(meters: float) -> str:
     if pd.isna(meters):
         return "Unknown"
@@ -108,9 +105,6 @@ def _segment_table(picks: pd.DataFrame, col: str) -> pd.DataFrame:
     return agg[[col, "Bets", "WinRate", "ROI", "Coverage"]]  # pyright: ignore[reportReturnType]  # column-list index yields DataFrame
 
 
-# ── I/O helpers ───────────────────────────────────────────────────────────────
-
-
 def _load_results_extra(picks: pd.DataFrame) -> pd.DataFrame:
     """Join AgeBand, Pattern, RatingBand from the raw Results_*.csv files."""
     race_ids = set(picks["RaceId"].unique())
@@ -129,9 +123,6 @@ def _load_results_extra(picks: pd.DataFrame) -> pd.DataFrame:
         return picks
     extra = pd.concat(dfs).drop_duplicates("RaceId")
     return picks.merge(extra, on="RaceId", how="left")
-
-
-# ── Display helpers ────────────────────────────────────────────────────────────
 
 
 def _confidence_band(prob: float) -> str:
@@ -193,9 +184,6 @@ def _calibration_view(picks: pd.DataFrame) -> None:
             f"  {row['ProbBand']!s:<10} {int(row['Bets']):>6}"
             f" {row['AvgPredicted']:>14.3f} {row['ActualWinRate']:>14.3f}"
         )
-
-
-# ── Candidate rules ───────────────────────────────────────────────────────────
 
 
 def _candidate_rules(picks: pd.DataFrame) -> pd.DataFrame:
@@ -275,9 +263,6 @@ def _print_candidate_rules(rules: pd.DataFrame) -> None:
         )
 
 
-# ── Feature nominations ────────────────────────────────────────────────────────
-
-
 def _feature_nominations(
     picks: pd.DataFrame, segment_stats: dict[str, pd.DataFrame]
 ) -> list[str]:
@@ -296,9 +281,6 @@ def _feature_nominations(
             )
     noms.sort(key=lambda x: x[0])
     return [msg for _, msg in noms]
-
-
-# ── Main entry point ──────────────────────────────────────────────────────────
 
 
 def analyse(eval_csv_path: str) -> None:

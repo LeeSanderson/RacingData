@@ -7,8 +7,7 @@ from race_analytics.features.pipeline import FeaturePipeline
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(_SCRIPTS_DIR)), "Data")
 
-# Limit to the current month plus the previous 6 months. Loading the full
-# history is unnecessary for feature building and is much slower.
+# Loading the full history is unnecessary for feature building and is much slower.
 _TRAINING_MONTHS = 7
 
 

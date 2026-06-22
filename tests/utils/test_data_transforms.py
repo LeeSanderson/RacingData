@@ -270,9 +270,6 @@ def test_encode_going_defaults_empty_going_to_good() -> None:
             assert result.iloc[0][col] == 0.0, f"Empty going should leave {col} = 0.0"
 
 
-# --- calculate_speed ---
-
-
 @pytest.fixture
 def speed_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
@@ -311,9 +308,6 @@ def test_calculate_speed_preserves_exactly_20(speed_dataframe: pd.DataFrame) -> 
     assert result.iloc[2]["Speed"] == pytest.approx(20.0)
 
 
-# --- clean_weight ---
-
-
 @pytest.fixture
 def weight_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
@@ -339,9 +333,6 @@ def test_clean_weight_preserves_boundary_value(weight_dataframe: pd.DataFrame) -
     result = clean_weight(weight_dataframe)
     # Exactly 10 is valid (condition is < 10)
     assert result.iloc[4]["WeightInPounds"] == 10.0
-
-
-# --- calculate_horse_count ---
 
 
 @pytest.fixture
@@ -385,9 +376,6 @@ def test_calculate_horse_count_preserves_row_count(
     assert len(result) == len(horse_count_dataframe)
 
 
-# --- calculate_weight_change ---
-
-
 @pytest.fixture
 def weight_change_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
@@ -418,9 +406,6 @@ def test_calculate_weight_change_is_nan_when_last_race_weight_is_nan(
 ) -> None:
     result = calculate_weight_change(weight_change_dataframe)
     assert pd.isna(result.iloc[2]["WeightChange"])
-
-
-# --- calculate_distance_change ---
 
 
 @pytest.fixture

@@ -225,7 +225,7 @@ public sealed class NextDataRaceCardReader
         var forecastFractional = horseId.HasValue && forecastOdds.TryGetValue(horseId.Value, out var desc) ? desc : null;
 
         // A claiming jockey's allowance is both folded into the rendered jockey name (for DOM fidelity)
-        // and captured in its own column (issue 005), so it is read once here.
+        // and captured in its own column, so it is read once here.
         var jockeyAllowanceLbs = fields.NumberOrNull("weightAllowanceLbs");
 
         return new NextDataRunner(

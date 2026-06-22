@@ -21,7 +21,6 @@ public class HttpClientHtmlLoader(IHttpClientFactory httpClientFactory) : IHtmlL
             {
                 if (attempt < maxAttempts)
                 {
-                    // Retry after delay
                     await Task.Delay(delayMilliseconds);
                 }
                 else

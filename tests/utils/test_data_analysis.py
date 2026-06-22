@@ -13,10 +13,6 @@ from race_analytics.features.transforms import (
     encode_surfaces,
 )
 
-# ================================================================
-# calculateHorsesPerRace
-# ================================================================
-
 
 def test_calculateHorsesPerRace():
     data = [
@@ -37,11 +33,6 @@ def test_calculateHorsesPerRace():
     assert result["HorseCount"].tolist() == expected_counts
 
 
-# ================================================================
-# CalculateRacesWithKnownHorsesAndJockeys
-# ================================================================
-
-
 def test_first_day_races_are_never_known():
     """All races on the first day have no history, so KnownHorseAndJockey must be False."""
     data = [
@@ -56,10 +47,8 @@ def test_first_day_races_are_never_known():
 def test_race_with_all_known_horses_and_jockeys_is_marked_known():
     """A race where every horse and jockey appeared in a prior race is marked True."""
     data = [
-        # Day 1: establish history for SecretSecret/PaulTown and ComeSeptember/SimonTorrens
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.ComeSeptember, td.SimonTorrens),
-        # Day 2: same horses and jockeys → all known
         td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.SimonTorrens),
         td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown),
     ]
@@ -72,9 +61,7 @@ def test_race_with_all_known_horses_and_jockeys_is_marked_known():
 def test_race_with_unknown_horse_is_not_marked_known():
     """Even if all jockeys are known, one unknown horse makes the whole race False."""
     data = [
-        # Day 1: only PaulTown and SecretSecret seen
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
-        # Day 2: LaylaDaffodil is a new horse, so the race is unknown
         td.RaceResult.new(td.Chelmsford21stAt1805, td.LaylaDaffodil, td.PaulTown),
         td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.SimonTorrens),
     ]
@@ -87,10 +74,8 @@ def test_race_with_unknown_horse_is_not_marked_known():
 def test_race_with_unknown_jockey_is_not_marked_known():
     """Even if all horses are known, one unknown jockey makes the whole race False."""
     data = [
-        # Day 1: only SecretSecret and ComeSeptember seen, with PaulTown and SimonTorrens
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.ComeSeptember, td.SimonTorrens),
-        # Day 2: ShaneFitzgerald is a new jockey
         td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.ShaneFitzgerald),
         td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown),
     ]
@@ -103,11 +88,8 @@ def test_race_with_unknown_jockey_is_not_marked_known():
 def test_no_races_on_intermediate_day_does_not_raise():
     """Base class skips update() on gap days (no races), so subclasses never receive an empty slice."""
     data = [
-        # July 20: establish history
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.ComeSeptember, td.SimonTorrens),
-        # July 21: no races (gap day) — iterator visits it with empty daily_slice
-        # July 22: same horses and jockeys → all known
         td.RaceResult.new(td.Nottingham22ndAt1815, td.SecretSecret, td.PaulTown),
         td.RaceResult.new(td.Nottingham22ndAt1815, td.ComeSeptember, td.SimonTorrens),
     ]
@@ -137,16 +119,10 @@ def test_known_across_three_days():
     assert df["KnownHorseAndJockey"].tolist() == expected_known
 
 
-# ================================================================
-# CalculateHorsesStats
-# ================================================================
-
-
 @pytest.fixture
 def horse_stats_dataframe() -> pd.DataFrame:
     """Two-day dataset. Day 1 = Ballinrobe (July 20), Day 2 = Chelmsford (July 21)."""
     data = [
-        # Day 1: two horses, SecretSecret finishes 2nd
         td.RaceResult.new(
             td.Ballinrobe20thAt1515,
             td.SecretSecret,
@@ -168,7 +144,6 @@ def horse_stats_dataframe() -> pd.DataFrame:
             Going="Soft",
             FinishingPosition=1,
         ),
-        # Day 2: SecretSecret runs again
         td.RaceResult.new(
             td.Chelmsford21stAt1805,
             td.SecretSecret,
@@ -240,7 +215,6 @@ def test_horse_stats_avg_relative_finishing_position(
         (horse_stats_dataframe["HorseId"] == td.SecretSecret.HorseId)
         & (horse_stats_dataframe["RaceId"] == td.Chelmsford21stAt1805.RaceId)
     ].iloc[0]
-    # SecretSecret finished 2nd of 2 on day 1 → relative = 2/2 = 1.0
     assert secret_day2["LastRaceAvgRelFinishingPosition"] == pytest.approx(1.0)
 
 
@@ -276,7 +250,6 @@ def test_horse_stats_encoded_race_type_columns(
         (horse_stats_dataframe["HorseId"] == td.SecretSecret.HorseId)
         & (horse_stats_dataframe["RaceId"] == td.Chelmsford21stAt1805.RaceId)
     ].iloc[0]
-    # Ballinrobe is a Hurdle race
     assert secret_day2["LastRaceRaceType_Hurdle"] == 1.0
     assert secret_day2["LastRaceRaceType_Flat"] == 0.0
 
@@ -303,9 +276,7 @@ def test_horse_stats_no_error_when_new_horse_races_alongside_known_horse():
     The fix is to initialise the column as float (1.0) so NaN is accepted.
     """
     data = [
-        # Day 1: SecretSecret establishes history
         td.RaceResult.new(td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown),
-        # Day 2: SecretSecret (known) + ComeSeptember (brand new, no prior history)
         td.RaceResult.new(td.Chelmsford21stAt1805, td.SecretSecret, td.PaulTown),
         td.RaceResult.new(td.Chelmsford21stAt1805, td.ComeSeptember, td.SimonTorrens),
     ]
@@ -314,18 +285,12 @@ def test_horse_stats_no_error_when_new_horse_races_alongside_known_horse():
     df = encode_surfaces(df)
     df = encode_going(df)
     df = encode_race_type(df)
-    # Should NOT raise TypeError: Invalid value '...' for dtype 'int64'
     CalculateHorsesStats().process_race_data(df)
     come_day2 = df[
         (df["HorseId"] == td.ComeSeptember.HorseId)
         & (df["RaceId"] == td.Chelmsford21stAt1805.RaceId)
     ].iloc[0]
     assert pd.isna(come_day2["NumberOfPriorRaces"])
-
-
-# ================================================================
-# CalculateJockeyStats
-# ================================================================
 
 
 @pytest.fixture
@@ -337,7 +302,6 @@ def jockey_stats_dataframe() -> pd.DataFrame:
       Day 3 (Nottingham July 22):  any pos   → history: day 1 + day 2
     """
     data = [
-        # Day 1
         td.RaceResult.new(
             td.Ballinrobe20thAt1515, td.SecretSecret, td.PaulTown, FinishingPosition=2
         ),
@@ -347,7 +311,6 @@ def jockey_stats_dataframe() -> pd.DataFrame:
             td.PhilipDonovan,
             FinishingPosition=1,
         ),
-        # Day 2
         td.RaceResult.new(
             td.Chelmsford21stAt1805, td.ComeSeptember, td.PaulTown, FinishingPosition=1
         ),
@@ -357,7 +320,6 @@ def jockey_stats_dataframe() -> pd.DataFrame:
             td.ShaneFitzgerald,
             FinishingPosition=2,
         ),
-        # Day 3
         td.RaceResult.new(
             td.Nottingham22ndAt1815, td.SelfAssessed, td.PaulTown, FinishingPosition=1
         ),
@@ -405,7 +367,6 @@ def test_jockey_stats_days_since_last_race(
     jockey_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateJockeyStats().process_race_data(jockey_stats_dataframe)
-    # Day 2 history is day 1 (July 20); day 2 is July 21 → 1 day
     row = _paul_town_on(jockey_stats_dataframe, td.Chelmsford21stAt1805)
     assert row["DaysSinceJockeyLastRaced"] == 1
 
@@ -414,7 +375,6 @@ def test_jockey_stats_win_percentage_no_wins(
     jockey_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateJockeyStats().process_race_data(jockey_stats_dataframe)
-    # Day 2: history = day 1 only, where PaulTown finished 2nd → 0 wins
     row = _paul_town_on(jockey_stats_dataframe, td.Chelmsford21stAt1805)
     assert row["JockeyWinPercentage"] == pytest.approx(0.0)
 
@@ -423,14 +383,12 @@ def test_jockey_stats_win_percentage_with_wins(
     jockey_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateJockeyStats().process_race_data(jockey_stats_dataframe)
-    # Day 3: history = day 1 (2nd) + day 2 (1st) → 1 win of 2 races = 0.5
     row = _paul_town_on(jockey_stats_dataframe, td.Nottingham22ndAt1815)
     assert row["JockeyWinPercentage"] == pytest.approx(0.5)
 
 
 def test_jockey_stats_top3_percentage(jockey_stats_dataframe: pd.DataFrame) -> None:
     CalculateJockeyStats().process_race_data(jockey_stats_dataframe)
-    # Day 3: day 1 = 2nd (< 4), day 2 = 1st (< 4) → 2/2 = 1.0
     row = _paul_town_on(jockey_stats_dataframe, td.Nottingham22ndAt1815)
     assert row["JockeyTop3Percentage"] == pytest.approx(1.0)
 
@@ -439,7 +397,6 @@ def test_jockey_stats_avg_relative_finishing_position(
     jockey_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateJockeyStats().process_race_data(jockey_stats_dataframe)
-    # Day 3: day 1 = 2nd of 2 (1.0), day 2 = 1st of 2 (0.5) → mean = 0.75
     row = _paul_town_on(jockey_stats_dataframe, td.Nottingham22ndAt1815)
     assert row["JockeyAvgRelFinishingPosition"] == pytest.approx(0.75)
 
@@ -448,14 +405,8 @@ def test_jockey_with_no_prior_history_keeps_default_prior_races(
     jockey_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateJockeyStats().process_race_data(jockey_stats_dataframe)
-    # Day 1: PaulTown has no history → JockeyNumberOfPriorRaces stays at the default 1.0
     row = _paul_town_on(jockey_stats_dataframe, td.Ballinrobe20thAt1515)
     assert row["JockeyNumberOfPriorRaces"] == pytest.approx(1.0)
-
-
-# ================================================================
-# CalculateHorsesStats — multi-race form features
-# ================================================================
 
 
 @pytest.fixture
@@ -468,7 +419,6 @@ def multi_race_horse_stats_dataframe() -> pd.DataFrame:
       Day 4 (Wolverhampton July 24): SecretSecret runs — predictions based on days 1-3
     """
     data = [
-        # Day 1
         td.RaceResult.new(
             td.Ballinrobe20thAt1515,
             td.SecretSecret,
@@ -483,7 +433,6 @@ def multi_race_horse_stats_dataframe() -> pd.DataFrame:
             FinishingPosition=1,
             Speed=13.5,
         ),
-        # Day 2
         td.RaceResult.new(
             td.Chelmsford21stAt1805,
             td.SecretSecret,
@@ -498,7 +447,6 @@ def multi_race_horse_stats_dataframe() -> pd.DataFrame:
             FinishingPosition=2,
             Speed=13.8,
         ),
-        # Day 3
         td.RaceResult.new(
             td.Nottingham22ndAt1815,
             td.SecretSecret,
@@ -520,7 +468,6 @@ def multi_race_horse_stats_dataframe() -> pd.DataFrame:
             FinishingPosition=3,
             Speed=14.0,
         ),
-        # Day 4
         td.RaceResult.new(
             td.Wolverhampton24thAt1300,
             td.SecretSecret,
@@ -555,7 +502,6 @@ def test_horse_stats_last3_avg_speed_with_3_prior_races(
 ) -> None:
     CalculateHorsesStats().process_race_data(multi_race_horse_stats_dataframe)
     row = _secret_on(multi_race_horse_stats_dataframe, td.Wolverhampton24thAt1300)
-    # Last 3 speeds: 15.0 (day3), 14.0 (day2), 13.0 (day1) → avg = 14.0
     assert row["Last3RaceAvgSpeed"] == pytest.approx(14.0)
 
 
@@ -564,7 +510,6 @@ def test_horse_stats_last3_speed_trend_positive_for_improving_form(
 ) -> None:
     CalculateHorsesStats().process_race_data(multi_race_horse_stats_dataframe)
     row = _secret_on(multi_race_horse_stats_dataframe, td.Wolverhampton24thAt1300)
-    # LastRaceSpeed=15.0, Last3RaceAvgSpeed=14.0 → trend = 1.0
     assert row["Last3RaceSpeedTrend"] == pytest.approx(1.0)
 
 
@@ -573,7 +518,6 @@ def test_horse_stats_last3_avg_rel_pos_with_3_prior_races(
 ) -> None:
     CalculateHorsesStats().process_race_data(multi_race_horse_stats_dataframe)
     row = _secret_on(multi_race_horse_stats_dataframe, td.Wolverhampton24thAt1300)
-    # Day3: 1st of 3 = 0.333, Day2: 1st of 2 = 0.5, Day1: 2nd of 2 = 1.0 → mean ≈ 0.611
     assert row["Last3AvgRelFinishingPosition"] == pytest.approx(
         (1 / 3 + 1 / 2 + 2 / 2) / 3, rel=1e-4
     )
@@ -583,17 +527,11 @@ def test_horse_stats_last3_features_are_nan_with_fewer_than_3_races(
     multi_race_horse_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateHorsesStats().process_race_data(multi_race_horse_stats_dataframe)
-    # Day 2: SecretSecret has only 1 prior race → all 3 features should be NaN
     row = _secret_on(multi_race_horse_stats_dataframe, td.Chelmsford21stAt1805)
     # pd.isna on a scalar Series element is typed as Series | NDArray by the stubs
     assert pd.isna(row["Last3RaceAvgSpeed"])  # pyright: ignore[reportGeneralTypeIssues]
     assert pd.isna(row["Last3RaceSpeedTrend"])  # pyright: ignore[reportGeneralTypeIssues]
     assert pd.isna(row["Last3AvgRelFinishingPosition"])  # pyright: ignore[reportGeneralTypeIssues]
-
-
-# ================================================================
-# CalculateTrainerStats
-# ================================================================
 
 
 @pytest.fixture
@@ -605,7 +543,6 @@ def trainer_stats_dataframe() -> pd.DataFrame:
       Day 3 (Nottingham July 22):  1st of 3  → history: day 1 + day 2
     """
     data = [
-        # Day 1
         td.RaceResult.new(
             td.Ballinrobe20thAt1515,
             td.SecretSecret,
@@ -620,7 +557,6 @@ def trainer_stats_dataframe() -> pd.DataFrame:
             FinishingPosition=1,
             trainer=td.TrainerJones,
         ),
-        # Day 2
         td.RaceResult.new(
             td.Chelmsford21stAt1805,
             td.ComeSeptember,
@@ -635,7 +571,6 @@ def trainer_stats_dataframe() -> pd.DataFrame:
             FinishingPosition=2,
             trainer=td.TrainerJones,
         ),
-        # Day 3
         td.RaceResult.new(
             td.Nottingham22ndAt1815,
             td.SelfAssessed,
@@ -689,7 +624,6 @@ def test_trainer_stats_win_percentage_no_wins(
     trainer_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateTrainerStats().process_race_data(trainer_stats_dataframe)
-    # Day 2: history = day 1 only (2nd) → 0 wins
     row = _trainer_smith_on(trainer_stats_dataframe, td.Chelmsford21stAt1805)
     assert row["TrainerWinPercentage"] == pytest.approx(0.0)
 
@@ -698,14 +632,12 @@ def test_trainer_stats_win_percentage_with_wins(
     trainer_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateTrainerStats().process_race_data(trainer_stats_dataframe)
-    # Day 3: day 1 (2nd) + day 2 (1st) → 1 win of 2 races = 0.5
     row = _trainer_smith_on(trainer_stats_dataframe, td.Nottingham22ndAt1815)
     assert row["TrainerWinPercentage"] == pytest.approx(0.5)
 
 
 def test_trainer_stats_top3_percentage(trainer_stats_dataframe: pd.DataFrame) -> None:
     CalculateTrainerStats().process_race_data(trainer_stats_dataframe)
-    # Day 3: day 1 (2nd < 4) + day 2 (1st < 4) → 2/2 = 1.0
     row = _trainer_smith_on(trainer_stats_dataframe, td.Nottingham22ndAt1815)
     assert row["TrainerTop3Percentage"] == pytest.approx(1.0)
 
@@ -714,7 +646,6 @@ def test_trainer_stats_avg_relative_finishing_position(
     trainer_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateTrainerStats().process_race_data(trainer_stats_dataframe)
-    # Day 3: day 1 = 2nd of 2 (1.0), day 2 = 1st of 2 (0.5) → mean = 0.75
     row = _trainer_smith_on(trainer_stats_dataframe, td.Nottingham22ndAt1815)
     assert row["TrainerAvgRelFinishingPosition"] == pytest.approx(0.75)
 
@@ -723,6 +654,5 @@ def test_trainer_with_no_prior_history_keeps_default_prior_races(
     trainer_stats_dataframe: pd.DataFrame,
 ) -> None:
     CalculateTrainerStats().process_race_data(trainer_stats_dataframe)
-    # Day 1: TrainerSmith has no history → TrainerNumberOfPriorRaces stays at default 1.0
     row = _trainer_smith_on(trainer_stats_dataframe, td.Ballinrobe20thAt1515)
     assert row["TrainerNumberOfPriorRaces"] == pytest.approx(1.0)

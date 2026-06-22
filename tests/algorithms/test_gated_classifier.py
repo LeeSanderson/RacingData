@@ -164,9 +164,6 @@ def trained_gated() -> GatedClassifier:
     return algo
 
 
-# ── 1. fit + predict_field returns expected columns ───────────────────────────
-
-
 def test_fit_predict_field_returns_expected_columns(
     trained_gated: GatedClassifier,
 ) -> None:
@@ -176,9 +173,6 @@ def test_fit_predict_field_returns_expected_columns(
     result = trained_gated.predict_field(_serve(races, horse_stats, jockey_stats))
     for col in ["RaceId", "HorseId", "WinProbability", "PredictedRank"]:
         assert col in result.columns, f"missing column: {col}"
-
-
-# ── 2. predict returns one row per race (rank 1 only) ─────────────────────────
 
 
 def test_predict_returns_one_row_per_race(trained_gated: GatedClassifier) -> None:
@@ -195,12 +189,9 @@ def test_predict_returns_one_row_per_race(trained_gated: GatedClassifier) -> Non
     assert result["RaceId"].nunique() == len(result)
 
 
-# ── 3. predict_field_unfiltered returns more rows than predict_field ──────────
-
-
 def test_predict_field_unfiltered_has_more_rows_than_predict_field():
     inner = WinClassifier(max_horses=10)
-    algo = GatedClassifier(inner, coverage=0.3)  # tight gate suppresses some races
+    algo = GatedClassifier(inner, coverage=0.3)
     algo.fit(_rd(_make_train_df(n_races=10)))
 
     races = pd.DataFrame(
@@ -220,16 +211,10 @@ def test_predict_field_unfiltered_has_more_rows_than_predict_field():
     assert len(unfiltered) >= len(filtered)
 
 
-# ── 4. no inheritance from inner class ───────────────────────────────────────
-
-
 def test_gated_classifier_does_not_inherit_from_inner():
     inner = WinClassifier(max_horses=10)
     algo = GatedClassifier(inner)
     assert not isinstance(algo, WinClassifier)
-
-
-# ── 5. gate is calibrated after fit ──────────────────────────────────────────
 
 
 def test_gate_calibrated_after_fit():
@@ -239,18 +224,12 @@ def test_gate_calibrated_after_fit():
     assert algo.get_confidence_gate()._calib_scores  # pyright: ignore[reportPrivateUsage]  # intentional internal-state assertion
 
 
-# ── 6. characterization: threshold matches the legacy round trip on the fixture ─
-
-
 def test_calibrated_threshold_matches_legacy_within_tolerance():
     algo = GatedClassifier(WinClassifier(max_horses=10), coverage=0.7)
     algo.fit(_rd(_make_train_df()))
     # Legacy (decompose -> four-frame re-encode) threshold pinned at 1/3 on this
     # uniform fixture (3 identical runners per race -> top_prob ~= 0.333).
     assert algo.get_confidence_gate().threshold == pytest.approx(0.33333334, abs=1e-2)
-
-
-# ── 9. calibration flows RaceData.as_of through to the gate ───────────────────
 
 
 class _AsOfScoringInner(FieldPredictorBaseAlgorithm):

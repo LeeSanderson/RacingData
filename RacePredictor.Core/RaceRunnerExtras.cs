@@ -1,14 +1,8 @@
 namespace RacePredictor.Core;
 
-// Per-runner "extras" captured forward-only from the racecard JSON island (Issue 005): first-time
-// flags, trainer current form, jockey allowance, new-trainer count, country of origin and the raw
-// Spotlight prose. Like Owner/Breeding these are JSON-only — null on the DOM-oracle reading and
-// excluded from cross-validation. Grouped as one value object so the new surface is cohesive rather
-// than nine loose RaceRunner properties.
-//
-// Bool flags are nullable: null = the flag is absent from the card, false = present but not set,
-// true = fired. WindSurgery and TrainerRtf are integers in the JSON (a wind-op indicator and a
-// trainer current-form snapshot), captured faithfully rather than coerced to bools.
+// Per-runner extras captured forward-only from the racecard JSON island; null on the DOM-oracle
+// reading and excluded from cross-validation. Bool flags are nullable: null = absent from the card,
+// false = present but not set, true = fired.
 public class RaceRunnerExtras
 {
     public RaceRunnerExtras(

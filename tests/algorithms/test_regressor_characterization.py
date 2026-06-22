@@ -160,9 +160,6 @@ def _fitted_algo(max_horses: int = 5) -> _CharacterizationRegressor:
     return algo
 
 
-# ── characterization: the pinned top-1 picks across merge/dropna/count gates ──
-
-
 def test_regressor_top1_picks_are_pinned() -> None:
     algo = _fitted_algo(max_horses=5)
 

@@ -12,10 +12,6 @@ from race_analytics.scripts.diagnostic import (
     _segment_table,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
 )
 
-# ================================================================
-# _distance_band
-# ================================================================
-
 
 def test_distance_band_under_6f() -> None:
     assert _distance_band(5 * 201.168) == "<6f"
@@ -43,11 +39,6 @@ def test_distance_band_16f_plus() -> None:
 
 def test_distance_band_na_returns_unknown() -> None:
     assert _distance_band(float("nan")) == "Unknown"
-
-
-# ================================================================
-# _field_size_band
-# ================================================================
 
 
 def test_field_size_band_small() -> None:
@@ -83,11 +74,6 @@ def test_field_size_band_boundaries() -> None:
 
 def test_field_size_band_na_returns_unknown() -> None:
     assert _field_size_band(float("nan")) == "Unknown"
-
-
-# ================================================================
-# _identify_picks
-# ================================================================
 
 
 def _race_df(rows: list[dict[str, Any]]) -> pd.DataFrame:
@@ -239,11 +225,6 @@ def test_identify_picks_one_pick_per_algo_per_race_per_fold() -> None:
     assert len(result) == 3  # (A,1,01), (B,1,01), (A,1,02)
 
 
-# ================================================================
-# _roi
-# ================================================================
-
-
 def _picks_df(rows: list[dict[str, Any]]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
@@ -285,11 +266,6 @@ def test_roi_mixed() -> None:
     )
     # profit = (4-1) + (-1) + (-1) = 1; roi = 1/3
     assert _roi(df) == pytest.approx(1 / 3)
-
-
-# ================================================================
-# _segment_table
-# ================================================================
 
 
 def _seg_picks():

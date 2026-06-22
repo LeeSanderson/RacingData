@@ -177,15 +177,9 @@ def trained_algo() -> ProxyTSRXGBoostAlgorithm:
     return algo
 
 
-# ── 1. fit completes ──────────────────────────────────────────────────────────
-
-
 def test_fit_completes_without_error() -> None:
     algo = ProxyTSRXGBoostAlgorithm(max_horses=10)
     algo.fit(_train())  # must not raise
-
-
-# ── 1b. feature set drops raw ratings, uses LastRace* + as-of proxy ───────────
 
 
 def test_feature_set_drops_raw_ratings_and_uses_lastrace_plus_proxy() -> None:
@@ -209,9 +203,6 @@ def test_feature_set_drops_raw_ratings_and_uses_lastrace_plus_proxy() -> None:
     assert "RelLastProxyTSR" in feats
 
 
-# ── 2. predict returns correct columns ───────────────────────────────────────
-
-
 def test_predict_returns_raceId_and_horseId_columns(
     trained_algo: ProxyTSRXGBoostAlgorithm,
 ) -> None:
@@ -222,9 +213,6 @@ def test_predict_returns_raceId_and_horseId_columns(
     result = trained_algo.predict(_serve(races, horse_stats, jockey_stats))
 
     assert list(result.columns) == ["RaceId", "HorseId"]
-
-
-# ── 3. predict returns one row per race ───────────────────────────────────────
 
 
 def test_predict_returns_one_row_per_race(
@@ -246,9 +234,6 @@ def test_predict_returns_one_row_per_race(
     assert result["RaceId"].nunique() == len(result)
 
 
-# ── 4. No TSR gating — predicts on races with no real TopSpeedRating ──────────
-
-
 def test_predict_includes_races_with_no_real_tsr(
     trained_algo: ProxyTSRXGBoostAlgorithm,
 ) -> None:
@@ -266,9 +251,6 @@ def test_predict_includes_races_with_no_real_tsr(
 
     # Both races should be predicted — no TSR gate
     assert 20 in result["RaceId"].values
-
-
-# ── 5. Algorithm is registered in the ALGORITHMS list ────────────────────────
 
 
 def test_algorithm_is_registered() -> None:

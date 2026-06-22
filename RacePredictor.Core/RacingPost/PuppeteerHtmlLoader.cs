@@ -36,7 +36,6 @@ public class PuppeteerHtmlLoader : IHtmlLoader
 
     private static async Task EnsureBrowserDownloaded()
     {
-        // We need to fetch it
         await BrowserFetcherSemaphore.WaitAsync();
         try
         {

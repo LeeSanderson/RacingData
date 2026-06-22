@@ -46,7 +46,7 @@ public class ValidateRaceCardPredictionsCommandHandler(
                 percentageGains);
 
             // Staked performance using the advised per-pick Stake; falls back to the flat-£1 figure above
-            // when no stakes are present (legacy file / no-bet day).
+            // when no stakes are present (no-bet day).
             var advisedStake = scores.Sum(x => x.Stake ?? 0);
             var stakeWeightedGains = StakeWeightedReturnPercentage(scores);
             Logger.LogInformation(
@@ -58,9 +58,7 @@ public class ValidateRaceCardPredictionsCommandHandler(
 
     // Runs before TodaysRaceCards.csv is overwritten: copies the morning racecard's pre-race data onto
     // matching (RaceId, HorseId) result rows. Forward-only and idempotent — each field is filled only
-    // when the card has it AND the result cell is still blank. Generalises the original forecast-odds-only
-    // merge: the forecast odds are now one field among several (forecast odds, the four base pre-race
-    // fields, and the three Card* ratings), all carried by this single card→result path.
+    // when the card has it AND the result cell is still blank.
     private async Task MergeCardDataIntoResults()
     {
         var cardFileName = Path.Combine(_dataFolder, "TodaysRaceCards.csv");
@@ -180,9 +178,7 @@ public class ValidateRaceCardPredictionsCommandHandler(
     private static bool StakeReturnedFor(ResultStatus resultStatus) =>
         resultStatus is ResultStatus.RaceVoid or ResultStatus.NonRunner;
 
-    // Stake-weighted return: (Σ stake·odds of winners + Σ returned stake [void/non-runner] − Σ stake of losers) / Σ stake.
-    // Degrades gracefully to the flat-£1-per-pick figure when no advised stakes are present (legacy file / no-bet day),
-    // rather than dividing by zero.
+    // Degrades gracefully to the flat-£1-per-pick figure when no advised stakes are present, rather than dividing by zero.
     public static double StakeWeightedReturnPercentage(IReadOnlyCollection<RaceCardPredictionScore> scores) =>
         scores.Sum(x => x.Stake ?? 0) > 0
             ? ReturnPercentage(scores, x => x.Stake ?? 0)

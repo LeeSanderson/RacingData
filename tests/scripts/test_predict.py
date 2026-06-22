@@ -8,10 +8,6 @@ import pytest
 from race_analytics.features.race_data import RaceData
 from race_analytics.scripts.predict import predict
 
-# ================================================================
-# Shared fake algorithms (FieldPredictor contract) and fixtures
-# ================================================================
-
 
 class _FakeAlgo:
     """FieldPredictor stub: one rank-1 pick per race with a fixed WinProbability."""
@@ -121,19 +117,9 @@ def data_dir(tmp_path: pathlib.Path) -> str:
     return str(tmp_path)
 
 
-# ================================================================
-# test 1 — output file is created
-# ================================================================
-
-
 def test_predict_writes_todayspredictions_csv(data_dir: str) -> None:
     predict(data_path=data_dir, algorithm=_FakeAlgo())
     assert os.path.exists(os.path.join(data_dir, "TodaysPredictions.csv"))
-
-
-# ================================================================
-# test 2 — output has correct columns (predict_field carries WinProbability)
-# ================================================================
 
 
 def test_predict_output_has_correct_columns(data_dir: str) -> None:
@@ -149,11 +135,6 @@ def test_predict_output_has_correct_columns(data_dir: str) -> None:
         "WinProbability",
         "Stake",
     ]
-
-
-# ================================================================
-# test 3 — output is sorted by CourseName then Off
-# ================================================================
 
 
 def test_predict_output_is_sorted_by_coursename_off(tmp_path: pathlib.Path) -> None:
@@ -217,11 +198,6 @@ def test_predict_output_is_sorted_by_coursename_off(tmp_path: pathlib.Path) -> N
     assert list(result["HorseName"]) == ["Gamma", "Beta", "Alpha"]
 
 
-# ================================================================
-# test 4 — empty winners → empty CSV with correct columns
-# ================================================================
-
-
 class _EmptyAlgo:
     max_horses = 99
 
@@ -254,11 +230,6 @@ def test_predict_empty_winners_writes_empty_csv(data_dir: str) -> None:
         "Stake",
     ]
     assert len(result) == 0
-
-
-# ================================================================
-# test 5 — trainer stats reach the serving RaceData (joined on TrainerId)
-# ================================================================
 
 
 class _ServeCapturingAlgo:
@@ -301,12 +272,7 @@ def test_predict_joins_trainer_stats_into_serving_data(data_dir: str) -> None:
     )  # joined on TrainerId via build_serving_from_stats
 
 
-# ================================================================
-# test 6 — the built card carries no rating columns (ratings come only
-#          from the per-horse stats join); predictions still produced
-# ================================================================
-
-
+# ratings reach the algorithms only through the stats join, never the card
 def test_predict_card_drops_rating_columns_and_still_predicts(
     tmp_path: pathlib.Path,
 ) -> None:
@@ -346,12 +312,7 @@ def test_predict_card_drops_rating_columns_and_still_predicts(
             f"rating column leaked into the serving data: {col}"
             f"rating column leaked into the serving data: {col}"
         )
-    assert len(result) == 1  # prediction still produced
-
-
-# ================================================================
-# Staking (issues/002) — a Stake column riding from the full field
-# ================================================================
+    assert len(result) == 1
 
 
 class _FullFieldAlgo:
@@ -465,7 +426,7 @@ def test_predict_no_value_race_retained_with_zero_stake(
     algo = _FullFieldAlgo(probs={401: 0.51, 501: 0.49})
     result = predict(data_path=str(tmp_path), algorithm=algo)
 
-    assert len(result[result["RaceId"] == 20]) == 1  # race retained, not dropped
+    assert len(result[result["RaceId"] == 20]) == 1
     winner = result[result["RaceId"] == 20].iloc[0]
     assert winner["HorseId"] == 401
     assert winner["Stake"] == 0.0

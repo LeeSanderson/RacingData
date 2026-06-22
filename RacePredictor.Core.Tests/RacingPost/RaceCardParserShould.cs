@@ -137,8 +137,7 @@ public class RaceCardParserShould
     [Fact]
     public async Task ParseGowranParkMaidenWithUnratedRunners()
     {
-        // Equivalent to the legacy Windsor Arabian-races test: a card whose runners do not yet have
-        // an official rating. Every horse in a maiden is unrated, so OR must be null for all.
+        // Every horse in a maiden is unrated, so OR must be null for all.
         var actualRaceParseResult = await GetRaceCard("racecard_gowran_park_20260520_1820_unrated.html");
 
         actualRaceParseResult.Runners.Length.Should().Be(15);

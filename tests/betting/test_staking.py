@@ -145,12 +145,11 @@ def test_stakes_are_rounded_to_two_decimal_places() -> None:
 
 
 def test_default_bankroll_is_calibrated_to_a_roughly_one_pound_typical_stake() -> None:
-    # issues/005: BANKROLL is calibrated from the diagnostic backtest's stake distribution
-    # so the typical advised stake lands near the familiar £1 unit (PRD user story 5), not
-    # the sub-£1 placeholder the provisional BANKROLL=25 produced. A representative value
-    # bet (ModelProb 0.52 vs de-overrounded MarketProb 0.48 -> edge 0.04, gross odds 2.0,
+    # BANKROLL is calibrated from the diagnostic backtest's stake distribution so the
+    # typical advised stake lands near the familiar £1 unit. A representative value bet
+    # (ModelProb 0.52 vs de-overrounded MarketProb 0.48 -> edge 0.04, gross odds 2.0,
     # f* = (0.52·2 - 1)/(2 - 1) = 0.04) must therefore stake on the order of £1 at the
-    # *default* bankroll — it stakes only ~£0.25 at the old provisional 25.
+    # *default* bankroll.
     field = pd.DataFrame(
         {
             "RaceId": [1, 1],

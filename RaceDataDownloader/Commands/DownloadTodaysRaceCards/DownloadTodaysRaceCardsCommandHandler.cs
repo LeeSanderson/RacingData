@@ -81,7 +81,7 @@ public class DownloadTodaysRaceCardsCommandHandler(
         WarnWhenRatingAbsent(withTopSpeedRating, "top speed ratings (TSR)", raceCards.Count);
     }
 
-    // Informational fill-rate datapoint for the per-runner extras (Issue 005). Unlike the forecast and
+    // Informational fill-rate datapoint for the per-runner extras. Unlike the forecast and
     // ratings canaries this never warns: the extras are legitimately sparse (first-time flags rarely
     // fire; trainerRtf is absent on some jurisdictions such as HK; wind-surgery is jumps-skewed), so a
     // zero count is normal data, not a structural alarm. The throw on a vanished key is owned by the

@@ -63,7 +63,6 @@ public class IntegrationTests
             {
                 if (attempt < maxAttempts)
                 {
-                    // Retry after delay
                     await Task.Delay(delayMilliseconds);
                 }
                 else

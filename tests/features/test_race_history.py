@@ -115,9 +115,6 @@ def _make_enriched_df(n_races: int = 3) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ── race_card ─────────────────────────────────────────────────────────────────
-
-
 def test_race_card_returns_only_card_columns() -> None:
     df = _make_enriched_df()
     result = race_card(df)

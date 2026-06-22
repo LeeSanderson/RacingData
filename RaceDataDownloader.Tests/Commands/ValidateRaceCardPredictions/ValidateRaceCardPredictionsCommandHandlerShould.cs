@@ -355,7 +355,6 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         exitCode.Should().Be(ExitCodes.Success);
         var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
         var horse1 = mergedResults.Single(r => r.HorseId == 1);
-        // Forecast odds (unchanged precedent) plus the five other pre-race columns all land on the result row.
         horse1.ForecastFractionalOdds.Should().Be("11/2");
         horse1.ForecastDecimalOdds.Should().Be(6.5);
         horse1.CardOfficialRating.Should().Be(95);

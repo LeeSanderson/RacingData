@@ -88,39 +88,25 @@ def _fixture() -> pd.DataFrame:
     )
 
 
-# ================================================================
-# _attach_stakes — reuses the production compute_stakes
-# ================================================================
-
-
 def test_attach_stakes_sizes_the_value_bet_and_zeroes_the_rest() -> None:
     staked = _attach_stakes(_fixture())
     by_horse = staked.set_index("HorseId")["Stake"]
-    assert by_horse[10] == 3.00  # value bet, full-field-normalized Kelly (sub-cap)
-    assert by_horse[11] == 0.0  # no edge
-    assert by_horse[12] == 0.0  # negative edge
-    assert by_horse[20] == 0.0  # no edge
-    assert by_horse[21] == 0.0  # no edge
-
-
-# ================================================================
-# _identify_picks — one rank-1 pick per race, carrying its stake
-# ================================================================
+    assert by_horse[10] == 3.00
+    assert by_horse[11] == 0.0
+    assert by_horse[12] == 0.0
+    assert by_horse[20] == 0.0
+    assert by_horse[21] == 0.0
 
 
 def test_identify_picks_takes_highest_probability_horse_with_its_stake() -> None:
     picks = _identify_picks(_attach_stakes(_fixture()))
-    assert len(picks) == 2  # one per race
+    assert len(picks) == 2
     by_race = picks.set_index("RaceId")
-    assert by_race.loc[1, "HorseId"] == 10  # highest prob in race 1
-    assert by_race.loc[1, "Stake"] == 3.00  # carries the value-bet stake
-    assert by_race.loc[2, "HorseId"] == 20  # highest prob in race 2
-    assert by_race.loc[2, "Stake"] == 0.0  # no-bet pick
+    assert by_race.loc[1, "HorseId"] == 10
+    assert by_race.loc[1, "Stake"] == 3.00
+    assert by_race.loc[2, "HorseId"] == 20
+    assert by_race.loc[2, "Stake"] == 0.0
 
-
-# ================================================================
-# _summarise — flat-£1 vs Kelly ROI, coverage, stake distribution
-# ================================================================
 
 _SUMMARY_FIELDS = {
     "races",
@@ -156,7 +142,7 @@ def test_summarise_flat_roi_matches_hand_computed_value() -> None:
 
 def test_summarise_coverage_is_a_valid_fraction() -> None:
     summary = _summarise(_identify_picks(_attach_stakes(_fixture())))
-    assert summary["bets"] == 1  # only the value bet is staked
+    assert summary["bets"] == 1
     assert 0.0 <= summary["coverage"] <= 1.0
     assert summary["coverage"] == 0.5
 
@@ -165,7 +151,7 @@ def test_summarise_kelly_roi_uses_staked_returns() -> None:
     summary = _summarise(_identify_picks(_attach_stakes(_fixture())))
     # Only the 3.00 value bet is live: it wins at 3.0 -> profit 3.00*(3-1) = 6.0.
     assert summary["kelly_profit"] == 6.0
-    assert summary["kelly_roi"] == 2.0  # 6.0 / 3.00 staked
+    assert summary["kelly_roi"] == 2.0
     assert summary["stake_median"] == 3.00
     assert summary["stake_mean"] == 3.00
 
@@ -187,11 +173,6 @@ def test_summarise_empty_picks_is_safe() -> None:
     assert summary["coverage"] == 0.0
 
 
-# ================================================================
-# _backtest — one summary per algorithm, no cross-algorithm normalization
-# ================================================================
-
-
 def test_attach_stakes_zeroes_when_staking_columns_are_absent() -> None:
     # Older eval files (pre-MarketProb) lack WinProbability/MarketProb/ResolvedOdds.
     legacy = pd.DataFrame(
@@ -208,7 +189,7 @@ def test_attach_stakes_zeroes_when_staking_columns_are_absent() -> None:
         ]
     )
     staked = _attach_stakes(legacy)
-    assert (staked["Stake"] == 0.0).all()  # no crash, no bets
+    assert (staked["Stake"] == 0.0).all()
 
 
 def test_summarise_falls_back_to_decimal_odds_when_resolved_absent() -> None:
@@ -228,7 +209,7 @@ def test_summarise_falls_back_to_decimal_odds_when_resolved_absent() -> None:
     )
     summary = _summarise(picks)
     assert summary["races"] == 1
-    assert summary["flat_profit"] == 2.0  # winner @ 3.0 -> +2.0
+    assert summary["flat_profit"] == 2.0
     assert summary["bets"] == 0
 
 

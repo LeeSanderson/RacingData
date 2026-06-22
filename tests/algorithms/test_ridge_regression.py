@@ -179,11 +179,6 @@ def trained_algo() -> RidgeRegressionAlgorithm:
     return _fit(algo, rows)
 
 
-# ================================================================
-# Correct output columns and shape
-# ================================================================
-
-
 def test_predict_returns_raceId_and_horseId_columns(
     trained_algo: RidgeRegressionAlgorithm,
 ) -> None:
@@ -194,11 +189,6 @@ def test_predict_returns_raceId_and_horseId_columns(
     result = trained_algo.predict(_serve(races, horse_stats, jockey_stats))
 
     assert list(result.columns) == ["RaceId", "HorseId"]
-
-
-# ================================================================
-# One winner per race
-# ================================================================
 
 
 def test_predict_returns_one_row_per_race(
@@ -220,11 +210,6 @@ def test_predict_returns_one_row_per_race(
     assert result["RaceId"].nunique() == len(result)
 
 
-# ================================================================
-# max_horses filter
-# ================================================================
-
-
 def test_predict_excludes_races_exceeding_max_horses() -> None:
     algo = RidgeRegressionAlgorithm(max_horses=5)
     rows = [
@@ -234,8 +219,6 @@ def test_predict_excludes_races_exceeding_max_horses() -> None:
     ]
     _fit(algo, rows)
 
-    # Race 10: 3 horses — within the limit of 5
-    # Race 20: 7 horses — exceeds the limit of 5
     all_ids = [101, 102, 103, *range(201, 208)]
     race_rows = [_race_row(10, h, h) for h in [101, 102, 103]] + [
         _race_row(20, h, h) for h in range(201, 208)

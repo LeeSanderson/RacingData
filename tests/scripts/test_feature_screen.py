@@ -51,9 +51,9 @@ def test_screen_wraps_training_frame_as_race_data(
 ) -> None:
     """screen() must hand fit() a RaceData, not the raw engineered DataFrame.
 
-    Regression: fit() is RaceData-only (RFC-001); screen() previously passed the
-    engineered DataFrame straight through, which fails at runtime. Stub the data
-    load + feature engineering and capture the type of the object given to fit().
+    Regression guard: fit() is RaceData-only; wrap exactly as the harness does. Stub
+    the data load + feature engineering and capture the type of the object given to
+    fit().
     """
     enriched = pd.DataFrame({"Off": pd.to_datetime(["2026-01-01"]), "Wins": [1]})
     monkeypatch.setattr(fs, "_load_training_window", lambda months: enriched)

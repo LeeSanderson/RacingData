@@ -102,7 +102,6 @@ def _train_row(
         "DistanceChange": 0.0,
         "SurfaceSwitch": 0.0,
         "CodeSwitch": 0.0,
-        # Tier-1 new optional predictors
         "RaceClass": 3.0,
         "Age": 4.0,
         "RelAge": 0.0,
@@ -122,8 +121,8 @@ def _train_row(
         "SexRestriction_F": 0.0,
         "SexRestriction_FM": 0.0,
         "SexRestriction_Open": 1.0,
-        # The harness training frame carries MarketProb (issue 003); a varying value
-        # mirrors the per-race normalized market signal the estimator fits on.
+        # The harness training frame carries MarketProb; a varying value mirrors the
+        # per-race normalized market signal the estimator fits on.
         "MarketProb": round(0.2 + (horse_id % 3) * 0.1, 3),
     }
 
@@ -224,9 +223,6 @@ def _make_predict_fixtures(
     return races, horse_stats, jockey_stats
 
 
-# ── Test 1: XGBoostAlgorithm._fitted_predictors includes all Last3* after fit ──
-
-
 def test_xgboost_fitted_predictors_include_last3_columns():
     algo = XGBoostAlgorithm()
     algo.fit(_rd(_make_train_df()))
@@ -236,18 +232,12 @@ def test_xgboost_fitted_predictors_include_last3_columns():
         )
 
 
-# ── Test 2: XGBoostAlgorithm.predict returns non-empty with NaN Last3* horse ──
-
-
 def test_xgboost_predict_tolerates_nan_last3_in_one_horse():
     algo = XGBoostAlgorithm()
     algo.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures()
     result = algo.predict(_serve(races, horse_stats, jockey_stats))
     assert len(result) > 0
-
-
-# ── Test 3: RidgeRegressionAlgorithm._fitted_predictors excludes all Last3* ───
 
 
 def test_ridge_fitted_predictors_exclude_last3_columns():
@@ -265,18 +255,12 @@ def test_ridge_fitted_predictors_exclude_last3_columns():
         )
 
 
-# ── Test 4: RatingsXGBoostUngated predict returns non-empty with NaN Last3* ───
-
-
 def test_ratings_xgboost_ungated_predict_tolerates_nan_last3_in_one_horse():
     algo = RatingsXGBoostUngatedAlgorithm()
     algo.fit(_rd(_make_train_df()))
     races, horse_stats, jockey_stats = _make_predict_fixtures()
     result = algo.predict(_serve(races, horse_stats, jockey_stats))
     assert len(result) > 0
-
-
-# ── Test 5: ProxyTSRXGBoost predict returns non-empty with NaN Last3* horse ──
 
 
 def test_proxy_tsr_xgboost_predict_tolerates_nan_last3_in_one_horse():

@@ -433,9 +433,7 @@ def _resolve_algorithms(names: list[str] | None) -> list[FieldPredictor]:
                 f"Unknown algorithm(s): {', '.join(unknown)}\nAvailable: {available}"
             )
         selected = [proto_map[n] for n in names]
-    # Fresh instances every call so per-fold re-instantiation stops XGBoost's C++
-    # memory pool accumulating across folds. `max_horses` is part of the FieldPredictor
-    # contract, so no reflective hasattr guard is needed.
+    # `max_horses` is part of the FieldPredictor contract, so no reflective hasattr guard.
     return [type(a)(max_horses=a.max_horses) for a in selected]
 
 
@@ -469,8 +467,6 @@ def evaluate(
     selected_algos: list[FieldPredictor] = []
 
     for fold_date in fold_dates:
-        # Fresh instances every fold — prevents XGBoost C++ memory from accumulating
-        # across hundreds of successive fit() calls on the same booster object.
         selected_algos = _resolve_algorithms(algorithms)
         print(f"\n--- Fold: {fold_date} ---")
         raw = _load_window(fold_date, training_months)
@@ -487,17 +483,14 @@ def evaluate(
             print("  No known races, skipping")
             continue
 
-        # Build the canonical RaceData once per fold — the training window and the
-        # serving card — then drive every algorithm through the FieldPredictor
-        # contract. `build_serving` is the single home of the merge + transform chain.
-        # `_engineer_features` stays as the window's feature source: its column set is
-        # exactly what the models have always trained on, so metrics are unchanged.
+        # `_engineer_features` is the window's feature source: its column set is exactly
+        # what the models have always trained on, so metrics are unchanged.
         train_data = builder.wrap_training(train_df)
         card = race_card(known_fold)
         serve_data = builder.build_serving(card, train_df, as_of=serve_as_of)  # pyright: ignore[reportArgumentType]  # boolean-indexed .copy() is a DataFrame
         results_df = _results(known_fold)
 
-        for algo in selected_algos:  # algo: FieldPredictor
+        for algo in selected_algos:
             name = type(algo).__name__
             print(f"  Fitting {name}...", flush=True)
             t0 = time.perf_counter()
@@ -583,7 +576,6 @@ def evaluate(
 
     _print_early_late_split(algo_names, all_preds, all_results_store, all_total_known)
 
-    # ROI-vs-coverage frontier for abstain algorithms
     algo_map = {type(a).__name__: a for a in selected_algos}
     for name in algo_names:
         algo = algo_map.get(name)
@@ -609,8 +601,6 @@ def evaluate(
                 f"  {row['coverage_target']:>14.2f} {row['actual_coverage']:>16.3f}"
                 f" {row['roi']:>8.3f} {int(row['races']):>8}"  # pyright: ignore[reportArgumentType]  # scalar cell is int-convertible
             )
-
-    # CSV already written incrementally per fold above; nothing more to do here.
 
     return {"fit_times": all_fit_times, "predict_times": all_predict_times}
 

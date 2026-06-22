@@ -141,7 +141,6 @@ def _population(field: pd.DataFrame) -> list[tuple[int, int]]:
 
 
 def test_predicted_population_unchanged_and_no_odds_gate() -> None:
-    # Race 1 fully priced; race 2 fully unpriced (every runner -> uniform prior).
     priced = {(1, 10): 2.0, (1, 11): 3.0, (1, 12): 4.0}
 
     with_algo = _fit_win_classifier(_race_data(odds=priced))

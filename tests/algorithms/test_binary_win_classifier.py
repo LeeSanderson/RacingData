@@ -18,7 +18,7 @@ from race_analytics.features.race_data import RaceData, RaceDataBuilder
 
 _LONG_AGO = datetime(2020, 1, 1)
 _AS_OF = datetime(2026, 1, 1)
-_REQ_COL = "DistanceInMeters"  # first entry of REQUIRED_PREDICTORS
+_REQ_COL = "DistanceInMeters"
 
 
 def _rd(df: pd.DataFrame) -> RaceData:
@@ -126,13 +126,9 @@ def _make_predict_fixtures(
     return races, horse_stats, jockey_stats
 
 
-# ── fit engineers the race context the classifier is trained on ───────────────
-
-
 def test_fit_feeds_classifier_engineered_race_context() -> None:
     spy = _SpyAlgo()
     spy.fit(_rd(_make_train_df()))
-    # fit_X is captured by the mock during fit (private spy attr, set non-None)
     cols = spy._mock.fit_X.columns  # pyright: ignore[reportPrivateUsage, reportOptionalMemberAccess]
     # HorseCount + the relative-rating column are materialised by the engine and
     # become features, alongside the required predictor and the raw extra feature.
@@ -140,21 +136,15 @@ def test_fit_feeds_classifier_engineered_race_context() -> None:
         assert expected in cols, f"{expected} not fed to the estimator"
 
 
-# ── dropna: NaN in a required predictor drops the row before fitting ──────────
-
-
 def test_fit_drops_rows_with_nan_required_predictor() -> None:
     spy = _SpyAlgo()
     rows = [
         _train_row(1, 10, wins=1),
         _train_row(1, 11, wins=0),
-        _train_row(2, 20, wins=0, dist=None),  # NaN in required — dropped
+        _train_row(2, 20, wins=0, dist=None),
     ]
     spy.fit(_rd(pd.DataFrame(rows)))
     assert len(spy._mock.fit_X) == 2  # pyright: ignore[reportPrivateUsage, reportArgumentType]
-
-
-# ── extra_nan_tolerant_features column tolerates NaN in fit ───────────────────
 
 
 def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped() -> None:
@@ -162,19 +152,15 @@ def test_nan_in_extra_tolerant_feature_is_kept_nan_in_required_is_dropped() -> N
     rows = [
         _train_row(1, 10, wins=1),
         _train_row(1, 11, wins=0),
-        _train_row(2, 20, wins=0, some_rating=None),  # NaN in extra — should survive
+        _train_row(2, 20, wins=0, some_rating=None),
         _train_row(2, 21, wins=1),
-        _train_row(3, 30, wins=0, dist=None),  # NaN in required — should drop
+        _train_row(3, 30, wins=0, dist=None),
     ]
     spy.fit(_rd(pd.DataFrame(rows)))
 
-    # fit_X captured by the mock during fit (private spy attr, set non-None)
     assert len(spy._mock.fit_X) == 4  # pyright: ignore[reportPrivateUsage, reportArgumentType]  # horse 30 dropped; others kept
     assert "SomeRatingCol" in spy._mock.fit_X.columns  # pyright: ignore[reportPrivateUsage, reportOptionalMemberAccess]
     assert spy._mock.fit_X["SomeRatingCol"].isna().sum() == 1  # pyright: ignore[reportPrivateUsage, reportOptionalSubscript]  # horse 20's NaN survived
-
-
-# ── the race gate runs after the complete-race filter, before scoring ─────────
 
 
 def test_race_gate_sees_unscored_field_and_can_drop_it() -> None:
@@ -193,12 +179,8 @@ def test_race_gate_sees_unscored_field_and_can_drop_it() -> None:
     result = spy.predict_field(_serve(races, horse_stats, jockey_stats))
 
     assert result.empty  # gate dropped everything
-    # _gate_frames records the frames the gate saw (private spy attr)
     assert len(spy._gate_frames) == 1  # pyright: ignore[reportPrivateUsage]
     assert "WinProbability" not in spy._gate_frames[0].columns  # pyright: ignore[reportPrivateUsage]  # gate runs pre-scoring
-
-
-# ── predict_field() / predict() output shapes ─────────────────────────────────
 
 
 def test_predict_field_returns_empty_before_fit() -> None:

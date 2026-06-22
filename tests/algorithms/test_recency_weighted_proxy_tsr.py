@@ -180,7 +180,6 @@ def _prepared_weights(
     algo: RecencyWeightedProxyTSRAlgorithm, train_df: pd.DataFrame, as_of: pd.Timestamp
 ) -> pd.DataFrame:
     """Run the training-prep hook and return the prepared frame carrying `_w`."""
-    # test exercises the protected training-prep hook directly
     return algo._prepare_training(RaceData(train_df.copy(), as_of)).frame  # pyright: ignore[reportPrivateUsage]
 
 

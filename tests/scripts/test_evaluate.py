@@ -50,11 +50,6 @@ class _FakeBuilder:
         )
 
 
-# ================================================================
-# _extract_known_races
-# ================================================================
-
-
 def test_extract_known_races_removes_unknown_races() -> None:
     df = pd.DataFrame(
         [
@@ -89,11 +84,6 @@ def test_extract_known_races_returns_empty_when_none_known() -> None:
     assert _extract_known_races(df).empty
 
 
-# ================================================================
-# _race_card — ratings flow only through the per-horse stats join
-# ================================================================
-
-
 def test_race_card_drops_rating_columns() -> None:
     fold_df = pd.DataFrame(
         [
@@ -116,14 +106,8 @@ def test_race_card_drops_rating_columns() -> None:
     card = _race_card(fold_df)
     for col in ["OfficialRating", "RacingPostRating", "TopSpeedRating"]:
         assert col not in card.columns, f"rating column leaked into the card: {col}"
-    # essentials the algorithm re-encodes are still carried
     for col in ["RaceId", "HorseId", "JockeyId", "Surface", "Going", "RaceType"]:
         assert col in card.columns
-
-
-# ================================================================
-# Shared fixture helpers
-# ================================================================
 
 
 def _train_row(
@@ -171,11 +155,6 @@ def _train_row(
         "RaceType_Other": 0.0,
         "RaceType_SteepleChase": 0.0,
     }
-
-
-# ================================================================
-# _compute_horse_stats
-# ================================================================
 
 
 def test_horse_stats_one_row_per_horse() -> None:
@@ -235,11 +214,6 @@ def test_horse_stats_avg_rel_pos_incorporates_last_race() -> None:
     assert result.iloc[0]["LastRaceAvgRelFinishingPosition"] == pytest.approx(0.36)
 
 
-# ================================================================
-# _compute_jockey_stats
-# ================================================================
-
-
 def test_jockey_stats_one_row_per_jockey() -> None:
     rows = [
         _train_row(horse_id=1, jockey_id=10, off="2026-01-01"),
@@ -286,11 +260,6 @@ def test_jockey_stats_uses_most_recent_race_as_last_off() -> None:
     )
 
 
-# ================================================================
-# _format_timing
-# ================================================================
-
-
 def test_format_timing_returns_pipe_prefixed_string() -> None:
     from race_analytics.scripts.evaluate import (
         _format_timing,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
@@ -307,11 +276,6 @@ def test_format_timing_three_decimal_places() -> None:
     result = _format_timing(0.1, 0.001)
     assert "fit=0.100s" in result
     assert "predict=0.001s" in result
-
-
-# ================================================================
-# _aggregate_times
-# ================================================================
 
 
 def test_aggregate_times_returns_mean_and_std() -> None:
@@ -342,11 +306,6 @@ def test_aggregate_times_empty_returns_none() -> None:
     )
 
     assert _aggregate_times([]) is None
-
-
-# ================================================================
-# evaluate() — timing accumulation
-# ================================================================
 
 
 def _make_fold_races(fold_date: date) -> pd.DataFrame:
@@ -482,11 +441,6 @@ def test_evaluate_timing_summary_shows_na_for_skipped_algorithms(
     assert "N/A" in out
 
 
-# ================================================================
-# _roi_coverage_frontier
-# ================================================================
-
-
 def _make_field_preds(
     races_horses: list[tuple[int, list[tuple[int, float]]]],
 ) -> pd.DataFrame:
@@ -620,11 +574,6 @@ def test_roi_coverage_frontier_tighter_coverage_fewer_races() -> None:
     assert races_tight <= races_full
 
 
-# ================================================================
-# _print_early_late_split — structural smoke test
-# ================================================================
-
-
 def test_early_late_split_printed_in_evaluate_output(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
@@ -650,10 +599,6 @@ def test_early_late_split_printed_in_evaluate_output(
     out = capsys.readouterr().out
     assert "=== Early-vs-Late Stability ===" in out
 
-
-# ================================================================
-# _build_csv_rows
-# ================================================================
 
 _CSV_COLUMNS = [
     "FoldDate",
@@ -1006,11 +951,6 @@ def test_build_csv_rows_market_prob_na_when_absent_from_known_fold() -> None:
     assert pd.isna(rows.iloc[0]["MarketProb"])
 
 
-# ================================================================
-# evaluate() — predict_field() integration
-# ================================================================
-
-
 class _FieldAlgo:
     """FieldPredictor stub whose predict_field returns per-horse WinProbability."""
 
@@ -1099,12 +1039,6 @@ def test_evaluate_csv_win_probability_na_for_non_field_algo(
     assert df["WinProbability"].isna().all()
 
 
-# ================================================================
-# evaluate() — the declared FieldPredictor / AbstainCapable contract
-# (no hasattr/getattr/type() probing of algorithms)
-# ================================================================
-
-
 class _AbstainAlgo(_FieldAlgo):
     """FieldPredictor + AbstainCapable. The harness must detect abstention via the
     AbstainCapable Protocol (isinstance), not by probing for method names."""
@@ -1179,11 +1113,6 @@ def test_evaluate_abstain_capable_algo_triggers_frontier(
         evaluate(folds=1)
     out = capsys.readouterr().out
     assert "=== ROI-vs-Coverage Frontier: _AbstainAlgo ===" in out
-
-
-# ================================================================
-# evaluate() — full real path (real RaceDataBuilder + real algorithm)
-# ================================================================
 
 
 def _enriched_fold_frame(fold_date: date) -> pd.DataFrame:
@@ -1337,15 +1266,10 @@ def test_evaluate_end_to_end_with_real_builder_and_active_algorithm(
     assert (
         df["WinProbability"].notna().all()
     )  # the gated win-classifier carries probabilities
-    # Diagnostic columns (issue 006): MarketProb rides through from the engineered fold
-    # frame (dense), and the resolved odds (forecast -> SP) are populated per runner.
+    # MarketProb rides through from the engineered fold frame (dense); the resolved
+    # odds (forecast -> SP) are populated per runner.
     assert df["MarketProb"].notna().all()
     assert df["ResolvedOdds"].notna().all()
-
-
-# ================================================================
-# evaluate() — CSV export
-# ================================================================
 
 
 def test_evaluate_no_flags_writes_no_file(tmp_path: pathlib.Path) -> None:
@@ -1447,12 +1371,6 @@ def test_evaluate_with_zero_folds_returns_without_unbound_error() -> None:
     result = evaluate(folds=0)
 
     assert isinstance(result, dict)
-
-
-# ================================================================
-# _engineer_features — MarketProb materialized on the training path
-# (PRD: "Materialize in two non-shared places" — place (a))
-# ================================================================
 
 
 def _raw_results_frame() -> pd.DataFrame:
