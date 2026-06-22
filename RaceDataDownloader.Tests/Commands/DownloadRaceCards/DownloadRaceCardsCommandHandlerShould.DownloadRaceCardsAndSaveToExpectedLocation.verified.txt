@@ -47,6 +47,11 @@
           "Id": 322703,
           "Name": "Li Xiting"
         },
+        "Breeding": {
+          "SireName": "Not A Single Doubt",
+          "SireCountry": "AUS",
+          "DamName": "Jacquetta"
+        },
         "Attributes": {
           "RaceCardNumber": 1,
           "StallNumber": 3,
@@ -86,6 +91,11 @@
           "Id": 353563,
           "Name": "Ng Sun Wah, Au Yau Lin \u0026 Alan Leung Wai Zen"
         },
+        "Breeding": {
+          "SireName": "Daiwa Major",
+          "SireCountry": "JPN",
+          "DamName": "Get Closer"
+        },
         "Attributes": {
           "RaceCardNumber": 2,
           "StallNumber": 2,
@@ -123,6 +133,11 @@
         "Owner": {
           "Id": 356254,
           "Name": "Matthew Ma Hing Chuen"
+        },
+        "Breeding": {
+          "SireName": "Unite And Conquer",
+          "SireCountry": "AUS",
+          "DamName": "Sukhar"
         },
         "Attributes": {
           "RaceCardNumber": 3,
@@ -163,6 +178,11 @@
           "Id": 178562,
           "Name": "HKJC Racing Club Limited"
         },
+        "Breeding": {
+          "SireName": "Russian Revolution",
+          "SireCountry": "AUS",
+          "DamName": "Calvados"
+        },
         "Attributes": {
           "RaceCardNumber": 4,
           "StallNumber": 4,
@@ -202,6 +222,11 @@
           "Id": 147023,
           "Name": "HK Country Club Racing Syndicate"
         },
+        "Breeding": {
+          "SireName": "Nicconi",
+          "SireCountry": "AUS",
+          "DamName": "Alana\u0027s Party"
+        },
         "Attributes": {
           "RaceCardNumber": 5,
           "StallNumber": 7,
@@ -239,6 +264,11 @@
         "Owner": {
           "Id": 263629,
           "Name": "Royal Elitist Team Syndicate"
+        },
+        "Breeding": {
+          "SireName": "Russian Revolution",
+          "SireCountry": "AUS",
+          "DamName": "Theatre Fan"
         },
         "Attributes": {
           "RaceCardNumber": 6,
@@ -279,6 +309,11 @@
           "Id": 354711,
           "Name": "Lun Ka Leung \u0026 Yeung Hiu Yu"
         },
+        "Breeding": {
+          "SireName": "Cosmic Force",
+          "SireCountry": "AUS",
+          "DamName": "Cappella Magna"
+        },
         "Attributes": {
           "RaceCardNumber": 7,
           "StallNumber": 1,
@@ -317,6 +352,11 @@
         "Owner": {
           "Id": 242398,
           "Name": "Wong Man"
+        },
+        "Breeding": {
+          "SireName": "Headwater",
+          "SireCountry": "AUS",
+          "DamName": "Beechal"
         },
         "Attributes": {
           "RaceCardNumber": 8,
@@ -357,6 +397,11 @@
           "Id": 163409,
           "Name": "Ng To"
         },
+        "Breeding": {
+          "SireName": "Lean Mean Machine",
+          "SireCountry": "AUS",
+          "DamName": "Carashan Girl"
+        },
         "Attributes": {
           "RaceCardNumber": 9,
           "StallNumber": 10,
@@ -395,6 +440,11 @@
         "Owner": {
           "Id": 300332,
           "Name": "Henry Cheung Kun Tong"
+        },
+        "Breeding": {
+          "SireName": "Per Incanto",
+          "SireCountry": "USA",
+          "DamName": "Amanjena"
         },
         "Attributes": {
           "RaceCardNumber": 10,
@@ -435,6 +485,11 @@
           "Id": 217804,
           "Name": "Gui Shengyue"
         },
+        "Breeding": {
+          "SireName": "Pride Of Dubai",
+          "SireCountry": "AUS",
+          "DamName": "Allez France"
+        },
         "Attributes": {
           "RaceCardNumber": 11,
           "StallNumber": 5,
@@ -473,6 +528,11 @@
         "Owner": {
           "Id": 300614,
           "Name": "Augustine Wong Ho Ming"
+        },
+        "Breeding": {
+          "SireName": "Justify",
+          "SireCountry": "USA",
+          "DamName": "So You Merge"
         },
         "Attributes": {
           "RaceCardNumber": 12,

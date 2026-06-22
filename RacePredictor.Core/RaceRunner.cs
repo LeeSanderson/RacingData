@@ -8,7 +8,8 @@ public class RaceRunner
         RaceEntity trainer,
         RaceRunnerAttributes attributes,
         RaceRunnerStats statistics,
-        RaceEntity? owner = null)
+        RaceEntity? owner = null,
+        RaceRunnerBreeding? breeding = null)
     {
         Horse = horse;
         Jockey = jockey;
@@ -16,6 +17,7 @@ public class RaceRunner
         Attributes = attributes;
         Statistics = statistics;
         Owner = owner;
+        Breeding = breeding;
     }
 
     public RaceEntity Horse { get; }
@@ -26,6 +28,11 @@ public class RaceRunner
     // on the DOM-oracle reading and excluded from cross-validation. Optional so the DOM parser and the
     // results layout are unaffected.
     public RaceEntity? Owner { get; }
+
+    // Breeding (sire/dam) is a forward-only racecard fact like Owner: null on the DOM-oracle reading
+    // and excluded from cross-validation. Trailing optional so the DOM parser and results layout are
+    // unaffected. Unlike Owner it is NOT backfill-able (absent from result pages).
+    public RaceRunnerBreeding? Breeding { get; }
 
     public RaceRunnerAttributes Attributes { get; }
     public RaceRunnerStats Statistics { get; }

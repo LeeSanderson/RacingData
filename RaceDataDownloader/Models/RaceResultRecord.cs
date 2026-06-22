@@ -119,4 +119,19 @@ public record RaceResultRecord : RaceCardRecord
     [Optional]
     [Index(50)]
     public new string? OwnerName { get; set; }
+
+    // The base RaceCardRecord places breeding at indices 40-42, which the results layout already uses
+    // for ForecastFractionalOdds / ForecastDecimalOdds / DaysSinceLastRun. Re-declare with `new` so
+    // breeding appends at the end of the results layout instead of colliding (same shadowing pattern as
+    // DaysSinceLastRun..PrizeMoneyValue and Owner above). Breeding is NOT backfill-able (absent from
+    // result pages), so these stay blank in the results layout.
+    [Optional]
+    [Index(51)]
+    public new string? SireName { get; set; }
+    [Optional]
+    [Index(52)]
+    public new string? SireCountry { get; set; }
+    [Optional]
+    [Index(53)]
+    public new string? DamName { get; set; }
 }

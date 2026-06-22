@@ -11,6 +11,7 @@ public class NextDataRaceCardReaderShould
         "{\"horseId\":555,\"horseName\":\"Synthetic\",\"countryOrigin\":\"GB\"," +
         "\"jockeyId\":11,\"jockeyName\":\"J Test\",\"trainerId\":22,\"trainerName\":\"T Test\"," +
         "\"ownerId\":777,\"ownerName\":\"O Test\"," +
+        "\"sireName\":\"S Test\",\"sireCountry\":\"GB\",\"damName\":\"D Test\"," +
         "\"age\":5,\"startNumber\":1,\"draw\":3,\"formattedWeightStones\":9,\"formattedWeightPounds\":7," +
         "\"daysSinceLastRun\":\"21\",\"formFiguresData\":[{\"figure\":\"1\",\"position\":0}]," +
         "\"officialRatingToday\":70,\"rpPostmark\":80,\"rpTopspeed\":60,\"horseHeadGear\":\"t\"," +
@@ -52,6 +53,9 @@ public class NextDataRaceCardReaderShould
         relocal.ForecastDecimalOdds.Should().Be(8.0);   // forecast "7/1" -> decimal 8.0
         relocal.OwnerId.Should().Be(372779);
         relocal.OwnerName.Should().Be("K Shenton & D Cunha");
+        relocal.SireName.Should().Be("Siyouni");
+        relocal.SireCountry.Should().Be("FR");
+        relocal.DamName.Should().Be("Inconceivable");
     }
 
     [Fact]
@@ -189,6 +193,17 @@ public class NextDataRaceCardReaderShould
     }
 
     [Fact]
+    public void ThrowNamingTheKeyWhenTheSireKeyIsMissing()
+    {
+        var runnerWithoutSireName = ValidRunner.Replace("\"sireName\":\"S Test\",", string.Empty);
+        var html = WrapDocument("[" + runnerWithoutSireName + "]");
+
+        var read = () => new NextDataRaceCardReader().Read(html);
+
+        read.Should().Throw<ValidationException>().WithMessage("*sireName*");
+    }
+
+    [Fact]
     public void ThrowWhenTheNextDataScriptIsAbsent()
     {
         const string html = "<html><head></head><body><p>A page with no __NEXT_DATA__ island.</p></body></html>";
@@ -264,6 +279,9 @@ public class NextDataRaceCardReaderShould
             .Replace("\"rpTopspeed\":60,", "\"rpTopspeed\":null,")
             .Replace("\"ownerId\":777,", "\"ownerId\":null,")
             .Replace("\"ownerName\":\"O Test\",", "\"ownerName\":null,")
+            .Replace("\"sireName\":\"S Test\",", "\"sireName\":null,")
+            .Replace("\"sireCountry\":\"GB\",", "\"sireCountry\":null,")
+            .Replace("\"damName\":\"D Test\",", "\"damName\":null,")
             .Replace("\"forecastOddsValue\":4,", "\"forecastOddsValue\":null,");
 
         var view = new NextDataRaceCardReader().Read(WrapDocument("[" + nulledRunner + "]"));
@@ -277,5 +295,8 @@ public class NextDataRaceCardReaderShould
         runner.ForecastDecimalOdds.Should().BeNull();
         runner.OwnerId.Should().BeNull();
         runner.OwnerName.Should().BeNull();
+        runner.SireName.Should().BeNull();
+        runner.SireCountry.Should().BeNull();
+        runner.DamName.Should().BeNull();
     }
 }

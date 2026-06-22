@@ -19,7 +19,10 @@ public class RaceCardRecordShould
             PrizeMoney = "£4,397",
             PrizeMoneyValue = 4397m,
             OwnerId = 322703,
-            OwnerName = "Li Xiting"
+            OwnerName = "Li Xiting",
+            SireName = "Not A Single Doubt",
+            SireCountry = "AUS",
+            DamName = "Jacquetta"
         };
 
         var single = (await (await new[] { record }.ToCsvString()).FromCsvString<RaceCardRecord>()).Single();
@@ -30,6 +33,9 @@ public class RaceCardRecordShould
         single.PrizeMoneyValue.Should().Be(4397m);
         single.OwnerId.Should().Be(322703);
         single.OwnerName.Should().Be("Li Xiting");
+        single.SireName.Should().Be("Not A Single Doubt");
+        single.SireCountry.Should().Be("AUS");
+        single.DamName.Should().Be("Jacquetta");
     }
 
     [Fact]
@@ -56,6 +62,9 @@ public class RaceCardRecordShould
         records[0].PrizeMoneyValue.Should().BeNull();
         records[0].OwnerId.Should().BeNull();
         records[0].OwnerName.Should().BeNullOrEmpty();
+        records[0].SireName.Should().BeNullOrEmpty();
+        records[0].SireCountry.Should().BeNullOrEmpty();
+        records[0].DamName.Should().BeNullOrEmpty();
     }
 
     [Fact]
@@ -75,5 +84,10 @@ public class RaceCardRecordShould
         // Owner is captured per-runner; every runner on this card carries one.
         records.Should().OnlyContain(r => r.OwnerId.HasValue && !string.IsNullOrEmpty(r.OwnerName));
         records.Should().Contain(r => r.HorseId == 4043909 && r.OwnerId == 322703 && r.OwnerName == "Li Xiting");
+        // Breeding is captured per-runner too; every runner on this card carries a sire and dam.
+        records.Should().OnlyContain(r =>
+            !string.IsNullOrEmpty(r.SireName) && !string.IsNullOrEmpty(r.SireCountry) && !string.IsNullOrEmpty(r.DamName));
+        records.Should().Contain(r =>
+            r.HorseId == 4043909 && r.SireName == "Not A Single Doubt" && r.SireCountry == "AUS" && r.DamName == "Jacquetta");
     }
 }

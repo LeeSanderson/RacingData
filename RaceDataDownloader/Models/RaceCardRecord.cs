@@ -51,7 +51,11 @@ public record RaceCardRecord
                 // Owner is null on the DOM-oracle reading; the JSON island is the sole capture source.
                 // A clean null owner (genuinely absent) leaves both columns blank.
                 OwnerId = d.Runner.Owner?.Id,
-                OwnerName = d.Runner.Owner?.Name
+                OwnerName = d.Runner.Owner?.Name,
+                // Breeding is likewise JSON-only and forward-only; a clean null leaves the columns blank.
+                SireName = d.Runner.Breeding?.SireName,
+                SireCountry = d.Runner.Breeding?.SireCountry,
+                DamName = d.Runner.Breeding?.DamName
             });
 
     [Index(0)]
@@ -151,4 +155,17 @@ public record RaceCardRecord
     [Optional]
     [Index(39)]
     public string? OwnerName { get; set; }
+
+    // Breeding (sire/dam) captured forward-only from the racecard JSON island (Issue 004). Unlike owner
+    // this is NOT backfill-able -- it is absent from historic result pages -- so it stays null on rows
+    // that predate capture. RaceResultRecord re-declares these at higher indices for the results layout.
+    [Optional]
+    [Index(40)]
+    public string? SireName { get; set; }
+    [Optional]
+    [Index(41)]
+    public string? SireCountry { get; set; }
+    [Optional]
+    [Index(42)]
+    public string? DamName { get; set; }
 }

@@ -22,7 +22,8 @@ internal static class NextDataRunnerMapper
             new RaceEntity(r.TrainerId ?? 0, r.TrainerName ?? "Unknown Trainer"),
             new RaceRunnerAttributes(r.RaceCardNumber, r.Draw, r.Age, r.Weight, r.HeadGear, r.DaysSinceLastRun, r.FormFigures),
             new RaceRunnerStats(new RaceOdds(r.ForecastFractionalOdds ?? "SP"), r.OfficialRating, r.RacingPostRating, r.TopSpeedRating),
-            ToOwner(r));
+            ToOwner(r),
+            ToBreeding(r));
 
     // Owner is the one new field that is also backfill-able: it appears on daily result pages, unlike
     // breeding/verdict/wind-op. A historic-results re-scrape could fold ownerId/ownerName in alongside
@@ -33,4 +34,11 @@ internal static class NextDataRunnerMapper
         r.OwnerId is null && r.OwnerName is null
             ? null
             : new RaceEntity(r.OwnerId ?? 0, r.OwnerName ?? string.Empty);
+
+    // Breeding is forward-only and NOT backfill-able (absent from result pages). When every breeding
+    // field is absent the runner carries a clean null rather than an all-null value object.
+    private static RaceRunnerBreeding? ToBreeding(NextDataRunner r) =>
+        r.SireName is null && r.SireCountry is null && r.DamName is null
+            ? null
+            : new RaceRunnerBreeding(r.SireName, r.SireCountry, r.DamName);
 }

@@ -44,6 +44,9 @@ public sealed class NextDataRunner
         string? trainerName,
         int? ownerId,
         string? ownerName,
+        string? sireName,
+        string? sireCountry,
+        string? damName,
         int age,
         RaceWeight weight,
         int raceCardNumber,
@@ -66,6 +69,9 @@ public sealed class NextDataRunner
         TrainerName = trainerName;
         OwnerId = ownerId;
         OwnerName = ownerName;
+        SireName = sireName;
+        SireCountry = sireCountry;
+        DamName = damName;
         Age = age;
         Weight = weight;
         RaceCardNumber = raceCardNumber;
@@ -93,6 +99,15 @@ public sealed class NextDataRunner
 
     /// <summary>The owning party's display name (may name a syndicate or several owners); null when absent.</summary>
     public string? OwnerName { get; }
+
+    /// <summary>The sire's name; null when the card carries no breeding for the runner.</summary>
+    public string? SireName { get; }
+
+    /// <summary>The sire's country of origin (e.g. "GB", "FR", "USA"); null when absent.</summary>
+    public string? SireCountry { get; }
+
+    /// <summary>The dam's name; null when absent.</summary>
+    public string? DamName { get; }
 
     public int Age { get; }
     public RaceWeight Weight { get; }
