@@ -122,14 +122,19 @@ public record RaceCardRecord
     // Pre-race facts collected at card parse (Issue 001 domain model). No prefix — they have no
     // post-race counterpart to collide with. TodaysRaceCards.csv is rewritten daily, so these append
     // contiguously here; RaceResultRecord re-declares them at higher indices for the results layout.
+    // [Optional] lets CreateReaderConfiguration tolerate files written before these columns existed.
+    [Optional]
     [Index(34)]
     public int? DaysSinceLastRun { get; set; }
+    [Optional]
     [Index(35)]
     public string? FormFigures { get; set; }
     // Raw display string (currency symbol + thousands separators preserved; not normalised across
     // countries) alongside the numeric value (symbol/commas stripped).
+    [Optional]
     [Index(36)]
     public string? PrizeMoney { get; set; }
+    [Optional]
     [Index(37)]
     public decimal? PrizeMoneyValue { get; set; }
 }
