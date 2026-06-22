@@ -72,11 +72,38 @@ RaceDataDownloader.exe validate --output Data
 ## C# Conventions
 
 ### Comments (applies to all code, C# and Python)
-Prefer self-describing code over comments. Only comment when the code can't speak for itself:
+**The default is zero comments.** Write self-describing code; reach for a comment only when the code genuinely can't carry the meaning itself. Before writing any comment, apply this test: *would a competent reader who knows this codebase be confused or make a wrong assumption without it?* If no, delete it. "It's helpful" / "it documents the step" / "it's nice for readers" are **not** reasons — clear code already does that.
+
 - **Comment the *why*, not the *what*** — non-obvious intent, external-system quirks (racingpost.com markup, CsvHelper behaviour), timing constraints, or invariants like idempotency. Never restate what the code or an assertion already says.
 - **Delete a comment that paraphrases the line below it.** If a comment is only needed because a name is unclear, rename instead.
+- **No section-header or step-narration comments** (`# Load the data`, `# Now filter`, `// build the options`). Code structure already shows the steps; if a block needs a label, extract it into a well-named function.
 - **Keep explanatory blocks to 1–2 lines.** If you need a paragraph, the code is probably too complex — simplify it, or move the rationale to a doc under `docs/`.
 - **No ephemeral references** (PRD phase numbers, "legacy X test", ticket IDs) — they rot. Reserve XML doc comments (`/// <summary>`) for public API surface, not private methods or test helpers.
+
+**Delete comments like these** — they only restate the code:
+```python
+# Load the results CSV
+df = pd.read_csv(path)
+# Filter to known horses and jockeys
+df = df[df["KnownHorseAndJockey"]]
+# Encode the going column
+going = encode_going(df["Going"])
+```
+```csharp
+// Get the horse name
+var name = _find.Anchor().WithAttribute("data-testid", "Link__Horse").GetText();
+// Validate the options
+var (start, end, dataFolder) = ValidateOptions(options);
+```
+
+**Keep comments like these** — they carry intent the code can't:
+```python
+# encode_going defaults null/empty to "Good": the model was trained on always-known going (see below)
+```
+```csharp
+// Going lives in a sibling span only on jumps cards; Optional() avoids a throw on flat cards
+_find.Optional().Anchor().WithAttribute("data-testid", "Link__Going").GetText();
+```
 
 ### Command handler pattern
 All CLI commands extend `FileCommandHandlerBase<THandler, TOptions>`:
