@@ -28,7 +28,7 @@ public sealed class NextDataRaceCardReader
         "formattedWeightStones", "formattedWeightPounds",
         "daysSinceLastRun", "formFiguresData",
         "officialRatingToday", "rpPostmark", "rpTopspeed",
-        "forecastOddsValue", "nonRunner", "irishReserve",
+        "horseHeadGear", "forecastOddsValue", "nonRunner", "irishReserve",
     };
 
     public NextDataRaceCardView Read(string html)
@@ -44,7 +44,8 @@ public sealed class NextDataRaceCardReader
         using var parsed = ParseJson(json);
         var data = NavigateTo(parsed.RootElement, RacePageDataPath);
         var (courseId, raceId, countryCode) = ReadRaceLevel(data);
-        var runners = ReadRunners(data, countryCode);
+        var forecastOdds = ReadForecastOdds(data);
+        var runners = ReadRunners(data, countryCode, forecastOdds);
         return new NextDataRaceCardView(courseId, raceId, countryCode, runners);
     }
 
@@ -114,7 +115,7 @@ public sealed class NextDataRaceCardReader
             RequireString(race, "countryCode"));
     }
 
-    private static IReadOnlyList<NextDataRunner> ReadRunners(JsonElement data, string raceCountryCode)
+    private static IReadOnlyList<NextDataRunner> ReadRunners(JsonElement data, string raceCountryCode, IReadOnlyDictionary<int, string> forecastOdds)
     {
         if (!data.TryGetProperty("runners", out var runners) || runners.ValueKind != JsonValueKind.Array)
         {
@@ -133,11 +134,55 @@ public sealed class NextDataRaceCardReader
         foreach (var runner in runners.EnumerateArray())
         {
             ValidateSentinelKeys(runner, index);
-            result.Add(BuildRunner(runner, index, raceCountryCode));
+            result.Add(BuildRunner(runner, index, raceCountryCode, forecastOdds));
             index++;
         }
 
         return result;
+    }
+
+    // The betting forecast lives in a race-level array (the JSON analog of the rendered forecast the
+    // DOM parser scrapes), each entry fanning one price out to one or more horses. A missing forecast
+    // is legitimate absence (the card has none) -> an empty map, every runner left at SP -> never throws.
+    private static IReadOnlyDictionary<int, string> ReadForecastOdds(JsonElement data)
+    {
+        var map = new Dictionary<int, string>();
+        if (!data.TryGetProperty("raceDetails", out var raceDetails) ||
+            raceDetails.ValueKind != JsonValueKind.Object ||
+            !raceDetails.TryGetProperty("bettingForecast", out var forecast) ||
+            forecast.ValueKind != JsonValueKind.Array)
+        {
+            return map;
+        }
+
+        foreach (var entry in forecast.EnumerateArray())
+        {
+            if (entry.ValueKind != JsonValueKind.Object ||
+                !entry.TryGetProperty("oddsDesc", out var oddsDesc) || oddsDesc.ValueKind != JsonValueKind.String ||
+                !entry.TryGetProperty("horses", out var horses) || horses.ValueKind != JsonValueKind.Array)
+            {
+                continue;
+            }
+
+            var desc = oddsDesc.GetString();
+            if (string.IsNullOrEmpty(desc))
+            {
+                continue;
+            }
+
+            foreach (var horse in horses.EnumerateArray())
+            {
+                if (horse.ValueKind == JsonValueKind.Object &&
+                    horse.TryGetProperty("horseId", out var horseId) &&
+                    horseId.ValueKind == JsonValueKind.Number &&
+                    horseId.TryGetInt32(out var id))
+                {
+                    map[id] = desc;
+                }
+            }
+        }
+
+        return map;
     }
 
     private static void ValidateSentinelKeys(JsonElement runner, int index)
@@ -159,10 +204,11 @@ public sealed class NextDataRaceCardReader
         }
     }
 
-    private static NextDataRunner BuildRunner(JsonElement runner, int index, string raceCountryCode)
+    private static NextDataRunner BuildRunner(JsonElement runner, int index, string raceCountryCode, IReadOnlyDictionary<int, string> forecastOdds)
     {
         var fields = new RunnerFields(runner, index);
 
+        var horseId = fields.NumberOrNull("horseId");
         var rawName = fields.StringOrNull("horseName");
         var country = fields.StringOrNull("countryOrigin");
 
@@ -170,8 +216,12 @@ public sealed class NextDataRaceCardReader
         // matching the RaceOdds the DOM parser derives from the same forecast.
         var forecastRatio = fields.NumberAsDoubleOrNull("forecastOddsValue");
 
+        // The fractional price string ("11/2") comes from the race-level betting forecast, keyed by
+        // horse id; absent there leaves the runner at SP.
+        var forecastFractional = horseId.HasValue && forecastOdds.TryGetValue(horseId.Value, out var desc) ? desc : null;
+
         return new NextDataRunner(
-            fields.NumberOrNull("horseId"),
+            horseId,
             ReconstructHorseName(rawName, country, raceCountryCode),
             fields.NumberOrNull("jockeyId"),
             ReconstructJockeyName(fields.StringOrNull("jockeyName"), fields.NumberAllowingMissing("weightAllowanceLbs")),
@@ -186,6 +236,8 @@ public sealed class NextDataRaceCardReader
             fields.RatingOrNull("officialRatingToday"),
             fields.RatingOrNull("rpPostmark"),
             fields.RatingOrNull("rpTopspeed"),
+            fields.StringOrNull("horseHeadGear"),
+            forecastFractional,
             forecastRatio.HasValue ? forecastRatio.Value + 1.0 : null,
             fields.Bool("nonRunner") || fields.Bool("irishReserve"));
     }

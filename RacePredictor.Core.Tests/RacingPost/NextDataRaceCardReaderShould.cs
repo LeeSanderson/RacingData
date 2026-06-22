@@ -12,7 +12,7 @@ public class NextDataRaceCardReaderShould
         "\"jockeyId\":11,\"jockeyName\":\"J Test\",\"trainerId\":22,\"trainerName\":\"T Test\"," +
         "\"age\":5,\"startNumber\":1,\"draw\":3,\"formattedWeightStones\":9,\"formattedWeightPounds\":7," +
         "\"daysSinceLastRun\":\"21\",\"formFiguresData\":[{\"figure\":\"1\",\"position\":0}]," +
-        "\"officialRatingToday\":70,\"rpPostmark\":80,\"rpTopspeed\":60," +
+        "\"officialRatingToday\":70,\"rpPostmark\":80,\"rpTopspeed\":60,\"horseHeadGear\":\"t\"," +
         "\"forecastOddsValue\":4,\"nonRunner\":false,\"irishReserve\":false}";
 
     private static string WrapScript(string scriptContent) =>
@@ -46,7 +46,26 @@ public class NextDataRaceCardReaderShould
         relocal.OfficialRating.Should().Be(70);
         relocal.RacingPostRating.Should().Be(84);
         relocal.TopSpeedRating.Should().Be(46);
-        relocal.ForecastDecimalOdds.Should().Be(8.0); // forecast "7/1" -> decimal 8.0
+        relocal.HeadGear.Should().BeNull();             // Relocal wears no headgear
+        relocal.ForecastFractionalOdds.Should().Be("7/1");
+        relocal.ForecastDecimalOdds.Should().Be(8.0);   // forecast "7/1" -> decimal 8.0
+    }
+
+    [Fact]
+    public void ExposeTheStaticHeadgearCodeAndFractionalForecastPrice()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_kempton_20260520_2000_headgear.html");
+
+        var view = new NextDataRaceCardReader().Read(html);
+
+        var rockIguana = view.RunnerByHorseId(7374167);
+        rockIguana.Should().NotBeNull();
+        rockIguana!.HeadGear.Should().Be("h");
+        rockIguana.ForecastFractionalOdds.Should().Be("11/2");
+        rockIguana.ForecastDecimalOdds.Should().BeApproximately(6.5, 0.001);
+
+        // A runner with no headgear is a clean null, not an empty string.
+        view.Runners.Should().Contain(r => r.HeadGear == null);
     }
 
     [Theory]

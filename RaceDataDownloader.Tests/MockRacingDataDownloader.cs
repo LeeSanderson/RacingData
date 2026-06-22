@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using NSubstitute;
 using RaceDataDownloader.Tests.Fakes;
 using RacePredictor.Core.RacingPost;
@@ -38,7 +39,11 @@ internal static class MockRacingDataDownloader
 
     public static IRacingDataDownloader MockReturnHappyValleyRaceCardWithNoForecast(this IRacingDataDownloader downloader)
     {
+        // Capture now reads forecast odds from the JSON island, so neutralise the forecast there as
+        // well as in the DOM oracle. A card with no forecast leaves every runner at SP (exercising the
+        // forecast canary) while the two readings still agree, so cross-validation does not abort.
         var html = FakeData.HappyValleyRaceCardFor1140RaceOn20260520
+            .Replace("\"bettingForecast\":", "\"bettingForecastRemoved\":", StringComparison.Ordinal)
             .Replace("data-testid=\"Link__BettingForecastHorse\"", "data-testid=\"Link__BettingForecastHorseRemoved\"", StringComparison.Ordinal);
         var mockRaceCard = new RaceCardParser().Parse(html);
         downloader.DownloadRaceCard(HappyValleyRaceCardUrl).Returns(mockRaceCard);
@@ -47,11 +52,25 @@ internal static class MockRacingDataDownloader
 
     public static IRacingDataDownloader MockReturnHappyValleyRaceCardWithNoRatings(this IRacingDataDownloader downloader)
     {
-        // Remove the runner-stats containers so OR/RPR/TSR all parse as null, exercising the ratings canary.
+        // Null the runner ratings in the JSON island (the captured source) and remove the DOM
+        // runner-stats containers, so OR/RPR/TSR all parse as null on both readings. This exercises the
+        // ratings canary without tripping cross-validation (both readings agree the ratings are absent).
         var html = FakeData.HappyValleyRaceCardFor1140RaceOn20260520
             .Replace("data-testid=\"Container__RunnerStats\"", "data-testid=\"Container__RunnerStatsRemoved\"", StringComparison.Ordinal);
+        html = Regex.Replace(html, "\"(officialRatingToday|rpPostmark|rpTopspeed)\":-?\\d+", "\"$1\":\"-\"");
         var mockRaceCard = new RaceCardParser().Parse(html);
         downloader.DownloadRaceCard(HappyValleyRaceCardUrl).Returns(mockRaceCard);
+        return downloader;
+    }
+
+    public static IRacingDataDownloader MockReturnHappyValleyRaceCardWithNoNextData(this IRacingDataDownloader downloader)
+    {
+        // Remove the __NEXT_DATA__ JSON island entirely. Parsing is deferred to call time (a lazy
+        // Returns callback) so the reader's fail-loud ValidationException is thrown inside RunAsync
+        // rather than at mock-setup time.
+        var html = FakeData.HappyValleyRaceCardFor1140RaceOn20260520
+            .Replace("__NEXT_DATA__", "__NEXT_DATA_REMOVED__", StringComparison.Ordinal);
+        downloader.DownloadRaceCard(HappyValleyRaceCardUrl).Returns(_ => new RaceCardParser().Parse(html));
         return downloader;
     }
 

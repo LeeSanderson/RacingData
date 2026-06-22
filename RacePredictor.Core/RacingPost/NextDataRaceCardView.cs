@@ -51,6 +51,8 @@ public sealed class NextDataRunner
         int? officialRating,
         int? racingPostRating,
         int? topSpeedRating,
+        string? headGear,
+        string? forecastFractionalOdds,
         double? forecastDecimalOdds,
         bool isNonRunner)
     {
@@ -69,6 +71,8 @@ public sealed class NextDataRunner
         OfficialRating = officialRating;
         RacingPostRating = racingPostRating;
         TopSpeedRating = topSpeedRating;
+        HeadGear = headGear;
+        ForecastFractionalOdds = forecastFractionalOdds;
         ForecastDecimalOdds = forecastDecimalOdds;
         IsNonRunner = isNonRunner;
     }
@@ -88,6 +92,13 @@ public sealed class NextDataRunner
     public int? OfficialRating { get; }
     public int? RacingPostRating { get; }
     public int? TopSpeedRating { get; }
+
+    /// <summary>The static headgear code (e.g. "t", "tb"); null when the runner wears none.</summary>
+    public string? HeadGear { get; }
+
+    /// <summary>The betting-forecast price as a fractional string (e.g. "11/2"); null when the runner has no forecast.</summary>
+    public string? ForecastFractionalOdds { get; }
+
     public double? ForecastDecimalOdds { get; }
 
     /// <summary>True when the runner is a declared non-runner or reserve (excluded by the DOM parser).</summary>

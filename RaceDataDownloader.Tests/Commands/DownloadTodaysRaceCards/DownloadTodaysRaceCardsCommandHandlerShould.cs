@@ -29,6 +29,28 @@ public class DownloadTodaysRaceCardsCommandHandlerShould(ITestOutputHelper outpu
     }
 
     [Fact]
+    public async Task FailAndWriteNoCsvWhenTheRaceCardHasNoNextDataIsland()
+    {
+        // Capture comes from validated JSON or the run fails — there is no silent DOM fallback. An
+        // absent __NEXT_DATA__ island must abort the run and leave no CSV behind.
+        var mockFileSystemBuilder = new MockFileSystemBuilder();
+        var mockRacingDataDownloader = MockRacingDataDownloader
+            .New()
+            .MockReturnHappyValleyRaceCardUrls()
+            .MockReturnHappyValleyRaceCardWithNoNextData();
+        var clock = Substitute.For<IClock>();
+        clock.Today.Returns(new DateOnly(2026, 05, 20));
+        var logger = new OutputLogger<DownloadTodaysRaceCardsCommandHandler>(output);
+
+        var handler = new DownloadTodaysRaceCardsCommandHandler(mockFileSystemBuilder.FileSystem, mockRacingDataDownloader, clock, logger);
+        var options = new DownloadTodaysRaceCardsOptions { DataDirectory = MockFileSystemBuilder.OutputDirectory };
+        var result = await handler.RunAsync(options);
+
+        result.Should().Be(ExitCodes.Error);
+        mockFileSystemBuilder.TodaysSavedResultsAsCsv.Should().BeNull();
+    }
+
+    [Fact]
     public async Task DownloadRaceCardsAndSaveToExpectedLocation()
     {
         var mockFileSystemBuilder = new MockFileSystemBuilder();

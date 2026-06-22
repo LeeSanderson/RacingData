@@ -154,9 +154,19 @@ public partial class RaceCardParser : RaceParser
             .GetMatch(_find.AnyElement().WithAttribute("data-testid", "Container__RaceDetailsInfo").GetText())
             .AsInt();
 
+    // Runner capture reads the __NEXT_DATA__ JSON island as the sole source (fail-loud on any
+    // structural problem). The DOM RaceCardRunnerParser is retained and run in parallel purely as a
+    // cross-validation oracle — its reading is never written to the CSV; it only proves the JSON node
+    // still corresponds to the rendered card. There is no DOM fallback: a JSON failure or systematic
+    // JSON<->DOM divergence throws and aborts the run.
     private RaceRunner[] GetRunners()
     {
-        var runnerParser = new RaceCardRunnerParser(_document);
-        return runnerParser.Parse().ToArray();
+        var view = new NextDataRaceCardReader().Read(_document);
+        var capturedRunners = NextDataRunnerMapper.ToRaceRunners(view);
+
+        var oracleRunners = new RaceCardRunnerParser(_document).Parse().ToArray();
+        RaceCardRunnerCrossValidator.Validate(capturedRunners, oracleRunners);
+
+        return capturedRunners;
     }
 }

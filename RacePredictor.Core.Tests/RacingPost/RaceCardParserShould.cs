@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using RacePredictor.Core.RacingPost;
 
 namespace RacePredictor.Core.Tests.RacingPost;
@@ -76,8 +75,11 @@ public class RaceCardParserShould
         var actualRaceParseResult = await GetRaceCard("racecard_kempton_20260520_2000_headgear.html");
 
         actualRaceParseResult.Runners.Length.Should().Be(11);
+        // Headgear is now read from the authoritative __NEXT_DATA__ JSON, which carries 7 wearers among
+        // the active runners. The old DOM span-scanning heuristic under-counted at 6 (it missed one);
+        // correcting that under-count is an expected outcome of the JSON migration, not a regression.
         var headgearCount = actualRaceParseResult.Runners.Count(r => !string.IsNullOrEmpty(r.Attributes.HeadGear));
-        headgearCount.Should().Be(6);
+        headgearCount.Should().Be(7);
 
         actualRaceParseResult.Runners
             .Where(r => !string.IsNullOrEmpty(r.Attributes.HeadGear))
@@ -110,19 +112,17 @@ public class RaceCardParserShould
     }
 
     [Fact]
-    public async Task FallBackToDefaultOddsWhenRunnerHasNoForecast()
+    public async Task DefaultToSpWhenTheBettingForecastIsAbsent()
     {
+        // Remove the betting forecast from the JSON island (the captured source) and the DOM oracle
+        // alike: a card with no forecast leaves every runner at SP, and the two readings still agree.
         var html = ResourceLoader.ReadRacingPostExampleResource("racecard_kempton_20260520_2000_headgear.html");
-        var modified = RemoveForecastForHorse(html, 7374167);
+        var modified = RemoveBettingForecast(html);
 
         var card = await new RaceCardParser().Parse(modified);
 
-        var rockIguana = card.Runners.Single(r => r.Horse.Id == 7374167);
-        rockIguana.Statistics.Odds.FractionalOdds.Should().Be("SP");
-        rockIguana.Statistics.Odds.DecimalOdds.Should().BeNull();
-
-        // Other runners are unaffected and still receive their forecast.
-        card.Runners.Single(r => r.Horse.Id == 4518765).Statistics.Odds.FractionalOdds.Should().Be("6/1");
+        card.Runners.Should().OnlyContain(r =>
+            r.Statistics.Odds.FractionalOdds == "SP" && r.Statistics.Odds.DecimalOdds == null);
     }
 
     [Fact]
@@ -148,22 +148,26 @@ public class RaceCardParserShould
     [Fact]
     public async Task ExcludeReservesFromParsedRunners()
     {
-        // Synthesise a reserve by retitling the first runner's card number to "R1".
-        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_yarmouth_20260520_1910.html");
-        var modified = MarkFirstRunnerNumberAsReserve(html);
+        // The Happy Valley card carries 14 entries in the JSON runners array, two of which are flagged
+        // irishReserve (Sportic Warrior, Flying Amani). Reserve exclusion is now driven by the JSON
+        // flags rather than the DOM card-number text.
+        var card = await GetRaceCard("racecard_happyvalley_20260520_1140.html");
 
-        var card = await new RaceCardParser().Parse(modified);
-        card.Runners.Length.Should().Be(5);
-        card.Runners.Should().NotContain(r => r.Horse.Name == "Relocal FR");
+        card.Runners.Length.Should().Be(12);
+        card.Runners.Should().NotContain(r => r.Horse.Id == 6107027); // Sportic Warrior
+        card.Runners.Should().NotContain(r => r.Horse.Id == 7209394); // Flying Amani
     }
 
     [Fact]
-    public async Task FallBackToUnknownJockeyWhenJockeyLinkMissing()
+    public async Task UseUnknownJockeyWhenTheJsonJockeyIsNull()
     {
-        // Synthesise a missing-jockey row by retagging the first runner's jockey anchor so the
-        // parser cannot locate it.
+        // Null Relocal's jockey in the JSON island (a present-but-null value, the legitimate-absence
+        // case). A single runner diverging from the DOM oracle is within tolerance, so the run does
+        // not abort, and the captured jockey falls back to the Unknown placeholder.
         var html = ResourceLoader.ReadRacingPostExampleResource("racecard_yarmouth_20260520_1910.html");
-        var modified = RemoveFirstRunnerJockey(html);
+        var modified = html
+            .Replace("\"jockeyId\":94575", "\"jockeyId\":null", StringComparison.Ordinal)
+            .Replace("\"jockeyName\":\"George Wood\"", "\"jockeyName\":null", StringComparison.Ordinal);
 
         var card = await new RaceCardParser().Parse(modified);
         card.Runners.Length.Should().Be(6);
@@ -182,39 +186,24 @@ public class RaceCardParserShould
     }
 
     [Fact]
-    public async Task FallBackToZeroWeightWhenWeightDigitsMissing()
+    public async Task ParseARunnerWithANullDaysSinceLastRunFromJsonAsNull()
     {
-        // Synthesise a missing-weight row by emptying the digits inside the first runner's
-        // "Xst Ylb" weight markup so the parser's regex cannot match.
+        // No fixture has a genuine first-time runner, so synthesise one by nulling Relocal's
+        // days-since-last-run in the JSON island. A present-but-null value is legitimate absence
+        // (a debut runner) and must surface as a clean null rather than throw. The single-runner
+        // divergence from the DOM oracle is within tolerance, so the run is not aborted.
         var html = ResourceLoader.ReadRacingPostExampleResource("racecard_yarmouth_20260520_1910.html");
-        var modified = RemoveFirstRunnerWeight(html);
-
-        var card = await new RaceCardParser().Parse(modified);
-        card.Runners.Length.Should().Be(6);
-        var firstByCard = card.Runners.OrderBy(r => r.Attributes.RaceCardNumber).First();
-        firstByCard.Attributes.Weight.TotalPounds.Should().Be(0);
-        card.Runners.Count(r => r.Attributes.Weight.TotalPounds == 0).Should().Be(1);
-    }
-
-    [Fact]
-    public async Task ParseAFirstTimeRunnerWithNoFormOrDaysSinceAsNull()
-    {
-        // No fixture has a genuine first-time runner, so synthesise one by stripping the
-        // days-since-last-run and form-figures markup from the first runner's row. Absence is
-        // normal (debut runners) and must parse to null rather than throw.
-        var html = ResourceLoader.ReadRacingPostExampleResource("racecard_yarmouth_20260520_1910.html");
-        var modified = MakeFirstRunnerAFirstTimer(html);
+        var modified = html.Replace("\"daysSinceLastRun\":\"32\"", "\"daysSinceLastRun\":null", StringComparison.Ordinal);
 
         var card = await new RaceCardParser().Parse(modified);
 
         card.Runners.Length.Should().Be(6);
         var firstTimer = card.Runners.Single(r => r.Horse.Name == "Relocal FR");
         firstTimer.Attributes.DaysSinceLastRun.Should().BeNull();
-        firstTimer.Attributes.FormFigures.Should().BeNull();
 
-        // The surgical mutation leaves every other runner's pre-race form intact.
+        // Every other runner keeps its days-since-last-run.
         card.Runners.Where(r => r.Horse.Name != "Relocal FR")
-            .Should().OnlyContain(r => r.Attributes.DaysSinceLastRun != null && r.Attributes.FormFigures != null);
+            .Should().OnlyContain(r => r.Attributes.DaysSinceLastRun != null);
     }
 
     private static async Task<RaceCard> GetRaceCard(string resourceFileName)
@@ -224,77 +213,14 @@ public class RaceCardParserShould
         return await parser.Parse(raceResultHtmlPage);
     }
 
-    private static string MakeFirstRunnerAFirstTimer(string html)
-    {
-        var rowIdx = html.IndexOf("Container__RunnerRowDesktop", StringComparison.Ordinal);
-        if (rowIdx < 0)
-        {
-            throw new InvalidOperationException("Could not find first runner row to mutate.");
-        }
-        // Confine the edit to the first runner's row (up to the next desktop row) so other runners
-        // keep their form.
-        var nextRowIdx = html.IndexOf("Container__RunnerRowDesktop", rowIdx + 1, StringComparison.Ordinal);
-        if (nextRowIdx < 0)
-        {
-            nextRowIdx = html.Length;
-        }
-        var region = html[rowIdx..nextRowIdx]
-            .Replace("data-testid=\"Text__DaysSinceLastRun\"", "data-testid=\"Text__DaysSinceLastRunRemoved\"", StringComparison.Ordinal)
-            .Replace("data-testid=\"Container__RunnerRowFormFigures\"", "data-testid=\"Container__RunnerRowFormFiguresRemoved\"", StringComparison.Ordinal);
-        return html[..rowIdx] + region + html[nextRowIdx..];
-    }
-
-    private static string MarkFirstRunnerNumberAsReserve(string html)
-    {
-        var rowIdx = html.IndexOf("Container__RunnerRowDesktop", StringComparison.Ordinal);
-        var pattern = new Regex(@"(Container__RunnerNumber[^>]*>\s*<div[^>]*>\s*<span[^>]*>)(\d+)(</span>)");
-        var match = pattern.Match(html, rowIdx);
-        if (!match.Success)
-        {
-            throw new InvalidOperationException("Could not find first runner number span to mutate.");
-        }
-        var replacement = $"{match.Groups[1].Value}R{match.Groups[2].Value}{match.Groups[3].Value}";
-        return html[..match.Index] + replacement + html[(match.Index + match.Length)..];
-    }
-
-    private static string RemoveForecastForHorse(string html, int horseId)
-    {
-        // Rename only the betting-forecast anchor for this horse (the runner-row Link__Horse anchor
-        // for the same id is left intact) so the forecast parser no longer matches it.
-        var pattern = new Regex($"Link__BettingForecastHorse(\"[^>]*?href=\"/profile/horse/{horseId}/)");
-        if (!pattern.IsMatch(html))
-        {
-            throw new InvalidOperationException($"Could not find forecast anchor for horse {horseId} to remove.");
-        }
-        // The race-card page renders its content twice, so neutralise every copy of the anchor.
-        return pattern.Replace(html, "Link__BettingForecastHorseRemoved$1");
-    }
+    // Neutralises the betting forecast in both the JSON island (the captured source) and the DOM
+    // oracle so the two readings agree that the card has no forecast.
+    private static string RemoveBettingForecast(string html) =>
+        html
+            .Replace("\"bettingForecast\":", "\"bettingForecastRemoved\":", StringComparison.Ordinal)
+            .Replace("data-testid=\"Link__BettingForecastHorse\"", "data-testid=\"Link__BettingForecastHorseRemoved\"", StringComparison.Ordinal);
 
     private static string RemoveGoingLink(string html) =>
         html.Replace("data-testid=\"Link__Going\"", "data-testid=\"Link__GoingRemoved\"",
             StringComparison.Ordinal);
-
-    private static string RemoveFirstRunnerJockey(string html)
-    {
-        var rowIdx = html.IndexOf("Container__RunnerRowDesktop", StringComparison.Ordinal);
-        const string Marker = "data-testid=\"Link__Jockey\"";
-        var idx = html.IndexOf(Marker, rowIdx, StringComparison.Ordinal);
-        if (idx < 0)
-        {
-            throw new InvalidOperationException("Could not find first jockey link to remove.");
-        }
-        return html[..idx] + "data-testid=\"Link__JockeyRemoved\"" + html[(idx + Marker.Length)..];
-    }
-
-    private static string RemoveFirstRunnerWeight(string html)
-    {
-        var rowIdx = html.IndexOf("Container__RunnerRowDesktop", StringComparison.Ordinal);
-        var pattern = new Regex(@"<span[^>]*>\d+</span>st\s+<span[^>]*>\d+</span>lb");
-        var match = pattern.Match(html, rowIdx);
-        if (!match.Success)
-        {
-            throw new InvalidOperationException("Could not find first runner weight markup to remove.");
-        }
-        return html[..match.Index] + "<span></span>st <span></span>lb" + html[(match.Index + match.Length)..];
-    }
 }
