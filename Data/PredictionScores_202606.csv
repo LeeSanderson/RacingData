@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,3/1,4,CompletedRace,921224,15,Doncaster,06/20/2026 20:30:00,3197369,Pleasant Man,0.3043211,1.25
+8,False,5/2,3.5,CompletedRace,922971,180,Down Royal,06/20/2026 15:53:00,5021597,Fiver Friday,0.22468394,0.3
+1,True,6/5F,2.2,CompletedRace,921199,174,Newmarket (July),06/20/2026 15:47:00,4642854,Sixpack,0.38075534,0.59
+2,False,4/5F,1.8,CompletedRace,922754,40,Nottingham,06/20/2026 20:45:00,7762488,Kalokalo IRE,0.32970548,0.09
 1,True,EvensF,2,CompletedRace,921128,2,Ascot,06/19/2026 17:35:00,8144075,Causeway IRE,0.43113202,0
 5,False,9/1,10,CompletedRace,921175,21,Goodwood,06/19/2026 20:05:00,7592670,Mr Writer IRE,0.22024332,0.4
 1,True,10/11F,1.9090909090909092,CompletedRace,922920,188,Limerick,06/19/2026 17:20:00,8268301,Zenford,0.36163384,0.56
