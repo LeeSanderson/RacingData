@@ -103,8 +103,8 @@ public record RaceResultRecord : RaceRunnerRecord
     [Index(48)]
     public int? CardTopSpeedRating { get; set; }
 
-    // Owner is captured forward-only from the card and is not part of the card->result
-    // write-back, so these stay blank in the results layout.
+    // Owner, captured from the card and forwarded onto the result by the validate write-back. Forward-only,
+    // so rows whose morning card no longer exists stay blank.
     [Optional]
     [Index(49)]
     public int? OwnerId { get; set; }
@@ -112,8 +112,8 @@ public record RaceResultRecord : RaceRunnerRecord
     [Index(50)]
     public string? OwnerName { get; set; }
 
-    // Breeding is captured forward-only from the card and is not part of the card->result write-back,
-    // so these stay blank in the results layout.
+    // Breeding (sire/dam), captured from the card and forwarded onto the result by the validate write-back.
+    // Forward-only, so rows whose morning card no longer exists stay blank.
     [Optional]
     [Index(51)]
     public string? SireName { get; set; }
@@ -124,8 +124,10 @@ public record RaceResultRecord : RaceRunnerRecord
     [Index(53)]
     public string? DamName { get; set; }
 
-    // Extras are captured forward-only from the card and are not part of the card->result write-back,
-    // so these stay blank in the results layout.
+    // Per-runner extras, captured from the card and forwarded onto the result by the validate write-back.
+    // Forward-only, so rows whose morning card no longer exists stay blank. The three first-time flags carry
+    // a captured false as false (the write-back gates on presence, not truthiness). WindSurgery and TrainerRtf
+    // are integers in the JSON (a wind-op indicator and a trainer current-form snapshot), not bool flags.
     [Optional]
     [Index(54)]
     public bool? HeadgearFirstTime { get; set; }

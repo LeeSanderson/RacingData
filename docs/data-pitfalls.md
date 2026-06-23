@@ -44,7 +44,11 @@ un-prefixed rating columns must not. (`Card*` is a clean *current-race* pre-race
 rating source, alongside the previous-race `LastRace*` values from the stats join.)
 
 Two caveats apply to the `Card*` columns and the other newly-captured pre-race fields
-(`DaysSinceLastRun`, `FormFigures`, `PrizeMoney`/`PrizeMoneyValue`):
+(`DaysSinceLastRun`, `FormFigures`, `PrizeMoney`/`PrizeMoneyValue`, and the
+owner/breeding/extras fields — `OwnerId`/`OwnerName`, `SireName`/`SireCountry`/`DamName`,
+the first-time flags, `WindSurgery`, `TrainerRtf`, `JockeyAllowanceLbs`,
+`NewTrainerRacesCount`, `CountryOfOrigin`, `Spotlight` — all now forwarded by the
+write-back too):
 
 - **Forward-only coverage.** They populate from *deployment forward* via the
   card→result write-back (see [`docs/odds-capture.md`](odds-capture.md)); coverage

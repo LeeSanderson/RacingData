@@ -451,6 +451,171 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         horse1.TopSpeedRating.Should().Be(120);
     }
 
+    [Fact]
+    public async Task ForwardOwnerFromTheCardIntoMatchedResultRows()
+    {
+        var cards = new List<RaceCardRecord>
+        {
+            CardRunner(raceId: 1, horseId: 1, fractionalOdds: "11/2", decimalOdds: 6.5,
+                ownerId: 322703, ownerName: "Li Xiting")
+        };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await _resultsWhereHorse1Won.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        var horse1 = mergedResults.Single(r => r.HorseId == 1);
+        horse1.OwnerId.Should().Be(322703);
+        horse1.OwnerName.Should().Be("Li Xiting");
+    }
+
+    [Fact]
+    public async Task ForwardEveryOwnerBreedingAndExtraFieldFromTheCardIntoMatchedResultRows()
+    {
+        var cards = new List<RaceCardRecord>
+        {
+            CardRunner(raceId: 1, horseId: 1, fractionalOdds: "11/2", decimalOdds: 6.5,
+                ownerId: 322703, ownerName: "Li Xiting",
+                sireName: "Not A Single Doubt", sireCountry: "AUS", damName: "Jacquetta",
+                headgearFirstTime: true, geldingFirstTime: false, windSurgery: 2,
+                trainerRtf: 59, jockeyAllowanceLbs: 5, jockeyFirstTime: true,
+                newTrainerRacesCount: 1, countryOfOrigin: "FR",
+                spotlight: "Won well; \"one to note\", strong at C&D")
+        };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await _resultsWhereHorse1Won.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        var horse1 = mergedResults.Single(r => r.HorseId == 1);
+        horse1.OwnerId.Should().Be(322703);
+        horse1.OwnerName.Should().Be("Li Xiting");
+        horse1.SireName.Should().Be("Not A Single Doubt");
+        horse1.SireCountry.Should().Be("AUS");
+        horse1.DamName.Should().Be("Jacquetta");
+        horse1.HeadgearFirstTime.Should().BeTrue();
+        horse1.GeldingFirstTime.Should().BeFalse();
+        horse1.WindSurgery.Should().Be(2);
+        horse1.TrainerRtf.Should().Be(59);
+        horse1.JockeyAllowanceLbs.Should().Be(5);
+        horse1.JockeyFirstTime.Should().BeTrue();
+        horse1.NewTrainerRacesCount.Should().Be(1);
+        horse1.CountryOfOrigin.Should().Be("FR");
+        horse1.Spotlight.Should().Be("Won well; \"one to note\", strong at C&D");
+    }
+
+    [Fact]
+    public async Task LeaveResultOwnerBreedingExtrasCellsUntouchedWhenTheCardLacksThem()
+    {
+        var resultsWithOwnerData = new List<RaceResultRecord>
+        {
+            new()
+            {
+                RaceId = 1, RaceName = "Race1", CourseId = 1, CourseName = "Course1", HorseId = 1,
+                Off = new DateTime(2022, 05, 13, 13, 40, 0), FinishingPosition = 1,
+                FractionalOdds = "10/1", DecimalOdds = 11, ResultStatus = ResultStatus.CompletedRace,
+                OwnerName = "Existing Owner", SireName = "Existing Sire", GeldingFirstTime = true
+            }
+        };
+        // A matched card runner that genuinely carries none of the owner/breeding/extras fields.
+        var cards = new List<RaceCardRecord> { CardRunner(raceId: 1, horseId: 1, fractionalOdds: "11/2", decimalOdds: 6.5) };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await resultsWithOwnerData.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        var horse1 = mergedResults.Single(r => r.HorseId == 1);
+        // An absent card value never overwrites an existing result cell with empty data.
+        horse1.OwnerName.Should().Be("Existing Owner");
+        horse1.SireName.Should().Be("Existing Sire");
+        horse1.GeldingFirstTime.Should().BeTrue();
+        // And a still-blank result cell stays blank when the card has nothing to give.
+        horse1.OwnerId.Should().BeNull();
+        horse1.DamName.Should().BeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task LeaveAlreadyPopulatedOwnerBreedingExtrasCellsUntouchedButFillStillBlankOnes()
+    {
+        var resultsWithSomeCardData = new List<RaceResultRecord>
+        {
+            new()
+            {
+                RaceId = 1, RaceName = "Race1", CourseId = 1, CourseName = "Course1", HorseId = 1,
+                Off = new DateTime(2022, 05, 13, 13, 40, 0), FinishingPosition = 1,
+                FractionalOdds = "10/1", DecimalOdds = 11, ResultStatus = ResultStatus.CompletedRace,
+                OwnerName = "Existing Owner", SireName = "Existing Sire", WindSurgery = 1
+                // OwnerId, DamName and TrainerRtf left blank
+            }
+        };
+        var cards = new List<RaceCardRecord>
+        {
+            CardRunner(raceId: 1, horseId: 1, fractionalOdds: "11/2", decimalOdds: 6.5,
+                ownerId: 322703, ownerName: "Li Xiting", sireName: "Not A Single Doubt",
+                damName: "Jacquetta", windSurgery: 2, trainerRtf: 59)
+        };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await resultsWithSomeCardData.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        var horse1 = mergedResults.Single(r => r.HorseId == 1);
+        // Already-populated cells keep their own values, not the card's.
+        horse1.OwnerName.Should().Be("Existing Owner");
+        horse1.SireName.Should().Be("Existing Sire");
+        horse1.WindSurgery.Should().Be(1);
+        // Still-blank cells DO fill from the card.
+        horse1.OwnerId.Should().Be(322703);
+        horse1.DamName.Should().Be("Jacquetta");
+        horse1.TrainerRtf.Should().Be(59);
+    }
+
+    [Fact]
+    public async Task CarryAFirstTimeFlagCapturedAsFalseOntoTheResultAsFalseNotNull()
+    {
+        var cards = new List<RaceCardRecord>
+        {
+            CardRunner(raceId: 1, horseId: 1, fractionalOdds: "11/2", decimalOdds: 6.5,
+                headgearFirstTime: true, geldingFirstTime: false)
+            // jockeyFirstTime left null on the card
+        };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await _resultsWhereHorse1Won.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        var horse1 = mergedResults.Single(r => r.HorseId == 1);
+        // Gated on presence, not truthiness: a captured false survives as false, distinct from an absent (null) flag.
+        horse1.HeadgearFirstTime.Should().BeTrue();
+        horse1.GeldingFirstTime.Should().BeFalse();
+        horse1.JockeyFirstTime.Should().BeNull();
+    }
+
     private static RaceResultRecord ResultRunner(int horseId, string fractionalOdds, double decimalOdds, int finishingPosition) =>
         new()
         {
@@ -468,7 +633,11 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
 
     private static RaceCardRecord CardRunner(int raceId, int horseId, string fractionalOdds, double? decimalOdds,
         int? officialRating = null, int? racingPostRating = null, int? topSpeedRating = null,
-        int? daysSinceLastRun = null, string? formFigures = null, string? prizeMoney = null, decimal? prizeMoneyValue = null) =>
+        int? daysSinceLastRun = null, string? formFigures = null, string? prizeMoney = null, decimal? prizeMoneyValue = null,
+        int? ownerId = null, string? ownerName = null, string? sireName = null, string? sireCountry = null,
+        string? damName = null, bool? headgearFirstTime = null, bool? geldingFirstTime = null, int? windSurgery = null,
+        int? trainerRtf = null, int? jockeyAllowanceLbs = null, bool? jockeyFirstTime = null,
+        int? newTrainerRacesCount = null, string? countryOfOrigin = null, string? spotlight = null) =>
         new()
         {
             RaceId = raceId,
@@ -485,7 +654,21 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
             DaysSinceLastRun = daysSinceLastRun,
             FormFigures = formFigures,
             PrizeMoney = prizeMoney,
-            PrizeMoneyValue = prizeMoneyValue
+            PrizeMoneyValue = prizeMoneyValue,
+            OwnerId = ownerId,
+            OwnerName = ownerName,
+            SireName = sireName,
+            SireCountry = sireCountry,
+            DamName = damName,
+            HeadgearFirstTime = headgearFirstTime,
+            GeldingFirstTime = geldingFirstTime,
+            WindSurgery = windSurgery,
+            TrainerRtf = trainerRtf,
+            JockeyAllowanceLbs = jockeyAllowanceLbs,
+            JockeyFirstTime = jockeyFirstTime,
+            NewTrainerRacesCount = newTrainerRacesCount,
+            CountryOfOrigin = countryOfOrigin,
+            Spotlight = spotlight
         };
 
     // Backs the mock filesystem with a mutable store so Exists/Read/Delete/Write behave like a real one.

@@ -150,7 +150,8 @@ public class ValidateRaceCardPredictionsCommandHandler(
             filled++;
         }
 
-        // The four base pre-race fields map name-to-name (the result re-declares them with `new`).
+        // Days-since/form/prize forward name-to-name: card and result each own these columns at their own
+        // sibling indices, so the value carries straight across with no Card* prefix.
         if (card.DaysSinceLastRun != null && result.DaysSinceLastRun == null)
         {
             result.DaysSinceLastRun = card.DaysSinceLastRun;
@@ -169,6 +170,81 @@ public class ValidateRaceCardPredictionsCommandHandler(
         if (card.PrizeMoneyValue != null && result.PrizeMoneyValue == null)
         {
             result.PrizeMoneyValue = card.PrizeMoneyValue;
+            filled++;
+        }
+
+        if (card.OwnerId != null && result.OwnerId == null)
+        {
+            result.OwnerId = card.OwnerId;
+            filled++;
+        }
+        if (!string.IsNullOrEmpty(card.OwnerName) && string.IsNullOrEmpty(result.OwnerName))
+        {
+            result.OwnerName = card.OwnerName;
+            filled++;
+        }
+
+        // The three first-time flags gate on presence (non-null), never truthiness, so a card `false` is
+        // carried as `false` and stays distinct from an absent (null) flag — the three-state signal is preserved.
+        if (card.HeadgearFirstTime != null && result.HeadgearFirstTime == null)
+        {
+            result.HeadgearFirstTime = card.HeadgearFirstTime;
+            filled++;
+        }
+        if (card.GeldingFirstTime != null && result.GeldingFirstTime == null)
+        {
+            result.GeldingFirstTime = card.GeldingFirstTime;
+            filled++;
+        }
+        if (card.JockeyFirstTime != null && result.JockeyFirstTime == null)
+        {
+            result.JockeyFirstTime = card.JockeyFirstTime;
+            filled++;
+        }
+
+        if (!string.IsNullOrEmpty(card.SireName) && string.IsNullOrEmpty(result.SireName))
+        {
+            result.SireName = card.SireName;
+            filled++;
+        }
+        if (!string.IsNullOrEmpty(card.SireCountry) && string.IsNullOrEmpty(result.SireCountry))
+        {
+            result.SireCountry = card.SireCountry;
+            filled++;
+        }
+        if (!string.IsNullOrEmpty(card.DamName) && string.IsNullOrEmpty(result.DamName))
+        {
+            result.DamName = card.DamName;
+            filled++;
+        }
+        if (card.WindSurgery != null && result.WindSurgery == null)
+        {
+            result.WindSurgery = card.WindSurgery;
+            filled++;
+        }
+        if (card.TrainerRtf != null && result.TrainerRtf == null)
+        {
+            result.TrainerRtf = card.TrainerRtf;
+            filled++;
+        }
+        if (card.JockeyAllowanceLbs != null && result.JockeyAllowanceLbs == null)
+        {
+            result.JockeyAllowanceLbs = card.JockeyAllowanceLbs;
+            filled++;
+        }
+        if (card.NewTrainerRacesCount != null && result.NewTrainerRacesCount == null)
+        {
+            result.NewTrainerRacesCount = card.NewTrainerRacesCount;
+            filled++;
+        }
+        if (!string.IsNullOrEmpty(card.CountryOfOrigin) && string.IsNullOrEmpty(result.CountryOfOrigin))
+        {
+            result.CountryOfOrigin = card.CountryOfOrigin;
+            filled++;
+        }
+        if (!string.IsNullOrEmpty(card.Spotlight) && string.IsNullOrEmpty(result.Spotlight))
+        {
+            result.Spotlight = card.Spotlight;
             filled++;
         }
 

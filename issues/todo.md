@@ -71,6 +71,9 @@ model features from these columns is this follow-on. Candidate features: owner s
 sire/dam aptitude (for lightly-raced types whose form is thin), the first-time
 headgear/gelding/wind-op angles, and a "yard in form" feature off `TrainerRtf` (a capture-time
 snapshot, leak-free).
+A later PRD (forward all pre-race card fields into results) extended the `validate` write-back so
+these 14 fields now also land on the matching `Results_*.csv` rows, so the training corpus accrues
+them from go-live forward (previously they reached only the daily card and were lost on overwrite).
 **Forward-only constraint:** capture began ~2026-06 with no archive/backfill, so every field yields
 *zero* training rows until forward history accrues, and several fire sparsely (gelding-first-time,
 wind-surgery, new-trainer count). A useful modelling window is months out — assess per-field coverage
