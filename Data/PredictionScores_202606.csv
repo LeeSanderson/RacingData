@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,6/4F,2.5,CompletedRace,923425,175,Ballinrobe,06/22/2026 20:30:00,5272592,Switch From Diesel,0.49323735,5
+2,False,11/4,3.75,CompletedRace,921247,7,Brighton,06/22/2026 20:10:00,5937865,State Of Madness,0.39964807,5
+1,True,8/11F,1.7272727272727273,CompletedRace,921254,10,Catterick,06/22/2026 16:35:00,8240990,Treasure Islands,0.38880154,0.25
+3,False,EvensF,2,CompletedRace,921259,16,Musselburgh,06/22/2026 14:45:00,9092904,Lady Dublin,0.22341822,0
+1,True,7/2,4.5,CompletedRace,921258,16,Musselburgh,06/22/2026 16:45:00,6388816,Krissy IRE,0.38163602,5
+5,False,18/1,19,CompletedRace,921267,93,Windsor,06/22/2026 19:50:00,8157549,Guitar Solo,0.25529924,2.4
 1,True,3/1,4,CompletedRace,921224,15,Doncaster,06/20/2026 20:30:00,3197369,Pleasant Man,0.3043211,1.25
 8,False,5/2,3.5,CompletedRace,922971,180,Down Royal,06/20/2026 15:53:00,5021597,Fiver Friday,0.22468394,0.3
 1,True,6/5F,2.2,CompletedRace,921199,174,Newmarket (July),06/20/2026 15:47:00,4642854,Sixpack,0.38075534,0.59
