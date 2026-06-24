@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,5/2,3.5,CompletedRace,921272,6,Beverley,06/23/2026 14:15:00,8881480,Fern Clyde,0.42641693,4.12
+3,False,100/30,4.333333333333334,CompletedRace,921274,6,Beverley,06/23/2026 14:45:00,4175322,Roaring Ralph,0.26981866,0
+3,False,11/10F,2.1,CompletedRace,921273,6,Beverley,06/23/2026 16:17:00,3781882,Qitaal,0.5151506,3.6
+1,True,11/4F,3.75,CompletedRace,921286,1212,Ffos Las,06/23/2026 17:10:00,3630334,Solanna,0.27412477,0
+1,True,1/2F,1.5,CompletedRace,921280,36,Newbury,06/23/2026 20:05:00,4757705,Baileys Khelstar FR,0.2668307,2.52
+4,False,3/1F,4,CompletedRace,921037,39,Newton Abbot,06/23/2026 20:20:00,5504617,Jafimgoso,0.30160242,0
+0,False,9/2,5.5,PulledUp,921041,39,Newton Abbot,06/23/2026 20:50:00,3560286,Hatos FR,0.27877775,0
 3,False,6/4F,2.5,CompletedRace,923425,175,Ballinrobe,06/22/2026 20:30:00,5272592,Switch From Diesel,0.49323735,5
 2,False,11/4,3.75,CompletedRace,921247,7,Brighton,06/22/2026 20:10:00,5937865,State Of Madness,0.39964807,5
 1,True,8/11F,1.7272727272727273,CompletedRace,921254,10,Catterick,06/22/2026 16:35:00,8240990,Treasure Islands,0.38880154,0.25
