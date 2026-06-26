@@ -1773,9 +1773,9 @@ def _early_late_inputs(
                 [
                     {
                         "RaceId": race_id,
-                        "HorseId": int(row["HorseId"]),
-                        "FinishingPosition": int(row["FinishingPosition"]),
-                        "DecimalOdds": float(row["ResolvedOdds"]),
+                        "HorseId": int(row["HorseId"]),  # pyright: ignore[reportArgumentType]  # scalar cell is int-convertible
+                        "FinishingPosition": int(row["FinishingPosition"]),  # pyright: ignore[reportArgumentType]  # scalar cell is int-convertible
+                        "DecimalOdds": float(row["ResolvedOdds"]),  # pyright: ignore[reportArgumentType]  # scalar cell is float-convertible
                         "ResultStatus": "CompletedRace",
                     }
                     for _, row in frame.iterrows()
