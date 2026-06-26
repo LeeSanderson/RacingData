@@ -71,13 +71,21 @@ internal partial class RaceCardRunnerParser : RunnerParser
     private static RaceEntity ResolveEntity(HtmlNodeFinder rowFind, string testId, RaceEntity fallback)
     {
         var node = rowFind.Optional().Anchor().WithAttribute("data-testid", testId).GetNode();
-        return node != null ? AnchorToNamedEntity(node) : fallback;
+        if (node is null)
+        {
+            return fallback;
+        }
+
+        // An undeclared jockey/trainer renders an empty anchor with a placeholder "/racecards/race/"
+        // href (no id); fall back to the same "Unknown" entity the JSON capture uses so the two agree.
+        var entity = AnchorToNamedEntity(node);
+        return entity.Id == 0 ? fallback : entity;
     }
 
     private static RaceEntity AnchorToNamedEntity(HtmlNode anchor)
     {
         // Anchors may include <sup> badges (booking count, win-rate); take only <span> text as the name.
-        var id = @"/(\d+)/".GetMatch(anchor.GetAttributeValue("href", string.Empty)).AsInt();
+        var id = @"/(\d+)/".FindMatch(anchor.GetAttributeValue("href", string.Empty)).AsOptionalInt() ?? 0;
         var spans = anchor.SelectNodes(".//span");
         var name = spans is null
             ? anchor.InnerText.TrimAllWhiteSpace()

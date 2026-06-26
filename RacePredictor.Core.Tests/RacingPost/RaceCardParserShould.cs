@@ -205,6 +205,31 @@ public class RaceCardParserShould
             .Should().OnlyContain(r => r.Attributes.DaysSinceLastRun != null);
     }
 
+    [Fact]
+    public async Task ParseArabianCardThatCarriesAForecastOnlyInTheJsonIsland()
+    {
+        // Arabian (ARO) cards carry a betting forecast in the __NEXT_DATA__ island but render no
+        // forecast section in the DOM, so the oracle reads SP for every runner. The captured JSON
+        // forecast is correct and must not be flagged as a systematic ForecastOdds divergence.
+        var card = await GetRaceCard("racecard_doncaster_20260626_arabian.html");
+
+        card.Runners.Length.Should().Be(4);
+        card.Runners.Should().OnlyContain(r => r.Statistics.Odds.DecimalOdds.HasValue);
+        card.Runners.Single(r => r.Horse.Id == 3664406).Statistics.Odds.FractionalOdds.Should().Be("100/30");
+    }
+
+    [Fact]
+    public async Task ParseCharityRaceWhereEveryDomJockeyIsUndeclared()
+    {
+        // A Corinthian charity race lists no jockeys yet: every runner row renders an empty
+        // Link__Jockey anchor with a placeholder "/racecards/race/" href carrying no id. The DOM
+        // oracle must fall back to the Unknown jockey rather than throw on the id-less href.
+        var card = await GetRaceCard("racecard_curragh_20260626_undeclared_jockey.html");
+
+        card.Runners.Should().HaveCount(13);
+        card.Runners.Should().OnlyContain(r => r.Jockey.Id == 0 && r.Jockey.Name == "Unknown Jockey");
+    }
+
     private static async Task<RaceCard> GetRaceCard(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadRacingPostExampleResource(resourceFileName);

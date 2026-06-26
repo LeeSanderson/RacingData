@@ -12,6 +12,11 @@ namespace RacePredictor.Core.RacingPost;
 /// The oracle field set is deliberately limited to fields the DOM parser reads robustly. Age,
 /// TopSpeedRating, TrainerName and HeadGear are excluded: the DOM parser is known to be buggy on
 /// each (the JSON is authoritative), so comparing them would raise false alarms.
+///
+/// ForecastOdds is cross-checked only where the DOM oracle actually read a price: Arabian (ARO)
+/// cards carry a betting forecast in the JSON island but render no forecast section at all, so the
+/// oracle reads no odds for any runner. Absence in the oracle cannot contradict the JSON, so it is
+/// not divergence; a price the DOM does render that the JSON disagrees with still is.
 /// </summary>
 public static class RaceCardRunnerCrossValidator
 {
@@ -85,7 +90,9 @@ public static class RaceCardRunnerCrossValidator
         new("FormFigures", (j, d) => j.Attributes.FormFigures != d.Attributes.FormFigures),
         new("OfficialRating", (j, d) => j.Statistics.OfficialRating != d.Statistics.OfficialRating),
         new("RacingPostRating", (j, d) => j.Statistics.RacingPostRating != d.Statistics.RacingPostRating),
-        new("ForecastOdds", (j, d) => !OddsMatch(j.Statistics.Odds.DecimalOdds, d.Statistics.Odds.DecimalOdds)),
+        new("ForecastOdds", (j, d) =>
+            d.Statistics.Odds.DecimalOdds is not null &&
+            !OddsMatch(j.Statistics.Odds.DecimalOdds, d.Statistics.Odds.DecimalOdds)),
     };
 
     private static bool OddsMatch(double? a, double? b) =>
