@@ -537,8 +537,23 @@ def evaluate(
             fav_preds = baseline.predict(preds["RaceId"], results_df)
             fav_acc = accuracy(fav_preds, results_df)
             fav_r = roi(fav_preds, results_df)
+            field_preds = algo.predict_field(serve_data)
+            # Build this fold's staking frame BEFORE printing the per-fold line so the
+            # line can report the fold's Kelly figure off the same frame the CSV/Summary
+            # use — same single source of truth, just scoped to one fold.
+            field_frame = _build_csv_rows(
+                fold_date, name, field_preds, known_fold, results_df
+            )
+            fold_kelly = _kelly_summaries([field_frame])
+            fold_has_probability = (
+                "WinProbability" in field_frame.columns
+                and field_frame["WinProbability"].notna().any()
+            )
+            kelly_pounds, kelly_cov = _format_kelly(
+                fold_kelly.get(name), fold_has_probability
+            )
             print(
-                f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)} | favourite: accuracy={fav_acc:.3f}, roi={fav_r:.3f}, races={len(fav_preds)} {_format_timing(fit_time, predict_time)}"
+                f"  {name}: accuracy={acc:.3f}, roi={r:.3f}, races={len(preds)} | favourite: accuracy={fav_acc:.3f}, roi={fav_r:.3f}, races={len(fav_preds)} | kelly £={kelly_pounds}, coverage={kelly_cov} {_format_timing(fit_time, predict_time)}"
             )
             _print_race_results(preds, known_fold)
             all_preds[name].append(preds)
@@ -547,14 +562,10 @@ def evaluate(
             all_fit_times[name].append(fit_time)
             all_predict_times[name].append(predict_time)
             all_total_known[name].append(known_fold["RaceId"].nunique())
-            field_preds = algo.predict_field(serve_data)
             if isinstance(algo, AbstainCapable):
                 all_unfiltered_preds[name].append(
                     algo.predict_field_unfiltered(serve_data)
                 )
-            field_frame = _build_csv_rows(
-                fold_date, name, field_preds, known_fold, results_df
-            )
             all_field_frames[name].append(field_frame)
             csv_rows.append(field_frame)
 
