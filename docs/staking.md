@@ -109,6 +109,26 @@ flat-£1 figure is negative, in line with every full-coverage algorithm in the M
 diagnostic. The staking diagnostic did **not** move `ACTIVE_ALGORITHM` — that documents the
 prediction algorithm, not the staking strategy.
 
+#### Reported inline by the evaluator
+
+`race_analytics/scripts/evaluate.py` now reports the same Kelly net £ / coverage % **inline,
+on every run**, at three sites — the per-fold line, the cross-fold **Summary** table, and
+the **Early-vs-Late** stability split — computed from the same retained full-field frames
+the diagnostic backtest reads (the inline figure is `betting.backtest(concat(frames))`, so
+it equals the diagnostic script's figure by construction). The inline numbers carry **no**
+diagnostic label, to keep the evaluator tables compact; this SP-placeholder /
+diagnostic-only caveat is the label, and it travels with them exactly as it does with the
+`backtest_staking.py` banner and the MarketProb diagnostic. Until the **≥80% forecast-coverage
+re-eval trigger** fires (see [`evaluations.md`](../evaluations.md)), every inline Kelly
+figure is still resolving `MarketProb` and the settlement odds from **post-race SP**, so the
+same reasoning above applies — read them as informational, never as a forecast-time edge.
+
+Crucially, surfacing Kelly inline does **not** change how an algorithm is chosen.
+Algorithm selection / promotion of `ACTIVE_ALGORITHM` continues to rest on **flat ROI +
+early/late stability** while history is SP-derived; the inline Kelly columns ride along as
+an informational signal only and must not be used to promote until forecast coverage
+matures (PRD "No selection-policy change"; [`evaluations.md`](../evaluations.md)).
+
 ### 3. Not real-money validated — the **forward log** is what makes the rest measurable
 
 Because the backtest can't speak to forecast-time profitability, the honest track record
