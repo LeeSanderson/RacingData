@@ -288,4 +288,16 @@ this anchor. The new `GatedWinClassifier` eval accuracy of **0.299** is
   `PREDICTORS` non-null; `Last3*` optional via NaN tolerance), field size ≤ 10.
   TSR-gated variant additionally requires `LastRaceTopSpeedRating` non-null
   for every horse.
+- **Inline Kelly reporting**: the evaluator reports Kelly net £ / Kelly coverage % inline,
+  on every run (independent of `--save-results`), at all three sites — the per-fold line,
+  the cross-fold **Summary** table, and the **Early-vs-Late** stability split — computed
+  from the same retained full-field frames via the shared `race_analytics/betting`
+  summariser (`betting.backtest(concat(frames))`), so the inline figure equals the
+  `backtest_staking.py` diagnostic by construction. The inline columns carry **no**
+  diagnostic label (the evaluator tables stay compact); the SP-placeholder / diagnostic-only
+  caveat in the "Staking diagnostic" section above and in [`docs/staking.md`](docs/staking.md)
+  is the label, and it applies to these inline numbers until the ≥80% forecast-coverage
+  re-eval trigger fires. **No selection-policy change**: algorithm selection / promotion of
+  `ACTIVE_ALGORITHM` still rests on **flat ROI + early/late stability** while history is
+  SP-derived; the inline Kelly figures ride along as an informational signal only.
 - **Run command**: `python -m race_analytics.scripts.evaluate --folds 180 --training-months 7 --save-results`
