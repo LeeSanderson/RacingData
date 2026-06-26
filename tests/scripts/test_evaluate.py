@@ -1536,3 +1536,209 @@ def test_results_graceful_when_forecast_odds_absent() -> None:
         "DecimalOdds",
         "ResultStatus",
     ]
+
+
+def _kelly_fold_frame(
+    algo: str, race_id: int, win_prob: float, market_prob: float, odds: float, pos: int
+) -> pd.DataFrame:
+    """A one-race full-field frame in the `_build_csv_rows` shape the evaluator retains.
+
+    Two runners (favourite + outsider) so within-race probability normalization is
+    exercised; the favourite (win_prob) is the rank-1 pick `summarise` settles on.
+    """
+    return pd.DataFrame(
+        [
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": algo,
+                "RaceId": race_id,
+                "HorseId": race_id * 10,
+                "WinProbability": win_prob,
+                "PredictedScore": np.nan,
+                "MarketProb": market_prob,
+                "ResolvedOdds": odds,
+                "FinishingPosition": pos,
+            },
+            {
+                "FoldDate": "2026-01-01",
+                "Algorithm": algo,
+                "RaceId": race_id,
+                "HorseId": race_id * 10 + 1,
+                "WinProbability": 1.0 - win_prob,
+                "PredictedScore": np.nan,
+                "MarketProb": 1.0 - market_prob,
+                "ResolvedOdds": odds + 1.0,
+                "FinishingPosition": pos + 1,
+            },
+        ]
+    )
+
+
+def test_kelly_summaries_aggregates_additively_across_folds() -> None:
+    """Per-(algorithm, fold) frames are summarised by concatenation, never by averaging
+    per-fold ratios: two folds each placing one winning value bet sum into one summary."""
+    from race_analytics.scripts.evaluate import (
+        _kelly_summaries,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    fold_1 = _kelly_fold_frame(
+        "Algo", 1, win_prob=0.6, market_prob=0.4, odds=3.0, pos=1
+    )
+    fold_2 = _kelly_fold_frame(
+        "Algo", 2, win_prob=0.6, market_prob=0.4, odds=3.0, pos=1
+    )
+
+    summaries = _kelly_summaries([fold_1, fold_2])
+
+    assert set(summaries) == {"Algo"}
+    s = summaries["Algo"]
+    assert s["races"] == 2
+    assert s["bets"] == 2
+    assert s["coverage"] == 1.0
+
+
+def test_kelly_summaries_empty_input_returns_empty_dict() -> None:
+    from race_analytics.scripts.evaluate import (
+        _kelly_summaries,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    assert _kelly_summaries([]) == {}
+    assert (
+        _kelly_summaries([pd.DataFrame(columns=["Algorithm", "RaceId", "HorseId"])])
+        == {}
+    )
+
+
+def test_kelly_summaries_equals_shared_backtest_over_concatenation() -> None:
+    """Parity guarantee: the evaluator's inline aggregation over a set of per-fold frames
+    equals calling the shared `betting.backtest` over the concatenation of those frames."""
+    from race_analytics.betting import backtest
+    from race_analytics.scripts.evaluate import (
+        _kelly_summaries,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    frames = [
+        _kelly_fold_frame("Algo", 1, win_prob=0.6, market_prob=0.4, odds=3.0, pos=1),
+        _kelly_fold_frame("Algo", 2, win_prob=0.5, market_prob=0.5, odds=4.0, pos=3),
+        _kelly_fold_frame("Other", 3, win_prob=0.7, market_prob=0.3, odds=2.5, pos=1),
+    ]
+
+    inline = _kelly_summaries(frames)
+    offline = backtest(pd.concat(frames, ignore_index=True))
+
+    assert inline == offline
+
+
+def test_format_kelly_reports_net_pounds_and_coverage_percent() -> None:
+    from race_analytics.scripts.evaluate import (
+        _format_kelly,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    summary = {"kelly_profit": 4.0, "coverage": 0.5}
+    pounds, coverage = _format_kelly(summary, has_probability=True)
+    assert pounds == "+4.00"
+    assert coverage == "50.0%"
+
+
+def test_format_kelly_non_probabilistic_shows_na_and_zero_coverage() -> None:
+    from race_analytics.scripts.evaluate import (
+        _format_kelly,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    # A regression model emits no win probability: Kelly £ is n/a, not 0.0.
+    pounds, coverage = _format_kelly({"kelly_profit": 0.0, "coverage": 0.0}, False)
+    assert pounds == "n/a"
+    assert coverage == "0.0%"
+
+
+def test_format_kelly_probabilistic_with_no_bets_shows_zero_not_na() -> None:
+    from race_analytics.scripts.evaluate import (
+        _format_kelly,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    # A probabilistic algorithm that never cleared the value gate placed £0 — distinct
+    # from a model that cannot be value-staked at all.
+    pounds, coverage = _format_kelly({"kelly_profit": 0.0, "coverage": 0.0}, True)
+    assert pounds == "+0.00"
+    assert coverage == "0.0%"
+
+
+def test_summary_table_has_kelly_columns(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    with (
+        patch(
+            "race_analytics.scripts.evaluate._load_window",
+            return_value=pd.DataFrame([{"x": 1}]),
+        ),
+        patch(
+            "race_analytics.scripts.evaluate._engineer_features",
+            return_value=_make_fold_races(fold_date),
+        ),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_FieldAlgo()]),
+    ):
+        evaluate(folds=1)
+
+    out = capsys.readouterr().out
+    summary_block = out[out.index("=== Summary ===") :]
+    assert "Kelly £" in summary_block
+    assert "Kelly%" in summary_block
+
+
+def test_summary_table_kelly_columns_appear_without_save_results(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The Kelly figures are computed on every run, not only with --save-results."""
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    with (
+        patch(
+            "race_analytics.scripts.evaluate._load_window",
+            return_value=pd.DataFrame([{"x": 1}]),
+        ),
+        patch(
+            "race_analytics.scripts.evaluate._engineer_features",
+            return_value=_make_fold_races(fold_date),
+        ),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_FieldAlgo()]),
+    ):
+        evaluate(folds=1, save_results=False)
+
+    out = capsys.readouterr().out
+    summary_block = out[out.index("=== Summary ===") :]
+    assert "Kelly £" in summary_block
+    assert "Kelly%" in summary_block
+
+
+def test_summary_table_non_probabilistic_algo_shows_na_for_kelly(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A regression-like algorithm (no WinProbability) reports n/a / 0.0% for Kelly,
+    while its accuracy / ROI / favourite columns are still printed."""
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    with (
+        patch(
+            "race_analytics.scripts.evaluate._load_window",
+            return_value=pd.DataFrame([{"x": 1}]),
+        ),
+        patch(
+            "race_analytics.scripts.evaluate._engineer_features",
+            return_value=_make_fold_races(fold_date),
+        ),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
+    ):
+        evaluate(folds=1)
+
+    out = capsys.readouterr().out
+    summary_lines = out[out.index("=== Summary ===") :].splitlines()
+    algo_line = next(line for line in summary_lines if "_StubAlgo" in line)
+    assert "n/a" in algo_line

@@ -13,6 +13,7 @@ from race_analytics.algorithms import ALGORITHMS
 from race_analytics.algorithms.base import AbstainCapable, FieldPredictor
 from race_analytics.algorithms.confidence_gate import ConfidenceGate
 from race_analytics.algorithms.market_favourite import MarketFavouriteBaseline
+from race_analytics.betting import backtest
 from race_analytics.features.horse_stats import CalculateHorsesStats
 from race_analytics.features.jockey_stats import CalculateJockeyStats
 from race_analytics.features.market_prob import MARKET_PROB, resolve_decimal_odds
@@ -165,6 +166,35 @@ def _build_csv_rows(
 
 def _default_csv_path() -> str:
     return f"evaluation_results_{date.today().strftime('%Y%m%d')}.csv"
+
+
+def _kelly_summaries(frames: list[pd.DataFrame]) -> dict[str, dict[str, float]]:
+    """Per-algorithm Kelly summary over the concatenation of the retained per-fold frames.
+
+    Cross-fold aggregation is additive: the per-(algorithm, fold) full-field frames are
+    concatenated and summarised once by the shared ``betting.backtest`` (which sums the
+    returns and bet/race counts and recomputes coverage), never by averaging per-fold
+    ratios. Being literally ``backtest(concat(frames))`` guarantees the inline figure
+    equals the diagnostic backtest over the same frames.
+    """
+    nonempty = [f for f in frames if not f.empty]
+    if not nonempty:
+        return {}
+    return backtest(pd.concat(nonempty, ignore_index=True))
+
+
+def _format_kelly(
+    summary: dict[str, float] | None, has_probability: bool
+) -> tuple[str, str]:
+    """Kelly net £ and coverage % strings for one algorithm's Summary row.
+
+    A non-probabilistic algorithm (no win probability emitted) can place no value bets,
+    so it reports ``n/a`` / ``0.0%`` rather than a misleading £0. A probabilistic
+    algorithm that simply never cleared the value gate reports ``+0.00`` / ``0.0%``.
+    """
+    if summary is None or not has_probability:
+        return "n/a", "0.0%"
+    return f"{summary['kelly_profit']:+.2f}", f"{summary['coverage'] * 100:.1f}%"
 
 
 def _roi_coverage_frontier(
@@ -454,6 +484,7 @@ def evaluate(
     all_predict_times: dict[str, list[float]] = {n: [] for n in algo_names}
     all_total_known: dict[str, list[int]] = {n: [] for n in algo_names}
     all_unfiltered_preds: dict[str, list[pd.DataFrame]] = {n: [] for n in algo_names}
+    all_field_frames: dict[str, list[pd.DataFrame]] = {n: [] for n in algo_names}
     csv_rows: list[pd.DataFrame] = []
     baseline = MarketFavouriteBaseline()
     builder = RaceDataBuilder()
@@ -521,9 +552,11 @@ def evaluate(
                 all_unfiltered_preds[name].append(
                     algo.predict_field_unfiltered(serve_data)
                 )
-            csv_rows.append(
-                _build_csv_rows(fold_date, name, field_preds, known_fold, results_df)
+            field_frame = _build_csv_rows(
+                fold_date, name, field_preds, known_fold, results_df
             )
+            all_field_frames[name].append(field_frame)
+            csv_rows.append(field_frame)
 
         # Flush this fold's rows to disk immediately so a crash loses at most one fold
         if incremental_path and csv_rows:
@@ -535,15 +568,24 @@ def evaluate(
 
         gc.collect()
 
+    kelly_by_algo = _kelly_summaries(csv_rows)
+    has_probability = {
+        name: any(
+            "WinProbability" in f.columns and f["WinProbability"].notna().any()
+            for f in all_field_frames[name]
+        )
+        for name in algo_names
+    }
+
     print("\n=== Summary ===")
     print(
-        f"{'Algorithm':<40} {'Accuracy':>10} {'ROI':>10} {'Races':>8} {'Fav Accuracy':>14} {'Fav ROI':>10}"
+        f"{'Algorithm':<40} {'Accuracy':>10} {'ROI':>10} {'Races':>8} {'Fav Accuracy':>14} {'Fav ROI':>10} {'Kelly £':>10} {'Kelly%':>8}"
     )
-    print("-" * 98)
+    print("-" * 118)
     for name in algo_names:
         if not all_preds[name]:
             print(
-                f"  {name:<40} {'N/A':>10} {'N/A':>10} {'0':>8} {'N/A':>14} {'N/A':>10}"
+                f"  {name:<40} {'N/A':>10} {'N/A':>10} {'0':>8} {'N/A':>14} {'N/A':>10} {'n/a':>10} {'0.0%':>8}"
             )
             continue
         combined_preds = pd.concat(all_preds[name]).reset_index(drop=True)
@@ -553,8 +595,11 @@ def evaluate(
         combined_fav_preds = pd.concat(all_fav_preds[name]).reset_index(drop=True)
         fav_acc = accuracy(combined_fav_preds, combined_results)
         fav_r = roi(combined_fav_preds, combined_results)
+        kelly_pounds, kelly_cov = _format_kelly(
+            kelly_by_algo.get(name), has_probability[name]
+        )
         print(
-            f"  {name:<40} {acc:>10.3f} {r:>10.3f} {len(combined_preds):>8} {fav_acc:>14.3f} {fav_r:>10.3f}"
+            f"  {name:<40} {acc:>10.3f} {r:>10.3f} {len(combined_preds):>8} {fav_acc:>14.3f} {fav_r:>10.3f} {kelly_pounds:>10} {kelly_cov:>8}"
         )
 
     print("\n=== Timing Summary ===")
