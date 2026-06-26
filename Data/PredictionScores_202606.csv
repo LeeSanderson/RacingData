@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,4/6F,1.6666666666666665,CompletedRace,921315,22,Hamilton,06/25/2026 20:30:00,8205617,Ruby Wedding,0.47984836,0
+2,False,1/9F,1.1111111111111112,CompletedRace,921324,30,Leicester,06/25/2026 20:45:00,8236346,Pentonville,0.61468196,0
+1,True,7/4,2.75,CompletedRace,921325,40,Nottingham,06/25/2026 10:30:00,8084432,Food For Thought,0.36969072,0.65
 1,True,11/4,3.75,CompletedRace,923460,192,Naas,06/24/2026 18:40:00,9060365,Rebel Moon GB,0.2686262,0.45
 3,False,5/2,3.5,CompletedRace,921272,6,Beverley,06/23/2026 14:15:00,8881480,Fern Clyde,0.42641693,4.12
 3,False,100/30,4.333333333333334,CompletedRace,921274,6,Beverley,06/23/2026 14:45:00,4175322,Roaring Ralph,0.26981866,0
