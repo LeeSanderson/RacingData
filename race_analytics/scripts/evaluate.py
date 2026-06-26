@@ -245,18 +245,28 @@ def _print_early_late_split(
     all_preds: dict[str, list[pd.DataFrame]],
     all_results_store: dict[str, list[pd.DataFrame]],
     all_total_known: dict[str, list[int]],
+    all_field_frames: dict[str, list[pd.DataFrame]],
+    has_probability: dict[str, bool],
 ) -> None:
-    """Print early-vs-late stability split for all algorithms."""
+    """Print early-vs-late stability split for all algorithms.
+
+    Each period reports Kelly net £ and Kelly coverage % alongside accuracy / ROI /
+    races / coverage. The Kelly figures are an additive summary over that period's
+    full-field frames — split on the same early/late boundary as the other columns — so
+    the staked edge can be judged over time, not just the flat ROI. The same locked
+    metric and net-£ convention as the Summary table; no diagnostic label.
+    """
     print("\n=== Early-vs-Late Stability ===")
     print(
         f"{'Algorithm':<40} {'Period':<8} {'Accuracy':>10} {'ROI':>10}"
-        f" {'Races':>8} {'Coverage':>10}"
+        f" {'Races':>8} {'Coverage':>10} {'Kelly £':>10} {'Kelly%':>8}"
     )
-    print("-" * 96)
+    print("-" * 116)
     for name in algo_names:
         preds_list = all_preds[name]
         results_list = all_results_store[name]
         total_list = all_total_known[name]
+        field_list = all_field_frames[name]
         if not preds_list:
             print(f"  {name:<40} {'N/A'}")
             continue
@@ -276,9 +286,13 @@ def _print_early_late_split(
             acc = accuracy(combined_p, combined_r)
             r = roi(combined_p, combined_r)
             cov = len(combined_p) / total if total > 0 else 0.0
+            kelly_summary = _kelly_summaries(field_list[sl]).get(name)
+            kelly_pounds, kelly_cov = _format_kelly(
+                kelly_summary, has_probability[name]
+            )
             print(
                 f"  {name:<40} {label:<8} {acc:>10.3f} {r:>10.3f}"
-                f" {len(combined_p):>8} {cov:>10.3f}"
+                f" {len(combined_p):>8} {cov:>10.3f} {kelly_pounds:>10} {kelly_cov:>8}"
             )
 
 
@@ -630,7 +644,14 @@ def evaluate(
                 f"  {name:<40} {fit_avg:>10.3f} {fit_std:>10.3f} {pred_avg:>10.3f} {pred_std:>10.3f}"
             )
 
-    _print_early_late_split(algo_names, all_preds, all_results_store, all_total_known)
+    _print_early_late_split(
+        algo_names,
+        all_preds,
+        all_results_store,
+        all_total_known,
+        all_field_frames,
+        has_probability,
+    )
 
     algo_map = {type(a).__name__: a for a in selected_algos}
     for name in algo_names:
