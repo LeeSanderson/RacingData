@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 
-from race_analytics.scripts.backtest_staking import (
-    _attach_stakes,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
-    _backtest,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
-    _identify_picks,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
-    _summarise,  # pyright: ignore[reportPrivateUsage]  # test exercises the module's private pure helper
+from race_analytics.betting import (
+    attach_stakes,
+    backtest,
+    identify_picks,
+    summarise,
 )
 
 # ================================================================
@@ -89,7 +89,7 @@ def _fixture() -> pd.DataFrame:
 
 
 def test_attach_stakes_sizes_the_value_bet_and_zeroes_the_rest() -> None:
-    staked = _attach_stakes(_fixture())
+    staked = attach_stakes(_fixture())
     by_horse = staked.set_index("HorseId")["Stake"]
     assert by_horse[10] == 3.00
     assert by_horse[11] == 0.0
@@ -99,7 +99,7 @@ def test_attach_stakes_sizes_the_value_bet_and_zeroes_the_rest() -> None:
 
 
 def test_identify_picks_takes_highest_probability_horse_with_its_stake() -> None:
-    picks = _identify_picks(_attach_stakes(_fixture()))
+    picks = identify_picks(attach_stakes(_fixture()))
     assert len(picks) == 2
     by_race = picks.set_index("RaceId")
     assert by_race.loc[1, "HorseId"] == 10
@@ -128,12 +128,12 @@ _SUMMARY_FIELDS = {
 
 
 def test_summarise_reports_all_expected_fields() -> None:
-    summary = _summarise(_identify_picks(_attach_stakes(_fixture())))
+    summary = summarise(identify_picks(attach_stakes(_fixture())))
     assert set(summary) >= _SUMMARY_FIELDS
 
 
 def test_summarise_flat_roi_matches_hand_computed_value() -> None:
-    summary = _summarise(_identify_picks(_attach_stakes(_fixture())))
+    summary = summarise(identify_picks(attach_stakes(_fixture())))
     # Picks: race 1 winner @ 3.0 -> +2.0; race 2 loser -> -1.0. Net +1.0 over 2 picks.
     assert summary["races"] == 2
     assert summary["flat_profit"] == 1.0
@@ -141,14 +141,14 @@ def test_summarise_flat_roi_matches_hand_computed_value() -> None:
 
 
 def test_summarise_coverage_is_a_valid_fraction() -> None:
-    summary = _summarise(_identify_picks(_attach_stakes(_fixture())))
+    summary = summarise(identify_picks(attach_stakes(_fixture())))
     assert summary["bets"] == 1
     assert 0.0 <= summary["coverage"] <= 1.0
     assert summary["coverage"] == 0.5
 
 
 def test_summarise_kelly_roi_uses_staked_returns() -> None:
-    summary = _summarise(_identify_picks(_attach_stakes(_fixture())))
+    summary = summarise(identify_picks(attach_stakes(_fixture())))
     # Only the 3.00 value bet is live: it wins at 3.0 -> profit 3.00*(3-1) = 6.0.
     assert summary["kelly_profit"] == 6.0
     assert summary["kelly_roi"] == 2.0
@@ -160,7 +160,7 @@ def test_summarise_handles_no_bets_without_dividing_by_zero() -> None:
     # A frame whose only pick fails the value gate -> zero coverage.
     fixture = _fixture()
     no_value = fixture[fixture["RaceId"] == 2].copy()  # only race 2 (no edge anywhere)
-    summary = _summarise(_identify_picks(_attach_stakes(no_value)))
+    summary = summarise(identify_picks(attach_stakes(no_value)))
     assert summary["bets"] == 0
     assert summary["coverage"] == 0.0
     assert np.isnan(summary["kelly_roi"])
@@ -168,7 +168,7 @@ def test_summarise_handles_no_bets_without_dividing_by_zero() -> None:
 
 
 def test_summarise_empty_picks_is_safe() -> None:
-    summary = _summarise(_identify_picks(_attach_stakes(_fixture().iloc[0:0].copy())))
+    summary = summarise(identify_picks(attach_stakes(_fixture().iloc[0:0].copy())))
     assert summary["races"] == 0
     assert summary["coverage"] == 0.0
 
@@ -188,7 +188,7 @@ def test_attach_stakes_zeroes_when_staking_columns_are_absent() -> None:
             }
         ]
     )
-    staked = _attach_stakes(legacy)
+    staked = attach_stakes(legacy)
     assert (staked["Stake"] == 0.0).all()
 
 
@@ -207,7 +207,7 @@ def test_summarise_falls_back_to_decimal_odds_when_resolved_absent() -> None:
             }
         ]
     )
-    summary = _summarise(picks)
+    summary = summarise(picks)
     assert summary["races"] == 1
     assert summary["flat_profit"] == 2.0
     assert summary["bets"] == 0
@@ -218,7 +218,7 @@ def test_backtest_summarises_each_algorithm_independently() -> None:
     # algorithms at once, the within-race ModelProb would be halved and the edge
     # would collapse below MIN_EDGE. Per-algorithm normalization keeps the bet.
     df = pd.concat([_fixture(), _fixture().assign(Algorithm="Other")])
-    summaries = _backtest(df)
+    summaries = backtest(df)
     assert set(summaries) == {"Algo", "Other"}
     assert summaries["Algo"]["bets"] == 1
     assert summaries["Other"]["bets"] == 1

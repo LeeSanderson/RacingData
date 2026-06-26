@@ -3,9 +3,14 @@ from race_analytics.betting.staking import (
     CAP,
     KELLY_FRACTION,
     MIN_EDGE,
+    STAKE,
+    attach_stakes,
+    backtest,
     compute_stakes,
+    identify_picks,
     kelly_fraction,
     normalize_within_race,
+    summarise,
 )
 
 __all__ = [
@@ -13,7 +18,12 @@ __all__ = [
     "CAP",
     "KELLY_FRACTION",
     "MIN_EDGE",
+    "STAKE",
+    "attach_stakes",
+    "backtest",
     "compute_stakes",
+    "identify_picks",
     "kelly_fraction",
     "normalize_within_race",
+    "summarise",
 ]
