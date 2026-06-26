@@ -1742,3 +1742,192 @@ def test_summary_table_non_probabilistic_algo_shows_na_for_kelly(
     summary_lines = out[out.index("=== Summary ===") :].splitlines()
     algo_line = next(line for line in summary_lines if "_StubAlgo" in line)
     assert "n/a" in algo_line
+
+
+def _early_late_inputs(
+    name: str, field_frames: list[pd.DataFrame]
+) -> tuple[
+    dict[str, list[pd.DataFrame]],
+    dict[str, list[pd.DataFrame]],
+    dict[str, list[int]],
+    dict[str, list[pd.DataFrame]],
+    dict[str, bool],
+]:
+    """Build the five per-algorithm accumulators `_print_early_late_split` consumes.
+
+    The rank-1-pick preds/results frames drive the existing accuracy/ROI/coverage
+    columns; the full-field `field_frames` (one per fold, most-recent-first) drive the
+    new Kelly columns. The favourite pick is the rank-1 horse in each fold's field.
+    """
+    preds: list[pd.DataFrame] = []
+    results: list[pd.DataFrame] = []
+    totals: list[int] = []
+    for frame in field_frames:
+        race_id = int(frame["RaceId"].iloc[0])
+        pick = frame.iloc[0]
+        preds.append(
+            pd.DataFrame([{"RaceId": race_id, "HorseId": int(pick["HorseId"])}])
+        )
+        results.append(
+            pd.DataFrame(
+                [
+                    {
+                        "RaceId": race_id,
+                        "HorseId": int(row["HorseId"]),
+                        "FinishingPosition": int(row["FinishingPosition"]),
+                        "DecimalOdds": float(row["ResolvedOdds"]),
+                        "ResultStatus": "CompletedRace",
+                    }
+                    for _, row in frame.iterrows()
+                ]
+            )
+        )
+        totals.append(1)
+    has_prob = any(
+        "WinProbability" in f.columns and f["WinProbability"].notna().any()
+        for f in field_frames
+    )
+    return (
+        {name: preds},
+        {name: results},
+        {name: totals},
+        {name: field_frames},
+        {name: has_prob},
+    )
+
+
+def test_early_late_split_table_has_kelly_columns() -> None:
+    """The Early-vs-Late header gains Kelly net £ and Kelly coverage % columns."""
+    from race_analytics.scripts.evaluate import (
+        _print_early_late_split,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    field_frames = [
+        _kelly_fold_frame("Algo", i, win_prob=0.6, market_prob=0.4, odds=3.0, pos=1)
+        for i in range(1, 5)
+    ]
+    preds, results, totals, frames, has_prob = _early_late_inputs("Algo", field_frames)
+
+    import io
+    from contextlib import redirect_stdout
+
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        _print_early_late_split(["Algo"], preds, results, totals, frames, has_prob)
+    out = buf.getvalue()
+
+    assert "Kelly" in out
+    header = next(line for line in out.splitlines() if "Period" in line)
+    assert "Kelly £" in header
+    assert "Kelly%" in header
+
+
+def test_early_late_split_kelly_is_additive_summary_per_half() -> None:
+    """Each period's Kelly net £ / coverage equals the shared summary over that period's
+    concatenated full-field frames (the same early/late split as the other columns)."""
+    from race_analytics.scripts.evaluate import (
+        _kelly_summaries,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+        _print_early_late_split,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    # Four folds, most-recent-first: folds 0,1 = Late, folds 2,3 = Early. The Late half
+    # places winning value bets (positive Kelly); the Early half loses (negative Kelly).
+    field_frames = [
+        _kelly_fold_frame("Algo", 1, win_prob=0.6, market_prob=0.4, odds=3.0, pos=1),
+        _kelly_fold_frame("Algo", 2, win_prob=0.6, market_prob=0.4, odds=3.0, pos=1),
+        _kelly_fold_frame("Algo", 3, win_prob=0.6, market_prob=0.4, odds=3.0, pos=2),
+        _kelly_fold_frame("Algo", 4, win_prob=0.6, market_prob=0.4, odds=3.0, pos=2),
+    ]
+    preds, results, totals, frames, has_prob = _early_late_inputs("Algo", field_frames)
+
+    late_summary = _kelly_summaries(field_frames[0:2])["Algo"]
+    early_summary = _kelly_summaries(field_frames[2:4])["Algo"]
+
+    import io
+    from contextlib import redirect_stdout
+
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        _print_early_late_split(["Algo"], preds, results, totals, frames, has_prob)
+    out = buf.getvalue()
+
+    rows = [line for line in out.splitlines() if line.startswith("  Algo ")]
+    late_line = next(line for line in rows if " Late " in line)
+    early_line = next(line for line in rows if " Early " in line)
+
+    assert f"{late_summary['kelly_profit']:+.2f}" in late_line
+    assert f"{late_summary['coverage'] * 100:.1f}%" in late_line
+    assert f"{early_summary['kelly_profit']:+.2f}" in early_line
+    assert f"{early_summary['coverage'] * 100:.1f}%" in early_line
+    # The halves differ (Late won, Early lost), proving the split is per-half not pooled.
+    assert late_summary["kelly_profit"] != early_summary["kelly_profit"]
+
+
+def test_early_late_split_non_probabilistic_shows_na_in_both_periods() -> None:
+    """A non-probabilistic algorithm (no WinProbability) reports n/a / 0.0% Kelly in
+    both the Early and Late periods, while still showing its accuracy/ROI/coverage."""
+    from race_analytics.scripts.evaluate import (
+        _print_early_late_split,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    def _no_prob_frame(race_id: int, pos: int) -> pd.DataFrame:
+        frame = _kelly_fold_frame(
+            "Reg", race_id, win_prob=0.6, market_prob=0.4, odds=3.0, pos=pos
+        )
+        frame["WinProbability"] = np.nan
+        frame["PredictedScore"] = [2.0, 1.0]
+        return frame
+
+    field_frames = [_no_prob_frame(i, pos=1) for i in range(1, 5)]
+    preds, results, totals, frames, has_prob = _early_late_inputs("Reg", field_frames)
+
+    import io
+    from contextlib import redirect_stdout
+
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        _print_early_late_split(["Reg"], preds, results, totals, frames, has_prob)
+    out = buf.getvalue()
+
+    rows = [line for line in out.splitlines() if line.startswith("  Reg ")]
+    late_line = next(line for line in rows if " Late " in line)
+    early_line = next(line for line in rows if " Early " in line)
+    assert "n/a" in late_line and "0.0%" in late_line
+    assert "n/a" in early_line and "0.0%" in early_line
+
+
+def test_early_late_split_existing_columns_unchanged_by_kelly() -> None:
+    """Adding Kelly columns does not alter the accuracy / ROI / races / coverage values
+    for each period — those still derive from the rank-1 preds/results."""
+    from race_analytics.scripts.evaluate import (
+        _print_early_late_split,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+    from race_analytics.utils.scoring import accuracy, roi
+
+    field_frames = [
+        _kelly_fold_frame("Algo", i, win_prob=0.6, market_prob=0.4, odds=3.0, pos=1)
+        for i in range(1, 5)
+    ]
+    preds, results, totals, frames, has_prob = _early_late_inputs("Algo", field_frames)
+
+    # Late half is preds[0:2]; recompute the expected accuracy/ROI the same way the
+    # function does (concatenating the rank-1 picks/results over that half).
+    late_preds = pd.concat(preds["Algo"][0:2])
+    late_results = pd.concat(results["Algo"][0:2])
+    expected_acc = accuracy(late_preds, late_results)
+    expected_roi = roi(late_preds, late_results)
+
+    import io
+    from contextlib import redirect_stdout
+
+    buf = io.StringIO()
+    with redirect_stdout(buf):
+        _print_early_late_split(["Algo"], preds, results, totals, frames, has_prob)
+    out = buf.getvalue()
+
+    rows = [line for line in out.splitlines() if line.startswith("  Algo ")]
+    late_line = next(line for line in rows if " Late " in line)
+    assert f"{expected_acc:.3f}" in late_line
+    assert f"{expected_roi:.3f}" in late_line
+    # Races column for the Late half = 2 rank-1 picks (fields: Algo Late acc roi races ...)
+    assert late_line.split()[4] == "2"
