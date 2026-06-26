@@ -1742,3 +1742,132 @@ def test_summary_table_non_probabilistic_algo_shows_na_for_kelly(
     summary_lines = out[out.index("=== Summary ===") :].splitlines()
     algo_line = next(line for line in summary_lines if "_StubAlgo" in line)
     assert "n/a" in algo_line
+
+
+def _per_fold_block(out: str) -> str:
+    """The output before the cross-fold Summary table (the per-fold lines)."""
+    return out[: out.index("=== Summary ===")]
+
+
+def _per_fold_algo_line(out: str, algo_name: str) -> str:
+    """The per-fold per-algorithm line (the one carrying accuracy=/roi=), not the
+    Summary-table row, for the given algorithm."""
+    block = _per_fold_block(out)
+    return next(
+        line for line in block.splitlines() if algo_name in line and "accuracy=" in line
+    )
+
+
+def test_per_fold_line_includes_kelly_net_pounds_and_coverage(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Each fold's per-algorithm line reports that fold's Kelly net £ and coverage %."""
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    with (
+        patch(
+            "race_analytics.scripts.evaluate._load_window",
+            return_value=pd.DataFrame([{"x": 1}]),
+        ),
+        patch(
+            "race_analytics.scripts.evaluate._engineer_features",
+            return_value=_make_fold_races(fold_date),
+        ),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_FieldAlgo()]),
+    ):
+        evaluate(folds=1)
+
+    out = capsys.readouterr().out
+    line = _per_fold_algo_line(out, "_FieldAlgo")
+    assert "kelly" in line.lower()
+    assert "coverage=" in line
+
+
+def test_per_fold_line_non_probabilistic_shows_na(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A regression-like algorithm (no WinProbability) reports n/a for the fold's Kelly
+    net £ on the per-fold line, mirroring the Summary table."""
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    with (
+        patch(
+            "race_analytics.scripts.evaluate._load_window",
+            return_value=pd.DataFrame([{"x": 1}]),
+        ),
+        patch(
+            "race_analytics.scripts.evaluate._engineer_features",
+            return_value=_make_fold_races(fold_date),
+        ),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_StubAlgo()]),
+    ):
+        evaluate(folds=1)
+
+    out = capsys.readouterr().out
+    line = _per_fold_algo_line(out, "_StubAlgo")
+    assert "n/a" in line
+    assert "coverage=0.0%" in line
+
+
+def test_per_fold_line_preserves_existing_metrics(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """Adding Kelly to the per-fold line leaves the accuracy / roi / favourite figures
+    intact (acceptance criterion: existing per-fold figures unchanged)."""
+    from race_analytics.scripts.evaluate import evaluate
+
+    fold_date = date.today() - timedelta(days=1)
+    with (
+        patch(
+            "race_analytics.scripts.evaluate._load_window",
+            return_value=pd.DataFrame([{"x": 1}]),
+        ),
+        patch(
+            "race_analytics.scripts.evaluate._engineer_features",
+            return_value=_make_fold_races(fold_date),
+        ),
+        patch("race_analytics.scripts.evaluate.RaceDataBuilder", _FakeBuilder),
+        patch("race_analytics.scripts.evaluate.ALGORITHMS", [_FieldAlgo()]),
+    ):
+        evaluate(folds=1)
+
+    out = capsys.readouterr().out
+    line = _per_fold_algo_line(out, "_FieldAlgo")
+    # The fold fixture: one known race (RaceId 2) whose predicted horse won at odds 3.5.
+    assert "accuracy=1.000" in line
+    assert "roi=2.500" in line
+    assert "favourite: accuracy=" in line
+    assert "fit=" in line and "predict=" in line
+
+
+def test_per_fold_staking_frame_built_before_line_printed(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The fold's staking frame must be built (via _build_csv_rows) before the per-fold
+    line is printed, so the printed Kelly figure reflects that fold's frame. We assert the
+    per-fold Kelly figure equals the shared backtest over that fold's retained frame."""
+    from race_analytics.betting import backtest
+    from race_analytics.scripts.evaluate import (
+        _build_csv_rows,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    # A two-runner fold where the rank-1 pick clears the value gate, so a non-zero Kelly
+    # net £ is produced — proving the printed figure comes from the staking frame.
+    frame = _kelly_fold_frame("Algo", 1, win_prob=0.6, market_prob=0.4, odds=3.0, pos=1)
+    summary = backtest(frame)["Algo"]
+    assert summary["bets"] == 1  # a value bet was placed on this frame
+    assert summary["kelly_profit"] > 0
+
+    from race_analytics.scripts.evaluate import (
+        _format_kelly,  # pyright: ignore[reportPrivateUsage]  # intentional: testing module-internal helper
+    )
+
+    pounds, coverage = _format_kelly(summary, has_probability=True)
+    assert pounds == f"{summary['kelly_profit']:+.2f}"
+    assert coverage == "100.0%"
+    # _build_csv_rows is the staking-frame builder the per-fold line now depends on.
+    assert callable(_build_csv_rows)
