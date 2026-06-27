@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,EvensF,2,CompletedRace,921052,4,Bangor-on-Dee,06/26/2026 17:58:00,6577916,Le Gentleman FR,0.28183362,0
+1,True,13/2,7.5,CompletedRace,921050,4,Bangor-on-Dee,06/26/2026 19:43:00,3301624,Supreme Yeats IRE,0.3707823,1.14
+2,False,13/8F,2.625,CompletedRace,921053,4,Bangor-on-Dee,06/26/2026 20:18:00,6698892,Centurion's Sister IRE,0.44182166,5
+1,True,11/8F,2.375,CompletedRace,921058,9,Cartmel,06/26/2026 15:18:00,5047968,Passengerontheship IRE,0.4825293,0
+4,False,9/2,5.5,CompletedRace,921057,9,Cartmel,06/26/2026 15:50:00,3257914,Fairlawn Flyer,0.2672344,1.46
+1,True,2/1F,3,CompletedRace,921060,9,Cartmel,06/26/2026 16:23:00,3918385,Zumbi GER,0.28681427,0
+1,True,7/5F,2.4,CompletedRace,921347,15,Doncaster,06/26/2026 12:15:00,7503747,Rizal FR,0.3043381,0
+1,True,2/1,3,CompletedRace,921349,15,Doncaster,06/26/2026 13:15:00,8277428,Reem Rak IRE,0.3815901,0
+2,False,4/6F,1.6666666666666665,CompletedRace,921435,1353,Newcastle (AW),06/26/2026 18:53:00,5870116,Diamond Rain,0.3122581,0
+1,True,30/100F,1.3,CompletedRace,921344,174,Newmarket (July),06/26/2026 17:20:00,9359957,Starlight Lass,0.5517512,0
+2,False,8/13F,1.6153846153846154,CompletedRace,921343,174,Newmarket (July),06/26/2026 18:25:00,7739795,Phantom Watch IRE,0.38199908,0
+2,False,6/4F,2.5,CompletedRace,921338,174,Newmarket (July),06/26/2026 19:35:00,7613512,Hardy's Hero,0.47098508,3.21
+2,False,3/1,4,CompletedRace,921335,174,Newmarket (July),06/26/2026 20:10:00,6270351,Betelgeuse IRE,0.2956929,5
+4,False,7/4F,2.75,CompletedRace,921341,174,Newmarket (July),06/26/2026 20:45:00,7183164,Belle Amie SWE,0.38072726,0.24
+2,False,11/1,12,CompletedRace,921353,104,Yarmouth,06/26/2026 10:30:00,8200995,Leonato IRE,0.26868978,1.5
+2,False,13/8F,2.625,CompletedRace,921352,104,Yarmouth,06/26/2026 11:30:00,7708605,Luzon Heights,0.25784835,0
 1,True,4/6F,1.6666666666666665,CompletedRace,921315,22,Hamilton,06/25/2026 20:30:00,8205617,Ruby Wedding,0.47984836,0
 2,False,1/9F,1.1111111111111112,CompletedRace,921324,30,Leicester,06/25/2026 20:45:00,8236346,Pentonville,0.61468196,0
 1,True,7/4,2.75,CompletedRace,921325,40,Nottingham,06/25/2026 10:30:00,8084432,Food For Thought,0.36969072,0.65
