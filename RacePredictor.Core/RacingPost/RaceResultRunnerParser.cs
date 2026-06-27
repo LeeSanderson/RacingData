@@ -54,7 +54,7 @@ internal class RaceResultRunnerParser : RunnerParser
 
         var missingJockeys = jockeys.Count(j => j.Id == 0);
         var missingTrainers = trainers.Count(t => t.Id == 0);
-        if (missingJockeys > 1 || missingTrainers > 1)
+        if (missingJockeys > 1 && missingTrainers > 1)
         {
             throw new Exception($"Unexpected missing entries: {missingJockeys} jockeys, {missingTrainers} trainers");
         }

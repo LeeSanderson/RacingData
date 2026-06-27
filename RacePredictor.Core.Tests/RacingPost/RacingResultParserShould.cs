@@ -258,6 +258,24 @@ public class RacingResultParserShould
     }
 
 
+    [Fact]
+    public async Task ParseResultsWhereAllJockeysHaveNoProfileLink()
+    {
+        // Charity/amateur races (e.g. Corinthian races) run with jockeys who have no Racing Post profile.
+        // All jockey anchors in rp-horseTable__human_medium resolve to Id == 0.
+        // The parser must not throw; it should store Id == 0 for every jockey.
+        var html = ResourceLoader.ReadRacingPostExampleResource("results_carlisle_20220516_1320.html");
+        var modified = html.Replace(
+            "data-test-selector=\"link-jockeyName\"",
+            "data-test-selector=\"link-jockeyName-removed\"",
+            StringComparison.Ordinal);
+
+        var result = await new RacingResultParser().Parse(modified);
+
+        result.Runners.Should().NotBeEmpty();
+        result.Runners.Should().OnlyContain(r => r.Jockey.Id == 0);
+    }
+
     private static async Task<RaceResult> GetRaceResult(string resourceFileName)
     {
         var raceResultHtmlPage = ResourceLoader.ReadRacingPostExampleResource(resourceFileName);
