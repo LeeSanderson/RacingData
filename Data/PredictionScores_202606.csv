@@ -1,4 +1,16 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+4,False,15/2,8.5,CompletedRace,921359,12,Chepstow,06/27/2026 19:35:00,6855100,Gennadius,0.26747987,2.09
+4,False,11/10F,2.1,CompletedRace,921371,13,Chester,06/27/2026 14:32:00,8290517,El Nay IRE,0.4673376,0
+7,False,11/8F,2.375,CompletedRace,921369,13,Chester,06/27/2026 17:20:00,6714930,Solar Pass,0.29807755,0
+1,True,13/5,3.6,CompletedRace,923501,308,Churchill Downs,06/27/2026 23:14:00,5982495,Magnitude,0.30590594,1.38
+3,False,1/3F,1.3333333333333333,CompletedRace,923594,178,Curragh,06/27/2026 14:15:00,9046182,Confucius,0.46014836,0
+4,False,11/10F,2.1,CompletedRace,919190,178,Curragh,06/27/2026 15:55:00,8188004,Thundering On GB,0.24844499,0
+1,True,3/5F,1.6,CompletedRace,923726,206,Deauville,06/27/2026 10:00:00,9033928,Erdenali,0.28520706,0
+1,True,4/5F,1.8,CompletedRace,923727,206,Deauville,06/27/2026 10:30:00,7653169,Narissa IRE,0.2928537,0
+2,False,13/2,7.5,CompletedRace,921373,31,Lingfield,06/27/2026 18:25:00,7639434,Mayaada IRE,0.3748287,4.28
+3,False,9/4F,3.25,CompletedRace,921380,93,Windsor,06/27/2026 19:45:00,3143809,Wisper IRE,0.29240066,0.93
+3,False,9/2,5.5,CompletedRace,921383,93,Windsor,06/27/2026 20:15:00,8530096,Kindly Queen IRE,0.28616968,2.94
+3,False,13/8,2.625,CompletedRace,921387,107,York,06/27/2026 14:58:00,8321648,Saber Strike IRE,0.3541883,0
 2,False,EvensF,2,CompletedRace,921052,4,Bangor-on-Dee,06/26/2026 17:58:00,6577916,Le Gentleman FR,0.28183362,0
 1,True,13/2,7.5,CompletedRace,921050,4,Bangor-on-Dee,06/26/2026 19:43:00,3301624,Supreme Yeats IRE,0.3707823,1.14
 2,False,13/8F,2.625,CompletedRace,921053,4,Bangor-on-Dee,06/26/2026 20:18:00,6698892,Centurion's Sister IRE,0.44182166,5
