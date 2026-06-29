@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+9,False,6/4F,2.5,CompletedRace,921063,9,Cartmel,06/28/2026 15:37:00,5455543,Goodwin Face FR,0.45871142,2.81
+3,False,6/1,7,CompletedRace,921062,9,Cartmel,06/28/2026 16:15:00,4303288,Pour Les Filles,0.30206186,5
+4,False,11/4,3.75,CompletedRace,908061,178,Curragh,06/28/2026 16:35:00,7992524,Raaheeb,0.26472026,0
+3,False,4/5F,1.8,CompletedRace,923736,219,Saint-Cloud,06/28/2026 15:00:00,8973280,Overnight,0.41148368,0
+2,False,6/5,2.2,CompletedRace,921073,84,Uttoxeter,06/28/2026 13:47:00,5441305,Pony Soprano IRE,0.50536525,0
+1,True,4/6F,1.6666666666666665,CompletedRace,921075,84,Uttoxeter,06/28/2026 16:43:00,7378617,Edelak IRE,0.35606,0
 4,False,15/2,8.5,CompletedRace,921359,12,Chepstow,06/27/2026 19:35:00,6855100,Gennadius,0.26747987,2.09
 4,False,11/10F,2.1,CompletedRace,921371,13,Chester,06/27/2026 14:32:00,8290517,El Nay IRE,0.4673376,0
 7,False,11/8F,2.375,CompletedRace,921369,13,Chester,06/27/2026 17:20:00,6714930,Solar Pass,0.29807755,0
