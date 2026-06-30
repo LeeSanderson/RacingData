@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,4/1,5,CompletedRace,923566,1212,Ffos Las,06/29/2026 16:22:00,7597372,Grey Soul IRE,0.30918968,0
+5,False,9/4,3.25,CompletedRace,923567,1212,Ffos Las,06/29/2026 16:52:00,8245521,Marquessofanglesey IRE,0.2689651,0
+2,False,11/2,6.5,CompletedRace,922155,46,Pontefract,06/29/2026 14:30:00,3538642,Yermanthere IRE,0.2647388,1.64
+1,True,30/100F,1.3,CompletedRace,922151,46,Pontefract,06/29/2026 15:30:00,8227227,Capichera IRE,0.33545142,0
+1,True,9/2,5.5,CompletedRace,922153,46,Pontefract,06/29/2026 16:00:00,5285714,Jez Bomb,0.24549462,3.37
+1,True,11/4,3.75,CompletedRace,922092,67,Stratford,06/29/2026 14:40:00,8205601,Playful Fox FR,0.3036061,0.39
 9,False,6/4F,2.5,CompletedRace,921063,9,Cartmel,06/28/2026 15:37:00,5455543,Goodwin Face FR,0.45871142,2.81
 3,False,6/1,7,CompletedRace,921062,9,Cartmel,06/28/2026 16:15:00,4303288,Pour Les Filles,0.30206186,5
 4,False,11/4,3.75,CompletedRace,908061,178,Curragh,06/28/2026 16:35:00,7992524,Raaheeb,0.26472026,0
