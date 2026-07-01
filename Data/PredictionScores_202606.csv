@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+5,False,2/1J,3,CompletedRace,922165,7,Brighton,06/30/2026 15:13:00,3634785,King Of War,0.26629868,0
+1,True,5/1,6,CompletedRace,922177,16,Musselburgh,06/30/2026 15:00:00,8148796,Haayimm IRE,0.24253948,0
+2,False,6/5J,2.2,CompletedRace,923574,52,Salisbury,06/30/2026 16:37:00,7204963,Pearl River,0.38949895,2.5
+1,True,7/2,4.5,CompletedRace,922093,67,Stratford,06/30/2026 18:18:00,5746437,Captain Cool IRE,0.40700245,5
+2,False,6/4F,2.5,CompletedRace,922096,67,Stratford,06/30/2026 19:18:00,5784839,Tyson GER,0.3709377,0
+3,False,11/8F,2.375,CompletedRace,922095,67,Stratford,06/30/2026 20:18:00,4455445,Glenmalure Flyer IRE,0.34788546,0
+4,False,11/4J,3.75,CompletedRace,923670,201,Wexford,06/30/2026 14:20:00,58958864,Scalpnagoon,0.32083586,3.75
+2,False,9/4,3.25,CompletedRace,923674,201,Wexford,06/30/2026 16:20:00,5727969,Future Prospect,0.30952007,0.45
 1,True,4/1,5,CompletedRace,923566,1212,Ffos Las,06/29/2026 16:22:00,7597372,Grey Soul IRE,0.30918968,0
 5,False,9/4,3.25,CompletedRace,923567,1212,Ffos Las,06/29/2026 16:52:00,8245521,Marquessofanglesey IRE,0.2689651,0
 2,False,11/2,6.5,CompletedRace,922155,46,Pontefract,06/29/2026 14:30:00,3538642,Yermanthere IRE,0.2647388,1.64
