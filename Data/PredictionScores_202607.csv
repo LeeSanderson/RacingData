@@ -1,0 +1,5 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,4/5F,1.8,CompletedRace,922184,5,Bath,07/01/2026 20:18:00,7695900,Swiped,0.25016505,0
+5,False,7/2,4.5,CompletedRace,922190,17,Epsom,07/01/2026 18:57:00,6367244,Arcturus Flame IRE,0.34043726,4.26
+4,False,11/4,3.75,CompletedRace,922197,80,Thirsk,07/01/2026 15:40:00,8620471,Asia Force IRE,0.2317924,1.62
+5,False,100/30F,4.333333333333334,CompletedRace,923622,101,Worcester,07/01/2026 14:20:00,7436477,Greer Hill IRE,0.23544541,0.2
