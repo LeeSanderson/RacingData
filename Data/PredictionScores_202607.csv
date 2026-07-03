@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,4/6F,1.6666666666666665,CompletedRace,923696,176,Bellewstown,07/02/2026 20:23:00,4584381,Lark In The Mornin GER,0.35463244,0
+4,False,2/1,3,CompletedRace,922448,1079,Kempton (AW),07/02/2026 18:03:00,9227221,Time Saxon Warrior FR,0.3759417,0.63
+8,False,5/1,6,CompletedRace,923854,1079,Kempton (AW),07/02/2026 19:08:00,6692993,Breakdancer IRE,0.24627918,0
+3,False,7/4J,2.75,CompletedRace,922207,36,Newbury,07/02/2026 20:30:00,7865992,Thanos,0.37648788,0
+3,False,4/5F,1.8,CompletedRace,922763,40,Nottingham,07/02/2026 15:30:00,8839217,Al Maslool,0.33158678,2.67
+1,True,5/2,3.5,CompletedRace,922107,41,Perth,07/02/2026 14:48:00,5870164,Pergamon FR,0.34522352,0
+5,False,7/4F,2.75,CompletedRace,922105,41,Perth,07/02/2026 15:18:00,5727947,Gunnery Sergeant FR,0.34289798,0
+1,True,5/4F,2.25,CompletedRace,922108,41,Perth,07/02/2026 16:25:00,5851318,The Flying Poet IRE,0.38829604,2.81
+3,False,11/4,3.75,CompletedRace,922211,104,Yarmouth,07/02/2026 14:39:00,3197369,Pleasant Man,0.33081028,5
 2,False,4/5F,1.8,CompletedRace,922184,5,Bath,07/01/2026 20:18:00,7695900,Swiped,0.25016505,0
 5,False,7/2,4.5,CompletedRace,922190,17,Epsom,07/01/2026 18:57:00,6367244,Arcturus Flame IRE,0.34043726,4.26
 4,False,11/4,3.75,CompletedRace,922197,80,Thirsk,07/01/2026 15:40:00,8620471,Asia Force IRE,0.2317924,1.62
