@@ -1,4 +1,15 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+4,False,9/4,3.25,CompletedRace,922867,12,Chepstow,07/03/2026 16:37:00,9097215,Eloquencia,0.31116343,0
+3,False,6/1,7,CompletedRace,922868,12,Chepstow,07/03/2026 17:10:00,5991241,Oasis Sunrise IRE,0.3202953,5
+2,False,6/4F,2.5,CompletedRace,922869,12,Chepstow,07/03/2026 17:43:00,4429419,Supreme King IRE,0.34266338,0
+3,False,7/2,4.5,CompletedRace,922113,39,Newton Abbot,07/03/2026 14:10:00,8903771,Getmyfriend IRE,0.33927068,0
+2,False,13/8F,2.625,CompletedRace,922116,39,Newton Abbot,07/03/2026 14:45:00,7263140,Kittys Glance,0.30743027,0
+1,True,8/15F,1.5333333333333332,CompletedRace,922115,39,Newton Abbot,07/03/2026 15:20:00,5447233,Miss Kassiopi,0.41166994,0
+5,False,8/1,9,CompletedRace,922112,39,Newton Abbot,07/03/2026 16:30:00,4963725,Charlus IRE,0.60032576,4.65
+2,False,3/1,4,CompletedRace,922256,54,Sandown,07/03/2026 15:35:00,4839367,Persica IRE,0.3692924,4.81
+1,True,4/7F,1.5714285714285714,CompletedRace,922255,54,Sandown,07/03/2026 16:10:00,6023328,Lazy Griff GER,0.32989758,0
+4,False,5/2F,3.5,CompletedRace,922260,54,Sandown,07/03/2026 16:42:00,7324719,Minhad,0.26761672,2.65
+2,False,4/1,5,CompletedRace,922261,54,Sandown,07/03/2026 17:15:00,8188070,Thursday Girl,0.28572157,0.28
 1,True,4/6F,1.6666666666666665,CompletedRace,923696,176,Bellewstown,07/02/2026 20:23:00,4584381,Lark In The Mornin GER,0.35463244,0
 4,False,2/1,3,CompletedRace,922448,1079,Kempton (AW),07/02/2026 18:03:00,9227221,Time Saxon Warrior FR,0.3759417,0.63
 8,False,5/1,6,CompletedRace,923854,1079,Kempton (AW),07/02/2026 19:08:00,6692993,Breakdancer IRE,0.24627918,0
