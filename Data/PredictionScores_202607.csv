@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+4,False,EvensF,2,CompletedRace,922297,3,Ayr,07/06/2026 17:30:00,5311224,Is She Now IRE,0.25118658,0
+1,True,3/1J,4,CompletedRace,922303,49,Ripon,07/06/2026 19:09:00,5073257,Jesmond Dawn IRE,0.25745037,2.29
+1,True,11/8F,2.375,CompletedRace,924279,196,Roscommon,07/06/2026 18:48:00,8784170,Lizzie Twigg,0.30492133,3.23
 1,True,2/1,3,CompletedRace,922117,35,Market Rasen,07/05/2026 16:00:00,4305460,Regal Renaissance,0.4777028,0
 4,False,8/1,9,CompletedRace,921918,394,Southwell (AW),07/05/2026 17:55:00,4642854,Sixpack,0.40152827,0
 1,True,5/2,3.5,CompletedRace,923866,176,Bellewstown,07/04/2026 17:15:00,8418719,Mino Des Mottes FR,0.26996794,0.33
