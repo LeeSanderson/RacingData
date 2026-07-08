@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+4,False,6/5F,2.2,CompletedRace,922308,7,Brighton,07/07/2026 18:50:00,9372909,Radahn IRE,0.2783198,0
+1,True,3/1J,4,CompletedRace,922317,46,Pontefract,07/07/2026 16:18:00,7657429,Welbury,0.23552316,0
+1,True,6/4J,2.5,CompletedRace,924321,200,Tramore,07/07/2026 18:30:00,5806679,Daboya,0.30871743,0
+2,False,11/4,3.75,CompletedRace,922125,84,Uttoxeter,07/07/2026 13:30:00,6649595,Ride Like A Girl FR,0.26871327,0
+2,False,5/6F,1.8333333333333335,CompletedRace,922127,84,Uttoxeter,07/07/2026 14:00:00,6362961,Ice Jet IRE,0.2967479,0
+1,True,5/4F,2.25,CompletedRace,922126,84,Uttoxeter,07/07/2026 14:30:00,6121065,Karnaval Point FR,0.29164153,0
 4,False,EvensF,2,CompletedRace,922297,3,Ayr,07/06/2026 17:30:00,5311224,Is She Now IRE,0.25118658,0
 1,True,3/1J,4,CompletedRace,922303,49,Ripon,07/06/2026 19:09:00,5073257,Jesmond Dawn IRE,0.25745037,2.29
 1,True,11/8F,2.375,CompletedRace,924279,196,Roscommon,07/06/2026 18:48:00,8784170,Lizzie Twigg,0.30492133,3.23
