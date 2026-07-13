@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+5,False,6/4F,2.5,CompletedRace,924667,206,Deauville,07/12/2026 15:25:00,7789319,Rayif IRE,0.2866829,0
+0,False,EvensF,2,PulledUp,922141,41,Perth,07/12/2026 14:06:00,7108230,L'Amalric FR,0.48366475,0
+1,True,13/8F,2.625,CompletedRace,922142,41,Perth,07/12/2026 14:41:00,3851614,Conquer The Breeze IRE,0.3070919,0
+2,False,5/4F,2.25,CompletedRace,922140,41,Perth,07/12/2026 15:16:00,6609348,Atlantic City,0.34150618,0
+2,False,11/4J,3.75,CompletedRace,922139,41,Perth,07/12/2026 16:26:00,3939851,Secret Trix,0.4482524,1.25
+2,False,5/6F,1.8333333333333335,CompletedRace,922146,67,Stratford,07/12/2026 13:50:00,8157638,Tiny Riot IRE,0.49505377,0
+5,False,4/1,5,CompletedRace,922147,67,Stratford,07/12/2026 15:00:00,7060305,Laffer Curve,0.37068158,0
+1,True,9/4,3.25,CompletedRace,922148,67,Stratford,07/12/2026 16:10:00,6640606,Thickthorn Tom IRE,0.42344862,0
+0,False,10/11F,1.9090909090909092,Fell,922144,67,Stratford,07/12/2026 16:45:00,7378617,Edelak IRE,0.47268882,0
 4,False,EvensF,2,CompletedRace,922385,2,Ascot,07/11/2026 14:27:00,5864565,More Thunder IRE,0.2532637,0
 1,True,13/8F,2.625,CompletedRace,922389,2,Ascot,07/11/2026 15:34:00,8062546,Galilean Quality IRE,0.2906927,0
 5,False,13/8F,2.625,CompletedRace,922387,2,Ascot,07/11/2026 16:12:00,7360547,Ernst Blofeld IRE,0.22817744,0
