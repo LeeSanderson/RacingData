@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,5/4,2.25,CompletedRace,923098,31,Lingfield,07/15/2026 17:20:00,8858093,Probation,0.39954048,0
+1,True,1/7F,1.1428571428571428,CompletedRace,923097,31,Lingfield,07/15/2026 17:50:00,9254381,Brunhilde IRE,0.60025364,5
+3,False,6/5F,2.2,CompletedRace,923096,31,Lingfield,07/15/2026 19:20:00,5234275,Classic Encounter IRE,0.45145738,0
+1,True,5/4F,2.25,CompletedRace,922985,84,Uttoxeter,07/15/2026 15:18:00,58950449,Sunray Shadow,0.47230142,0
+0,False,7/2,4.5,PulledUp,922987,84,Uttoxeter,07/15/2026 16:18:00,3630330,Theonlywayiswessex FR,0.3429135,0.12
+3,False,4/1,5,CompletedRace,923102,104,Yarmouth,07/15/2026 18:40:00,3886662,Dion Baker IRE,0.30070424,1.19
 2,False,7/4,2.75,CompletedRace,923065,6,Beverley,07/14/2026 15:17:00,8111193,It's Debatable IRE,0.411917,0
 3,False,2/1F,3,CompletedRace,924649,179,Downpatrick,07/14/2026 16:12:00,5160467,Playtime GB,0.24275987,0
 1,True,10/11F,1.9090909090909092,CompletedRace,923073,1212,Ffos Las,07/14/2026 16:05:00,6838436,Tokyo Joe,0.2331354,0
