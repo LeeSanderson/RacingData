@@ -1,4 +1,19 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,6/4,2.5,CompletedRace,923108,12,Chepstow,07/16/2026 14:05:00,9244714,Quisana IRE,0.32943594,5
+6,False,5/6F,1.8333333333333335,CompletedRace,923110,12,Chepstow,07/16/2026 15:50:00,5991308,Stenmark IRE,0.27254462,0
+2,False,3/1,4,CompletedRace,923119,17,Epsom,07/16/2026 18:20:00,6107035,Eutropia,0.24613345,0
+0,False,SP,,NonRunner,923118,17,Epsom,07/16/2026 18:55:00,7267865,Tiger FR,0.24742903,0
+7,False,11/1,12,CompletedRace,923116,17,Epsom,07/16/2026 19:30:00,3208573,Pride Of Nepal,0.2362057,0
+5,False,11/8F,2.375,CompletedRace,923117,17,Epsom,07/16/2026 20:05:00,5708896,Atmosphere,0.35172573,1.42
+1,True,3/1,4,CompletedRace,923127,22,Hamilton,07/16/2026 15:25:00,8362109,I'll Be Back IRE,0.33993578,0
+5,False,9/4,3.25,CompletedRace,923128,22,Hamilton,07/16/2026 16:00:00,6626284,Kaleido,0.3171854,3.13
+4,False,4/1,5,CompletedRace,924629,185,Killarney,07/16/2026 17:05:00,4728109,Birdie Or Bust,0.371795,1.99
+3,False,11/8F,2.375,CompletedRace,924623,187,Leopardstown,07/16/2026 18:35:00,7966367,How'sthebai,0.3551704,0
+1,True,11/10F,2.1,CompletedRace,923710,187,Leopardstown,07/16/2026 19:10:00,7870207,Geryon,0.30990246,0
+3,False,5/2F,3.5,CompletedRace,924624,187,Leopardstown,07/16/2026 19:45:00,6042410,Daler,0.26684743,0
+6,False,3/1J,4,CompletedRace,924625,187,Leopardstown,07/16/2026 20:20:00,7588067,Killyclogher Rose,0.2545525,0
+4,False,13/8F,2.625,CompletedRace,923126,80,Thirsk,07/16/2026 16:45:00,6309473,Harswell Ruby IRE,0.31148595,0
+2,False,7/4F,2.75,CompletedRace,922994,101,Worcester,07/16/2026 20:12:00,4994527,Fane Court IRE,0.24381809,0
 1,True,5/4,2.25,CompletedRace,923098,31,Lingfield,07/15/2026 17:20:00,8858093,Probation,0.39954048,0
 1,True,1/7F,1.1428571428571428,CompletedRace,923097,31,Lingfield,07/15/2026 17:50:00,9254381,Brunhilde IRE,0.60025364,5
 3,False,6/5F,2.2,CompletedRace,923096,31,Lingfield,07/15/2026 19:20:00,5234275,Classic Encounter IRE,0.45145738,0
