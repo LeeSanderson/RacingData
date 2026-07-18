@@ -1,4 +1,17 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,4/7F,1.5714285714285714,CompletedRace,924738,180,Down Royal,07/17/2026 19:59:00,8304779,Teologia FR,0.5218215,5
+2,False,5/2F,3.5,CompletedRace,924739,180,Down Royal,07/17/2026 20:30:00,8245432,Augusta Rock,0.33652312,0
+2,False,7/4,2.75,CompletedRace,923137,22,Hamilton,07/17/2026 17:30:00,6595660,Nightsinwhitesatin,0.4367085,0.97
+2,False,6/1,7,CompletedRace,923134,22,Hamilton,07/17/2026 19:50:00,8205616,Prizeland,0.36491704,2.49
+2,False,11/8F,2.375,CompletedRace,923139,22,Hamilton,07/17/2026 21:00:00,6074425,Geo IRE,0.23933624,0.23
+2,False,7/2,4.5,CompletedRace,924730,185,Killarney,07/17/2026 15:42:00,7404480,Endless Talking,0.35793805,2.94
+1,True,8/13F,1.6153846153846154,CompletedRace,923167,36,Newbury,07/17/2026 17:20:00,4686994,Green Sky IRE,0.3659551,0
+2,False,4/6F,1.6666666666666665,CompletedRace,923168,36,Newbury,07/17/2026 17:55:00,8277429,Turty Tree IRE,0.30279037,0
+1,True,EvensF,2,CompletedRace,923180,174,Newmarket (July),07/17/2026 18:23:00,8205612,Counter Intuitive IRE,0.48799467,0
+2,False,10/11F,1.9090909090909092,CompletedRace,923179,174,Newmarket (July),07/17/2026 18:58:00,6710718,High Degree,0.29835728,0
+1,True,13/8F,2.625,CompletedRace,923183,174,Newmarket (July),07/17/2026 20:43:00,5737954,Prefer The Sister IRE,0.272,0.15
+1,True,8/11F,1.7272727272727273,CompletedRace,923141,40,Nottingham,07/17/2026 15:27:00,4483044,Al Sayah,0.28859487,2.71
+2,False,11/2,6.5,CompletedRace,924370,513,Wolverhampton (AW),07/17/2026 16:28:00,7204779,Chapter IRE,0.29126292,0
 2,False,6/4,2.5,CompletedRace,923108,12,Chepstow,07/16/2026 14:05:00,9244714,Quisana IRE,0.32943594,5
 6,False,5/6F,1.8333333333333335,CompletedRace,923110,12,Chepstow,07/16/2026 15:50:00,5991308,Stenmark IRE,0.27254462,0
 2,False,3/1,4,CompletedRace,923119,17,Epsom,07/16/2026 18:20:00,6107035,Eutropia,0.24613345,0
