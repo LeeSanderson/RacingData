@@ -1,4 +1,25 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,13/8,2.625,CompletedRace,923000,9,Cartmel,07/18/2026 14:00:00,7499408,Rebel Tribesman IRE,0.3702104,0
+5,False,9/2,5.5,CompletedRace,923002,9,Cartmel,07/18/2026 14:35:00,5289576,Made All,0.3153438,0
+1,True,13/2,7.5,CompletedRace,923003,9,Cartmel,07/18/2026 16:21:00,4682894,Jeteye IRE,0.23811856,1.41
+5,False,6/4F,2.5,CompletedRace,923001,9,Cartmel,07/18/2026 17:30:00,5047968,Passengerontheship IRE,0.36799398,0
+2,False,10/1,11,CompletedRace,923711,178,Curragh,07/18/2026 14:15:00,6238190,Rhapsody,0.31081608,4.98
+4,False,12/1,13,CompletedRace,908062,178,Curragh,07/18/2026 16:35:00,9060365,Rebel Moon GB,0.2383155,2.15
+1,True,100/30,4.333333333333334,CompletedRace,924770,178,Curragh,07/18/2026 17:10:00,7627149,Genchev GB,0.35868612,3.15
+1,True,9/2,5.5,CompletedRace,923194,15,Doncaster,07/18/2026 19:50:00,7806389,Royal Poetry IRE,0.30757567,4.35
+3,False,85/40,3.125,CompletedRace,923193,15,Doncaster,07/18/2026 21:00:00,5870164,Pergamon FR,0.32177427,0.25
+2,False,11/8J,2.375,CompletedRace,923009,35,Market Rasen,07/18/2026 13:35:00,7258540,Loriko FR,0.50252813,0
+1,True,11/8,2.375,CompletedRace,923010,35,Market Rasen,07/18/2026 15:20:00,5228807,No More Bolero,0.311743,0
+7,False,9/4F,3.25,CompletedRace,923008,35,Market Rasen,07/18/2026 16:40:00,5554936,Special John IRE,0.27122962,0
+1,True,EvensF,2,CompletedRace,923173,36,Newbury,07/18/2026 13:55:00,4839367,Persica IRE,0.24642555,0
+1,True,13/2,7.5,CompletedRace,923174,36,Newbury,07/18/2026 14:25:00,6287988,Shrimp Shady,0.2300106,2.13
+5,False,7/4F,2.75,CompletedRace,923185,174,Newmarket (July),07/18/2026 15:05:00,6560235,Revoir,0.33895075,0
+2,False,7/2,4.5,CompletedRace,923186,174,Newmarket (July),07/18/2026 17:25:00,7471062,Astrazar IRE,0.2303285,1.85
+2,False,2/1F,3,CompletedRace,924360,40,Nottingham,07/18/2026 17:55:00,5929165,Perfidia IRE,0.23159643,0
+1,True,2/5F,1.4,CompletedRace,924362,40,Nottingham,07/18/2026 19:33:00,8214901,Del Corso,0.4308385,0
+6,False,11/8F,2.375,CompletedRace,924361,40,Nottingham,07/18/2026 20:43:00,6238173,Ablon FR,0.3353903,0
+1,True,7/2F,4.5,CompletedRace,923198,49,Ripon,07/18/2026 15:15:00,5303376,Salamanca City IRE,0.22999975,0.42
+1,True,23/10F,3.3,CompletedRace,924749,445,Saratoga,07/18/2026 19:46:00,6247275,Kathynmarissa,0.30511725,1.71
 1,True,4/7F,1.5714285714285714,CompletedRace,924738,180,Down Royal,07/17/2026 19:59:00,8304779,Teologia FR,0.5218215,5
 2,False,5/2F,3.5,CompletedRace,924739,180,Down Royal,07/17/2026 20:30:00,8245432,Augusta Rock,0.33652312,0
 2,False,7/4,2.75,CompletedRace,923137,22,Hamilton,07/17/2026 17:30:00,6595660,Nightsinwhitesatin,0.4367085,0.97
