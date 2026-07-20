@@ -1,4 +1,20 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,2/5F,1.4,CompletedRace,925260,204,Chantilly,07/19/2026 13:33:00,6719079,Cankoura,0.39318377,0
+3,False,3/5F,1.6,CompletedRace,925262,204,Chantilly,07/19/2026 16:35:00,9033928,Erdenali,0.37642127,0
+4,False,100/30,4.333333333333334,CompletedRace,922828,178,Curragh,07/19/2026 15:15:00,7551785,Dorset,0.24008545,3.55
+4,False,5/2,3.5,CompletedRace,924775,178,Curragh,07/19/2026 15:50:00,7618341,Sanctijude,0.2313035,4.39
+3,False,4/6F,1.6666666666666665,CompletedRace,922829,178,Curragh,07/19/2026 16:25:00,4438563,Al Riffa FR,0.28608227,0
+4,False,7/2,4.5,CompletedRace,924777,178,Curragh,07/19/2026 17:30:00,4249685,Solness FR,0.2269803,2.39
+1,True,7/2,4.5,CompletedRace,923014,39,Newton Abbot,07/19/2026 15:05:00,8903771,Getmyfriend IRE,0.39034632,0
+1,True,3/1J,4,CompletedRace,923017,39,Newton Abbot,07/19/2026 15:40:00,5424979,It's A Breeze IRE,0.2894868,0
+5,False,2/1F,3,CompletedRace,923207,47,Redcar,07/19/2026 15:33:00,7735725,Amidst The Chaos IRE,0.25633156,0
+2,False,4/5F,1.8,CompletedRace,923205,47,Redcar,07/19/2026 16:08:00,8188047,Be Patient,0.5291695,0
+1,True,4/6F,1.6666666666666665,CompletedRace,923019,67,Stratford,07/19/2026 13:45:00,7378617,Edelak IRE,0.4705406,0
+1,True,EvensF,2,CompletedRace,923020,67,Stratford,07/19/2026 14:15:00,6578002,Whatyouwaitingfor IRE,0.32671887,0
+4,False,7/2,4.5,CompletedRace,923021,67,Stratford,07/19/2026 15:23:00,4568961,Campaign Trail IRE,0.3883254,3.6
+4,False,7/2,4.5,CompletedRace,923018,67,Stratford,07/19/2026 15:58:00,4129104,Breaking Cover IRE,0.3226678,2
+4,False,EvensF,2,CompletedRace,923022,67,Stratford,07/19/2026 16:33:00,4231764,Artiste d'Ainay FR,0.38166612,0
+3,False,11/4,3.75,CompletedRace,923023,67,Stratford,07/19/2026 17:08:00,4730073,Basilette IRE,0.3243671,0
 2,False,13/8,2.625,CompletedRace,923000,9,Cartmel,07/18/2026 14:00:00,7499408,Rebel Tribesman IRE,0.3702104,0
 5,False,9/2,5.5,CompletedRace,923002,9,Cartmel,07/18/2026 14:35:00,5289576,Made All,0.3153438,0
 1,True,13/2,7.5,CompletedRace,923003,9,Cartmel,07/18/2026 16:21:00,4682894,Jeteye IRE,0.23811856,1.41
