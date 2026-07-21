@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,6/5F,2.2,CompletedRace,925168,175,Ballinrobe,07/20/2026 17:10:00,6528841,Minaun View GB,0.32954887,2.02
+4,False,100/30,4.333333333333334,CompletedRace,923219,6,Beverley,07/20/2026 19:30:00,6296525,A War Eagle IRE,0.29520214,1.29
+1,True,4/6F,1.6666666666666665,CompletedRace,923026,9,Cartmel,07/20/2026 13:42:00,6092537,Gambino IRE,0.27094498,0
+0,False,12/1,13,PulledUp,925277,9,Cartmel,07/20/2026 14:42:00,2537445,Katzoff IRE,0.36297685,1.76
+3,False,9/4F,3.25,CompletedRace,923030,9,Cartmel,07/20/2026 15:12:00,5340126,Raffles Nobu FR,0.34223446,0
+3,False,5/1,6,CompletedRace,923025,9,Cartmel,07/20/2026 16:12:00,6855088,Krak FR,0.43072045,1.4
+7,False,14/1,15,CompletedRace,923028,9,Cartmel,07/20/2026 16:47:00,4622426,Wearelongterm IRE,0.30914354,5
+2,False,5/2,3.5,CompletedRace,923225,93,Windsor,07/20/2026 19:50:00,8227212,Sunshine Star,0.38423964,0
 1,True,2/5F,1.4,CompletedRace,925260,204,Chantilly,07/19/2026 13:33:00,6719079,Cankoura,0.39318377,0
 3,False,3/5F,1.6,CompletedRace,925262,204,Chantilly,07/19/2026 16:35:00,9033928,Erdenali,0.37642127,0
 4,False,100/30,4.333333333333334,CompletedRace,922828,178,Curragh,07/19/2026 15:15:00,7551785,Dorset,0.24008545,3.55

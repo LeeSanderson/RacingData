@@ -37,7 +37,14 @@ Invoke-NativeCommand $RaceDownloaderExe updateresults --output $RaceDataPath --p
 Invoke-NativeCommand $RaceDownloaderExe validate --output $RaceDataPath
 Invoke-NativeCommand $RaceDownloaderExe todaysracecards --output $RaceDataPath
 
-Invoke-NativeCommand python -m pip install -e . --quiet
+if (Get-Command uv -ErrorAction SilentlyContinue) {
+    # Local dev venvs here are created by `uv` and ship without pip, so `python -m pip`
+    # fails with "No module named pip". CI checks out fresh with no venv and no uv
+    # install step, so it falls back to the hosted agent's system pip below.
+    Invoke-NativeCommand uv pip install -e . --quiet
+} else {
+    Invoke-NativeCommand python -m pip install -e . --quiet
+}
 
 $env:RACE_DATA_PATH = $RaceDataPath
 

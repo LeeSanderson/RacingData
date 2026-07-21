@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using System.IO.Abstractions;
 using Microsoft.Extensions.Logging;
 using RaceDataDownloader.Models;
@@ -299,6 +298,11 @@ public class ValidateRaceCardPredictionsCommandHandler(
         foreach (var prediction in predictions)
         {
             var result = await FindResultForPrediction(prediction);
+            if (result == null)
+            {
+                continue;
+            }
+
             yield return new RaceCardPredictionScore
             {
                 RaceId = prediction.RaceId,
@@ -318,13 +322,19 @@ public class ValidateRaceCardPredictionsCommandHandler(
         }
     }
 
-    private async Task<RaceResultRecord> FindResultForPrediction(RaceCardPrediction prediction)
+    // Missing race results are usually transient (late-posting results, a scrape that ran before an evening
+    // meeting finished) rather than a genuine data-pipeline bug, so this skips the prediction with a warning
+    // instead of throwing - a single unresolved race must not block scoring the rest, or the todaysracecards
+    // step later in run.ps1, from running.
+    private async Task<RaceResultRecord?> FindResultForPrediction(RaceCardPrediction prediction)
     {
         var predictionRaceDate = DateOnly.FromDateTime(prediction.Off);
         var resultsForDate = await EnsureResultsLoadedFor(prediction.RaceId, predictionRaceDate);
         if (resultsForDate.Count == 0)
         {
-            throw new ValidationException($"Unable to find race results for race {prediction.RaceId} on {prediction.Off}");
+            Logger.LogWarning("Unable to find race results for race {RaceId} on {Off} - skipping this prediction",
+                prediction.RaceId, prediction.Off);
+            return null;
         }
 
         var resultForPrediction =

@@ -236,6 +236,37 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
     }
 
     [Fact]
+    public async Task SkipAPredictionWhoseRaceHasNoResultsAtAllAndStillScoreTheRest()
+    {
+        var predictionForAMissingRaceAndAKnownRace = new List<RaceCardPrediction>
+        {
+            new()
+            {
+                RaceId = 999,
+                CourseId = 2,
+                CourseName = "Course2",
+                HorseId = 1,
+                HorseName = "MissingRaceHorse",
+                Off = new DateTime(2022, 05, 13, 21, 0, 0),
+            },
+            _predictionThatHorse1WillWin.Single()
+        };
+        _mockFileSystem.File.ReadAllTextAsync(PredictionsFile)
+            .Returns(Task.FromResult(await predictionForAMissingRaceAndAKnownRace.ToCsvString()));
+        _mockFileSystem.Directory.Exists(MockDataDirectory).Returns(true);
+        string? savedCsv = null;
+        _mockFileSystem.File.WriteAllTextAsync(PredictionsScoresFile, Arg.Do<string>(x => savedCsv = x))
+            .Returns(Task.CompletedTask);
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var scores = await savedCsv!.FromCsvString<RaceCardPredictionScore>();
+        scores.Should().BeEquivalentTo(_expectedPredictionScoreThatHorse1Won);
+    }
+
+    [Fact]
     public async Task MergeForecastOddsFromTheCardIntoMatchedResultRows()
     {
         var cards = new List<RaceCardRecord>
