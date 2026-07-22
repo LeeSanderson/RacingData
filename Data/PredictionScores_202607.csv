@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,4/1,5,CompletedRace,925228,175,Ballinrobe,07/21/2026 18:09:00,8344456,Manoir De Mirande FR,0.42890236,0
+3,False,7/2,4.5,CompletedRace,923239,40,Nottingham,07/21/2026 16:45:00,8259450,Porth Eilian,0.36749408,0.79
+3,False,5/2,3.5,CompletedRace,923246,52,Salisbury,07/21/2026 19:51:00,4990396,Blue Prince IRE,0.3696584,0
+1,True,4/5F,1.8,CompletedRace,923249,52,Salisbury,07/21/2026 20:51:00,5266405,Curran IRE,0.22944525,0
 2,False,6/5F,2.2,CompletedRace,925168,175,Ballinrobe,07/20/2026 17:10:00,6528841,Minaun View GB,0.32954887,2.02
 4,False,100/30,4.333333333333334,CompletedRace,923219,6,Beverley,07/20/2026 19:30:00,6296525,A War Eagle IRE,0.29520214,1.29
 1,True,4/6F,1.6666666666666665,CompletedRace,923026,9,Cartmel,07/20/2026 13:42:00,6092537,Gambino IRE,0.27094498,0
