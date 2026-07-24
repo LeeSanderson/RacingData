@@ -1,4 +1,18 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,6/4,2.5,CompletedRace,923272,15,Doncaster,07/23/2026 15:10:00,9354981,Jumeirah Storm IRE,0.33238515,0
+6,False,11/2,6.5,CompletedRace,925221,187,Leopardstown,07/23/2026 19:18:00,6388849,Kilcrea Rock,0.22494863,0
+1,True,11/4,3.75,CompletedRace,925222,187,Leopardstown,07/23/2026 19:53:00,7780574,Wyman,0.35431436,2.37
+1,True,7/4J,2.75,CompletedRace,923277,36,Newbury,07/23/2026 17:55:00,8881415,Waasil,0.365133,0
+0,False,SP,,NonRunner,923281,36,Newbury,07/23/2026 19:40:00,5034739,The Craftymaster,0.4826287,5
+3,False,9/4,3.25,CompletedRace,923279,36,Newbury,07/23/2026 20:15:00,5371937,Into Battle IRE,0.4112258,5
+2,False,9/4,3.25,CompletedRace,923290,54,Sandown,07/23/2026 14:55:00,9344932,Bayside View IRE,0.2882515,0
+4,False,9/2,5.5,CompletedRace,923293,54,Sandown,07/23/2026 15:30:00,4471469,Londoner IRE,0.271001,3.47
+3,False,5/4F,2.25,CompletedRace,923291,54,Sandown,07/23/2026 16:07:00,9060379,Alma Latina,0.54405344,0.61
+3,False,12/1,13,CompletedRace,923295,54,Sandown,07/23/2026 16:42:00,7930863,Albertini Star IRE,0.28643087,4.37
+3,False,9/4F,3.25,CompletedRace,923285,104,Yarmouth,07/23/2026 17:39:00,6143341,Distinct Spirit,0.250864,0.3
+4,False,11/4,3.75,CompletedRace,923283,104,Yarmouth,07/23/2026 18:14:00,8584316,Caviar Cowboy,0.57348615,4.78
+1,True,2/1J,3,CompletedRace,923286,104,Yarmouth,07/23/2026 18:49:00,6820604,Rogue Allegiance IRE,0.2664382,0
+2,False,2/1J,3,CompletedRace,923289,104,Yarmouth,07/23/2026 20:34:00,9157468,Roi De Coeur IRE,0.3416746,0
 1,True,7/4,2.75,CompletedRace,923255,10,Catterick,07/22/2026 14:37:00,9194407,Koodini IRE,0.30029142,5
 2,False,11/2,6.5,CompletedRace,923252,10,Catterick,07/22/2026 16:12:00,5330961,Something,0.25024116,2.21
 1,True,5/4,2.25,CompletedRace,923260,30,Leicester,07/22/2026 19:20:00,8062561,Liveinthelight,0.57067746,5
