@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,11/4,3.75,CompletedRace,923319,2,Ascot,07/24/2026 15:30:00,6504994,Kirchner IRE,0.3876348,0
+1,True,2/1F,3,CompletedRace,923318,2,Ascot,07/24/2026 16:05:00,8039756,Al Azd IRE,0.24856852,0
+5,False,11/2,6.5,CompletedRace,923303,12,Chepstow,07/24/2026 19:01:00,5019630,Rating IRE,0.2885777,3.9
+1,True,1/20F,1.05,CompletedRace,925323,596,Cork,07/24/2026 19:43:00,9125044,Alphonsus Liguori GB,0.57793933,0
+3,False,5/1,6,CompletedRace,923297,54,Sandown,07/24/2026 18:20:00,3632533,Appier IRE,0.29356858,0
+5,False,5/6F,1.8333333333333335,CompletedRace,923298,54,Sandown,07/24/2026 18:55:00,8174736,Hot And Cold,0.4200304,1.99
+4,False,11/8F,2.375,CompletedRace,923299,54,Sandown,07/24/2026 19:30:00,5708604,Cristo,0.26670074,0
+1,True,11/8F,2.375,CompletedRace,923302,54,Sandown,07/24/2026 20:05:00,7493141,Lyra Lea,0.32176104,0
 2,False,6/4,2.5,CompletedRace,923272,15,Doncaster,07/23/2026 15:10:00,9354981,Jumeirah Storm IRE,0.33238515,0
 6,False,11/2,6.5,CompletedRace,925221,187,Leopardstown,07/23/2026 19:18:00,6388849,Kilcrea Rock,0.22494863,0
 1,True,11/4,3.75,CompletedRace,925222,187,Leopardstown,07/23/2026 19:53:00,7780574,Wyman,0.35431436,2.37
