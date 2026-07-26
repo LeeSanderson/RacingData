@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,7/2,4.5,CompletedRace,923323,2,Ascot,07/25/2026 14:20:00,6807910,Kon Tiki,0.31002074,1.05
+1,True,13/2,7.5,CompletedRace,921399,2,Ascot,07/25/2026 15:35:00,5507022,Kalpana,0.35396388,3.3
+1,True,8/11F,1.7272727272727273,CompletedRace,923343,13,Chester,07/25/2026 15:10:00,9517086,Velociraptor,0.34713507,0
+4,False,EvensF,2,CompletedRace,923356,52,Salisbury,07/25/2026 19:45:00,8188061,Queen's Companion,0.45157874,0
+2,False,5/4F,2.25,CompletedRace,923359,52,Salisbury,07/25/2026 20:15:00,7806389,Royal Poetry IRE,0.5199172,5
+3,False,5/4F,2.25,CompletedRace,923335,107,York,07/25/2026 14:35:00,6088045,Damysus,0.2690097,0
 1,True,11/4,3.75,CompletedRace,923319,2,Ascot,07/24/2026 15:30:00,6504994,Kirchner IRE,0.3876348,0
 1,True,2/1F,3,CompletedRace,923318,2,Ascot,07/24/2026 16:05:00,8039756,Al Azd IRE,0.24856852,0
 5,False,11/2,6.5,CompletedRace,923303,12,Chepstow,07/24/2026 19:01:00,5019630,Rating IRE,0.2885777,3.9
