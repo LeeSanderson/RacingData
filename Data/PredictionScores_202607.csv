@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,11/10F,2.1,CompletedRace,925389,254,Munich,07/26/2026 13:10:00,5942432,Wimbledon Hawkeye GB,0.26480448,0
+1,True,2/13F,1.1538461538461537,CompletedRace,923365,46,Pontefract,07/26/2026 14:30:00,8111191,Asset GER,0.40724388,0
+5,False,4/1,5,CompletedRace,923366,46,Pontefract,07/26/2026 15:30:00,8039759,Stella Lucente IRE,0.30488145,0
+1,True,4/5F,1.8,CompletedRace,923362,46,Pontefract,07/26/2026 16:00:00,4362963,Holloway Boy,0.25926137,0
+1,True,EvensF,2,CompletedRace,923363,46,Pontefract,07/26/2026 16:30:00,5285714,Jez Bomb,0.2603337,0
+3,False,5/2,3.5,CompletedRace,923047,84,Uttoxeter,07/26/2026 14:12:00,8101894,Salkadan,0.3042095,0
+0,False,9/4F,3.25,PulledUp,923044,84,Uttoxeter,07/26/2026 15:42:00,58950449,Sunray Shadow,0.2961358,0
+2,False,15/8F,2.875,CompletedRace,923045,84,Uttoxeter,07/26/2026 16:12:00,5295439,Divilabother IRE,0.26180813,0
+1,True,11/10F,2.1,CompletedRace,923046,84,Uttoxeter,07/26/2026 16:42:00,7191406,At The Oche IRE,0.24669906,0
+2,False,4/1,5,CompletedRace,925457,84,Uttoxeter,07/26/2026 17:42:00,6898518,October Hill IRE,0.2590939,1.52
 1,True,7/2,4.5,CompletedRace,923323,2,Ascot,07/25/2026 14:20:00,6807910,Kon Tiki,0.31002074,1.05
 1,True,13/2,7.5,CompletedRace,921399,2,Ascot,07/25/2026 15:35:00,5507022,Kalpana,0.35396388,3.3
 1,True,8/11F,1.7272727272727273,CompletedRace,923343,13,Chester,07/25/2026 15:10:00,9517086,Velociraptor,0.34713507,0
