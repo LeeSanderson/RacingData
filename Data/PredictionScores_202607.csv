@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,13/8F,2.625,CompletedRace,923890,3,Ayr,07/27/2026 15:15:00,5204024,Imperial Guard IRE,0.27426216,0
+4,False,6/4F,2.5,CompletedRace,923895,49,Ripon,07/27/2026 20:10:00,8120586,Masked Warrior,0.27126512,0
+3,False,7/4,2.75,CompletedRace,923902,93,Windsor,07/27/2026 17:50:00,9451565,Sweet Horizon,0.23919868,0
+4,False,3/1F,4,CompletedRace,923904,93,Windsor,07/27/2026 20:00:00,7592659,Khuskhas,0.22474092,0
 3,False,11/10F,2.1,CompletedRace,925389,254,Munich,07/26/2026 13:10:00,5942432,Wimbledon Hawkeye GB,0.26480448,0
 1,True,2/13F,1.1538461538461537,CompletedRace,923365,46,Pontefract,07/26/2026 14:30:00,8111191,Asset GER,0.40724388,0
 5,False,4/1,5,CompletedRace,923366,46,Pontefract,07/26/2026 15:30:00,8039759,Stella Lucente IRE,0.30488145,0
