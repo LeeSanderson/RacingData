@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,9/4,3.25,CompletedRace,923935,21,Goodwood,07/29/2026 13:50:00,8120578,Hatteen IRE,0.26926193,0
+2,False,7/2C,4.5,CompletedRace,923965,47,Redcar,07/29/2026 15:15:00,4273987,Optician,0.25357035,0.63
+3,False,9/4,3.25,CompletedRace,923970,54,Sandown,07/29/2026 17:45:00,5708962,Best Rate,0.3900869,0
+2,False,4/1,5,CompletedRace,923972,54,Sandown,07/29/2026 20:00:00,8084435,Ammoony FR,0.22314182,0
+2,False,EvensF,2,CompletedRace,923969,54,Sandown,07/29/2026 20:30:00,8866972,Kakirra IRE,0.45295388,2.52
 1,True,11/10F,2.1,CompletedRace,923910,6,Beverley,07/28/2026 15:55:00,8039761,Norcross Brow,0.2574803,0
 1,True,2/7F,1.2857142857142856,CompletedRace,923915,1212,Ffos Las,07/28/2026 18:30:00,6143341,Distinct Spirit,0.42344466,0
 1,True,11/10F,2.1,CompletedRace,923914,1212,Ffos Las,07/28/2026 19:30:00,9396425,Summerson,0.44727334,5
