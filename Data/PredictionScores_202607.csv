@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,7/2,4.5,CompletedRace,925537,183,Galway,07/31/2026 17:30:00,4918273,Ocastle Des Mottes FR,0.39147002,2.55
+3,False,5/2,3.5,CompletedRace,925542,183,Galway,07/31/2026 20:40:00,5373981,Galileo Dame,0.37082323,5
+2,False,2/5F,1.4,CompletedRace,923945,21,Goodwood,07/31/2026 14:25:00,8245526,Talk Of New York,0.26509222,0
+2,False,11/1,12,CompletedRace,923947,21,Goodwood,07/31/2026 17:55:00,7627175,Lady Dora Mae IRE,0.30074978,4.44
+6,False,28/1,29,CompletedRace,923995,16,Musselburgh,07/31/2026 20:25:00,58956153,Teofimo IRE,0.24313346,5
+2,False,11/8J,2.375,CompletedRace,924003,174,Newmarket (July),07/31/2026 20:02:00,7183165,Sibling Rivelry,0.43984,2.07
+2,False,7/1,8,CompletedRace,924004,174,Newmarket (July),07/31/2026 20:32:00,5042476,Rising Force IRE,0.27876619,4.3
+2,False,100/30,4.333333333333334,CompletedRace,924230,513,Wolverhampton (AW),07/31/2026 15:45:00,9153191,Lightning Glory IRE,0.27542546,3.43
+1,True,1/4F,1.25,CompletedRace,924229,513,Wolverhampton (AW),07/31/2026 16:20:00,8432208,Roc De Fer IRE,0.3367131,0
 4,False,1/3F,1.3333333333333333,CompletedRace,923976,17,Epsom,07/30/2026 18:40:00,4552168,Imperial Cult IRE,0.27667776,0
 1,True,9/4,3.25,CompletedRace,923974,17,Epsom,07/30/2026 19:15:00,7922013,Trio,0.3410998,0
 3,False,7/2,4.5,CompletedRace,925422,183,Galway,07/30/2026 15:20:00,5443579,Soir De Garde FR,0.31984192,0.67
