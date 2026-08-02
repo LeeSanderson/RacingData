@@ -1,0 +1,13 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,5/4F,2.25,CompletedRace,924013,15,Doncaster,08/01/2026 14:30:00,9387262,Weleyff IRE,0.3929398,1.19
+2,False,15/8F,2.875,CompletedRace,923952,21,Goodwood,08/01/2026 14:25:00,6613678,Opportunity,0.27334374,0
+6,False,4/1,5,CompletedRace,922436,21,Goodwood,08/01/2026 15:00:00,5490594,Danielle,0.30790907,0.96
+5,False,5/1,6,CompletedRace,924024,22,Hamilton,08/01/2026 20:30:00,4502659,Rajapour IRE,0.237968,0.3
+2,False,4/1,5,CompletedRace,924026,31,Lingfield,08/01/2026 17:05:00,4471469,Londoner IRE,0.23194902,2.23
+1,True,8/15F,1.5333333333333332,CompletedRace,924027,31,Lingfield,08/01/2026 18:15:00,8437046,Campeona,0.42439488,0
+1,True,5/4F,2.25,CompletedRace,924028,31,Lingfield,08/01/2026 20:15:00,6143341,Distinct Spirit,0.4260017,0.49
+2,False,5/2F,3.5,CompletedRace,924010,174,Newmarket (July),08/01/2026 15:23:00,7436444,Lion Of Mali,0.32878536,1.39
+3,False,100/30,4.333333333333334,CompletedRace,925339,174,Newmarket (July),08/01/2026 16:33:00,8062562,Thaluna,0.43918443,4.61
+2,False,6/5F,2.2,CompletedRace,925557,445,Saratoga,08/01/2026 22:44:00,8210051,Commandment,0.39791283,0
+2,False,100/30,4.333333333333334,CompletedRace,924037,80,Thirsk,08/01/2026 14:43:00,9268202,Le Samourai IRE,0.25575534,1.03
+1,True,4/7F,1.5714285714285714,CompletedRace,924038,80,Thirsk,08/01/2026 16:22:00,8290509,La Peregrina,0.29692245,0
