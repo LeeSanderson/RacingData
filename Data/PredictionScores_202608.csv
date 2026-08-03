@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,EvensF,2,CompletedRace,924041,13,Chester,08/02/2026 15:52:00,6692990,Dance In The Storm,0.28941587,0
+2,False,8/5F,2.6,CompletedRace,926118,206,Deauville,08/02/2026 12:56:00,9344874,Queen Of The Day IRE,0.3955728,0
+1,True,1/2F,1.5,CompletedRace,926117,206,Deauville,08/02/2026 15:40:00,7360560,Blue Bolt IRE,0.23918477,0
+1,True,1/2F,1.5,CompletedRace,924047,104,Yarmouth,08/02/2026 14:35:00,8137375,Brighton View,0.49726737,3.55
 1,True,5/4F,2.25,CompletedRace,924013,15,Doncaster,08/01/2026 14:30:00,9387262,Weleyff IRE,0.3929398,1.19
 2,False,15/8F,2.875,CompletedRace,923952,21,Goodwood,08/01/2026 14:25:00,6613678,Opportunity,0.27334374,0
 6,False,4/1,5,CompletedRace,922436,21,Goodwood,08/01/2026 15:00:00,5490594,Danielle,0.30790907,0.96
