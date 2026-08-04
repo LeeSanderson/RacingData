@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,1/2F,1.5,CompletedRace,924054,40,Nottingham,08/03/2026 16:40:00,8214901,Del Corso,0.36593342,0
+1,True,5/6F,1.8333333333333335,CompletedRace,924055,40,Nottingham,08/03/2026 17:10:00,8120587,Venetian Lion,0.32144225,0
+5,False,3/1,4,CompletedRace,924069,93,Windsor,08/03/2026 18:00:00,4728070,Market House IRE,0.27676475,0.64
 1,True,EvensF,2,CompletedRace,924041,13,Chester,08/02/2026 15:52:00,6692990,Dance In The Storm,0.28941587,0
 2,False,8/5F,2.6,CompletedRace,926118,206,Deauville,08/02/2026 12:56:00,9344874,Queen Of The Day IRE,0.3955728,0
 1,True,1/2F,1.5,CompletedRace,926117,206,Deauville,08/02/2026 15:40:00,7360560,Blue Bolt IRE,0.23918477,0
