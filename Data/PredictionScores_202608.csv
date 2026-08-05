@@ -1,4 +1,5 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,4/5F,1.8,CompletedRace,924082,31,Lingfield,08/04/2026 19:18:00,8070670,Tabasko,0.3184255,0
 1,True,1/2F,1.5,CompletedRace,924054,40,Nottingham,08/03/2026 16:40:00,8214901,Del Corso,0.36593342,0
 1,True,5/6F,1.8333333333333335,CompletedRace,924055,40,Nottingham,08/03/2026 17:10:00,8120587,Venetian Lion,0.32144225,0
 5,False,3/1,4,CompletedRace,924069,93,Windsor,08/03/2026 18:00:00,4728070,Market House IRE,0.27676475,0.64
