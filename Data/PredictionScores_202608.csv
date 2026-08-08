@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,9/4F,3.25,CompletedRace,926188,184,Gowran Park,08/07/2026 17:35:00,9254435,Rebel Wave,0.26842815,0
+1,True,5/2,3.5,CompletedRace,926191,184,Gowran Park,08/07/2026 19:20:00,9254398,Sergei Diaghilev,0.36715895,0.19
+4,False,10/11F,1.9090909090909092,CompletedRace,926192,184,Gowran Park,08/07/2026 19:55:00,6238177,Celtic Motif,0.29795974,4
+1,True,8/15F,1.5333333333333332,CompletedRace,924160,23,Haydock,08/07/2026 17:43:00,9231641,Ancestor,0.5047338,0
+4,False,11/2,6.5,CompletedRace,924149,16,Musselburgh,08/07/2026 14:50:00,8881486,Bluestone Lady IRE,0.3137115,0
+2,False,11/10F,2.1,CompletedRace,924150,16,Musselburgh,08/07/2026 16:24:00,8432208,Roc De Fer IRE,0.32157785,0
+1,True,5/6F,1.8333333333333335,CompletedRace,924136,174,Newmarket (July),08/07/2026 20:22:00,7436346,Lucky Hero IRE,0.32402268,0
+2,False,11/4,3.75,CompletedRace,924156,80,Thirsk,08/07/2026 15:10:00,9424944,Love Tanya IRE,0.32892954,2.68
 2,False,11/4,3.75,CompletedRace,924103,7,Brighton,08/06/2026 16:25:00,3224061,Nibras Gold IRE,0.45250177,5
 2,False,13/2,7.5,CompletedRace,924104,7,Brighton,08/06/2026 17:30:00,3886662,Dion Baker IRE,0.26341334,3.98
 4,False,5/2J,3.5,CompletedRace,924118,12,Chepstow,08/06/2026 17:20:00,5991241,Oasis Sunrise IRE,0.31241563,4.22
