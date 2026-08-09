@@ -1,4 +1,23 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,11/10F,2.1,CompletedRace,924173,2,Ascot,08/08/2026 14:10:00,6287988,Shrimp Shady,0.24999505,0
+4,False,13/8F,2.625,CompletedRace,924175,2,Ascot,08/08/2026 15:55:00,8295085,Hoseki IRE,0.37884477,0
+7,False,4/1,5,CompletedRace,924178,3,Ayr,08/08/2026 19:00:00,4420163,Walsingham IRE,0.23245868,0.39
+2,False,33/10,4.3,CompletedRace,926311,206,Deauville,08/08/2026 12:58:00,6820587,Parachutiste IRE,0.25697264,0
+3,False,2/5F,1.4,CompletedRace,924169,23,Haydock,08/08/2026 13:50:00,8137375,Brighton View,0.45541933,0
+2,False,5/2F,3.5,CompletedRace,924168,23,Haydock,08/08/2026 15:34:00,4924738,Crimson Spirit,0.30193532,0
+5,False,15/8F,2.875,CompletedRace,924171,23,Haydock,08/08/2026 16:09:00,7020185,Norfolk Blue IRE,0.28009382,2.57
+1,True,7/2,4.5,CompletedRace,924170,23,Haydock,08/08/2026 17:10:00,7978760,Home Hero IRE,0.43636522,3.67
+1,True,10/11F,1.9090909090909092,CompletedRace,926249,203,Kilbeggan,08/08/2026 18:48:00,5727941,Rocky's Diamond,0.287684,0
+2,False,8/1,9,CompletedRace,926250,203,Kilbeggan,08/08/2026 19:18:00,6573396,Kings Jet,0.31119636,5
+6,False,7/2,4.5,CompletedRace,924185,393,Lingfield (AW),08/08/2026 19:40:00,5226937,Arantes Nascimento,0.22416487,0.64
+5,False,9/4,3.25,CompletedRace,924139,174,Newmarket (July),08/08/2026 13:55:00,9544214,Graceful Song USA,0.2759627,0
+4,False,11/4,3.75,CompletedRace,924145,174,Newmarket (July),08/08/2026 14:30:00,9424935,Sanbona Warrior IRE,0.28997976,0
+2,False,11/8F,2.375,CompletedRace,924143,174,Newmarket (July),08/08/2026 17:23:00,7055594,Jack Langley,0.2392982,0
+3,False,57/20,3.85,CompletedRace,926204,445,Saratoga,08/08/2026 22:14:00,6005936,Zulu Kingdom IRE,0.27375847,2.48
+4,False,33/10,4.3,CompletedRace,926195,445,Saratoga,08/08/2026 23:33:00,6807860,Baeza,0.2378432,1.61
+5,False,6/1,7,CompletedRace,926240,201,Wexford,08/08/2026 14:50:00,8584326,Marian Avenue,0.2799609,0
+2,False,7/2,4.5,CompletedRace,926243,201,Wexford,08/08/2026 16:35:00,7200367,Teenage Kiss,0.2541195,1.77
+5,False,8/1,9,CompletedRace,926244,201,Wexford,08/08/2026 17:05:00,5544173,Ned In The Park,0.23689617,1.79
 1,True,9/4F,3.25,CompletedRace,926188,184,Gowran Park,08/07/2026 17:35:00,9254435,Rebel Wave,0.26842815,0
 1,True,5/2,3.5,CompletedRace,926191,184,Gowran Park,08/07/2026 19:20:00,9254398,Sergei Diaghilev,0.36715895,0.19
 4,False,10/11F,1.9090909090909092,CompletedRace,926192,184,Gowran Park,08/07/2026 19:55:00,6238177,Celtic Motif,0.29795974,4
