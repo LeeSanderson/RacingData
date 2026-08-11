@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,3/1,4,CompletedRace,926282,175,Ballinrobe,08/10/2026 19:27:00,7865947,Run For The Border,0.2619414,0
+1,True,2/1F,3,CompletedRace,924826,93,Windsor,08/10/2026 17:45:00,8313782,Mythological Star IRE,0.31199402,0
 4,False,5/1,6,CompletedRace,926254,179,Downpatrick,08/09/2026 14:33:00,5355555,Trasna Na Pairce,0.3446936,5
 6,False,18/1,19,CompletedRace,924208,30,Leicester,08/09/2026 14:59:00,9254378,Better Nature,0.24682191,3.37
 4,False,9/4,3.25,CompletedRace,924206,30,Leicester,08/09/2026 15:34:00,8839217,Al Maslool,0.40933934,0
