@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,2/1F,3,CompletedRace,924864,6,Beverley,08/12/2026 16:15:00,7727253,Ciao Capo IRE,0.30449733,0.37
+3,False,6/4F,2.5,CompletedRace,924857,1212,Ffos Las,08/12/2026 17:40:00,8188066,John Harrison,0.2605889,0
+5,False,13/2,7.5,CompletedRace,926323,184,Gowran Park,08/12/2026 15:22:00,5845519,Alfred Tennyson,0.30696887,0
+5,False,40/1,41,CompletedRace,925089,1079,Kempton (AW),08/12/2026 18:00:00,8834579,It Would Be You,0.4074562,5
+1,True,11/4,3.75,CompletedRace,925091,1079,Kempton (AW),08/12/2026 21:00:00,7267905,Crooked Path IRE,0.22310102,0
+2,False,8/11F,1.7272727272727273,CompletedRace,924874,52,Salisbury,08/12/2026 15:30:00,9115896,Scommessa Sicura IRE,0.30027595,0
+4,False,13/2,7.5,CompletedRace,924873,52,Salisbury,08/12/2026 16:30:00,6005898,Alla Stella,0.22843425,1.01
 4,False,9/4,3.25,CompletedRace,924831,8,Carlisle,08/11/2026 16:45:00,6425091,Talismans Time,0.3094398,3.93
 1,True,1/6F,1.1666666666666667,CompletedRace,924852,40,Nottingham,08/11/2026 17:45:00,9490316,Apulia Bay IRE,0.47142023,4.37
 3,False,3/1,4,CompletedRace,926282,175,Ballinrobe,08/10/2026 19:27:00,7865947,Run For The Border,0.2619414,0
