@@ -1,4 +1,15 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,9/4,3.25,CompletedRace,924869,6,Beverley,08/13/2026 16:15:00,7677633,Mr Moonshine IRE,0.3435758,0.06
+7,False,43/5,9.6,CompletedRace,926507,206,Deauville,08/13/2026 16:45:00,9295471,Lovely Warrior,0.28021523,5
+9,False,8/5F,2.6,CompletedRace,926509,206,Deauville,08/13/2026 17:58:00,7882434,Gentlemanlike,0.2527298,0
+3,False,4/1,5,CompletedRace,925148,393,Lingfield (AW),08/13/2026 17:23:00,3147622,Kaaranah IRE,0.27416968,0
+1,True,EvensF,2,CompletedRace,924881,52,Salisbury,08/13/2026 18:04:00,9554424,Flooding IRE,0.53148216,0
+7,False,3/1,4,CompletedRace,924879,52,Salisbury,08/13/2026 19:34:00,8205612,Counter Intuitive IRE,0.30280942,0
+4,False,10/11F,1.9090909090909092,CompletedRace,924882,52,Salisbury,08/13/2026 20:04:00,9179733,Seven Sisters,0.35200605,0
+1,True,13/8F,2.625,CompletedRace,926329,200,Tramore,08/13/2026 17:11:00,6514086,Luker's Tipple,0.26802942,0.56
+1,True,7/4,2.75,CompletedRace,926332,200,Tramore,08/13/2026 18:48:00,4879085,Rightfolksplease,0.5102731,2.71
+1,True,5/2F,3.5,CompletedRace,926333,200,Tramore,08/13/2026 19:18:00,7534482,Lureka Du Noyer FR,0.24868551,0
+3,False,4/6F,1.6666666666666665,CompletedRace,924888,93,Windsor,08/13/2026 20:11:00,8313782,Mythological Star IRE,0.54270095,0
 1,True,2/1F,3,CompletedRace,924864,6,Beverley,08/12/2026 16:15:00,7727253,Ciao Capo IRE,0.30449733,0.37
 3,False,6/4F,2.5,CompletedRace,924857,1212,Ffos Las,08/12/2026 17:40:00,8188066,John Harrison,0.2605889,0
 5,False,13/2,7.5,CompletedRace,926323,184,Gowran Park,08/12/2026 15:22:00,5845519,Alfred Tennyson,0.30696887,0
