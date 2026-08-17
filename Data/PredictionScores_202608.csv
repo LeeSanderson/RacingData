@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,EvensF,2,CompletedRace,926988,206,Deauville,08/16/2026 12:58:00,8309180,Calasita IRE,0.41267166,1.75
+5,False,12/5,3.4,CompletedRace,926989,206,Deauville,08/16/2026 13:33:00,9568632,Jassas GB,0.44364607,0
+3,False,2/1F,3,CompletedRace,926990,206,Deauville,08/16/2026 14:50:00,7601611,Precise IRE,0.25419623,0
+1,True,15/8F,2.875,CompletedRace,924958,46,Pontefract,08/16/2026 16:15:00,8468003,Luna Celeste IRE,0.34840867,0.14
+1,True,6/4F,2.5,CompletedRace,924957,46,Pontefract,08/16/2026 17:15:00,6710718,High Degree,0.3167876,0
+5,False,5/1,6,CompletedRace,924956,46,Pontefract,08/16/2026 18:15:00,5663053,Sixty Plus IRE,0.2912983,0
 1,True,2/5F,1.4,CompletedRace,926936,206,Deauville,08/15/2026 12:58:00,7457802,Rabbit's Foot,0.48318747,1.54
 4,False,11/10F,2.1,CompletedRace,926937,206,Deauville,08/15/2026 13:33:00,7830208,Montreal IRE,0.43219474,0
 4,False,3/1,4,CompletedRace,924942,15,Doncaster,08/15/2026 14:30:00,7900535,One Of The Boys IRE,0.2668161,0
