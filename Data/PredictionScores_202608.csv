@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+7,False,100/30,4.333333333333334,CompletedRace,924962,10,Catterick,08/17/2026 14:15:00,5218435,Super Hit FR,0.29443768,1.44
+3,False,11/4,3.75,CompletedRace,925106,393,Lingfield (AW),08/17/2026 14:30:00,9115640,Parading,0.36478302,0.72
 2,False,EvensF,2,CompletedRace,926988,206,Deauville,08/16/2026 12:58:00,8309180,Calasita IRE,0.41267166,1.75
 5,False,12/5,3.4,CompletedRace,926989,206,Deauville,08/16/2026 13:33:00,9568632,Jassas GB,0.44364607,0
 3,False,2/1F,3,CompletedRace,926990,206,Deauville,08/16/2026 14:50:00,7601611,Precise IRE,0.25419623,0
