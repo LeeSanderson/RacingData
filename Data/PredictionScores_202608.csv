@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+7,False,7/2,4.5,CompletedRace,924975,12,Chepstow,08/18/2026 16:25:00,9531400,Rogue Exile IRE,0.37397143,0
+6,False,9/2,5.5,CompletedRace,925126,513,Wolverhampton (AW),08/18/2026 19:00:00,6265615,Gladiadora IRE,0.24677178,0.72
+1,True,5/4F,2.25,CompletedRace,925125,513,Wolverhampton (AW),08/18/2026 20:00:00,8219421,Heroics,0.40409052,0.66
 7,False,100/30,4.333333333333334,CompletedRace,924962,10,Catterick,08/17/2026 14:15:00,5218435,Super Hit FR,0.29443768,1.44
 3,False,11/4,3.75,CompletedRace,925106,393,Lingfield (AW),08/17/2026 14:30:00,9115640,Parading,0.36478302,0.72
 2,False,EvensF,2,CompletedRace,926988,206,Deauville,08/16/2026 12:58:00,8309180,Calasita IRE,0.41267166,1.75
