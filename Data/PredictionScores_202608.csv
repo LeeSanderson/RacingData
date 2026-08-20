@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+6,False,5/1,6,CompletedRace,924982,8,Carlisle,08/19/2026 17:30:00,8009426,Ephron IRE,0.27211514,0.78
+6,False,15/2,8.5,CompletedRace,925129,1079,Kempton (AW),08/19/2026 19:30:00,6692993,Breakdancer IRE,0.25666663,1.97
+1,True,13/8F,2.625,CompletedRace,927042,1079,Kempton (AW),08/19/2026 20:30:00,5580089,Cavolo Nero,0.25398967,0
+0,False,9/2,5.5,PulledUp,924794,101,Worcester,08/19/2026 17:02:00,4893400,Muskerry Rock IRE,0.3485159,0
+7,False,7/1,8,CompletedRace,924797,101,Worcester,08/19/2026 17:33:00,7436477,Greer Hill IRE,0.22342224,2.58
+3,False,6/4F,2.5,CompletedRace,923369,107,York,08/19/2026 15:00:00,7926343,Christmas Day IRE,0.4842062,1.11
+3,False,7/4,2.75,CompletedRace,922438,107,York,08/19/2026 15:35:00,7748955,Constitution River FR,0.3234341,0
 7,False,7/2,4.5,CompletedRace,924975,12,Chepstow,08/18/2026 16:25:00,9531400,Rogue Exile IRE,0.37397143,0
 6,False,9/2,5.5,CompletedRace,925126,513,Wolverhampton (AW),08/18/2026 19:00:00,6265615,Gladiadora IRE,0.24677178,0.72
 1,True,5/4F,2.25,CompletedRace,925125,513,Wolverhampton (AW),08/18/2026 20:00:00,8219421,Heroics,0.40409052,0.66
