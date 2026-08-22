@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,8/13F,1.6153846153846154,CompletedRace,925020,1212,Ffos Las,08/21/2026 15:20:00,8973287,Korbut,0.4841071,0
+2,False,4/9F,1.4444444444444444,CompletedRace,925027,22,Hamilton,08/21/2026 17:40:00,7935107,Lord d'Or GER,0.5212428,0
+5,False,6/4F,2.5,CompletedRace,927064,185,Killarney,08/21/2026 17:12:00,9189370,Belicoso,0.2625692,3.09
+7,False,9/2,5.5,CompletedRace,927067,185,Killarney,08/21/2026 18:50:00,7466836,Glitter And Glory,0.306237,5
+2,False,13/8F,2.625,CompletedRace,927069,185,Killarney,08/21/2026 19:50:00,6855106,Lady Plimsoll,0.29379562,1.86
+1,True,11/4,3.75,CompletedRace,925012,174,Newmarket (July),08/21/2026 15:45:00,8137388,Emma's Letter,0.2912474,0.75
+4,False,8/11F,1.7272727272727273,CompletedRace,925009,174,Newmarket (July),08/21/2026 16:20:00,7503747,Rizal FR,0.50367683,0
+3,False,7/2,4.5,CompletedRace,925013,174,Newmarket (July),08/21/2026 16:51:00,5641189,Hilltop,0.23964688,0
+1,True,1/18F,1.0555555555555556,CompletedRace,925033,52,Salisbury,08/21/2026 19:27:00,9554434,Bintward,0.40998092,0
 0,False,SP,,NonRunner,926967,185,Killarney,08/20/2026 17:43:00,8561228,Loch Cuan,0.23978567,2.86
 8,False,5/1,6,CompletedRace,926948,187,Leopardstown,08/20/2026 20:00:00,8515685,Duchess Of Kenli FR,0.2232594,0
 1,True,11/2,6.5,CompletedRace,925003,174,Newmarket (July),08/20/2026 16:20:00,7592670,Mr Writer IRE,0.28086075,0
