@@ -1,4 +1,15 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,9/4J,3.25,CompletedRace,925044,13,Chester,08/22/2026 17:35:00,6442171,St Mawes IRE,0.2853486,0
+3,False,4/6F,1.6666666666666665,CompletedRace,925247,178,Curragh,08/22/2026 14:50:00,9300194,Alpha,0.35057297,0
+1,True,2/1F,3,CompletedRace,925248,178,Curragh,08/22/2026 15:25:00,9286475,Giant Sequoia USA,0.28798082,0
+3,False,14/5,3.8,CompletedRace,927198,206,Deauville,08/22/2026 13:31:00,9535720,Majnoun,0.379601,5
+3,False,7/4,2.75,CompletedRace,927117,185,Killarney,08/22/2026 15:45:00,5793348,Bowensonfire FR,0.35007882,0
+1,True,1/2F,1.5,CompletedRace,927118,185,Killarney,08/22/2026 16:20:00,5787761,Butch Cassidy,0.41705254,0
+6,False,4/5F,1.8,CompletedRace,925049,393,Lingfield (AW),08/22/2026 18:15:00,8432201,Mountbatten GER,0.2643816,0
+2,False,100/30,4.333333333333334,CompletedRace,925019,174,Newmarket (July),08/22/2026 14:44:00,7592659,Khuskhas,0.3129417,4.41
+3,False,11/2,6.5,CompletedRace,925015,174,Newmarket (July),08/22/2026 16:29:00,4642854,Sixpack,0.31881255,1.57
+1,True,2/13F,1.1538461538461537,CompletedRace,924806,39,Newton Abbot,08/22/2026 13:55:00,8205601,Playful Fox FR,0.44512725,0
+2,False,4/5F,1.8,CompletedRace,924805,39,Newton Abbot,08/22/2026 15:05:00,6362961,Ice Jet IRE,0.4898289,0.89
 1,True,8/13F,1.6153846153846154,CompletedRace,925020,1212,Ffos Las,08/21/2026 15:20:00,8973287,Korbut,0.4841071,0
 2,False,4/9F,1.4444444444444444,CompletedRace,925027,22,Hamilton,08/21/2026 17:40:00,7935107,Lord d'Or GER,0.5212428,0
 5,False,6/4F,2.5,CompletedRace,927064,185,Killarney,08/21/2026 17:12:00,9189370,Belicoso,0.2625692,3.09
