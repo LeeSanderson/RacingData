@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+5,False,3/1,4,CompletedRace,925059,7,Brighton,08/23/2026 16:20:00,7365386,Sea Suite IRE,0.2950983,0
+4,False,3/1,4,CompletedRace,925060,7,Brighton,08/23/2026 16:50:00,3550657,Marsh Benham IRE,0.4086986,5
+2,False,9/2,5.5,CompletedRace,927231,206,Deauville,08/23/2026 12:58:00,9568587,Le Bon Temps Roule IRE,0.37984186,2.5
+2,False,4/5F,1.8,CompletedRace,927233,206,Deauville,08/23/2026 13:33:00,6143216,Santorini Star IRE,0.25571585,0
+2,False,7/2,4.5,CompletedRace,924811,101,Worcester,08/23/2026 14:08:00,4183371,Ras Kassar FR,0.24735583,1.35
+0,False,11/8F,2.375,BroughtDown,924810,101,Worcester,08/23/2026 14:38:00,7191406,At The Oche IRE,0.22367372,0
 3,False,9/4J,3.25,CompletedRace,925044,13,Chester,08/22/2026 17:35:00,6442171,St Mawes IRE,0.2853486,0
 3,False,4/6F,1.6666666666666665,CompletedRace,925247,178,Curragh,08/22/2026 14:50:00,9300194,Alpha,0.35057297,0
 1,True,2/1F,3,CompletedRace,925248,178,Curragh,08/22/2026 15:25:00,9286475,Giant Sequoia USA,0.28798082,0
