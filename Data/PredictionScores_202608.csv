@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+5,False,6/5F,2.2,CompletedRace,927157,175,Ballinrobe,08/24/2026 17:26:00,8525535,O'Grady Cracker,0.27540672,0
+1,True,10/11F,1.9090909090909092,CompletedRace,927160,175,Ballinrobe,08/24/2026 19:00:00,5087170,Bunting FR,0.25500983,4.16
+1,True,3/1,4,CompletedRace,925672,16,Musselburgh,08/24/2026 15:45:00,9249229,Two Commanders,0.27071875,0
+1,True,2/1F,3,CompletedRace,925667,93,Windsor,08/24/2026 18:18:00,8245527,Cape Fear,0.338671,0
 5,False,3/1,4,CompletedRace,925059,7,Brighton,08/23/2026 16:20:00,7365386,Sea Suite IRE,0.2950983,0
 4,False,3/1,4,CompletedRace,925060,7,Brighton,08/23/2026 16:50:00,3550657,Marsh Benham IRE,0.4086986,5
 2,False,9/2,5.5,CompletedRace,927231,206,Deauville,08/23/2026 12:58:00,9568587,Le Bon Temps Roule IRE,0.37984186,2.5
