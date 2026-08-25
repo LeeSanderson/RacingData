@@ -172,6 +172,14 @@ public class ValidateRaceCardPredictionsCommandHandler(
             filled++;
         }
 
+        // Result pages stopped publishing the rating band; the card still carries it, and it is the sole
+        // source of the IsHandicap feature, so it is back-filled here like the other pre-race fields.
+        if (!string.IsNullOrEmpty(card.RatingBand) && string.IsNullOrEmpty(result.RatingBand))
+        {
+            result.RatingBand = card.RatingBand;
+            filled++;
+        }
+
         if (card.OwnerId != null && result.OwnerId == null)
         {
             result.OwnerId = card.OwnerId;

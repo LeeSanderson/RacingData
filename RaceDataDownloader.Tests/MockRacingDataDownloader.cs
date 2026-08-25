@@ -82,10 +82,9 @@ internal static class MockRacingDataDownloader
         return downloader;
     }
 
-    public static async Task<IRacingDataDownloader> MockReturnBathRaceResults(this IRacingDataDownloader downloader)
+    public static IRacingDataDownloader MockReturnBathRaceResults(this IRacingDataDownloader downloader)
     {
-        var parser = new RacingResultParser();
-        var mockedRaceResult = await parser.Parse(FakeData.BathRaceResultFor1730RaceOn20220511);
+        var mockedRaceResult = new NextDataRaceResultReader().Read(FakeData.BathRaceResultFor1730RaceOn20220511);
 
         downloader.DownloadResults(RaceResultUrl).Returns(mockedRaceResult);
         return downloader;

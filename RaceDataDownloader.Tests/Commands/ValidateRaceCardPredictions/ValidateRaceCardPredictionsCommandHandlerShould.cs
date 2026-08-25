@@ -647,6 +647,26 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         horse1.JockeyFirstTime.Should().BeNull();
     }
 
+    [Fact]
+    public async Task FillTheRatingBandFromTheCardWhenTheResultPageDidNotPublishIt()
+    {
+        var cards = new List<RaceCardRecord>
+        {
+            CardRunner(raceId: 1, horseId: 1, fractionalOdds: "11/2", decimalOdds: 6.5, ratingBand: "0-70")
+        };
+        var store = ConfigureStatefulFiles(
+            (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
+            (RaceCardsFile, await cards.ToCsvString()),
+            (ResultsFileForMay2022, await _resultsWhereHorse1Won.ToCsvString()));
+
+        var handler = new ValidateRaceCardPredictionsCommandHandler(_mockFileSystem, new OutputLogger<ValidateRaceCardPredictionsCommandHandler>(_output));
+        var exitCode = await handler.RunAsync(new ValidateRaceCardPredictionsOptions { DataDirectory = MockDataDirectory });
+
+        exitCode.Should().Be(ExitCodes.Success);
+        var mergedResults = await store[ResultsFileForMay2022].FromCsvString<RaceResultRecord>();
+        mergedResults.Single(r => r.HorseId == 1).RatingBand.Should().Be("0-70");
+    }
+
     private static RaceResultRecord ResultRunner(int horseId, string fractionalOdds, double decimalOdds, int finishingPosition) =>
         new()
         {
@@ -668,11 +688,13 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         int? ownerId = null, string? ownerName = null, string? sireName = null, string? sireCountry = null,
         string? damName = null, bool? headgearFirstTime = null, bool? geldingFirstTime = null, int? windSurgery = null,
         int? trainerRtf = null, int? jockeyAllowanceLbs = null, bool? jockeyFirstTime = null,
-        int? newTrainerRacesCount = null, string? countryOfOrigin = null, string? spotlight = null) =>
+        int? newTrainerRacesCount = null, string? countryOfOrigin = null, string? spotlight = null,
+        string? ratingBand = null) =>
         new()
         {
             RaceId = raceId,
             RaceName = "Race1",
+            RatingBand = ratingBand,
             CourseId = 1,
             CourseName = "Course1",
             HorseId = horseId,

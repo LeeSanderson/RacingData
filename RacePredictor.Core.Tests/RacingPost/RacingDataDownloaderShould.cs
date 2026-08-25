@@ -23,6 +23,22 @@ public class RacingDataDownloaderShould
     }
 
     [Fact]
+    public async Task ReturnNoResultUrlsForADayWithoutRacing()
+    {
+        var htmlLoader = Substitute.For<IHtmlLoader>();
+        htmlLoader
+            .GetHtmlResponseFrom("https://www.racingpost.com/results/2025-12-25")
+            .Returns(ResourceLoader.ReadRacingPostExampleResource("daily_results_20251225_no_racing.html"));
+        var clock = Substitute.For<IClock>();
+        var downloader = new RacingDataDownloader(htmlLoader, clock);
+        var startDate = new DateOnly(2025, 12, 25);
+
+        var urls = await downloader.GetResultUrls(startDate, startDate).ToListAsync();
+
+        urls.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task ReturnExpectedListOfRaceCardUrlsForAGivenDay()
     {
         var htmlLoader = Substitute.For<IHtmlLoader>();

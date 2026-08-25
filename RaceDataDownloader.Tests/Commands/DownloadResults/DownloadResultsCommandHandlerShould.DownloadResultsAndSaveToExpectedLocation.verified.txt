@@ -19,7 +19,7 @@
       "Classification": {
         "RaceType": "Other",
         "Class": "Class 6",
-        "RatingBand": "0-60",
+        "RatingBand": "",
         "AgeBand": "4yo\u002B",
         "SexRestriction": "None"
       },
@@ -57,7 +57,7 @@
             "DecimalOdds": 7.5
           },
           "OfficialRating": 55,
-          "RacingPostRating": 64,
+          "RacingPostRating": 60,
           "TopSpeedRating": 34
         },
         "Results": {
@@ -99,7 +99,7 @@
             "DecimalOdds": 2.5
           },
           "OfficialRating": 51,
-          "RacingPostRating": 59,
+          "RacingPostRating": 55,
           "TopSpeedRating": 29
         },
         "Results": {
@@ -140,7 +140,7 @@
             "DecimalOdds": 21
           },
           "OfficialRating": 46,
-          "RacingPostRating": 53,
+          "RacingPostRating": 49,
           "TopSpeedRating": 23
         },
         "Results": {
@@ -182,7 +182,7 @@
             "DecimalOdds": 7.5
           },
           "OfficialRating": 67,
-          "RacingPostRating": 72,
+          "RacingPostRating": 68,
           "TopSpeedRating": 42
         },
         "Results": {
@@ -224,7 +224,7 @@
             "DecimalOdds": 9
           },
           "OfficialRating": 59,
-          "RacingPostRating": 63,
+          "RacingPostRating": 59,
           "TopSpeedRating": 32
         },
         "Results": {
@@ -265,7 +265,7 @@
             "DecimalOdds": 34
           },
           "OfficialRating": 54,
-          "RacingPostRating": 51,
+          "RacingPostRating": 47,
           "TopSpeedRating": 19
         },
         "Results": {
@@ -307,7 +307,7 @@
             "DecimalOdds": 8.5
           },
           "OfficialRating": 62,
-          "RacingPostRating": 58,
+          "RacingPostRating": 54,
           "TopSpeedRating": 26
         },
         "Results": {
@@ -349,7 +349,7 @@
             "DecimalOdds": 10
           },
           "OfficialRating": 62,
-          "RacingPostRating": 53,
+          "RacingPostRating": 49,
           "TopSpeedRating": 20
         },
         "Results": {
@@ -390,7 +390,7 @@
             "DecimalOdds": 13
           },
           "OfficialRating": 55,
-          "RacingPostRating": 35
+          "RacingPostRating": 31
         },
         "Results": {
           "FinishingPosition": 9,

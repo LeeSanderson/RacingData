@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using HtmlAgilityPack;
 
 namespace RacePredictor.Core.RacingPost;
@@ -20,29 +21,19 @@ public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacin
                 throw new Exception($"Failed to load URL {resultsUrl}: {e.Message}", e);
             }
 
-            var finder = new HtmlNodeFinder(htmlDocument.DocumentNode);
-            HtmlNode[] linkNodes = [];
+            string[] urls;
             try
             {
-                linkNodes = finder.Anchor()
-                    .WithSelector("link-listCourseNameLink")
-                    .GetNodes();
-            }
-            catch
-            {
-                // This may fail if there are no races for a given day (e.g. Christmas Day)
-                // Verify this is the case by trying to get an optional "No results found" node 
-                var errorMessage = finder.Optional().Div().WithSelector("text-errorMessageText").GetText();
-                if (errorMessage != "No results in the Racing Post records for this date")
-                {
-                    throw new Exception($"Unexpected error getting links from {resultsUrl}: {errorMessage}");
-                }
-            }
-
-            var urls = linkNodes
-                    .Select(n => "https://www.racingpost.com" + n.GetAttributeValue("href", string.Empty))
+                urls = new NextDataResultsIndexReader()
+                    .Read(htmlDocument)
+                    .Select(link => "https://www.racingpost.com" + link)
                     .Distinct()
                     .ToArray();
+            }
+            catch (ValidationException e)
+            {
+                throw new ValidationException($"Unexpected error getting links from {resultsUrl}: {e.Message}");
+            }
 
             foreach (var url in urls)
             {
@@ -56,8 +47,7 @@ public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacin
     public async Task<RaceResult> DownloadResults(string url)
     {
         var htmlResponse = await htmlLoader.GetHtmlResponseFrom(url);
-        var parser = new RacingResultParser();
-        return await parser.Parse(htmlResponse);
+        return new NextDataRaceResultReader().Read(htmlResponse);
     }
 
     private async Task<HtmlDocument> GetHtmlDocumentFrom(string url)

@@ -44,65 +44,12 @@ public sealed class NextDataRaceCardReader
 
     public NextDataRaceCardView Read(HtmlDocument document)
     {
-        var json = ExtractNextDataJson(document);
-        using var parsed = ParseJson(json);
-        var data = NavigateTo(parsed.RootElement, RacePageDataPath);
+        using var parsed = NextDataJson.Parse(document, "race-card");
+        var data = NextDataJson.NavigateTo(parsed.RootElement, RacePageDataPath);
         var (courseId, raceId, countryCode) = ReadRaceLevel(data);
         var forecastOdds = ReadForecastOdds(data);
         var runners = ReadRunners(data, countryCode, forecastOdds);
         return new NextDataRaceCardView(courseId, raceId, countryCode, runners);
-    }
-
-    private static string ExtractNextDataJson(HtmlDocument document)
-    {
-        var script = document.DocumentNode.SelectSingleNode("//script[@id='__NEXT_DATA__']");
-        if (script is null)
-        {
-            throw new ValidationException(
-                "The race-card page has no <script id=\"__NEXT_DATA__\"> element. " +
-                "The Racing Post page structure may have changed.");
-        }
-
-        var json = script.InnerHtml;
-        if (string.IsNullOrWhiteSpace(json))
-        {
-            throw new ValidationException("The __NEXT_DATA__ script element is present but empty.");
-        }
-
-        return json;
-    }
-
-    private static JsonDocument ParseJson(string json)
-    {
-        try
-        {
-            return JsonDocument.Parse(json);
-        }
-        catch (JsonException ex)
-        {
-            throw new ValidationException(
-                $"The __NEXT_DATA__ script content could not be parsed as JSON: {ex.Message}");
-        }
-    }
-
-    private static JsonElement NavigateTo(JsonElement root, IReadOnlyList<string> path)
-    {
-        var current = root;
-        var traversed = "$";
-        foreach (var segment in path)
-        {
-            if (current.ValueKind != JsonValueKind.Object || !current.TryGetProperty(segment, out var next))
-            {
-                throw new ValidationException(
-                    $"__NEXT_DATA__ JSON does not contain the expected path '{traversed}.{segment}'. " +
-                    "The Racing Post page structure may have changed.");
-            }
-
-            current = next;
-            traversed = $"{traversed}.{segment}";
-        }
-
-        return current;
     }
 
     private static (int courseId, int raceId, string countryCode) ReadRaceLevel(JsonElement data)

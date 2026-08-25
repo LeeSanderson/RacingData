@@ -9,7 +9,7 @@ public class DownloadResultsCommandHandlerShould(ITestOutputHelper output)
     public async Task DownloadResultsAndSaveToExpectedLocation()
     {
         var mockFileSystemBuilder = new MockFileSystemBuilder();
-        var mockRacingDataDownloader = await MockRacingDataDownloader
+        var mockRacingDataDownloader = MockRacingDataDownloader
             .New()
             .MockRaceResultUrls()
             .MockReturnBathRaceResults();

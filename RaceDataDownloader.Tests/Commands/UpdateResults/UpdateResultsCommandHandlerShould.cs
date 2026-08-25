@@ -26,11 +26,14 @@ public class UpdateResultsCommandHandlerShould : IAsyncLifetime
         _mockFileSystemBuilder = new MockFileSystemBuilder();
     }
 
-    public async Task InitializeAsync() =>
-        _mockRacingDataDownloader = await MockRacingDataDownloader
+    public Task InitializeAsync()
+    {
+        _mockRacingDataDownloader = MockRacingDataDownloader
             .New()
             .MockRaceResultUrls()
             .MockReturnBathRaceResults();
+        return Task.CompletedTask;
+    }
 
     public Task DisposeAsync() => Task.CompletedTask;
 
