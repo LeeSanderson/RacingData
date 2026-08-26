@@ -1,6 +1,8 @@
+using System.Net;
 using System.Text.RegularExpressions;
 using NSubstitute;
 using RaceDataDownloader.Tests.Fakes;
+using RacePredictor.Core;
 using RacePredictor.Core.RacingPost;
 
 namespace RaceDataDownloader.Tests;
@@ -9,6 +11,7 @@ internal static class MockRacingDataDownloader
 {
     private const string HappyValleyRaceCardUrl = "https://www.racingpost.com/racecards/396/happy-valley/2026-05-20/920859";
     private const string RaceResultUrl = "https://www.racingpost.com/results/2022-05-11";
+    private const string MissingRaceResultUrl = "https://www.racingpost.com/results/176/bellewstown/2026-08-25/927278";
 
     public static IRacingDataDownloader New() => Substitute.For<IRacingDataDownloader>();
 
@@ -79,6 +82,17 @@ internal static class MockRacingDataDownloader
         var mockRaceResultUrls = new[] { RaceResultUrl };
         downloader.GetResultUrls(Arg.Any<DateOnly>(), Arg.Any<DateOnly>())
             .Returns(mockRaceResultUrls.ToAsyncEnumerable());
+        return downloader;
+    }
+
+    public static IRacingDataDownloader MockRaceResultUrlsIncludingOneThatIsNotFound(this IRacingDataDownloader downloader)
+    {
+        var mockRaceResultUrls = new[] { MissingRaceResultUrl, RaceResultUrl };
+        downloader.GetResultUrls(Arg.Any<DateOnly>(), Arg.Any<DateOnly>())
+            .Returns(mockRaceResultUrls.ToAsyncEnumerable());
+        downloader.DownloadResults(MissingRaceResultUrl)
+            .Returns<RaceResult>(_ => throw new HttpRequestException(
+                $"Failed to load url {MissingRaceResultUrl}", null, HttpStatusCode.NotFound));
         return downloader;
     }
 

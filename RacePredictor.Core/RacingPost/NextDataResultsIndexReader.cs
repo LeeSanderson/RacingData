@@ -7,9 +7,10 @@ namespace RacePredictor.Core.RacingPost;
 /// <summary>
 /// Reads the per-race result links for one day from the Next.js <c>__NEXT_DATA__</c> JSON island of a
 /// daily results index page. The rendered page only lists races once a meeting accordion is expanded,
-/// so the JSON island is the only complete source. Fail-loud: any structural problem (absent or
-/// unparseable island, a moved path, a missing key, or a consumed field of the wrong type) throws a
-/// <see cref="ValidationException"/>. A day with no racing is recognised by the page's own
+/// so the JSON island is the only complete source. Races the index says have no result behind their
+/// link — abandoned ones keep a link that 404s — are excluded. Fail-loud: any structural problem
+/// (absent or unparseable island, a moved path, a missing key, or a consumed field of the wrong type)
+/// throws a <see cref="ValidationException"/>. A day with no racing is recognised by the page's own
 /// "no results" message and yields an empty list.
 /// </summary>
 public sealed class NextDataResultsIndexReader
@@ -140,7 +141,7 @@ public sealed class NextDataResultsIndexReader
         return links;
     }
 
-    // A null link is legitimate absence (an abandoned or void race has no result page to download).
+    // A null link is legitimate absence (a race with no result page at all).
     private static string? ReadResultLink(JsonElement race, int meetingIndex, int raceIndex)
     {
         var path = $"results.data[{meetingIndex}].races[{raceIndex}]";
@@ -156,12 +157,34 @@ public sealed class NextDataResultsIndexReader
                 "The Racing Post results schema may have changed.");
         }
 
-        return link.ValueKind switch
+        var url = link.ValueKind switch
         {
             JsonValueKind.Null => null,
             JsonValueKind.String => link.GetString().NullIfEmpty(),
             _ => throw new ValidationException(
                 $"__NEXT_DATA__ '{path}.fullResultLink' was {link.ValueKind}; expected a string."),
+        };
+
+        return url is null || HasFullResult(race, path) ? url : null;
+    }
+
+    // An abandoned race keeps its result link in the index, but that page 404s. 'fullResultAvailable'
+    // is the index's own answer to "is there a result behind this link", so it gates the download.
+    private static bool HasFullResult(JsonElement race, string path)
+    {
+        if (!race.TryGetProperty("fullResultAvailable", out var available))
+        {
+            throw new ValidationException(
+                $"__NEXT_DATA__ '{path}' is missing the expected key 'fullResultAvailable'. " +
+                "The Racing Post results schema may have changed.");
+        }
+
+        return available.ValueKind switch
+        {
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            _ => throw new ValidationException(
+                $"__NEXT_DATA__ '{path}.fullResultAvailable' was {available.ValueKind}; expected a boolean."),
         };
     }
 }

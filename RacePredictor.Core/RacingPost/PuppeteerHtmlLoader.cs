@@ -26,12 +26,18 @@ public class PuppeteerHtmlLoader : IHtmlLoader
         await page.EmulateAsync(device);
 
         var response = await page.GoToAsync(url);
-        if (!response.Ok)
-        {
-            throw new Exception($"Failed to load url {url} with status code {response.Status}");
-        }
+        EnsureSuccessStatusCode(url, response);
 
         return await page.GetContentAsync();
+    }
+
+    private static void EnsureSuccessStatusCode(string url, IResponse response)
+    {
+        if (!response.Ok)
+        {
+            throw new HttpRequestException(
+                $"Failed to load url {url} with status code {response.Status}", null, response.Status);
+        }
     }
 
     private static async Task EnsureBrowserDownloaded()

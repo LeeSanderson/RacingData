@@ -35,6 +35,49 @@ public class NextDataResultsIndexReaderShould
     }
 
     [Fact]
+    public void ExcludeAbandonedRacesThatStillCarryAResultLink()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("daily_results_20260825_abandoned_races.html");
+
+        var links = new NextDataResultsIndexReader().Read(html);
+
+        links.Count.Should().Be(28);
+        links.Where(link => link.Contains("bellewstown")).Should().Equal(
+            "/results/176/bellewstown/2026-08-25/927203",
+            "/results/176/bellewstown/2026-08-25/927204");
+    }
+
+    [Fact]
+    public void SkipARaceWhoseFullResultIsNotAvailable()
+    {
+        var links = new NextDataResultsIndexReader().Read(WrapDocument(
+            "{\"data\":[{\"isSpecialMeeting\":false,\"races\":[" +
+            "{\"fullResultAvailable\":false,\"fullResultLink\":\"/results/176/bellewstown/2026-08-25/927278\"}," +
+            "{\"fullResultAvailable\":true,\"fullResultLink\":\"/results/5/bath/2022-05-11/809925\"}]}]}"));
+
+        links.Should().Equal("/results/5/bath/2022-05-11/809925");
+    }
+
+    [Fact]
+    public void ThrowWhenARaceIsMissingItsFullResultAvailableFlag()
+    {
+        var read = () => new NextDataResultsIndexReader().Read(WrapDocument(
+            "{\"data\":[{\"isSpecialMeeting\":false,\"races\":[{\"fullResultLink\":\"/results/5/bath/2022-05-11/809925\"}]}]}"));
+
+        read.Should().Throw<ValidationException>().WithMessage("*fullResultAvailable*");
+    }
+
+    [Fact]
+    public void ThrowWhenTheFullResultAvailableFlagIsNotABoolean()
+    {
+        var read = () => new NextDataResultsIndexReader().Read(WrapDocument(
+            "{\"data\":[{\"isSpecialMeeting\":false,\"races\":[" +
+            "{\"fullResultAvailable\":\"yes\",\"fullResultLink\":\"/results/5/bath/2022-05-11/809925\"}]}]}"));
+
+        read.Should().Throw<ValidationException>().WithMessage("*fullResultAvailable*String*");
+    }
+
+    [Fact]
     public void ReturnNoLinksForADayWithoutRacing()
     {
         var html = ResourceLoader.ReadRacingPostExampleResource("daily_results_20251225_no_racing.html");
@@ -93,7 +136,8 @@ public class NextDataResultsIndexReaderShould
     {
         var links = new NextDataResultsIndexReader().Read(WrapDocument(
             "{\"data\":[{\"isSpecialMeeting\":false,\"races\":[" +
-            "{\"fullResultLink\":null},{\"fullResultLink\":\"/results/5/bath/2022-05-11/809925\"}]}]}"));
+            "{\"fullResultLink\":null}," +
+            "{\"fullResultAvailable\":true,\"fullResultLink\":\"/results/5/bath/2022-05-11/809925\"}]}]}"));
 
         links.Should().Equal("/results/5/bath/2022-05-11/809925");
     }

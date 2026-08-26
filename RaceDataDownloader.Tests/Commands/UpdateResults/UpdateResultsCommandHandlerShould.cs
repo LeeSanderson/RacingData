@@ -47,6 +47,20 @@ public class UpdateResultsCommandHandlerShould : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SaveTheRacesItCouldDownloadWhenAResultPageIsNotFound()
+    {
+        _mockRacingDataDownloader = MockRacingDataDownloader
+            .New()
+            .MockRaceResultUrlsIncludingOneThatIsNotFound()
+            .MockReturnBathRaceResults();
+
+        var result = await ExecuteHandler(1);
+
+        result.Should().Be(ExitCodes.Success);
+        _mockFileSystemBuilder.GetContent(ResultsFileForMay2022).Should().Contain("809925,Supporting Mental Health Awareness Week Handicap");
+    }
+
+    [Fact]
     public async Task SkipDownloadWhenResultsAlreadyExist()
     {
         _mockFileSystemBuilder.FileSystem.File.Exists(ResultsFileForMay2022).Returns(true);
