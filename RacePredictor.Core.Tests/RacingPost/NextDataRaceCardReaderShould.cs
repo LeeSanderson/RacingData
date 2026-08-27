@@ -16,7 +16,7 @@ public class NextDataRaceCardReaderShould
         "\"daysSinceLastRun\":\"21\",\"formFiguresData\":[{\"figure\":\"1\",\"position\":0}]," +
         "\"officialRatingToday\":70,\"rpPostmark\":80,\"rpTopspeed\":60,\"horseHeadGear\":\"t\"," +
         "\"horseHeadGearFirstTime\":true,\"geldingFirstTime\":false,\"windSurgery\":1,\"trainerRtf\":7," +
-        "\"weightAllowanceLbs\":5,\"jockeyFirstTime\":true,\"newTrainerRacesCount\":2,\"spotlight\":\"Synthetic prose\"," +
+        "\"weightAllowanceLbs\":5,\"jockeyFirstTime\":true,\"newTrainerRacesCount\":2," +
         "\"forecastOddsValue\":4,\"nonRunner\":false,\"irishReserve\":false}";
 
     private static string WrapScript(string scriptContent) =>
@@ -67,7 +67,6 @@ public class NextDataRaceCardReaderShould
         relocal.JockeyFirstTime.Should().BeTrue();
         relocal.NewTrainerRacesCount.Should().Be(1);
         relocal.CountryOfOrigin.Should().Be("FR");
-        relocal.Spotlight.Should().StartWith("The winner of one of his 11 starts for Roger Varian");
     }
 
     [Fact]
@@ -301,7 +300,6 @@ public class NextDataRaceCardReaderShould
             .Replace("\"weightAllowanceLbs\":5,", "\"weightAllowanceLbs\":null,")
             .Replace("\"jockeyFirstTime\":true,", "\"jockeyFirstTime\":null,")
             .Replace("\"newTrainerRacesCount\":2,", "\"newTrainerRacesCount\":null,")
-            .Replace("\"spotlight\":\"Synthetic prose\",", "\"spotlight\":null,")
             .Replace("\"forecastOddsValue\":4,", "\"forecastOddsValue\":null,");
 
         var view = new NextDataRaceCardReader().Read(WrapDocument("[" + nulledRunner + "]"));
@@ -326,7 +324,6 @@ public class NextDataRaceCardReaderShould
         runner.JockeyAllowanceLbs.Should().BeNull();
         runner.JockeyFirstTime.Should().BeNull();
         runner.NewTrainerRacesCount.Should().BeNull();
-        runner.Spotlight.Should().BeNull();
     }
 
     [Fact]
@@ -370,11 +367,11 @@ public class NextDataRaceCardReaderShould
     [Fact]
     public void ThrowNamingTheKeyWhenAnExtrasKeyIsMissing()
     {
-        var runnerWithoutSpotlight = ValidRunner.Replace("\"spotlight\":\"Synthetic prose\",", string.Empty);
-        var html = WrapDocument("[" + runnerWithoutSpotlight + "]");
+        var runnerWithoutNewTrainerCount = ValidRunner.Replace("\"newTrainerRacesCount\":2,", string.Empty);
+        var html = WrapDocument("[" + runnerWithoutNewTrainerCount + "]");
 
         var read = () => new NextDataRaceCardReader().Read(html);
 
-        read.Should().Throw<ValidationException>().WithMessage("*spotlight*");
+        read.Should().Throw<ValidationException>().WithMessage("*newTrainerRacesCount*");
     }
 }

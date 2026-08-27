@@ -141,8 +141,7 @@ public class RaceResultRecordShould
             JockeyAllowanceLbs = 5,
             JockeyFirstTime = true,
             NewTrainerRacesCount = 1,
-            CountryOfOrigin = "FR",
-            Spotlight = "Won well; \"one to note\", strong at C&D"
+            CountryOfOrigin = "FR"
         };
 
         var single = (await (await new[] { record }.ToCsvString()).FromCsvString<RaceResultRecord>()).Single();
@@ -160,7 +159,6 @@ public class RaceResultRecordShould
         single.JockeyFirstTime.Should().BeTrue();
         single.NewTrainerRacesCount.Should().Be(1);
         single.CountryOfOrigin.Should().Be("FR");
-        single.Spotlight.Should().Be("Won well; \"one to note\", strong at C&D");
     }
 
     private static string StripLastColumns(string csv, int count)

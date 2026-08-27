@@ -36,10 +36,9 @@ public class RaceRunner
     // unaffected.
     public RaceRunnerBreeding? Breeding { get; }
 
-    // Per-runner extras (first-time flags, trainerRtf, jockey allowance, new-trainer count, country,
-    // Spotlight prose) — like Owner/Breeding a forward-only JSON-only fact, null on the DOM-oracle
-    // reading and excluded from cross-validation. Trailing optional so the DOM parser and results
-    // layout are unaffected.
+    // Per-runner extras (first-time flags, trainerRtf, jockey allowance, new-trainer count, country)
+    // — like Owner/Breeding a forward-only JSON-only fact, null on the DOM-oracle reading and excluded
+    // from cross-validation. Trailing optional so the DOM parser and results layout are unaffected.
     public RaceRunnerExtras? Extras { get; }
 
     public RaceRunnerAttributes Attributes { get; }

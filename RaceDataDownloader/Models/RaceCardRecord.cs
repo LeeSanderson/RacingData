@@ -64,8 +64,7 @@ public record RaceCardRecord : RaceRunnerRecord
                 JockeyAllowanceLbs = d.Runner.Extras?.JockeyAllowanceLbs,
                 JockeyFirstTime = d.Runner.Extras?.JockeyFirstTime,
                 NewTrainerRacesCount = d.Runner.Extras?.NewTrainerRacesCount,
-                CountryOfOrigin = d.Runner.Extras?.CountryOfOrigin,
-                Spotlight = d.Runner.Extras?.Spotlight
+                CountryOfOrigin = d.Runner.Extras?.CountryOfOrigin
             });
 
     // Pre-race facts collected at card parse. No prefix — they have no post-race counterpart to
@@ -133,8 +132,4 @@ public record RaceCardRecord : RaceRunnerRecord
     [Optional]
     [Index(50)]
     public string? CountryOfOrigin { get; set; }
-    // Raw analyst prose, banked verbatim (CSV-escaped by CsvHelper); no parsing or feature derivation.
-    [Optional]
-    [Index(51)]
-    public string? Spotlight { get; set; }
 }

@@ -13,8 +13,7 @@ public class RaceRunnerExtras
         int? jockeyAllowanceLbs,
         bool? jockeyFirstTime,
         int? newTrainerRacesCount,
-        string? countryOfOrigin,
-        string? spotlight)
+        string? countryOfOrigin)
     {
         HeadgearFirstTime = headgearFirstTime;
         GeldingFirstTime = geldingFirstTime;
@@ -24,7 +23,6 @@ public class RaceRunnerExtras
         JockeyFirstTime = jockeyFirstTime;
         NewTrainerRacesCount = newTrainerRacesCount;
         CountryOfOrigin = countryOfOrigin;
-        Spotlight = spotlight;
     }
 
     public bool? HeadgearFirstTime { get; }
@@ -39,7 +37,4 @@ public class RaceRunnerExtras
     public bool? JockeyFirstTime { get; }
     public int? NewTrainerRacesCount { get; }
     public string? CountryOfOrigin { get; }
-
-    // Raw analyst prose banked verbatim for a future NLP pipeline; no parsing or feature derivation.
-    public string? Spotlight { get; }
 }

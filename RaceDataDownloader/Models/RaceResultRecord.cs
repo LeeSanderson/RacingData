@@ -152,7 +152,4 @@ public record RaceResultRecord : RaceRunnerRecord
     [Optional]
     [Index(61)]
     public string? CountryOfOrigin { get; set; }
-    [Optional]
-    [Index(62)]
-    public string? Spotlight { get; set; }
 }

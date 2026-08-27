@@ -67,8 +67,7 @@ public sealed class NextDataRunner
         int? jockeyAllowanceLbs,
         bool? jockeyFirstTime,
         int? newTrainerRacesCount,
-        string? countryOfOrigin,
-        string? spotlight)
+        string? countryOfOrigin)
     {
         HorseId = horseId;
         HorseName = horseName;
@@ -102,7 +101,6 @@ public sealed class NextDataRunner
         JockeyFirstTime = jockeyFirstTime;
         NewTrainerRacesCount = newTrainerRacesCount;
         CountryOfOrigin = countryOfOrigin;
-        Spotlight = spotlight;
     }
 
     public int? HorseId { get; }
@@ -171,7 +169,4 @@ public sealed class NextDataRunner
 
     /// <summary>The horse's country of origin (e.g. "GB", "FR", "AUS"); null when absent.</summary>
     public string? CountryOfOrigin { get; }
-
-    /// <summary>The raw per-runner Spotlight analyst prose, banked verbatim; null when absent.</summary>
-    public string? Spotlight { get; }
 }

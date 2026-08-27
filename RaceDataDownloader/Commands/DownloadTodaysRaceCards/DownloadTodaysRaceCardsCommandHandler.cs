@@ -81,11 +81,12 @@ public class DownloadTodaysRaceCardsCommandHandler(
         WarnWhenRatingAbsent(withTopSpeedRating, "top speed ratings (TSR)", raceCards.Count);
     }
 
-    // Informational fill-rate datapoint for the per-runner extras. Unlike the forecast and
-    // ratings canaries this never warns: the extras are legitimately sparse (first-time flags rarely
-    // fire; trainerRtf is absent on some jurisdictions such as HK; wind-surgery is jumps-skewed), so a
-    // zero count is normal data, not a structural alarm. The throw on a vanished key is owned by the
-    // reader's schema validation, so this canary only ever logs at the information level and never throws.
+    // The extras split by whether a zero count is possible in normal data. The always-present group
+    // (the three first-time flags and country of origin) is published for every runner on every
+    // jurisdiction's card, so a whole-field shortfall means the JSON stopped carrying it — a structure
+    // change, which throws. The rest are legitimately sparse: trainerRtf is absent outside GB/IRE,
+    // wind-surgery is jumps-skewed, jockey allowance only appears on claimers, and new-trainer count
+    // only after a yard switch. Those are logged and never throw.
     private void LogExtrasFillRate(List<RaceCard> raceCards)
     {
         var totalRunners = raceCards.Sum(c => c.Runners.Length);
@@ -97,20 +98,46 @@ public class DownloadTodaysRaceCardsCommandHandler(
         int Count(Func<RaceRunnerExtras, bool> present) =>
             raceCards.Sum(c => c.Runners.Count(r => r.Extras is not null && present(r.Extras)));
 
+        var headgearFirstTime = Count(e => e.HeadgearFirstTime.HasValue);
+        var geldingFirstTime = Count(e => e.GeldingFirstTime.HasValue);
+        var jockeyFirstTime = Count(e => e.JockeyFirstTime.HasValue);
+        var countryOfOrigin = Count(e => !string.IsNullOrEmpty(e.CountryOfOrigin));
+
         Logger.LogInformation(
             "Racecard extras present for {Total} runners: headgear-first {HeadgearFirstTime}, gelding-first {GeldingFirstTime}, " +
             "wind-surgery {WindSurgery}, trainerRtf {TrainerRtf}, jockey-allowance {JockeyAllowanceLbs}, jockey-first {JockeyFirstTime}, " +
-            "new-trainer-count {NewTrainerRacesCount}, country {CountryOfOrigin}, spotlight {Spotlight}.",
+            "new-trainer-count {NewTrainerRacesCount}, country {CountryOfOrigin}.",
             totalRunners,
-            Count(e => e.HeadgearFirstTime.HasValue),
-            Count(e => e.GeldingFirstTime.HasValue),
+            headgearFirstTime,
+            geldingFirstTime,
             Count(e => e.WindSurgery.HasValue),
             Count(e => e.TrainerRtf.HasValue),
             Count(e => e.JockeyAllowanceLbs.HasValue),
-            Count(e => e.JockeyFirstTime.HasValue),
+            jockeyFirstTime,
             Count(e => e.NewTrainerRacesCount.HasValue),
-            Count(e => !string.IsNullOrEmpty(e.CountryOfOrigin)),
-            Count(e => !string.IsNullOrEmpty(e.Spotlight)));
+            countryOfOrigin);
+
+        EnsureAlwaysPresentExtrasArePresent(
+            raceCards.Count,
+            ("first-time headgear flags", headgearFirstTime),
+            ("first-time gelding flags", geldingFirstTime),
+            ("first-time jockey flags", jockeyFirstTime),
+            ("country of origin", countryOfOrigin));
+    }
+
+    // Reports every absent field in one message rather than the first, so a site change that drops
+    // several at once is diagnosed from a single run.
+    private static void EnsureAlwaysPresentExtrasArePresent(int cardCount, params (string Label, int Count)[] extras)
+    {
+        var absent = extras.Where(e => e.Count == 0).Select(e => e.Label).ToArray();
+        if (absent.Length == 0)
+        {
+            return;
+        }
+
+        throw new ValidationException(
+            $"No runners across the {cardCount} downloaded race card(s) have {string.Join(", ", absent)}. " +
+            "The Racing Post racecard JSON may have stopped publishing these fields.");
     }
 
     private void WarnWhenRatingAbsent(int withRating, string ratingLabel, int cardCount)

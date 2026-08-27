@@ -56,8 +56,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "2-41 in Hong Kong, both wins coming over C\u0026D; no success since October 2023, but still makes plenty of appeal down to this level for the first time and he has a good draw."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 1,
@@ -107,8 +106,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": true,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "1-2 in Australia, but placed just once in 14 local starts; drop to Class 5 and his good draw are the positives, but he does need to show a bit more."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 2,
@@ -158,8 +156,7 @@
           "GeldingFirstTime": false,
           "JockeyAllowanceLbs": 2,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "1-19, the win coming at Sha Tin (6f) in March; looks opposable over this trip."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 3,
@@ -209,8 +206,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": true,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "No closer than eighth in seven starts over 5f-7f on turf/dirt; off four months and his two barrier trials since last seen in a race make him far from compelling."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 4,
@@ -260,8 +256,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "2-28 including a win over C\u0026D; out of the frame in both starts since returning to Class 5 company, but he wasn\u0027t beaten far here five weeks ago and has dropped to a favourable mark; each-way claims."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 5,
@@ -310,8 +305,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "NZ",
-          "Spotlight": "Very little to get excited about in his eight starts; off six months and although he has shown a little bit in his subsequent barrier trials, he still has plenty to prove over this trip from the outside stall."
+          "CountryOfOrigin": "NZ"
         },
         "Attributes": {
           "RaceCardNumber": 6,
@@ -361,8 +355,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "Front-runner who is 0-15, but has made the frame in six of his nine starts this season including over C\u0026D in March; hasn\u0027t enjoyed much luck with the draw lately, but no such excuses this time; high on list."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 7,
@@ -412,8 +405,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "2-29 including a win over C\u0026D; had dropped a long way in the weights when third over C\u0026D last month and latest effort on dirt can be forgiven; down another 2lb and shortlisted."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 8,
@@ -463,8 +455,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "Ran well in three starts over C\u0026D around the turn of the year, but has regressed since and is now 0-18; again hasn\u0027t enjoyed much luck with the draw."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 9,
@@ -514,8 +505,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "NZ",
-          "Spotlight": "1-21; won a dirt trial last month, but was again held back in a race at Sha Tin (6f) 17 days ago; has enough to prove back over this trip."
+          "CountryOfOrigin": "NZ"
         },
         "Attributes": {
           "RaceCardNumber": 10,
@@ -565,8 +555,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": false,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "0-17, but 6lb lower than when runner-up on his return from seven months off over C\u0026D in February and better drawn than when fourth in his last two starts here; worth a second look."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 11,
@@ -616,8 +605,7 @@
           "HeadgearFirstTime": false,
           "GeldingFirstTime": false,
           "JockeyFirstTime": true,
-          "CountryOfOrigin": "AUS",
-          "Spotlight": "Out of the frame in all 15 starts despite a sliding mark and poorly drawn to boot; makes little appeal."
+          "CountryOfOrigin": "AUS"
         },
         "Attributes": {
           "RaceCardNumber": 12,

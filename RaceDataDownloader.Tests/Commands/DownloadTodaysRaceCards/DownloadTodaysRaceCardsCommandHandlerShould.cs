@@ -137,7 +137,7 @@ public class DownloadTodaysRaceCardsCommandHandlerShould(ITestOutputHelper outpu
     }
 
     [Fact]
-    public async Task LogTheExtrasFillRateForTheNewFieldsWithoutThrowing()
+    public async Task LogTheExtrasFillRateAndNotThrowWhenOnlySparseExtrasAreAbsent()
     {
         var mockFileSystemBuilder = new MockFileSystemBuilder();
         var mockRacingDataDownloader = MockRacingDataDownloader
@@ -153,13 +153,32 @@ public class DownloadTodaysRaceCardsCommandHandlerShould(ITestOutputHelper outpu
         var result = await handler.RunAsync(options);
 
         result.Should().Be(ExitCodes.Success);
-        // An informational fill-rate line for the new extras is emitted. The canary never warns or
-        // throws: these fields are legitimately sparse (HK has no trainerRtf, no first-time flags fired),
-        // and the throw on a vanished key is owned by the reader's schema validation, not this canary.
+        // The HK card carries none of the sparse extras (no trainerRtf outside GB/IRE, no wind-surgery,
+        // no new-trainer count) yet every always-present extra is filled, so the run must still succeed.
         logger.Entries.Should().Contain(e =>
             e.Level == LogLevel.Information && e.Message.Contains("extras", StringComparison.OrdinalIgnoreCase));
-        logger.Entries.Should().NotContain(e =>
-            e.Level == LogLevel.Warning && e.Message.Contains("extras", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task FailAndWriteNoCsvWhenAnAlwaysPresentExtraIsAbsentFromEveryRunner()
+    {
+        // The first-time flags are published for every runner on every jurisdiction, so a whole-field
+        // shortfall is a site structure change, not sparse data, and must halt the run rather than log.
+        var mockFileSystemBuilder = new MockFileSystemBuilder();
+        var mockRacingDataDownloader = MockRacingDataDownloader
+            .New()
+            .MockReturnHappyValleyRaceCardUrls()
+            .MockReturnHappyValleyRaceCardWithNoFirstTimeHeadgearFlags();
+        var clock = Substitute.For<IClock>();
+        clock.Today.Returns(new DateOnly(2026, 05, 20));
+        var logger = new OutputLogger<DownloadTodaysRaceCardsCommandHandler>(output);
+
+        var handler = new DownloadTodaysRaceCardsCommandHandler(mockFileSystemBuilder.FileSystem, mockRacingDataDownloader, clock, logger);
+        var options = new DownloadTodaysRaceCardsOptions { DataDirectory = MockFileSystemBuilder.OutputDirectory };
+        var result = await handler.RunAsync(options);
+
+        result.Should().Be(ExitCodes.Error);
+        mockFileSystemBuilder.TodaysSavedResultsAsCsv.Should().BeNull();
     }
 
     [Fact]

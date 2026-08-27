@@ -515,8 +515,7 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
                 sireName: "Not A Single Doubt", sireCountry: "AUS", damName: "Jacquetta",
                 headgearFirstTime: true, geldingFirstTime: false, windSurgery: 2,
                 trainerRtf: 59, jockeyAllowanceLbs: 5, jockeyFirstTime: true,
-                newTrainerRacesCount: 1, countryOfOrigin: "FR",
-                spotlight: "Won well; \"one to note\", strong at C&D")
+                newTrainerRacesCount: 1, countryOfOrigin: "FR")
         };
         var store = ConfigureStatefulFiles(
             (PredictionsFile, await _predictionThatHorse1WillWin.ToCsvString()),
@@ -542,7 +541,6 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         horse1.JockeyFirstTime.Should().BeTrue();
         horse1.NewTrainerRacesCount.Should().Be(1);
         horse1.CountryOfOrigin.Should().Be("FR");
-        horse1.Spotlight.Should().Be("Won well; \"one to note\", strong at C&D");
     }
 
     [Fact]
@@ -688,7 +686,7 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
         int? ownerId = null, string? ownerName = null, string? sireName = null, string? sireCountry = null,
         string? damName = null, bool? headgearFirstTime = null, bool? geldingFirstTime = null, int? windSurgery = null,
         int? trainerRtf = null, int? jockeyAllowanceLbs = null, bool? jockeyFirstTime = null,
-        int? newTrainerRacesCount = null, string? countryOfOrigin = null, string? spotlight = null,
+        int? newTrainerRacesCount = null, string? countryOfOrigin = null,
         string? ratingBand = null) =>
         new()
         {
@@ -720,8 +718,7 @@ public class ValidateRaceCardPredictionsCommandHandlerShould
             JockeyAllowanceLbs = jockeyAllowanceLbs,
             JockeyFirstTime = jockeyFirstTime,
             NewTrainerRacesCount = newTrainerRacesCount,
-            CountryOfOrigin = countryOfOrigin,
-            Spotlight = spotlight
+            CountryOfOrigin = countryOfOrigin
         };
 
     // Backs the mock filesystem with a mutable store so Exists/Read/Delete/Write behave like a real one.

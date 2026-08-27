@@ -66,6 +66,18 @@ internal static class MockRacingDataDownloader
         return downloader;
     }
 
+    public static IRacingDataDownloader MockReturnHappyValleyRaceCardWithNoFirstTimeHeadgearFlags(this IRacingDataDownloader downloader)
+    {
+        // Null (not remove) the flag: the key stays present so the reader's sentinel check passes and the
+        // failure lands on the extras canary. horseHeadGearFirstTime is the right field to null for that
+        // isolation -- it feeds no other reading, whereas countryOrigin also builds the horse-name country
+        // suffix, so nulling that trips DOM cross-validation before the canary is reached.
+        var html = FakeData.HappyValleyRaceCardFor1140RaceOn20260520
+            .Replace("\"horseHeadGearFirstTime\":false", "\"horseHeadGearFirstTime\":null", StringComparison.Ordinal);
+        downloader.DownloadRaceCard(HappyValleyRaceCardUrl).Returns(_ => new RaceCardParser().Parse(html));
+        return downloader;
+    }
+
     public static IRacingDataDownloader MockReturnHappyValleyRaceCardWithNoNextData(this IRacingDataDownloader downloader)
     {
         // Remove the __NEXT_DATA__ JSON island entirely. Parsing is deferred to call time (a lazy

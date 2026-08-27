@@ -47,7 +47,7 @@ Two caveats apply to the `Card*` columns and the other newly-captured pre-race f
 (`DaysSinceLastRun`, `FormFigures`, `PrizeMoney`/`PrizeMoneyValue`, and the
 owner/breeding/extras fields — `OwnerId`/`OwnerName`, `SireName`/`SireCountry`/`DamName`,
 the first-time flags, `WindSurgery`, `TrainerRtf`, `JockeyAllowanceLbs`,
-`NewTrainerRacesCount`, `CountryOfOrigin`, `Spotlight` — all now forwarded by the
+`NewTrainerRacesCount`, `CountryOfOrigin` — all now forwarded by the
 write-back too):
 
 - **Forward-only coverage.** They populate from *deployment forward* via the
@@ -61,6 +61,23 @@ write-back too):
   **not** converted across countries, so a £-card and a €-card yield numbers on
   different scales. The raw `PrizeMoney` string preserves the original symbol for any
   later normalisation.
+- **A whole-field shortfall in the always-present extras halts the run.** The three
+  first-time flags and `CountryOfOrigin` are published for every runner on every
+  jurisdiction's card, so zero of them across a whole day means the JSON stopped
+  carrying the field — `DownloadTodaysRaceCardsCommandHandler` throws rather than logs.
+  The remaining extras (`WindSurgery`, `TrainerRtf`, `JockeyAllowanceLbs`,
+  `NewTrainerRacesCount`) are legitimately sparse — `TrainerRtf` is absent outside
+  GB/IRE, wind-surgery is jumps-skewed — so a zero count there is normal data and only
+  logs. Do not "tighten" those into throws; a quiet all-flat day would halt the pipeline.
+
+**Withdrawn field — `Spotlight`.** The per-runner analyst prose was captured from
+2026-06-22 and removed on 2026-08-27. Racing Post gated it behind Members' Club on
+**2026-08-25**: the logged-out `__NEXT_DATA__` island now carries `spotlight: ""` for
+every runner (an *empty string*, not an absent key, so the reader's sentinel check could
+not see it — only the fill-rate count moved, which is what prompted the always-present
+guard above). The column is gone from `RaceCardRecord`/`RaceResultRecord` and the
+write-back, and the ~22.8k banked prose rows were dropped from `Results_*.csv` rather
+than archived. Re-capturing it would need an authenticated session.
 
 ## Pitfall 2 — odds enter the model *only* through the sanctioned `MarketProb` resolver
 

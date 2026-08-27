@@ -141,6 +141,16 @@ missing a field that should always be present) must throw `ValidationException`,
 not log a warning. A thrown exception causes `run.ps1` to halt visibly; a warning
 is easy to miss in the log stream.
 
+The gate turns on whether a zero count is *possible in normal data*, so the racecard
+extras split two ways in `DownloadTodaysRaceCardsCommandHandler`. The three first-time
+flags and `CountryOfOrigin` are published for every runner on every jurisdiction, so an
+all-empty day throws. `WindSurgery`, `TrainerRtf`, `JockeyAllowanceLbs` and
+`NewTrainerRacesCount` are legitimately sparse (no `trainerRtf` outside GB/IRE,
+wind-surgery is jumps-skewed) and only log — do not promote those to throws. Note a
+present-but-empty **string** slips past the reader's sentinel-key check, which only
+catches a *missing* key: that is how the `Spotlight` paywalling went unnoticed for two
+days, and why the always-present group is guarded on fill rate rather than key presence.
+
 ### Testing
 - Snapshot tests use the Verify framework (`.verified.txt` files checked into source control)
 - Test names: `{Class}Should.{Behavior}` (e.g., `UpdateResultsCommandHandlerShould.BackFillDataForMissingDays`)

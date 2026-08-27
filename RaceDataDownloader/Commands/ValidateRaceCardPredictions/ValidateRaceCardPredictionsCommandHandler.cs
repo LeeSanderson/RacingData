@@ -249,11 +249,6 @@ public class ValidateRaceCardPredictionsCommandHandler(
             result.CountryOfOrigin = card.CountryOfOrigin;
             filled++;
         }
-        if (!string.IsNullOrEmpty(card.Spotlight) && string.IsNullOrEmpty(result.Spotlight))
-        {
-            result.Spotlight = card.Spotlight;
-            filled++;
-        }
 
         return filled;
     }

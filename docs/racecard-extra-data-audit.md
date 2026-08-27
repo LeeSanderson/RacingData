@@ -59,11 +59,12 @@ locates, so marginal parse cost is low):
    a low-regret **enabler/identity key** that seeds future owner-strike-rate features, not a
    standalone feature.
 
-**Deferred-but-attractive (revisit when a text/NLP pipeline exists):** the **RP Verdict**'s named
-selection (row 15) is effectively a published tipster pick — a potentially strong meta-signal — but
-it lives in the rendered DOM (not JSON), needs light NLP, and is patchy across cards; the per-runner
-**Spotlight** prose (row 14) is public and cheap to *bank raw*, but turning it into a feature is an
-NLP problem and it likely re-encodes already-captured ratings/form.
+**Deferred-but-attractive (revisit when a text/NLP pipeline exists) — since overtaken by the
+2026-08-25 paywalling; both are now unavailable logged-out, see the Spotlight note below:** the
+**RP Verdict**'s named selection (row 15) is effectively a published tipster pick — a potentially
+strong meta-signal — but it lives in the rendered DOM (not JSON), needs light NLP, and is patchy
+across cards; the per-runner **Spotlight** prose (row 14) was public and cheap to *bank raw*, but
+turning it into a feature is an NLP problem and it likely re-encodes already-captured ratings/form.
 
 **Leakage finding (explicit).** Assessed against the `Card*`-vs-inherited-ratings standard in
 [`data-pitfalls.md`](data-pitfalls.md): **no candidate is leakage-suspect.** All 18 are
@@ -214,12 +215,14 @@ jockey allowance) appear as explicit rows.
   `trainerRtf`, `newTrainerRacesCount`, `countryOrigin`). The fixtures were **not** captured
   under a privileged session — none of the structured candidates is members-gated. So for rows
   1–14 the parse path really is "read a JSON property", which 003 should weight as low difficulty.
-- **Spotlight — RESOLVED, public.** The per-runner `spotlight` value is full analyst prose in the
-  logged-out JSON, e.g. *"In cheekpieces the last twice; pushed the long odds-on favourite close
-  on his handicap debut (1m2f, good to firm) and then won as he liked at Wolverhampton on Tuesday
-  … this 295,000gns yearling could easily rate much higher."* It is **not** members-only and is a
-  JSON read, not a DOM/NLP scrape — though it is free text, so any *feature* extraction (vs raw
-  capture) is still an NLP problem for the follow-on PRD.
+- **Spotlight — was public, PAYWALLED 2026-08-25 (finding now obsolete).** At audit time the
+  per-runner `spotlight` value was full analyst prose in the logged-out JSON, e.g. *"In cheekpieces
+  the last twice; pushed the long odds-on favourite close on his handicap debut (1m2f, good to firm)
+  and then won as he liked at Wolverhampton on Tuesday … this 295,000gns yearling could easily rate
+  much higher."* **This is no longer true.** Racing Post gated it behind Members' Club on
+  2026-08-25: logged-out cards now carry `spotlight: ""` for every runner, with
+  `bettingTips.freeTipsSettings.hasAllSpotlights = false`. Capture was removed on 2026-08-27 — see
+  the withdrawn-field note in [`data-pitfalls.md`](data-pitfalls.md).
 - **Verdict — RESOLVED, but a correction to issue 001.** The race-level RP Verdict prose is in the
   **rendered `Container__Verdict` DOM** (e.g. *"VERDICT by Alistair Jones … PENTONVILLE looks
   well-in under a penalty for his AW win on Tuesday"* + a named selection via

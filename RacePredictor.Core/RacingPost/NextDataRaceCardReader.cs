@@ -32,7 +32,7 @@ public sealed class NextDataRaceCardReader
         "officialRatingToday", "rpPostmark", "rpTopspeed",
         "horseHeadGear", "forecastOddsValue", "nonRunner", "irishReserve",
         "horseHeadGearFirstTime", "geldingFirstTime", "windSurgery", "trainerRtf",
-        "weightAllowanceLbs", "jockeyFirstTime", "newTrainerRacesCount", "spotlight",
+        "weightAllowanceLbs", "jockeyFirstTime", "newTrainerRacesCount",
     };
 
     public NextDataRaceCardView Read(string html)
@@ -207,8 +207,7 @@ public sealed class NextDataRaceCardReader
             jockeyAllowanceLbs,
             fields.BoolOrNull("jockeyFirstTime"),
             fields.NumberOrNull("newTrainerRacesCount"),
-            country,
-            fields.StringOrNull("spotlight"));
+            country);
     }
 
     // Racing Post appends a horse's country of origin to its name only when that country differs

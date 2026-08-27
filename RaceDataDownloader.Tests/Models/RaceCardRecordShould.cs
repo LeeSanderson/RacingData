@@ -30,8 +30,7 @@ public class RaceCardRecordShould
             JockeyAllowanceLbs = 5,
             JockeyFirstTime = true,
             NewTrainerRacesCount = 1,
-            CountryOfOrigin = "FR",
-            Spotlight = "Won well; \"one to note\", strong at C&D"
+            CountryOfOrigin = "FR"
         };
 
         var single = (await (await new[] { record }.ToCsvString()).FromCsvString<RaceCardRecord>()).Single();
@@ -53,7 +52,6 @@ public class RaceCardRecordShould
         single.JockeyFirstTime.Should().BeTrue();
         single.NewTrainerRacesCount.Should().Be(1);
         single.CountryOfOrigin.Should().Be("FR");
-        single.Spotlight.Should().Be("Won well; \"one to note\", strong at C&D");
     }
 
     [Fact]
@@ -91,7 +89,6 @@ public class RaceCardRecordShould
         records[0].JockeyFirstTime.Should().BeNull();
         records[0].NewTrainerRacesCount.Should().BeNull();
         records[0].CountryOfOrigin.Should().BeNullOrEmpty();
-        records[0].Spotlight.Should().BeNullOrEmpty();
     }
 
     [Fact]
@@ -116,14 +113,13 @@ public class RaceCardRecordShould
             !string.IsNullOrEmpty(r.SireName) && !string.IsNullOrEmpty(r.SireCountry) && !string.IsNullOrEmpty(r.DamName));
         records.Should().Contain(r =>
             r.HorseId == 4043909 && r.SireName == "Not A Single Doubt" && r.SireCountry == "AUS" && r.DamName == "Jacquetta");
-        // Extras are captured per-runner. Every HK runner carries a country of origin and Spotlight prose;
-        // the first-time flags are clean falses (none fired) and trainerRtf is a clean null (HK lacks the
-        // win-rate badge) — absence is data, not a failure.
-        records.Should().OnlyContain(r => !string.IsNullOrEmpty(r.CountryOfOrigin) && !string.IsNullOrEmpty(r.Spotlight));
+        // Extras are captured per-runner. Every HK runner carries a country of origin; the first-time
+        // flags are clean falses (none fired) and trainerRtf is a clean null (HK lacks the win-rate
+        // badge) — absence is data, not a failure.
+        records.Should().OnlyContain(r => !string.IsNullOrEmpty(r.CountryOfOrigin));
         records.Should().OnlyContain(r => r.TrainerRtf == null);
         records.Should().Contain(r =>
             r.HorseId == 4043909 && r.CountryOfOrigin == "AUS" && r.HeadgearFirstTime == false &&
             r.GeldingFirstTime == false && r.JockeyFirstTime == false);
-        records.Should().Contain(r => r.HorseId == 4043909 && r.Spotlight!.StartsWith("2-41 in Hong Kong"));
     }
 }

@@ -46,9 +46,9 @@ internal static class NextDataRunnerMapper
     private static RaceRunnerExtras? ToExtras(NextDataRunner r) =>
         r.HeadgearFirstTime is null && r.GeldingFirstTime is null && r.WindSurgery is null &&
         r.TrainerRtf is null && r.JockeyAllowanceLbs is null && r.JockeyFirstTime is null &&
-        r.NewTrainerRacesCount is null && r.CountryOfOrigin is null && r.Spotlight is null
+        r.NewTrainerRacesCount is null && r.CountryOfOrigin is null
             ? null
             : new RaceRunnerExtras(
                 r.HeadgearFirstTime, r.GeldingFirstTime, r.WindSurgery, r.TrainerRtf,
-                r.JockeyAllowanceLbs, r.JockeyFirstTime, r.NewTrainerRacesCount, r.CountryOfOrigin, r.Spotlight);
+                r.JockeyAllowanceLbs, r.JockeyFirstTime, r.NewTrainerRacesCount, r.CountryOfOrigin);
 }
