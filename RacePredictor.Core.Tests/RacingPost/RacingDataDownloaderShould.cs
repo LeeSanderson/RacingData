@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using NSubstitute;
 using RacePredictor.Core.RacingPost;
 
@@ -23,7 +24,7 @@ public class RacingDataDownloaderShould
     }
 
     [Fact]
-    public async Task ReturnNoResultUrlsForADayWithoutRacing()
+    public async Task ReturnNoResultUrlsOnChristmasDayWhenThereIsNoRacing()
     {
         var htmlLoader = Substitute.For<IHtmlLoader>();
         htmlLoader
@@ -36,6 +37,22 @@ public class RacingDataDownloaderShould
         var urls = await downloader.GetResultUrls(startDate, startDate).ToListAsync();
 
         urls.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ThrowWhenADateThatShouldHaveRacingYieldsNoResultUrls()
+    {
+        var htmlLoader = Substitute.For<IHtmlLoader>();
+        htmlLoader
+            .GetHtmlResponseFrom("https://www.racingpost.com/results/2026-08-26")
+            .Returns(ResourceLoader.ReadRacingPostExampleResource("daily_results_20251225_no_racing.html"));
+        var clock = Substitute.For<IClock>();
+        var downloader = new RacingDataDownloader(htmlLoader, clock);
+        var startDate = new DateOnly(2026, 08, 26);
+
+        var getUrls = async () => await downloader.GetResultUrls(startDate, startDate).ToListAsync();
+
+        await getUrls.Should().ThrowAsync<ValidationException>().WithMessage("*results/2026-08-26*");
     }
 
     [Fact]

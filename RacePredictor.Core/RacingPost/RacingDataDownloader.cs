@@ -35,6 +35,8 @@ public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacin
                 throw new ValidationException($"Unexpected error getting links from {resultsUrl}: {e.Message}");
             }
 
+            EnsureRacesWereFound(currentDate, resultsUrl, urls.Length);
+
             foreach (var url in urls)
             {
                 yield return url;
@@ -43,6 +45,22 @@ public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacin
             currentDate = currentDate.AddDays(1);
         }
     }
+
+    // The index renders the same "no results for this date" empty state whether a day genuinely had no
+    // racing or its own data failed to load, so only the calendar can tell the two apart.
+    private static void EnsureRacesWereFound(DateOnly date, string resultsUrl, int raceCount)
+    {
+        if (raceCount > 0 || IsExpectedBlankRacingDay(date))
+        {
+            return;
+        }
+
+        throw new ValidationException(
+            $"Found no races at {resultsUrl}. Racing is expected on every date except Christmas Day, " +
+            "so the results index did not render its races. Re-running will retry the day.");
+    }
+
+    private static bool IsExpectedBlankRacingDay(DateOnly date) => date is { Month: 12, Day: 25 };
 
     public async Task<RaceResult> DownloadResults(string url)
     {
