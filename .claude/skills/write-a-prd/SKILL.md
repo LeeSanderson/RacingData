@@ -61,7 +61,7 @@ A list of implementation decisions that were made. This can include:
 - Technical clarifications from the developer
 - Architectural decisions (e.g. ports & adapters around a new external source)
 - Schema changes (CSV columns added/renamed; note that monthly `Results_YYYYMM.csv` files are append-only in spirit)
-- API contracts (e.g. the shape of `Predictions.json` / `TodaysPredictions.csv`)
+- API contracts (e.g. the shape of `TodaysPredictions.csv`)
 - Specific interactions (how `run.ps1` wires the new step in)
 
 Do NOT include specific file paths or code snippets. They may end up being outdated very quickly.

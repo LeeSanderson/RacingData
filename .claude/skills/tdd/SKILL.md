@@ -10,7 +10,7 @@ description: Test-driven development with red-green-refactor loop. Use when user
 This codebase has two test surfaces:
 
 - **C# (RacePredictor.Core.Tests, RaceDataDownloader.Tests)** — xUnit + FluentAssertions + NSubstitute + Verify (snapshot tests) + `RichardSzalay.MockHttp`. Tests are named `{Class}Should.{Behavior}`. The `MockFileSystemBuilder` and `MockRacingDataDownloader` helpers exist to wire up the standard system-boundary mocks. Verified snapshots live alongside tests as `.verified.txt` files.
-- **Python (Data/)** — feature-engineering and prediction notebooks. There is no formal test runner today; the pragmatic equivalent is running `run.ps1` end-to-end and inspecting the generated `Horse_Stats.csv`, `Jockey_Stats.csv`, `Race_Features.csv`, `Predictions.json`. When adding non-trivial Python logic, pull it into a pure function that takes a `DataFrame` in and returns a `DataFrame` out, so it can be exercised with pytest against a small fixture CSV.
+- **Python (`race_analytics/`)** — pytest, in the top-level `tests/` mirroring the package layout (`tests/features/`, `tests/algorithms/`, `tests/scripts/`, `tests/betting/`, `tests/utils/`) rather than co-located inside the package. Two commands, both before committing: `pre-commit run --all-files` (ruff lint + format, pyright strict — the single quality gate) then `python -m pytest tests/` (kept separate; too slow for the hook). Feature logic belongs in `race_analytics/features/`, never the exploratory notebooks. When adding non-trivial logic, pull it into a pure function that takes a `DataFrame` in and returns a `DataFrame` out, so it can be exercised against a small fixture CSV.
 
 ## Philosophy
 
@@ -100,7 +100,7 @@ After all tests pass, look for [refactor candidates](refactoring.md):
 - [ ] Apply SOLID principles where natural
 - [ ] Trim comments — keep only non-obvious *why*; delete any that restate the code (AGENTS.md "Comments")
 - [ ] Consider what new code reveals about existing code
-- [ ] Run `dotnet test` (or `.\run.ps1` for the full pipeline) after each refactor step
+- [ ] Run `dotnet test` (C#) or `pre-commit run --all-files && python -m pytest tests/` (Python) after each refactor step — `.\run.ps1` only for full-pipeline integration checks
 
 **Never refactor while RED.** Get to GREEN first.
 
