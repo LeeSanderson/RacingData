@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,9/4,3.25,CompletedRace,925710,8,Carlisle,08/27/2026 15:00:00,9263895,Bincimbal IRE,0.28073132,0
+1,True,11/8,2.375,CompletedRace,925714,1212,Ffos Las,08/27/2026 16:37:00,7926345,Winday FR,0.32241344,0
+4,False,7/2,4.5,CompletedRace,926033,393,Lingfield (AW),08/27/2026 14:52:00,9419854,Kiah IRE,0.3494579,0
+1,True,4/9F,1.4444444444444444,CompletedRace,925602,39,Newton Abbot,08/27/2026 16:42:00,5047953,St Just In Time,0.22361588,0
+0,False,9/4,3.25,Fell,925604,39,Newton Abbot,08/27/2026 17:12:00,7551821,Knightsbridge FR,0.3563183,0
+0,False,SP,,NonRunner,925605,39,Newton Abbot,08/27/2026 17:42:00,6032302,Estate Planning IRE,0.22611067,3.76
+4,False,5/6F,1.8333333333333335,CompletedRace,925600,39,Newton Abbot,08/27/2026 18:12:00,5419094,Gore Point,0.3036567,0
+5,False,7/2,4.5,CompletedRace,925603,39,Newton Abbot,08/27/2026 18:42:00,4420238,Jack The Savage,0.22826783,0.44
+1,True,5/4F,2.25,CompletedRace,925601,39,Newton Abbot,08/27/2026 19:12:00,6640606,Thickthorn Tom IRE,0.43037257,0
 2,False,100/30,4.333333333333334,CompletedRace,925685,393,Lingfield (AW),08/25/2026 14:30:00,5134066,Havana Touch,0.2405935,0
 3,False,6/1,7,CompletedRace,925598,67,Stratford,08/25/2026 17:40:00,5511335,Brionywells,0.3028365,4.27
 0,False,4/9F,1.4444444444444444,PulledUp,925596,67,Stratford,08/25/2026 18:15:00,6215501,Beorma IRE,0.38599667,0
