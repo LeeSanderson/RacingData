@@ -17,7 +17,10 @@ public sealed class NextDataResultsIndexReader
 {
     private static readonly string[] ResultsPath = { "props", "pageProps", "initialState", "results" };
 
-    private const string NoResultsMessageXPath = "//*[@data-testid='Text__NoResultsMessage']";
+    // The course-grouped and time-ordered index views render the same "no results" sentence under
+    // different test ids.
+    private const string NoResultsMessageXPath =
+        "//*[@data-testid='Text__NoResultsMessage' or @data-testid='Text__EmptyState']";
 
     public IReadOnlyList<string> Read(string html)
     {

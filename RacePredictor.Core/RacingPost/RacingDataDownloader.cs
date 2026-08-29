@@ -10,7 +10,10 @@ public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacin
         var currentDate = start;
         while (currentDate <= end)
         {
-            var resultsUrl = $"https://www.racingpost.com/results/{currentDate:yyyy-MM-dd}";
+            // The course-grouped index (/results/{date}) server-renders 'results.data: null' with
+            // 'error: "An error occurred"' for recent dates; the time-ordered view of the same day
+            // carries the full data and yields an identical set of links on every date both render.
+            var resultsUrl = $"https://www.racingpost.com/results/{currentDate:yyyy-MM-dd}/time-order";
             HtmlDocument htmlDocument;
             try
             {

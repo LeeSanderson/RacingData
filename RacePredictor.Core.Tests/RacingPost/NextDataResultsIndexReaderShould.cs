@@ -78,9 +78,31 @@ public class NextDataResultsIndexReaderShould
     }
 
     [Fact]
+    public void ReturnEveryRaceResultLinkForATimeOrderedDayOfRacing()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("daily_results_timeorder_20260828.html");
+
+        var links = new NextDataResultsIndexReader().Read(html);
+
+        links.Count.Should().Be(50);
+        links[0].Should().Be("/results/180/down-royal/2026-08-28/927303");
+        links.Should().OnlyHaveUniqueItems();
+    }
+
+    [Fact]
     public void ReturnNoLinksForADayWithoutRacing()
     {
         var html = ResourceLoader.ReadRacingPostExampleResource("daily_results_20251225_no_racing.html");
+
+        var links = new NextDataResultsIndexReader().Read(html);
+
+        links.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ReturnNoLinksForATimeOrderedDayWithoutRacing()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("daily_results_timeorder_20251225_no_racing.html");
 
         var links = new NextDataResultsIndexReader().Read(html);
 
