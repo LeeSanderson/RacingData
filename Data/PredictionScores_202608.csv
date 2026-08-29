@@ -1,4 +1,18 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,9/4F,3.25,CompletedRace,925722,1212,Ffos Las,08/28/2026 14:35:00,8009422,The Stone Power,0.22661225,0
+1,True,7/2,4.5,CompletedRace,925609,20,Fontwell,08/28/2026 16:05:00,7082673,Kom Tu Voudras FR,0.41401353,0.6
+1,True,9/4,3.25,CompletedRace,925612,20,Fontwell,08/28/2026 17:15:00,8908744,Delgany Second Now,0.46260178,0
+1,True,2/1,3,CompletedRace,925610,20,Fontwell,08/28/2026 18:25:00,5015356,Luna Run IRE,0.3187616,3.01
+3,False,7/2,4.5,CompletedRace,925613,20,Fontwell,08/28/2026 19:33:00,5340126,Raffles Nobu FR,0.36134654,0.66
+4,False,11/8F,2.375,CompletedRace,925746,21,Goodwood,08/28/2026 17:45:00,8084435,Ammoony FR,0.3492858,3.16
+1,True,11/8J,2.375,CompletedRace,925734,54,Sandown,08/28/2026 16:10:00,8084437,Drymee,0.3636147,0
+7,False,4/1,5,CompletedRace,925736,54,Sandown,08/28/2026 16:45:00,7708600,Box Clever,0.2553187,0
+1,True,7/2,4.5,CompletedRace,925733,54,Sandown,08/28/2026 17:20:00,7713423,Sovereign View,0.22033316,1.62
+3,False,4/5F,1.8,CompletedRace,925614,57,Sedgefield,08/28/2026 16:25:00,8913476,Datstheholyallofit IRE,0.22161111,0
+3,False,10/1,11,CompletedRace,925620,57,Sedgefield,08/28/2026 17:00:00,6256640,Expert Analysis IRE,0.3494275,5
+4,False,4/1,5,CompletedRace,925615,57,Sedgefield,08/28/2026 18:05:00,5385900,Fine Point IRE,0.22898717,3.1
+2,False,9/4F,3.25,CompletedRace,925617,57,Sedgefield,08/28/2026 18:40:00,4682894,Jeteye IRE,0.29879302,0
+0,False,11/8F,2.375,PulledUp,927314,201,Wexford,08/28/2026 18:32:00,4922499,Le Coq Hardi,0.3095355,0
 1,True,9/4,3.25,CompletedRace,925710,8,Carlisle,08/27/2026 15:00:00,9263895,Bincimbal IRE,0.28073132,0
 1,True,11/8,2.375,CompletedRace,925714,1212,Ffos Las,08/27/2026 16:37:00,7926345,Winday FR,0.32241344,0
 4,False,7/2,4.5,CompletedRace,926033,393,Lingfield (AW),08/27/2026 14:52:00,9419854,Kiah IRE,0.3494579,0
