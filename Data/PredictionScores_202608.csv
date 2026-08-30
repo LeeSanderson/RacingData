@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,3/1C,4,CompletedRace,925774,6,Beverley,08/29/2026 14:55:00,7499456,Rapide Vega IRE,0.29252073,0.39
+1,True,30/100F,1.3,CompletedRace,925623,9,Cartmel,08/29/2026 14:40:00,6092537,Gambino IRE,0.46897483,0
+4,False,7/1,8,CompletedRace,925622,9,Cartmel,08/29/2026 16:25:00,6613582,Kientzheim FR,0.2917629,2.14
+6,False,11/8F,2.375,CompletedRace,927363,178,Curragh,08/29/2026 13:53:00,9300207,So Lovely USA,0.3154797,0.03
+3,False,5/1,6,CompletedRace,927364,178,Curragh,08/29/2026 14:28:00,9344910,Banks Of The Boyne,0.298998,2.39
+2,False,2/1F,3,CompletedRace,925753,21,Goodwood,08/29/2026 14:35:00,6710718,High Degree,0.30727077,0
+5,False,85/40F,3.125,CompletedRace,925756,21,Goodwood,08/29/2026 16:20:00,6367244,Arcturus Flame IRE,0.3195989,0.53
+5,False,8/1,9,CompletedRace,925738,54,Sandown,08/29/2026 14:50:00,8432200,So Regal,0.29551837,1.94
+7,False,5/1,6,CompletedRace,925739,54,Sandown,08/29/2026 15:30:00,9609091,Sonic Angel,0.3085193,0
+1,True,7/4F,2.75,CompletedRace,925744,54,Sandown,08/29/2026 16:35:00,9212567,Victory Gold IRE,0.33654115,3.21
 3,False,9/4F,3.25,CompletedRace,925722,1212,Ffos Las,08/28/2026 14:35:00,8009422,The Stone Power,0.22661225,0
 1,True,7/2,4.5,CompletedRace,925609,20,Fontwell,08/28/2026 16:05:00,7082673,Kom Tu Voudras FR,0.41401353,0.6
 1,True,9/4,3.25,CompletedRace,925612,20,Fontwell,08/28/2026 17:15:00,8908744,Delgany Second Now,0.46260178,0
