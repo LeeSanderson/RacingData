@@ -1,0 +1,8 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,4/11F,1.3636363636363638,CompletedRace,925818,7,Brighton,09/01/2026 16:36:00,7020185,Norfolk Blue IRE,0.25317824,0
+2,False,2/1F,3,CompletedRace,925817,7,Brighton,09/01/2026 18:45:00,5118327,Serenity Dream IRE,0.25263077,0
+1,True,13/2,7.5,CompletedRace,927839,184,Gowran Park,09/01/2026 16:00:00,7866002,Quinta Girl,0.2332248,1.45
+1,True,11/4,3.75,CompletedRace,925825,393,Lingfield (AW),09/01/2026 16:20:00,5357886,Hope Rising IRE,0.34992537,0
+5,False,5/2F,3.5,CompletedRace,925812,49,Ripon,09/01/2026 14:10:00,6425087,His Finest Hour,0.23904808,0
+4,False,5/6F,1.8333333333333335,CompletedRace,925938,513,Wolverhampton (AW),09/01/2026 17:45:00,8236330,Media Legend IRE,0.31559002,0
+4,False,4/1,5,CompletedRace,925937,513,Wolverhampton (AW),09/01/2026 18:20:00,8432215,Variety Act GER,0.31979442,0
