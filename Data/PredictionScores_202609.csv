@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,9/2,5.5,CompletedRace,925830,5,Bath,09/02/2026 17:02:00,8111191,Asset GER,0.29172677,1.18
+0,False,SP,,NonRunner,925947,1079,Kempton (AW),09/02/2026 17:30:00,7609891,Musical Soldier IRE,0.32788667,0
+6,False,13/2,7.5,CompletedRace,925943,1079,Kempton (AW),09/02/2026 20:00:00,9286455,Raggaas,0.2578561,0
+2,False,4/9F,1.4444444444444444,CompletedRace,925946,1079,Kempton (AW),09/02/2026 20:30:00,7947751,Madjid,0.45813423,0
 1,True,4/11F,1.3636363636363638,CompletedRace,925818,7,Brighton,09/01/2026 16:36:00,7020185,Norfolk Blue IRE,0.25317824,0
 2,False,2/1F,3,CompletedRace,925817,7,Brighton,09/01/2026 18:45:00,5118327,Serenity Dream IRE,0.25263077,0
 1,True,13/2,7.5,CompletedRace,927839,184,Gowran Park,09/01/2026 16:00:00,7866002,Quinta Girl,0.2332248,1.45
