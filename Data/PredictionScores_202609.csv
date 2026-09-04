@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,5/1,6,CompletedRace,925857,23,Haydock,09/03/2026 15:17:00,9115664,Diplomata,0.25346887,1.47
+1,True,5/4F,2.25,CompletedRace,925851,23,Haydock,09/03/2026 16:25:00,8295085,Hoseki IRE,0.42904213,0
+3,False,3/1,4,CompletedRace,928017,211,Longchamp,09/03/2026 17:00:00,8018259,Mirik,0.28696042,3.98
+3,False,9/1,10,CompletedRace,925960,1353,Newcastle (AW),09/03/2026 15:24:00,4532158,It's All About You IRE,0.26551983,5
+5,False,7/4F,2.75,CompletedRace,925849,52,Salisbury,09/03/2026 17:55:00,9409953,Aleatrix,0.39343756,0.15
+5,False,6/4F,2.5,CompletedRace,925978,394,Southwell (AW),09/03/2026 17:35:00,9105997,Much,0.31980908,0
+1,True,7/4F,2.75,CompletedRace,925976,394,Southwell (AW),09/03/2026 18:40:00,6666854,The Third Star,0.25520438,0
+6,False,7/4J,2.75,CompletedRace,925975,394,Southwell (AW),09/03/2026 19:10:00,7020553,Franschhoek,0.34552634,0
+2,False,7/4F,2.75,CompletedRace,925979,394,Southwell (AW),09/03/2026 19:40:00,8973287,Korbut,0.31345892,0
 2,False,9/2,5.5,CompletedRace,925830,5,Bath,09/02/2026 17:02:00,8111191,Asset GER,0.29172677,1.18
 0,False,SP,,NonRunner,925947,1079,Kempton (AW),09/02/2026 17:30:00,7609891,Musical Soldier IRE,0.32788667,0
 6,False,13/2,7.5,CompletedRace,925943,1079,Kempton (AW),09/02/2026 20:00:00,9286455,Raggaas,0.2578561,0
