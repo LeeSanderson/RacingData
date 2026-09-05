@@ -1,4 +1,15 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,5/1,6,CompletedRace,925876,2,Ascot,09/04/2026 17:25:00,7534601,First Legion IRE,0.2687923,0
+2,False,85/40,3.125,CompletedRace,925633,4,Bangor-on-Dee,09/04/2026 14:50:00,6640606,Thickthorn Tom IRE,0.39849252,0
+5,False,3/1,4,CompletedRace,925634,4,Bangor-on-Dee,09/04/2026 15:25:00,8489903,Kiwi de Cotte FR,0.40687615,1.16
+0,False,SP,,NonRunner,925638,4,Bangor-on-Dee,09/04/2026 16:00:00,8641772,I Heard A Rumour IRE,0.28640565,0
+2,False,4/1,5,CompletedRace,927969,180,Down Royal,09/04/2026 17:30:00,9258970,Elyatta,0.22623296,2.48
+1,True,8/13F,1.6153846153846154,CompletedRace,925983,1079,Kempton (AW),09/04/2026 18:24:00,9595363,Gilding The Lily,0.47328418,0
+6,False,5/1,6,CompletedRace,925982,1079,Kempton (AW),09/04/2026 18:54:00,8304795,Fallacious Promise,0.25438702,1.12
+9,False,9/4F,3.25,CompletedRace,927960,203,Kilbeggan,09/04/2026 16:42:00,8455156,Cocofred,0.26925394,2.1
+0,False,4/6F,1.6666666666666665,Fell,927965,203,Kilbeggan,09/04/2026 19:15:00,5059601,My Great Mate,0.34293586,0
+1,True,10/11F,1.9090909090909092,CompletedRace,925641,101,Worcester,09/04/2026 16:30:00,5884290,Dexperts Opinion IRE,0.3762492,0.88
+1,True,5/4F,2.25,CompletedRace,925644,101,Worcester,09/04/2026 17:03:00,4977912,Holy Legend,0.3306378,0
 1,True,5/1,6,CompletedRace,925857,23,Haydock,09/03/2026 15:17:00,9115664,Diplomata,0.25346887,1.47
 1,True,5/4F,2.25,CompletedRace,925851,23,Haydock,09/03/2026 16:25:00,8295085,Hoseki IRE,0.42904213,0
 3,False,3/1,4,CompletedRace,928017,211,Longchamp,09/03/2026 17:00:00,8018259,Mirik,0.28696042,3.98
