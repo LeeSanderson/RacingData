@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,7/4F,2.75,CompletedRace,925657,20,Fontwell,09/06/2026 15:30:00,4231705,Gata Ban IRE,0.29514682,0
+4,False,5/2,3.5,CompletedRace,925656,20,Fontwell,09/06/2026 16:05:00,7191405,Ask A Sainte,0.36505577,2.59
+1,True,4/7F,1.5714285714285714,CompletedRace,925654,20,Fontwell,09/06/2026 16:40:00,2984463,Midnight Jewel,0.32919127,3.61
+5,False,36/5,8.2,CompletedRace,928187,211,Longchamp,09/06/2026 12:58:00,9194273,Vignelli,0.42773452,5
+3,False,4/5F,1.8,CompletedRace,928190,211,Longchamp,09/06/2026 15:25:00,7395230,Gstaad GB,0.34730375,0
+5,False,2/5F,1.4,CompletedRace,928191,211,Longchamp,09/06/2026 16:00:00,7643439,Benvenuto Cellini IRE,0.3724942,0
+2,False,29/10,3.9,CompletedRace,928192,211,Longchamp,09/06/2026 16:35:00,5826747,Bay City Roller IRE,0.5563611,3.88
+6,False,11/10F,2.1,CompletedRace,928116,416,Sha Tin,09/06/2026 09:15:00,5708876,Winning Ovation IRE,0.35040548,0
 1,True,EvensF,2,CompletedRace,925880,2,Ascot,09/05/2026 13:40:00,8200991,Thunder Call,0.30038297,0
 8,False,5/4F,2.25,CompletedRace,925879,2,Ascot,09/05/2026 14:10:00,8362122,Heyzoom IRE,0.2845316,0
 4,False,9/4F,3.25,CompletedRace,925884,2,Ascot,09/05/2026 15:25:00,9189212,Kahin IRE,0.33373562,2.28
