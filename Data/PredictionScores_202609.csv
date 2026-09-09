@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,15/8F,2.875,CompletedRace,926537,4,Bangor-on-Dee,09/08/2026 16:38:00,5793358,Duel Au Soleil FR,0.30378523,3.08
+1,True,10/11F,1.9090909090909092,CompletedRace,926536,4,Bangor-on-Dee,09/08/2026 17:12:00,5746437,Captain Cool IRE,0.47806486,0
+1,True,5/4F,2.25,CompletedRace,926538,4,Bangor-on-Dee,09/08/2026 17:42:00,7272321,Hidden Fortune IRE,0.34802458,0
+0,False,7/2,4.5,PulledUp,926541,4,Bangor-on-Dee,09/08/2026 18:12:00,6425079,Lunar Orbit IRE,0.30110422,0
+5,False,3/1J,4,CompletedRace,926540,4,Bangor-on-Dee,09/08/2026 18:42:00,8205601,Playful Fox FR,0.46012315,2.38
+4,False,7/1,8,CompletedRace,926539,4,Bangor-on-Dee,09/08/2026 19:12:00,5057495,Camino Rocio IRE,0.2848777,4.57
+2,False,1/33F,1.0303030303030303,CompletedRace,926605,21,Goodwood,09/08/2026 13:30:00,9631950,Najidi Storm,0.6119315,0
+1,True,8/15F,1.5333333333333332,CompletedRace,926602,21,Goodwood,09/08/2026 14:40:00,9317889,Spirit Tango IRE,0.35700798,0.76
+1,True,8/11F,1.7272727272727273,CompletedRace,926604,21,Goodwood,09/08/2026 15:50:00,4701450,Manxman IRE,0.40260056,0.16
 7,False,27/10F,3.7,CompletedRace,928081,402,Kentucky Downs,09/07/2026 22:45:00,5366185,Formidable Man,0.26873556,0.96
 1,True,2/5F,1.4,CompletedRace,926527,39,Newton Abbot,09/07/2026 14:00:00,7922027,Moment Of Light,0.46336532,0
 3,False,7/4F,2.75,CompletedRace,926524,39,Newton Abbot,09/07/2026 15:00:00,5793389,Saint Polo FR,0.3587575,0
