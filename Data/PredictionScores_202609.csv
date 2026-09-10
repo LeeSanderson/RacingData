@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,4/6F,1.6666666666666665,CompletedRace,928089,57,Sedgefield,09/09/2026 14:00:00,7753413,Way Maker IRE,0.37683195,0.28
+3,False,11/4,3.75,CompletedRace,928084,57,Sedgefield,09/09/2026 15:00:00,4455445,Glenmalure Flyer IRE,0.49507463,0
+1,True,5/2,3.5,CompletedRace,928085,57,Sedgefield,09/09/2026 16:00:00,7258540,Loriko FR,0.3586121,0
+3,False,5/2,3.5,CompletedRace,928087,57,Sedgefield,09/09/2026 16:30:00,5812499,East Eagle IRE,0.30658558,0
+0,False,SP,,NonRunner,928088,57,Sedgefield,09/09/2026 17:05:00,5793389,Saint Polo FR,0.47790483,4.89
 1,True,15/8F,2.875,CompletedRace,926537,4,Bangor-on-Dee,09/08/2026 16:38:00,5793358,Duel Au Soleil FR,0.30378523,3.08
 1,True,10/11F,1.9090909090909092,CompletedRace,926536,4,Bangor-on-Dee,09/08/2026 17:12:00,5746437,Captain Cool IRE,0.47806486,0
 1,True,5/4F,2.25,CompletedRace,926538,4,Bangor-on-Dee,09/08/2026 17:42:00,7272321,Hidden Fortune IRE,0.34802458,0
