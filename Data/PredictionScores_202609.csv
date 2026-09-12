@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,8/11F,1.7272727272727273,CompletedRace,926678,13,Chester,09/11/2026 14:12:00,8406260,Dovecote,0.4532027,3.02
+3,False,EvensF,2,CompletedRace,926648,15,Doncaster,09/11/2026 13:15:00,9456980,Nabati IRE,0.31047642,0
+1,True,5/6F,1.8333333333333335,CompletedRace,926644,15,Doncaster,09/11/2026 15:00:00,5968920,Caballo De Mar IRE,0.34935904,0
+1,True,2/5F,1.4,CompletedRace,926663,52,Salisbury,09/11/2026 17:58:00,6278716,Amiloc,0.22348832,0
+3,False,7/2,4.5,CompletedRace,926669,54,Sandown,09/11/2026 16:22:00,5598652,Philanthropist,0.27694368,0.18
+3,False,8/1,9,CompletedRace,926672,54,Sandown,09/11/2026 16:57:00,9429292,Vanilla Skies,0.26367617,0
+2,False,100/30,4.333333333333334,CompletedRace,926671,54,Sandown,09/11/2026 17:32:00,8214901,Del Corso,0.23219204,0
 4,False,9/4F,3.25,CompletedRace,926637,15,Doncaster,09/10/2026 15:00:00,8205616,Prizeland,0.3293706,2.8
 4,False,7/4F,2.75,CompletedRace,926642,15,Doncaster,09/10/2026 16:10:00,9503902,Al Wathba FR,0.3334809,0
 4,False,9/4F,3.25,CompletedRace,926643,15,Doncaster,09/10/2026 16:45:00,9317881,Storm Blade,0.27669233,0
