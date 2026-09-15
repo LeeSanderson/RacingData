@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,5/1,6,CompletedRace,926866,1079,Kempton (AW),09/14/2026 20:00:00,9217574,Sax Avoidance IRE,0.2886444,0
+2,False,11/8F,2.375,CompletedRace,926556,57,Sedgefield,09/14/2026 14:00:00,5856695,Fairlawn Skipper,0.4653902,0
+2,False,100/30,4.333333333333334,CompletedRace,926557,57,Sedgefield,09/14/2026 15:00:00,7453801,Uncle Al IRE,0.2855891,4.56
+5,False,9/1,10,CompletedRace,926559,57,Sedgefield,09/14/2026 15:30:00,5499901,Maggies Boy IRE,0.30556652,5
+2,False,6/5F,2.2,CompletedRace,926558,57,Sedgefield,09/14/2026 16:00:00,7499327,William Yeats,0.223593,0
+1,True,2/9F,1.2222222222222223,CompletedRace,926711,80,Thirsk,09/14/2026 15:21:00,9554414,Majestic Jude IRE,0.48836252,0
+9,False,5/2J,3.5,CompletedRace,926714,80,Thirsk,09/14/2026 16:21:00,7020583,Hatamoto,0.2538338,0
 1,True,4/7F,1.5714285714285714,CompletedRace,923717,178,Curragh,09/13/2026 14:50:00,9051032,Sun Goddess,0.39108253,0
 7,False,8/1,9,CompletedRace,923719,178,Curragh,09/13/2026 16:00:00,9326708,Haffner USA,0.31275922,0.51
 1,True,4/11F,1.3636363636363638,CompletedRace,921886,178,Curragh,09/13/2026 16:35:00,6102190,Scandinavia USA,0.36182955,0
