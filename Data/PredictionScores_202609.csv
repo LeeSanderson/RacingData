@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,5/4F,2.25,CompletedRace,926725,47,Redcar,09/15/2026 15:53:00,8309326,Supplicate,0.38297248,0
+1,True,EvensF,2,CompletedRace,926564,84,Uttoxeter,09/15/2026 15:00:00,6362961,Ice Jet IRE,0.43025643,0
+4,False,7/4F,2.75,CompletedRace,926561,84,Uttoxeter,09/15/2026 16:00:00,7015774,Axel Bleue,0.2935069,0
+9,False,6/4F,2.5,CompletedRace,926737,104,Yarmouth,09/15/2026 14:17:00,7204966,Toastmaster IRE,0.3283213,3.67
+5,False,11/4F,3.75,CompletedRace,926738,104,Yarmouth,09/15/2026 15:47:00,9613741,Javelot,0.26169991,0
 1,True,5/1,6,CompletedRace,926866,1079,Kempton (AW),09/14/2026 20:00:00,9217574,Sax Avoidance IRE,0.2886444,0
 2,False,11/8F,2.375,CompletedRace,926556,57,Sedgefield,09/14/2026 14:00:00,5856695,Fairlawn Skipper,0.4653902,0
 2,False,100/30,4.333333333333334,CompletedRace,926557,57,Sedgefield,09/14/2026 15:00:00,7453801,Uncle Al IRE,0.2855891,4.56
