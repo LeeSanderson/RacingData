@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,5/4F,2.25,CompletedRace,928996,469,Caulfield,09/19/2026 06:35:00,5465281,Cosmic Crusader NZ,0.27572364,0
+2,False,12/5,3.4,CompletedRace,929049,204,Chantilly,09/19/2026 12:58:00,9340130,Ciceron,0.38506222,0.53
+6,False,5/2F,3.5,CompletedRace,926802,36,Newbury,09/19/2026 13:37:00,5390044,French Duke IRE,0.22346024,0
+0,False,SP,,NonRunner,926805,36,Newbury,09/19/2026 16:30:00,8084437,Drymee,0.2561036,0
+7,False,2/1F,3,CompletedRace,926818,38,Newmarket,09/19/2026 13:50:00,8084432,Food For Thought,0.4214064,2.05
+5,False,2/1F,3,CompletedRace,926814,38,Newmarket,09/19/2026 16:20:00,4650593,Gooloogong IRE,0.30868712,0
+1,True,2/13F,1.1538461538461537,CompletedRace,929005,471,Randwick,09/19/2026 06:55:00,6323522,Autumn Glow,0.28108773,0
 3,False,11/4,3.75,CompletedRace,926785,3,Ayr,09/18/2026 13:20:00,8688543,Motown Filly IRE,0.22920966,1.45
 6,False,11/8F,2.375,CompletedRace,928999,3,Ayr,09/18/2026 16:45:00,7020142,Ice Cube IRE,0.48131865,3.5
 4,False,19/5,4.8,CompletedRace,928868,258,Belmont Park,09/18/2026 21:14:00,4743438,Phileas Fogg,0.28019857,0
