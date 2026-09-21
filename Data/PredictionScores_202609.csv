@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,13/10F,2.3,CompletedRace,929034,247,Dortmund,09/20/2026 14:45:00,5125839,Lordano,0.23588875,0
+1,True,5/4F,2.25,CompletedRace,928981,190,Listowel,09/20/2026 16:18:00,4918273,Ocastle Des Mottes FR,0.29739034,0
+1,True,11/8,2.375,CompletedRace,926586,44,Plumpton,09/20/2026 14:08:00,8214899,Getarose IRE,0.38721797,4.71
+1,True,2/7F,1.2857142857142856,CompletedRace,928854,44,Plumpton,09/20/2026 14:38:00,6367244,Arcturus Flame IRE,0.45745158,5
+3,False,4/1,5,CompletedRace,926581,44,Plumpton,09/20/2026 16:08:00,8330889,Mojito Des Mottes FR,0.44487843,4.44
+2,False,4/6F,1.6666666666666665,CompletedRace,926587,44,Plumpton,09/20/2026 16:38:00,6350114,Farhh Echo IRE,0.2786014,0
 2,False,5/4F,2.25,CompletedRace,928996,469,Caulfield,09/19/2026 06:35:00,5465281,Cosmic Crusader NZ,0.27572364,0
 2,False,12/5,3.4,CompletedRace,929049,204,Chantilly,09/19/2026 12:58:00,9340130,Ciceron,0.38506222,0.53
 6,False,5/2F,3.5,CompletedRace,926802,36,Newbury,09/19/2026 13:37:00,5390044,French Duke IRE,0.22346024,0
