@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,8/13F,1.6153846153846154,CompletedRace,927491,1212,Ffos Las,09/21/2026 16:19:00,8414343,Lucky Radar IRE,0.29783985,4.16
+2,False,5/2,3.5,CompletedRace,927503,30,Leicester,09/21/2026 13:59:00,9359953,Pequenita,0.2980084,0.2
+3,False,6/5F,2.2,CompletedRace,927664,513,Wolverhampton (AW),09/21/2026 16:35:00,7055594,Jack Langley,0.35941464,0
 1,True,13/10F,2.3,CompletedRace,929034,247,Dortmund,09/20/2026 14:45:00,5125839,Lordano,0.23588875,0
 1,True,5/4F,2.25,CompletedRace,928981,190,Listowel,09/20/2026 16:18:00,4918273,Ocastle Des Mottes FR,0.29739034,0
 1,True,11/8,2.375,CompletedRace,926586,44,Plumpton,09/20/2026 14:08:00,8214899,Getarose IRE,0.38721797,4.71
