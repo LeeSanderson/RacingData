@@ -1,4 +1,16 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,6/4,2.5,CompletedRace,927505,6,Beverley,09/22/2026 14:05:00,9786679,Bayraktar IRE,0.6725259,5
+3,False,3/1,4,CompletedRace,927396,20,Fontwell,09/22/2026 14:12:00,6578000,Tilehurst,0.2338325,0.55
+2,False,5/2,3.5,CompletedRace,927394,20,Fontwell,09/22/2026 14:47:00,2689814,Lermoos Legend,0.3194023,0
+3,False,7/2,4.5,CompletedRace,927395,20,Fontwell,09/22/2026 15:57:00,4867603,Siam Park IRE,0.27167702,3
+3,False,EvensF,2,CompletedRace,927393,20,Fontwell,09/22/2026 16:32:00,3984172,Flashy Boy IRE,0.29170427,0
+6,False,EvensF,2,CompletedRace,929058,190,Listowel,09/22/2026 16:07:00,9326711,Oklahoma USA,0.2681644,0
+1,True,15/8F,2.875,CompletedRace,929060,190,Listowel,09/22/2026 17:16:00,9222152,Count Bezukhov,0.35037658,0
+4,False,14/1,15,CompletedRace,929118,394,Southwell (AW),09/22/2026 17:30:00,7762482,Assiri Heights IRE,0.2720691,1.11
+1,True,5/2,3.5,CompletedRace,927399,85,Warwick,09/22/2026 13:55:00,4175302,In The Trenches,0.4656448,5
+2,False,4/7F,1.5714285714285714,CompletedRace,927400,85,Warwick,09/22/2026 15:05:00,6456211,Tralee Girl IRE,0.4847418,0
+3,False,EvensF,2,CompletedRace,927398,85,Warwick,09/22/2026 15:40:00,7051293,Dunkerque DEN,0.39821425,0.31
+2,False,10/11F,1.9090909090909092,CompletedRace,927403,85,Warwick,09/22/2026 16:15:00,8812028,Guts And Glory,0.2555178,0
 1,True,8/13F,1.6153846153846154,CompletedRace,927491,1212,Ffos Las,09/21/2026 16:19:00,8414343,Lucky Radar IRE,0.29783985,4.16
 2,False,5/2,3.5,CompletedRace,927503,30,Leicester,09/21/2026 13:59:00,9359953,Pequenita,0.2980084,0.2
 3,False,6/5F,2.2,CompletedRace,927664,513,Wolverhampton (AW),09/21/2026 16:35:00,7055594,Jack Langley,0.35941464,0
