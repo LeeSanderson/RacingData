@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,6/5J,2.2,CompletedRace,927516,21,Goodwood,09/23/2026 14:05:00,8245520,Plaid,0.4366863,1.12
+2,False,7/4F,2.75,CompletedRace,927515,21,Goodwood,09/23/2026 14:40:00,5881623,Storm Star,0.24492063,0
+1,True,6/4F,2.5,CompletedRace,927512,21,Goodwood,09/23/2026 15:15:00,7462332,Respond IRE,0.32811955,3.35
+4,False,12/1,13,CompletedRace,927682,1079,Kempton (AW),09/23/2026 17:30:00,9344939,Nothing But Love,0.2335781,0
+3,False,11/1,12,CompletedRace,929062,190,Listowel,09/23/2026 14:30:00,5864634,Cosmos d'Ainay FR,0.39980736,5
+1,True,EvensF,2,CompletedRace,929065,190,Listowel,09/23/2026 16:47:00,5713812,La Note Verte GB,0.3377259,0
 1,True,6/4,2.5,CompletedRace,927505,6,Beverley,09/22/2026 14:05:00,9786679,Bayraktar IRE,0.6725259,5
 3,False,3/1,4,CompletedRace,927396,20,Fontwell,09/22/2026 14:12:00,6578000,Tilehurst,0.2338325,0.55
 2,False,5/2,3.5,CompletedRace,927394,20,Fontwell,09/22/2026 14:47:00,2689814,Lermoos Legend,0.3194023,0
