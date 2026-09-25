@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,3/1F,4,CompletedRace,927532,38,Newmarket,09/24/2026 15:00:00,9377508,Mezzo Forte IRE,0.37747857,0.45
+1,True,4/7F,1.5714285714285714,CompletedRace,927533,38,Newmarket,09/24/2026 15:35:00,5033142,Gregory,0.3341326,0
+3,False,4/1,5,CompletedRace,927535,38,Newmarket,09/24/2026 16:10:00,8678960,Charles Darnay,0.27069187,0.51
+1,True,11/2,6.5,CompletedRace,927413,41,Perth,09/24/2026 13:39:00,8913476,Datstheholyallofit IRE,0.28809023,2.8
+2,False,4/1,5,CompletedRace,927411,41,Perth,09/24/2026 14:14:00,5587080,Tamarind Bay IRE,0.38404366,0
+3,False,5/6F,1.8333333333333335,CompletedRace,927416,41,Perth,09/24/2026 14:49:00,6256640,Expert Analysis IRE,0.33623195,0
+3,False,5/2F,3.5,CompletedRace,927412,41,Perth,09/24/2026 15:24:00,6166356,Sir Carnegie IRE,0.2533889,0
+3,False,3/1,4,CompletedRace,927528,46,Pontefract,09/24/2026 14:07:00,9777158,Rogue Crusader,0.31772068,0
+2,False,7/1,8,CompletedRace,927764,394,Southwell (AW),09/24/2026 20:30:00,7020562,Takeitorleaveit IRE,0.22722687,0
 1,True,6/5J,2.2,CompletedRace,927516,21,Goodwood,09/23/2026 14:05:00,8245520,Plaid,0.4366863,1.12
 2,False,7/4F,2.75,CompletedRace,927515,21,Goodwood,09/23/2026 14:40:00,5881623,Storm Star,0.24492063,0
 1,True,6/4F,2.5,CompletedRace,927512,21,Goodwood,09/23/2026 15:15:00,7462332,Respond IRE,0.32811955,3.35
