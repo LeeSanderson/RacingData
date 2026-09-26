@@ -1,4 +1,16 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,9/2,5.5,CompletedRace,927553,23,Haydock,09/25/2026 14:33:00,9004857,Thebesthasyetocome IRE,0.23390093,2.11
+1,True,5/2,3.5,CompletedRace,927548,23,Haydock,09/25/2026 16:50:00,8188065,Glory Road GER,0.31470382,2.38
+4,False,9/2,5.5,CompletedRace,927541,38,Newmarket,09/25/2026 13:15:00,8494420,Estissa,0.25524577,0
+7,False,11/4,3.75,CompletedRace,927540,38,Newmarket,09/25/2026 13:50:00,8205616,Prizeland,0.2953482,0
+6,False,16/1,17,CompletedRace,925068,38,Newmarket,09/25/2026 14:25:00,9249282,Sea Venture IRE,0.33901003,3.68
+1,True,4/9F,1.4444444444444444,CompletedRace,927539,38,Newmarket,09/25/2026 15:00:00,8245526,Talk Of New York,0.4145786,0
+2,False,5/1,6,CompletedRace,927542,38,Newmarket,09/25/2026 15:35:00,7627158,Archers Bay IRE,0.42390582,5
+7,False,4/1F,5,CompletedRace,927543,38,Newmarket,09/25/2026 16:45:00,7661868,Waterford Castle IRE,0.29656094,0.73
+1,True,5/6F,1.8333333333333335,CompletedRace,927419,101,Worcester,09/25/2026 13:30:00,5764652,Little Ledgend IRE,0.3418655,0
+0,False,13/8F,2.625,PulledUp,927420,101,Worcester,09/25/2026 15:15:00,9051047,Premier Tenor FR,0.45297158,0
+1,True,5/2F,3.5,CompletedRace,927421,101,Worcester,09/25/2026 15:50:00,6891772,The Egyptian Ginge IRE,0.22328152,0
+1,True,5/2,3.5,CompletedRace,927423,101,Worcester,09/25/2026 16:25:00,8370970,Network Rgb,0.22533041,0
 3,False,3/1F,4,CompletedRace,927532,38,Newmarket,09/24/2026 15:00:00,9377508,Mezzo Forte IRE,0.37747857,0.45
 1,True,4/7F,1.5714285714285714,CompletedRace,927533,38,Newmarket,09/24/2026 15:35:00,5033142,Gregory,0.3341326,0
 3,False,4/1,5,CompletedRace,927535,38,Newmarket,09/24/2026 16:10:00,8678960,Charles Darnay,0.27069187,0.51
