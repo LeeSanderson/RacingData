@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,10/11F,1.9090909090909092,CompletedRace,927227,178,Curragh,09/26/2026 15:10:00,9721420,Noble Exhibit,0.33542126,0
+7,False,11/2,6.5,CompletedRace,927561,23,Haydock,09/26/2026 16:00:00,9599856,Camarda Rc,0.24761805,0
+1,True,8/13F,1.6153846153846154,CompletedRace,929218,190,Listowel,09/26/2026 15:21:00,7160509,Roc Dino FR,0.3125953,0
+1,True,5/2,3.5,CompletedRace,927426,35,Market Rasen,09/26/2026 15:50:00,5826652,Jet To Vegas IRE,0.34682885,1.03
+2,False,17/2,9.5,CompletedRace,927545,38,Newmarket,09/26/2026 13:22:00,9554512,Polyxena IRE,0.2573841,0
+3,False,9/2,5.5,CompletedRace,925071,38,Newmarket,09/26/2026 13:55:00,9678410,Quicken Away USA,0.31998405,1.52
+3,False,3/1,4,CompletedRace,927568,49,Ripon,09/26/2026 14:16:00,9162150,Forest Berry,0.2765272,2.05
+4,False,6/4F,2.5,CompletedRace,927563,49,Ripon,09/26/2026 17:45:00,6425091,Talismans Time,0.34112287,1.75
+1,True,17/20F,1.85,CompletedRace,929664,311,Rosehill,09/26/2026 06:25:00,5911337,Lazzura,0.33339834,0
+5,False,85/40,3.125,CompletedRace,927697,394,Southwell (AW),09/26/2026 18:30:00,7947751,Madjid,0.25429544,0
 2,False,9/2,5.5,CompletedRace,927553,23,Haydock,09/25/2026 14:33:00,9004857,Thebesthasyetocome IRE,0.23390093,2.11
 1,True,5/2,3.5,CompletedRace,927548,23,Haydock,09/25/2026 16:50:00,8188065,Glory Road GER,0.31470382,2.38
 4,False,9/2,5.5,CompletedRace,927541,38,Newmarket,09/25/2026 13:15:00,8494420,Estissa,0.25524577,0
