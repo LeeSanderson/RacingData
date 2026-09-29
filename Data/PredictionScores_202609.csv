@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,7/2,4.5,CompletedRace,929675,180,Down Royal,09/28/2026 13:59:00,9227258,Nellcote,0.21984136,0
+2,False,4/6F,1.6666666666666665,CompletedRace,927431,39,Newton Abbot,09/28/2026 13:50:00,5490501,Depalma IRE,0.3388588,0
+1,True,3/1,4,CompletedRace,927434,39,Newton Abbot,09/28/2026 14:25:00,8551786,Scott's Legacy IRE,0.29461303,4.35
+1,True,5/1,6,CompletedRace,927432,39,Newton Abbot,09/28/2026 15:00:00,5419094,Gore Point,0.3154135,3.95
+3,False,11/8F,2.375,CompletedRace,927436,39,Newton Abbot,09/28/2026 15:35:00,5793389,Saint Polo FR,0.46157944,5
+2,False,13/8F,2.625,CompletedRace,927433,39,Newton Abbot,09/28/2026 16:10:00,7365441,Kilnew Supreme IRE,0.39189154,0
+4,False,11/10F,2.1,CompletedRace,929689,196,Roscommon,09/28/2026 16:30:00,7205147,Wild Bill Hickok,0.32105306,0
+7,False,12/1,13,CompletedRace,929690,196,Roscommon,09/28/2026 17:05:00,5441334,Nastya,0.25118166,2.12
 1,True,17/20F,1.85,CompletedRace,929668,469,Caulfield,09/27/2026 06:00:00,3276974,Pride Of Jenni,0.25023916,0
 2,False,7/2,4.5,CompletedRace,929235,178,Curragh,09/27/2026 15:45:00,9300195,Alpine Wedding,0.3235704,2.94
 2,False,11/4,3.75,CompletedRace,929236,178,Curragh,09/27/2026 16:55:00,9222301,Romance GER,0.24881445,1.98
