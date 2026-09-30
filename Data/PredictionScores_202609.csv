@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+7,False,9/1,10,CompletedRace,927601,3,Ayr,09/29/2026 14:08:00,9254386,Leopards Rock,0.22388184,1.26
+1,True,3/1,4,CompletedRace,927438,57,Sedgefield,09/29/2026 15:15:00,5568456,Tanking Along IRE,0.26209396,0.79
+1,True,8/15F,1.5333333333333332,CompletedRace,927441,57,Sedgefield,09/29/2026 15:45:00,5353783,Whitewinewednesday IRE,0.3120377,0
+1,True,7/2,4.5,CompletedRace,927439,57,Sedgefield,09/29/2026 16:15:00,4144687,Jet Of Dreams IRE,0.27968645,1.2
 1,True,7/2,4.5,CompletedRace,929675,180,Down Royal,09/28/2026 13:59:00,9227258,Nellcote,0.21984136,0
 2,False,4/6F,1.6666666666666665,CompletedRace,927431,39,Newton Abbot,09/28/2026 13:50:00,5490501,Depalma IRE,0.3388588,0
 1,True,3/1,4,CompletedRace,927434,39,Newton Abbot,09/28/2026 14:25:00,8551786,Scott's Legacy IRE,0.29461303,4.35
