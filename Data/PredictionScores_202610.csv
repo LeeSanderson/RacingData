@@ -1,0 +1,10 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+0,False,SP,,NonRunner,929778,176,Bellewstown,10/01/2026 13:00:00,9467453,Ippy,0.23439537,5
+3,False,11/10,2.1,CompletedRace,929780,176,Bellewstown,10/01/2026 13:35:00,9734686,Tax Me Later,0.31010848,0
+1,True,4/1,5,CompletedRace,929781,176,Bellewstown,10/01/2026 14:10:00,8058123,Big Bill FR,0.33300927,3.78
+1,True,10/11F,1.9090909090909092,CompletedRace,929784,176,Bellewstown,10/01/2026 15:55:00,9631936,Magnum Cor,0.49927104,0
+2,False,9/4F,3.25,CompletedRace,929759,177,Clonmel,10/01/2026 16:42:00,5870134,Kashchei GB,0.23362811,0
+5,False,2/1F,3,CompletedRace,927454,61,Southwell,10/01/2026 14:15:00,4320814,Gone In Sixty,0.24261254,0
+2,False,9/2,5.5,CompletedRace,927450,61,Southwell,10/01/2026 14:50:00,4117825,Law Of Supply IRE,0.27339235,2.34
+2,False,10/11F,1.9090909090909092,CompletedRace,927449,61,Southwell,10/01/2026 15:25:00,7592655,Moments Away IRE,0.48372105,2.16
+2,False,2/1,3,CompletedRace,927451,61,Southwell,10/01/2026 17:10:00,7882532,Crack Ops,0.35470635,0
