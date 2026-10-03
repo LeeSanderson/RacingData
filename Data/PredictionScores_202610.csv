@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+7,False,2/1F,3,CompletedRace,927641,2,Ascot,10/02/2026 15:00:00,8455175,Cockade,0.24120502,0
+1,True,4/6F,1.6666666666666665,CompletedRace,927638,2,Ascot,10/02/2026 15:35:00,8259452,Infraad IRE,0.4045964,0
+1,True,11/4,3.75,CompletedRace,929939,184,Gowran Park,10/02/2026 14:31:00,5713811,Gino Bella,0.25879857,3.13
+1,True,4/6F,1.6666666666666665,CompletedRace,927459,25,Hexham,10/02/2026 13:38:00,6649595,Ride Like A Girl FR,0.31544513,0
+1,True,13/8F,2.625,CompletedRace,927455,25,Hexham,10/02/2026 14:48:00,7204747,Mr McLoughlan,0.2750941,0
+6,False,100/30,4.333333333333334,CompletedRace,927456,25,Hexham,10/02/2026 15:23:00,3030298,Glory And Honour IRE,0.2706716,4.45
+5,False,5/2,3.5,CompletedRace,927461,25,Hexham,10/02/2026 15:58:00,4737904,Stylish Recruit IRE,0.29020524,0.88
+4,False,6/5F,2.2,CompletedRace,927458,25,Hexham,10/02/2026 16:33:00,6550765,Soldier In Mayo IRE,0.29618722,0
+1,True,100/30,4.333333333333334,CompletedRace,927742,513,Wolverhampton (AW),10/02/2026 16:25:00,9115739,Quiet Summer GER,0.2710127,0
+1,True,4/9F,1.4444444444444444,CompletedRace,927743,513,Wolverhampton (AW),10/02/2026 17:25:00,7992526,Enchanted Queen,0.45639786,0
 0,False,SP,,NonRunner,929778,176,Bellewstown,10/01/2026 13:00:00,9467453,Ippy,0.23439537,5
 3,False,11/10,2.1,CompletedRace,929780,176,Bellewstown,10/01/2026 13:35:00,9734686,Tax Me Later,0.31010848,0
 1,True,4/1,5,CompletedRace,929781,176,Bellewstown,10/01/2026 14:10:00,8058123,Big Bill FR,0.33300927,3.78
