@@ -1,4 +1,21 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,9/2,5.5,CompletedRace,927465,20,Fontwell,10/03/2026 14:02:00,3601926,Mcgregors Charge,0.26513562,5
+1,True,11/4,3.75,CompletedRace,927466,20,Fontwell,10/03/2026 17:00:00,7426991,Glance Of Glory,0.25996095,4.48
+1,True,11/8,2.375,CompletedRace,930027,184,Gowran Park,10/03/2026 13:20:00,5840006,El Cairos FR,0.32635462,0
+1,True,2/5F,1.4,CompletedRace,930028,184,Gowran Park,10/03/2026 13:55:00,9295579,Witches Familiar FR,0.494455,0
+1,True,11/10F,2.1,CompletedRace,930030,184,Gowran Park,10/03/2026 15:05:00,5329088,Fleur In The Park,0.38805974,0
+2,False,6/4F,2.5,CompletedRace,930031,184,Gowran Park,10/03/2026 15:40:00,6233876,Vicar Street,0.27041104,0
+1,True,11/10F,2.1,CompletedRace,930032,184,Gowran Park,10/03/2026 16:15:00,58958802,Fou De Toi FR,0.31336883,0
+6,False,18/5,4.6,CompletedRace,930079,440,Hoppegarten,10/03/2026 15:20:00,6613611,Bella Sinfonia,0.22280793,0
+1,True,94/10,10.4,CompletedRace,929946,211,Longchamp,10/03/2026 12:23:00,7987991,Jabracadabra,0.4098997,5
+2,False,47/10,5.7,CompletedRace,929952,211,Longchamp,10/03/2026 12:58:00,7355945,Zaydann GB,0.35256267,3.73
+2,False,1/5F,1.2,CompletedRace,929948,211,Longchamp,10/03/2026 16:00:00,6102190,Scandinavia USA,0.3331946,0
+2,False,15/8,2.875,CompletedRace,927649,38,Newmarket,10/03/2026 12:25:00,8547323,Pendella IRE,0.3585153,0
+1,True,1/4F,1.25,CompletedRace,925072,38,Newmarket,10/03/2026 13:35:00,7360560,Blue Bolt IRE,0.3177014,0
+6,False,7/2,4.5,CompletedRace,927650,38,Newmarket,10/03/2026 14:10:00,5315434,Primo Lara IRE,0.28230342,1.22
+1,True,9/2,5.5,CompletedRace,927659,47,Redcar,10/03/2026 14:17:00,5708644,Yafaarr IRE,0.2800419,0
+1,True,85/40F,3.125,CompletedRace,930125,47,Redcar,10/03/2026 14:50:00,7878369,Lady Hornblower,0.28924817,0
+2,False,13/2,7.5,CompletedRace,927754,394,Southwell (AW),10/03/2026 20:30:00,9115734,Astrid FR,0.2751359,5
 7,False,2/1F,3,CompletedRace,927641,2,Ascot,10/02/2026 15:00:00,8455175,Cockade,0.24120502,0
 1,True,4/6F,1.6666666666666665,CompletedRace,927638,2,Ascot,10/02/2026 15:35:00,8259452,Infraad IRE,0.4045964,0
 1,True,11/4,3.75,CompletedRace,929939,184,Gowran Park,10/02/2026 14:31:00,5713811,Gino Bella,0.25879857,3.13
