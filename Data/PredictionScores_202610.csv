@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+7,False,3/1F,4,CompletedRace,930001,178,Curragh,10/04/2026 15:05:00,8120549,Johnny Soda,0.22905375,0
+2,False,33/20,2.65,CompletedRace,930057,301,Keeneland,10/04/2026 22:45:00,8157604,Counting Stars,0.3966341,0
+1,True,1/4F,1.25,CompletedRace,927471,27,Kelso,10/04/2026 13:45:00,7365378,Jentobello,0.56369007,4.9
+1,True,9/4J,3.25,CompletedRace,927469,27,Kelso,10/04/2026 15:30:00,4129104,Breaking Cover IRE,0.332079,2.35
+2,False,7/10F,1.7,CompletedRace,929955,211,Longchamp,10/04/2026 13:09:00,8881154,Folsom Blues IRE,0.22481152,0
+3,False,43/10,5.3,CompletedRace,929957,211,Longchamp,10/04/2026 15:50:00,8665676,Pink Panthera,0.23556343,0
+5,False,16/5,4.2,CompletedRace,929958,211,Longchamp,10/04/2026 16:25:00,7870243,Samangan IRE,0.29678842,0
+1,True,3/1,4,CompletedRace,927476,84,Uttoxeter,10/04/2026 15:15:00,5295439,Divilabother IRE,0.3250377,3.37
+6,False,5/1,6,CompletedRace,927480,84,Uttoxeter,10/04/2026 16:20:00,3678078,Ghasham IRE,0.22764122,1.7
+1,True,15/8F,2.875,CompletedRace,927479,84,Uttoxeter,10/04/2026 16:56:00,4979974,Better Off Alone IRE,0.27217022,0
 3,False,9/2,5.5,CompletedRace,927465,20,Fontwell,10/03/2026 14:02:00,3601926,Mcgregors Charge,0.26513562,5
 1,True,11/4,3.75,CompletedRace,927466,20,Fontwell,10/03/2026 17:00:00,7426991,Glance Of Glory,0.25996095,4.48
 1,True,11/8,2.375,CompletedRace,930027,184,Gowran Park,10/03/2026 13:20:00,5840006,El Cairos FR,0.32635462,0
