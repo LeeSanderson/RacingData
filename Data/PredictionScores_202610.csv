@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,7/2,4.5,CompletedRace,928498,40,Nottingham,10/07/2026 13:59:00,9208605,Hello Friend IRE,0.30994388,2.99
+1,True,5/4F,2.25,CompletedRace,928348,57,Sedgefield,10/07/2026 14:20:00,3984172,Flashy Boy IRE,0.33345485,0
+2,False,6/5F,2.2,CompletedRace,928346,57,Sedgefield,10/07/2026 15:20:00,7499327,William Yeats,0.31603217,0
+3,False,13/8F,2.625,CompletedRace,928349,57,Sedgefield,10/07/2026 15:50:00,5867537,Littletown Lad IRE,0.34532708,0
 5,False,9/4J,3.25,CompletedRace,930146,183,Galway,10/06/2026 15:30:00,5025133,Chart Topper FR,0.33190635,2.42
 3,False,6/1,7,CompletedRace,928334,26,Huntingdon,10/06/2026 13:56:00,5499901,Maggies Boy IRE,0.2795189,4.53
 1,True,4/5F,1.8,CompletedRace,928333,26,Huntingdon,10/06/2026 14:31:00,7227179,Broadway Honey IRE,0.40050602,0
