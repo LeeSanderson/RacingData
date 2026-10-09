@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+10,False,8/1,9,CompletedRace,928506,3,Ayr,10/08/2026 16:05:00,5048098,Valentine Catcher,0.35622987,4.61
+2,False,100/30,4.333333333333334,CompletedRace,928351,35,Market Rasen,10/08/2026 15:41:00,2689814,Lermoos Legend,0.37810776,5
+2,False,7/4F,2.75,CompletedRace,928354,35,Market Rasen,10/08/2026 16:16:00,3236551,Spot On Soph IRE,0.22714373,0
+1,True,3/1F,4,CompletedRace,928762,394,Southwell (AW),10/08/2026 19:00:00,7961711,Rogue Citation IRE,0.23714863,1.26
+4,False,2/1,3,CompletedRace,930162,198,Thurles,10/08/2026 16:11:00,9499174,Cladach,0.52109665,5
+2,False,11/4F,3.75,CompletedRace,930169,200,Tramore,10/08/2026 16:30:00,7015770,Lady Doyanne,0.2821421,1.39
 2,False,7/2,4.5,CompletedRace,928498,40,Nottingham,10/07/2026 13:59:00,9208605,Hello Friend IRE,0.30994388,2.99
 1,True,5/4F,2.25,CompletedRace,928348,57,Sedgefield,10/07/2026 14:20:00,3984172,Flashy Boy IRE,0.33345485,0
 2,False,6/5F,2.2,CompletedRace,928346,57,Sedgefield,10/07/2026 15:20:00,7499327,William Yeats,0.31603217,0
