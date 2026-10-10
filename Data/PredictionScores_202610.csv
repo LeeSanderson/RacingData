@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,2/1J,3,CompletedRace,930336,179,Downpatrick,10/09/2026 14:48:00,6662107,Lygon Lad,0.27380255,0
+7,False,7/4F,2.75,CompletedRace,930327,1138,Dundalk (AW),10/09/2026 20:00:00,9153311,Camino Lad,0.25650063,0
+1,True,11/8F,2.375,CompletedRace,930328,1138,Dundalk (AW),10/09/2026 20:30:00,6327894,Fixation,0.25933227,2.95
+2,False,85/40F,3.125,CompletedRace,928518,38,Newmarket,10/09/2026 14:25:00,5063625,Flora Of Bermuda IRE,0.2931634,0
+3,False,8/1,9,CompletedRace,925073,38,Newmarket,10/09/2026 14:57:00,9645594,Forbidden Fire,0.29839525,1.86
+8,False,9/4F,3.25,CompletedRace,926829,38,Newmarket,10/09/2026 15:30:00,7627158,Archers Bay IRE,0.23443475,0.75
+7,False,11/4F,3.75,CompletedRace,928529,107,York,10/09/2026 14:40:00,7677646,Tierra Del Toro,0.33903816,0
 10,False,8/1,9,CompletedRace,928506,3,Ayr,10/08/2026 16:05:00,5048098,Valentine Catcher,0.35622987,4.61
 2,False,100/30,4.333333333333334,CompletedRace,928351,35,Market Rasen,10/08/2026 15:41:00,2689814,Lermoos Legend,0.37810776,5
 2,False,7/4F,2.75,CompletedRace,928354,35,Market Rasen,10/08/2026 16:16:00,3236551,Spot On Soph IRE,0.22714373,0
