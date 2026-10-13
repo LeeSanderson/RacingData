@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,13/8F,2.625,CompletedRace,928660,1079,Kempton (AW),10/12/2026 19:15:00,8890828,Floating Market,0.26878014,0
+1,True,1/4F,1.25,CompletedRace,928551,16,Musselburgh,10/12/2026 14:17:00,9631827,Vegasmile IRE,0.48769072,0
+8,False,9/2,5.5,CompletedRace,928552,16,Musselburgh,10/12/2026 14:47:00,9276851,Possessive,0.25155687,0
+3,False,15/8F,2.875,CompletedRace,928550,16,Musselburgh,10/12/2026 15:47:00,6074527,Dandy Magic IRE,0.23033042,0
+3,False,5/1,6,CompletedRace,928663,1353,Newcastle (AW),10/12/2026 16:28:00,9833053,Ella Beach FR,0.41307616,0
+0,False,6/1,7,PulledUp,929827,101,Worcester,10/12/2026 14:07:00,8525482,Saint Arion IRE,0.24816507,3.23
+1,True,15/8F,2.875,CompletedRace,928386,101,Worcester,10/12/2026 14:37:00,6812142,Away For The Night IRE,0.25809276,0
 3,False,8/13F,1.6153846153846154,CompletedRace,930397,596,Cork,10/11/2026 15:22:00,9222149,Dad Sez,0.413711,5
 5,False,7/1,8,CompletedRace,930398,596,Cork,10/11/2026 15:57:00,5633079,Phoenix Arizona,0.2689827,1.72
 2,False,3/1F,4,CompletedRace,930399,596,Cork,10/11/2026 16:32:00,5400934,Jasko Des Dames FR,0.2770709,0.25
