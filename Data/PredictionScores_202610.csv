@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,5/2,3.5,CompletedRace,929841,24,Hereford,10/13/2026 14:20:00,4980009,Jackstell FR,0.36473325,2
+0,False,7/2,4.5,PulledUp,928394,24,Hereford,10/13/2026 16:05:00,7404552,Miracles Do Happen,0.31973177,0
+5,False,7/2,4.5,CompletedRace,930847,195,Punchestown,10/13/2026 14:45:00,3970580,Senecia,0.28595582,5
+0,False,EvensF,2,PulledUp,928396,61,Southwell,10/13/2026 14:00:00,3458010,Limerick Leader FR,0.43435097,0
+2,False,11/2,6.5,CompletedRace,928398,61,Southwell,10/13/2026 17:23:00,5812499,East Eagle IRE,0.30709597,5
+1,True,10/11F,1.9090909090909092,CompletedRace,928671,513,Wolverhampton (AW),10/13/2026 19:00:00,6807911,Zachary Hickes,0.25715762,0
 3,False,13/8F,2.625,CompletedRace,928660,1079,Kempton (AW),10/12/2026 19:15:00,8890828,Floating Market,0.26878014,0
 1,True,1/4F,1.25,CompletedRace,928551,16,Musselburgh,10/12/2026 14:17:00,9631827,Vegasmile IRE,0.48769072,0
 8,False,9/2,5.5,CompletedRace,928552,16,Musselburgh,10/12/2026 14:47:00,9276851,Possessive,0.25155687,0
