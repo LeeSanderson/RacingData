@@ -21,8 +21,12 @@ public sealed class NextDataRaceResultReader : RaceParser
     private static readonly string[] HeaderKeys =
     {
         "raceTime", "raceDate", "courseDisplayName", "raceTitle",
-        "raceClass", "agesAllowed", "distanceShort", "going", "obstacles",
+        "raceClass", "distanceShort", "going", "obstacles",
     };
+
+    // Renamed by Racing Post in October 2026, when the rating band returned alongside the ages
+    // ("0-100, 4yo+"); older captured pages carry ages only under the original key.
+    private static readonly string[] BandKeys = { "ratingBandAndAgesAllowed", "agesAllowed" };
 
     private static readonly string[] DetailsKeys = { "numberOfRunners", "winningTime" };
 
@@ -63,7 +67,7 @@ public sealed class NextDataRaceResultReader : RaceParser
 
     private static RaceAttributes ReadRaceAttributes(JsonElement header, JsonElement details, string raceTitle, int runnerCount)
     {
-        var (ageBand, ratingBand) = GetAgeAndRatingBands(Text(header, "agesAllowed"));
+        var (ageBand, ratingBand) = GetAgeAndRatingBands(Text(header, RequireBandKey(header)));
         var classification = new RaceClassification(
             GetRaceType(raceTitle, Text(header, "obstacles")),
             ToRaceClass(Text(header, "raceClass")),
@@ -230,6 +234,13 @@ public sealed class NextDataRaceResultReader : RaceParser
             }
         }
     }
+
+    private static string RequireBandKey(JsonElement header) =>
+        BandKeys.FirstOrDefault(key => header.TryGetProperty(key, out _)) ??
+        throw new ValidationException(
+            $"__NEXT_DATA__ 'raceResult.data.header' is missing a band key; expected one of " +
+            $"{string.Join(", ", BandKeys.Select(key => $"'{key}'"))}. " +
+            "The Racing Post result schema may have changed.");
 
     private static int RequireInt(JsonElement element, string path, string key)
     {

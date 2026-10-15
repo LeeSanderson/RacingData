@@ -172,8 +172,8 @@ public class ValidateRaceCardPredictionsCommandHandler(
             filled++;
         }
 
-        // Result pages stopped publishing the rating band; the card still carries it, and it is the sole
-        // source of the IsHandicap feature, so it is back-filled here like the other pre-race fields.
+        // Result pages omitted the rating band until October 2026; it is the sole source of the IsHandicap
+        // feature, so results from that gap are back-filled from the card like the other pre-race fields.
         if (!string.IsNullOrEmpty(card.RatingBand) && string.IsNullOrEmpty(result.RatingBand))
         {
             result.RatingBand = card.RatingBand;

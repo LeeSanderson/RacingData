@@ -177,6 +177,15 @@ public class NextDataRaceResultReaderShould
     }
 
     [Fact]
+    public void ReadTheRatingAndAgeBandsFromTheCombinedHeaderKey()
+    {
+        var classification = GetRaceResult("results_ffos_las_20261014_928406_rating_band.html").Attributes.Classification;
+
+        classification.RatingBand.Should().Be("0-100");
+        classification.AgeBand.Should().Be("4yo+");
+    }
+
+    [Fact]
     public void KeepARunnerWhoseJockeyHasNoProfileLink()
     {
         // Charity/amateur races run with jockeys who have no Racing Post profile, as do races the site
@@ -229,6 +238,17 @@ public class NextDataRaceResultReaderShould
         var read = () => new NextDataRaceResultReader().Read(html);
 
         read.Should().Throw<ValidationException>().WithMessage("*header*");
+    }
+
+    [Fact]
+    public void ThrowWhenTheHeaderHasNoBandKey()
+    {
+        var html = ResourceLoader.ReadRacingPostExampleResource("results_ffos_las_20261014_928406_rating_band.html")
+            .Replace("\"ratingBandAndAgesAllowed\":", "\"bandsRenamed\":", StringComparison.Ordinal);
+
+        var read = () => new NextDataRaceResultReader().Read(html);
+
+        read.Should().Throw<ValidationException>().WithMessage("*'ratingBandAndAgesAllowed', 'agesAllowed'*");
     }
 
     private static RaceResult GetRaceResult(string resourceFileName) =>
