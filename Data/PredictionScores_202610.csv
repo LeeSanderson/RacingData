@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,6/4F,2.5,CompletedRace,928591,23,Haydock,10/16/2026 15:27:00,9208598,Resemblance IRE,0.29594243,0
+3,False,4/1,5,CompletedRace,928586,23,Haydock,10/16/2026 17:37:00,8227216,Gone By IRE,0.2706002,2.7
+1,True,15/8,2.875,CompletedRace,928689,1353,Newcastle (AW),10/16/2026 17:45:00,6626284,Kaleido,0.30272606,1.7
+3,False,3/1F,4,CompletedRace,928688,1353,Newcastle (AW),10/16/2026 18:15:00,8236330,Media Legend IRE,0.22285657,0
 1,True,8/11F,1.7272727272727273,CompletedRace,930224,20,Fontwell,10/15/2026 14:19:00,4908772,Double Powerful IRE,0.36781842,0
 2,False,13/8F,2.625,CompletedRace,931051,41,Perth,10/15/2026 16:15:00,6979142,Kado Sacree FR,0.25525984,0
 0,False,17/2,9.5,PulledUp,929835,1212,Ffos Las,10/14/2026 15:30:00,5587080,Tamarind Bay IRE,0.39163712,5
