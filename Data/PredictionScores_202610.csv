@@ -1,4 +1,18 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+4,False,100/30,4.333333333333334,CompletedRace,925078,2,Ascot,10/17/2026 13:30:00,5033142,Gregory,0.23124392,0
+1,True,5/4F,2.25,CompletedRace,925075,2,Ascot,10/17/2026 16:00:00,6055641,Ombudsman IRE,0.35374364,0
+5,False,2/1F,3,CompletedRace,928602,10,Catterick,10/17/2026 14:10:00,8188047,Be Patient,0.26962483,0
+1,True,4/7F,1.5714285714285714,CompletedRace,931099,187,Leopardstown,10/17/2026 15:07:00,9564193,Wall Street GB,0.35710174,0
+2,False,4/5F,1.8,CompletedRace,931101,187,Leopardstown,10/17/2026 16:15:00,9258976,Trean,0.3549273,0
+2,False,7/4,2.75,CompletedRace,931103,187,Leopardstown,10/17/2026 17:20:00,9531364,Admired Beauty,0.24697597,0
+3,False,15/8,2.875,CompletedRace,931067,188,Limerick,10/17/2026 14:55:00,8821466,Emerald Enigma,0.35724613,5
+1,True,8/11F,1.7272727272727273,CompletedRace,928439,35,Market Rasen,10/17/2026 13:50:00,5445490,Galway Reel IRE,0.2345156,0
+5,False,14/1,15,CompletedRace,928434,35,Market Rasen,10/17/2026 15:00:00,3956749,Transmission IRE,0.3096512,5
+4,False,5/1,6,CompletedRace,928443,39,Newton Abbot,10/17/2026 14:52:00,6215501,Beorma IRE,0.4039939,0
+2,False,7/4F,2.75,CompletedRace,931191,394,Southwell (AW),10/17/2026 18:00:00,8084442,Encore FR,0.30556825,0
+6,False,5/1,6,CompletedRace,928451,67,Stratford,10/17/2026 15:34:00,4175161,Mersey Street IRE,0.24171196,0
+2,False,7/4F,2.75,CompletedRace,928452,67,Stratford,10/17/2026 16:18:00,7178953,Lady Dapple Rose IRE,0.2555238,0
+2,False,7/4J,2.75,CompletedRace,928454,67,Stratford,10/17/2026 16:55:00,4363047,Applejack Poet IRE,0.31698522,0
 3,False,6/4F,2.5,CompletedRace,928591,23,Haydock,10/16/2026 15:27:00,9208598,Resemblance IRE,0.29594243,0
 3,False,4/1,5,CompletedRace,928586,23,Haydock,10/16/2026 17:37:00,8227216,Gone By IRE,0.2706002,2.7
 1,True,15/8,2.875,CompletedRace,928689,1353,Newcastle (AW),10/16/2026 17:45:00,6626284,Kaleido,0.30272606,1.7
