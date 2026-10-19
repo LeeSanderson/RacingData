@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,4/6F,1.6666666666666665,CompletedRace,931074,187,Leopardstown,10/18/2026 15:42:00,8953950,Come What May,0.48820898,1.68
+2,False,4/7F,1.5714285714285714,CompletedRace,931104,188,Limerick,10/18/2026 14:00:00,8821465,Brickfield Belle,0.38611636,0
+5,False,3/1,4,CompletedRace,931108,188,Limerick,10/18/2026 16:30:00,6807931,Zurich FR,0.25574657,1.38
+2,False,3/1,4,CompletedRace,931109,188,Limerick,10/18/2026 17:00:00,5727969,Future Prospect,0.38447514,4.18
+6,False,13/2,7.5,CompletedRace,928462,57,Sedgefield,10/18/2026 15:20:00,4201344,Ivane FR,0.25827402,2.39
+9,False,2/1F,3,CompletedRace,928463,57,Sedgefield,10/18/2026 16:20:00,6092537,Gambino IRE,0.27517924,0
 4,False,100/30,4.333333333333334,CompletedRace,925078,2,Ascot,10/17/2026 13:30:00,5033142,Gregory,0.23124392,0
 1,True,5/4F,2.25,CompletedRace,925075,2,Ascot,10/17/2026 16:00:00,6055641,Ombudsman IRE,0.35374364,0
 5,False,2/1F,3,CompletedRace,928602,10,Catterick,10/17/2026 14:10:00,8188047,Be Patient,0.26962483,0
