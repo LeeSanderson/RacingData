@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,9/2,5.5,CompletedRace,929248,44,Plumpton,10/19/2026 14:00:00,6270350,Anniversary,0.22627397,2.46
+5,False,10/1,11,CompletedRace,929246,44,Plumpton,10/19/2026 16:00:00,5906667,A Little Something,0.29417634,2.04
+2,False,9/4,3.25,CompletedRace,929252,44,Plumpton,10/19/2026 16:30:00,5061496,Latin IRE,0.478378,0.78
+5,False,7/1,8,CompletedRace,929250,44,Plumpton,10/19/2026 17:05:00,8299917,Grey Gamble IRE,0.3956218,5
+1,True,5/1,6,CompletedRace,929428,46,Pontefract,10/19/2026 14:53:00,9595368,King High,0.30811897,0
+3,False,11/1,12,CompletedRace,929430,46,Pontefract,10/19/2026 15:53:00,3234574,Marble Sands FR,0.25719425,4.49
+2,False,1/2F,1.5,CompletedRace,929531,394,Southwell (AW),10/19/2026 20:00:00,8111187,I'm The One,0.4172726,0
 1,True,4/6F,1.6666666666666665,CompletedRace,931074,187,Leopardstown,10/18/2026 15:42:00,8953950,Come What May,0.48820898,1.68
 2,False,4/7F,1.5714285714285714,CompletedRace,931104,188,Limerick,10/18/2026 14:00:00,8821465,Brickfield Belle,0.38611636,0
 5,False,3/1,4,CompletedRace,931108,188,Limerick,10/18/2026 16:30:00,6807931,Zurich FR,0.25574657,1.38
