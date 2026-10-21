@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,1/5F,1.2,CompletedRace,931231,178,Curragh,10/20/2026 14:25:00,7992528,Together Now USA,0.3097221,0
+1,True,7/4F,2.75,CompletedRace,929264,25,Hexham,10/20/2026 14:32:00,5867537,Littletown Lad IRE,0.23747934,0
+3,False,11/8F,2.375,CompletedRace,929260,25,Hexham,10/20/2026 15:42:00,5784840,Coded Welder IRE,0.37597126,3.53
+3,False,6/1,7,CompletedRace,929259,25,Hexham,10/20/2026 16:17:00,5845741,Welonlyhavedone IRE,0.42475462,5
+2,False,10/11F,1.9090909090909092,CompletedRace,929262,25,Hexham,10/20/2026 16:50:00,6640432,Stay Hopeful IRE,0.2741685,0
+2,False,4/1,5,CompletedRace,929547,1353,Newcastle (AW),10/20/2026 16:57:00,7360547,Ernst Blofeld IRE,0.27735856,3.11
+5,False,15/8F,2.875,CompletedRace,929436,104,Yarmouth,10/20/2026 14:53:00,9743860,Queen Of Scotland,0.405053,0
 2,False,9/2,5.5,CompletedRace,929248,44,Plumpton,10/19/2026 14:00:00,6270350,Anniversary,0.22627397,2.46
 5,False,10/1,11,CompletedRace,929246,44,Plumpton,10/19/2026 16:00:00,5906667,A Little Something,0.29417634,2.04
 2,False,9/4,3.25,CompletedRace,929252,44,Plumpton,10/19/2026 16:30:00,5061496,Latin IRE,0.478378,0.78
