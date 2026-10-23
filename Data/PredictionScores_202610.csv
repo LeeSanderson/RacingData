@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,6/1,7,CompletedRace,929277,8,Carlisle,10/22/2026 14:27:00,4922496,Walk On Quest IRE,0.3030231,3.3
+2,False,9/2,5.5,CompletedRace,930802,8,Carlisle,10/22/2026 16:12:00,3914017,Mirabad FR,0.35341316,5
+1,True,7/4F,2.75,CompletedRace,929280,8,Carlisle,10/22/2026 16:45:00,6892516,Dearkeithandkaty FR,0.3339835,4.74
+1,True,1/10F,1.1,CompletedRace,931247,177,Clonmel,10/22/2026 15:56:00,5713812,La Note Verte GB,0.39819977,0
+2,False,3/1,4,CompletedRace,929568,394,Southwell (AW),10/22/2026 18:00:00,7466830,Bofa Beach,0.25069577,0.08
 0,False,SP,,NonRunner,929442,38,Newmarket,10/21/2026 15:35:00,9409961,Under Arrest,0.25270486,2.48
 1,True,1/5F,1.2,CompletedRace,931231,178,Curragh,10/20/2026 14:25:00,7992528,Together Now USA,0.3097221,0
 1,True,7/4F,2.75,CompletedRace,929264,25,Hexham,10/20/2026 14:32:00,5867537,Littletown Lad IRE,0.23747934,0
