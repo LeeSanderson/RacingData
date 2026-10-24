@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,11/2,6.5,CompletedRace,929293,11,Cheltenham,10/23/2026 13:50:00,6362961,Ice Jet IRE,0.34272513,5
+7,False,12/1,13,CompletedRace,929292,11,Cheltenham,10/23/2026 15:00:00,8551786,Scott's Legacy IRE,0.25767356,1.79
+4,False,EvensF,2,CompletedRace,929456,15,Doncaster,10/23/2026 14:45:00,8106629,Palladas,0.31670853,0
+7,False,7/2,4.5,CompletedRace,931377,1138,Dundalk (AW),10/23/2026 17:15:00,7793651,Eleanor Shelby GB,0.4619057,5
+1,True,11/8F,2.375,CompletedRace,931387,197,Sligo,10/23/2026 13:25:00,7169852,Speisialta,0.29754505,2.69
+3,False,4/6F,1.6666666666666665,CompletedRace,931391,197,Sligo,10/23/2026 16:20:00,5554963,Union Station,0.23278861,0
+1,True,11/10F,2.1,CompletedRace,929574,513,Wolverhampton (AW),10/23/2026 20:30:00,7882515,Saxophonist IRE,0.29647171,0
 3,False,6/1,7,CompletedRace,929277,8,Carlisle,10/22/2026 14:27:00,4922496,Walk On Quest IRE,0.3030231,3.3
 2,False,9/2,5.5,CompletedRace,930802,8,Carlisle,10/22/2026 16:12:00,3914017,Mirabad FR,0.35341316,5
 1,True,7/4F,2.75,CompletedRace,929280,8,Carlisle,10/22/2026 16:45:00,6892516,Dearkeithandkaty FR,0.3339835,4.74
