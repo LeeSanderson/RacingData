@@ -1,4 +1,10 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,11/4F,3.75,CompletedRace,929300,11,Cheltenham,10/24/2026 15:30:00,7987974,North Shore FR,0.3863262,0
+3,False,11/8F,2.375,CompletedRace,927661,15,Doncaster,10/24/2026 13:30:00,9721420,Noble Exhibit IRE,0.33503065,0
+2,False,4/11F,1.3636363636363638,CompletedRace,929467,15,Doncaster,10/24/2026 14:40:00,9590693,National Honour IRE,0.45003885,0
+1,True,5/1,6,CompletedRace,929466,15,Doncaster,10/24/2026 15:19:00,5708904,River King IRE,0.31254488,3.63
+0,False,5/1,6,PulledUp,929311,27,Kelso,10/24/2026 14:44:00,5368110,Too Cool Forshrule IRE,0.24556643,5
+5,False,6/4F,2.5,CompletedRace,929310,27,Kelso,10/24/2026 15:14:00,6523105,Ashdown Forest IRE,0.28910884,0
 3,False,11/2,6.5,CompletedRace,929293,11,Cheltenham,10/23/2026 13:50:00,6362961,Ice Jet IRE,0.34272513,5
 7,False,12/1,13,CompletedRace,929292,11,Cheltenham,10/23/2026 15:00:00,8551786,Scott's Legacy IRE,0.25767356,1.79
 4,False,EvensF,2,CompletedRace,929456,15,Doncaster,10/23/2026 14:45:00,8106629,Palladas,0.31670853,0
