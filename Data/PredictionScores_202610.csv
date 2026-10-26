@@ -1,4 +1,13 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,28/1,29,CompletedRace,931490,183,Galway,10/25/2026 15:20:00,7020730,Tradonthebay,0.23250698,4.63
+2,False,1/2F,1.5,CompletedRace,930234,35,Market Rasen,10/25/2026 13:35:00,9138738,Don Dandy IRE,0.5120017,0
+3,False,85/40,3.125,CompletedRace,930237,35,Market Rasen,10/25/2026 14:41:00,4652672,Livin On Luco IRE,0.2304396,0
+8,False,78/10,8.8,CompletedRace,932053,219,Saint-Cloud,10/25/2026 11:48:00,6465134,Sindria IRE,0.24888006,2.42
+6,False,42/10,5.2,CompletedRace,932050,219,Saint-Cloud,10/25/2026 12:23:00,9636455,First Law IRE,0.30820632,0
+7,False,132/10,14.2,CompletedRace,932055,219,Saint-Cloud,10/25/2026 12:58:00,5089277,Clavus,0.24841997,3.19
+1,True,9/10F,1.9,CompletedRace,932051,219,Saint-Cloud,10/25/2026 13:33:00,9472110,Drumbeat IRE,0.3810616,0
+1,True,14/5F,3.8,CompletedRace,932052,219,Saint-Cloud,10/25/2026 14:50:00,4611034,Queenstown IRE,0.26323247,0
+3,False,9/5F,2.8,CompletedRace,931981,416,Sha Tin,10/25/2026 06:15:00,5991307,Seraph Gabriel IRE,0.24728966,1.9
 1,True,11/4F,3.75,CompletedRace,929300,11,Cheltenham,10/24/2026 15:30:00,7987974,North Shore FR,0.3863262,0
 3,False,11/8F,2.375,CompletedRace,927661,15,Doncaster,10/24/2026 13:30:00,9721420,Noble Exhibit IRE,0.33503065,0
 2,False,4/11F,1.3636363636363638,CompletedRace,929467,15,Doncaster,10/24/2026 14:40:00,9590693,National Honour IRE,0.45003885,0
