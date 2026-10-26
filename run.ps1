@@ -24,9 +24,10 @@ function Invoke-NativeCommand() {
     }
 }
 
-function Invoke-NativeCommandWithSocketRetry() {
-    # racingpost.com intermittently drops Puppeteer navigations with ERR_SOCKET_NOT_CONNECTED;
-    # waiting ~10 minutes before rerunning reliably clears it. Any other failure fails immediately.
+function Invoke-NativeCommandWithNetworkRetry() {
+    # Puppeteer navigations to racingpost.com intermittently fail with transient Chromium net::ERR_*
+    # errors (ERR_SOCKET_NOT_CONNECTED, ERR_CERT_VERIFIER_CHANGED); waiting ~10 minutes before
+    # rerunning clears them. Any non-network failure (parsing, validation) fails immediately.
     $maxRetries = 3
     $retryDelayMinutes = 10
     $command = $args[0]
@@ -47,12 +48,12 @@ function Invoke-NativeCommandWithSocketRetry() {
             return
         }
 
-        $isSocketError = ($output -join "`n") -match "ERR_SOCKET_NOT_CONNECTED"
-        if (-not $isSocketError -or $attempt -ge $maxRetries) {
+        $networkError = [regex]::Match(($output -join "`n"), "net::ERR_[A-Z_]+")
+        if (-not $networkError.Success -or $attempt -ge $maxRetries) {
             throw "$command $commandArgs exited with code $result."
         }
 
-        Write-Host "$command $commandArgs failed with ERR_SOCKET_NOT_CONNECTED; retry $($attempt + 1) of $maxRetries in $retryDelayMinutes minutes."
+        Write-Host "$command $commandArgs failed with $($networkError.Value); retry $($attempt + 1) of $maxRetries in $retryDelayMinutes minutes."
         Start-Sleep -Seconds ($retryDelayMinutes * 60)
     }
 }
@@ -66,9 +67,9 @@ Invoke-NativeCommand dotnet build
 Invoke-NativeCommand dotnet test
 ## Invoke-NativeCommand $RaceDownloaderExe deduperesults --output $RaceDataPath
 ## Invoke-NativeCommand $RaceDownloaderExe fixraceids --output $RaceDataPath
-Invoke-NativeCommandWithSocketRetry $RaceDownloaderExe updateresults --output $RaceDataPath --period 365
+Invoke-NativeCommandWithNetworkRetry $RaceDownloaderExe updateresults --output $RaceDataPath --period 365
 Invoke-NativeCommand $RaceDownloaderExe validate --output $RaceDataPath
-Invoke-NativeCommandWithSocketRetry $RaceDownloaderExe todaysracecards --output $RaceDataPath
+Invoke-NativeCommandWithNetworkRetry $RaceDownloaderExe todaysracecards --output $RaceDataPath
 
 if (Get-Command uv -ErrorAction SilentlyContinue) {
     # Local dev venvs here are created by `uv` and ship without pip, so `python -m pip`
