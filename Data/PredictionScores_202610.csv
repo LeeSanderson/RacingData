@@ -1,4 +1,11 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+5,False,11/4,3.75,CompletedRace,932030,183,Galway,10/26/2026 13:42:00,7204902,Green Soul,0.39442188,0
+3,False,EvensF,2,CompletedRace,929326,24,Hereford,10/26/2026 13:48:00,8556538,Jerseygeordie,0.3241223,0
+5,False,5/6F,1.8333333333333335,CompletedRace,932076,24,Hereford,10/26/2026 14:18:00,9915041,Our Wee Horse IRE,0.40334943,0
+6,False,12/1,13,CompletedRace,931317,24,Hereford,10/26/2026 14:52:00,8313815,Silvereen,0.3391786,3.56
+1,True,7/4F,2.75,CompletedRace,929595,394,Southwell (AW),10/26/2026 17:30:00,9753755,Yamnah FR,0.45986685,5
+2,False,11/2,6.5,CompletedRace,929599,394,Southwell (AW),10/26/2026 18:00:00,9290865,Yimmna FR,0.2264519,0.83
+3,False,2/1F,3,CompletedRace,929597,394,Southwell (AW),10/26/2026 20:30:00,5342158,Benvoy IRE,0.24512595,2.77
 3,False,28/1,29,CompletedRace,931490,183,Galway,10/25/2026 15:20:00,7020730,Tradonthebay,0.23250698,4.63
 2,False,1/2F,1.5,CompletedRace,930234,35,Market Rasen,10/25/2026 13:35:00,9138738,Don Dandy IRE,0.5120017,0
 3,False,85/40,3.125,CompletedRace,930237,35,Market Rasen,10/25/2026 14:41:00,4652672,Livin On Luco IRE,0.2304396,0
