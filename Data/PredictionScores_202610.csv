@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,4/5F,1.8,CompletedRace,929346,26,Huntingdon,10/28/2026 13:36:00,7436471,Current Edition IRE,0.41514212,0
+2,False,5/2,3.5,CompletedRace,929348,26,Huntingdon,10/28/2026 14:36:00,6388840,Gallivanted FR,0.22339375,0
+1,True,7/4F,2.75,CompletedRace,929615,1079,Kempton (AW),10/28/2026 18:15:00,7020225,Maria Da Silva IRE,0.33241996,0
 5,False,11/4,3.75,CompletedRace,929340,37,Newcastle,10/27/2026 15:31:00,7204723,Loulou Madrik FR,0.23110035,5
 5,False,11/4,3.75,CompletedRace,932030,183,Galway,10/26/2026 13:42:00,7204902,Green Soul,0.39442188,0
 3,False,EvensF,2,CompletedRace,929326,24,Hereford,10/26/2026 13:48:00,8556538,Jerseygeordie,0.3241223,0
