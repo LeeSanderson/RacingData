@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+5,False,13/8F,2.625,CompletedRace,932284,195,Punchestown,10/29/2026 14:35:00,9599769,Wecouldavehaditall,0.23801012,5
+4,False,5/1,6,CompletedRace,929622,394,Southwell (AW),10/29/2026 20:00:00,9331768,Kashooda,0.24386816,0
 2,False,4/5F,1.8,CompletedRace,929346,26,Huntingdon,10/28/2026 13:36:00,7436471,Current Edition IRE,0.41514212,0
 2,False,5/2,3.5,CompletedRace,929348,26,Huntingdon,10/28/2026 14:36:00,6388840,Gallivanted FR,0.22339375,0
 1,True,7/4F,2.75,CompletedRace,929615,1079,Kempton (AW),10/28/2026 18:15:00,7020225,Maria Da Silva IRE,0.33241996,0
