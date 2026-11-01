@@ -1,4 +1,14 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+6,False,13/2,7.5,CompletedRace,929397,2,Ascot,10/31/2026 12:50:00,5848874,Fidendum,0.24144165,0.05
+2,False,13/8F,2.625,CompletedRace,929396,2,Ascot,10/31/2026 13:25:00,5826652,Jet To Vegas IRE,0.3237322,0
+4,False,6/4,2.5,CompletedRace,932256,180,Down Royal,10/31/2026 13:00:00,7996921,Cite Florale FR,0.35490444,0
+0,False,SP,,NonRunner,932260,180,Down Royal,10/31/2026 15:50:00,6864624,Koktail Divin FR,0.38437077,3.32
+2,False,31/20,2.55,CompletedRace,929651,301,Keeneland,10/31/2026 20:58:00,6582490,Fully Subscribed,0.31817982,0
+6,False,57/10,6.7,CompletedRace,929653,301,Keeneland,10/31/2026 22:16:00,8678944,Golden Tempo,0.35165885,4.3
+4,False,1/2F,1.5,CompletedRace,929637,394,Southwell (AW),10/31/2026 17:05:00,9590693,National Honour IRE,0.33410716,0
+3,False,2/1F,3,CompletedRace,929388,87,Wetherby,10/31/2026 13:10:00,4497048,Palamon IRE,0.2806876,0
+1,True,13/8,2.625,CompletedRace,929386,87,Wetherby,10/31/2026 14:18:00,4299547,Strong Leader,0.37851092,0
+1,True,EvensF,2,CompletedRace,929389,87,Wetherby,10/31/2026 15:30:00,5431085,Filibustering,0.5816467,2.57
 1,True,4/1,5,CompletedRace,932149,180,Down Royal,10/30/2026 14:00:00,7139175,Ash Hobbs,0.27561322,0
 0,False,SP,,NonRunner,932150,180,Down Royal,10/30/2026 14:35:00,7530071,Mange Tout FR,0.451947,0
 4,False,85/40F,3.125,CompletedRace,932151,180,Down Royal,10/30/2026 15:10:00,8344456,Manoir De Mirande FR,0.24816361,0
