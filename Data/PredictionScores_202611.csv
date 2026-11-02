@@ -1,0 +1,11 @@
+FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,11/4,3.75,CompletedRace,929410,8,Carlisle,11/01/2026 12:38:00,5441328,Walking On A Dream IRE,0.28078505,0
+3,False,1/2F,1.5,CompletedRace,929407,8,Carlisle,11/01/2026 13:48:00,4355201,Paggane,0.39571652,0
+3,False,9/4,3.25,CompletedRace,929406,8,Carlisle,11/01/2026 14:58:00,4231885,Doyen Quest IRE,0.5098118,5
+1,True,5/4F,2.25,CompletedRace,932265,596,Cork,11/01/2026 14:15:00,7160509,Roc Dino FR,0.34637508,0
+1,True,EvensF,2,CompletedRace,932266,596,Cork,11/01/2026 14:50:00,7592654,Love Me Tender FR,0.22618718,0
+3,False,5/4F,2.25,CompletedRace,932267,596,Cork,11/01/2026 15:25:00,58958802,Fou De Toi FR,0.2679901,0
+2,False,15/8,2.875,CompletedRace,929413,26,Huntingdon,11/01/2026 13:32:00,3787100,Samuel Spade GER,0.40390098,5
+2,False,13/2,7.5,CompletedRace,929415,26,Huntingdon,11/01/2026 14:07:00,8903773,Moyanna,0.43287227,5
+2,False,3/1,4,CompletedRace,929419,26,Huntingdon,11/01/2026 15:17:00,6635692,Just A Heartbeat,0.2666608,2.58
+1,True,4/5F,1.8,CompletedRace,931967,101,Worcester,11/01/2026 13:20:00,6921054,Johnny's Jury IRE,0.45561364,0
