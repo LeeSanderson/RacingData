@@ -101,7 +101,10 @@ public class RacingDataDownloader(IHtmlLoader htmlLoader, IClock clock) : IRacin
                 finder.Anchor()
                     .WithTestIdStartingWith("Link__TimeOrderRace__")
                     .GetNodes()
-                    .Select(n => "https://www.racingpost.com" + n.GetAttributeValue("href", string.Empty))
+                    .Select(n => n.GetAttributeValue("href", string.Empty))
+                    // A race that has already run links to its result page instead of its card
+                    .Where(href => href.StartsWith("/racecards/"))
+                    .Select(href => "https://www.racingpost.com" + href)
                     .Distinct()
                     .ToArray();
 
