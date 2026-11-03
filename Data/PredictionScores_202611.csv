@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+6,False,11/2,6.5,CompletedRace,931175,1083,Chelmsford (AW),11/02/2026 19:15:00,6143215,Handle With Care,0.25118887,3.65
+6,False,11/4,3.75,CompletedRace,930438,44,Plumpton,11/02/2026 15:30:00,4175283,Birthday Angel IRE,0.2835126,5
+5,False,2/1F,3,CompletedRace,930698,513,Wolverhampton (AW),11/02/2026 17:00:00,9249229,Two Commanders,0.2689486,0
+7,False,3/1,4,CompletedRace,930701,513,Wolverhampton (AW),11/02/2026 19:30:00,7771197,Shes Got The Blues IRE,0.26608545,1.23
 1,True,11/4,3.75,CompletedRace,929410,8,Carlisle,11/01/2026 12:38:00,5441328,Walking On A Dream IRE,0.28078505,0
 3,False,1/2F,1.5,CompletedRace,929407,8,Carlisle,11/01/2026 13:48:00,4355201,Paggane,0.39571652,0
 3,False,9/4,3.25,CompletedRace,929406,8,Carlisle,11/01/2026 14:58:00,4231885,Doyen Quest IRE,0.5098118,5
