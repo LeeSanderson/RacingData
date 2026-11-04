@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,11/4F,3.75,CompletedRace,932383,182,Fairyhouse,11/03/2026 12:35:00,4042161,Ceroc,0.24095678,1.09
+2,False,9/4,3.25,CompletedRace,930456,57,Sedgefield,11/03/2026 12:44:00,4578066,Luminaries IRE,0.34234196,0
+3,False,2/9F,1.2222222222222223,CompletedRace,930455,57,Sedgefield,11/03/2026 13:19:00,7922027,Moment Of Light,0.24258256,0
+6,False,6/1,7,CompletedRace,930457,57,Sedgefield,11/03/2026 14:29:00,4173270,Natural Ability IRE,0.2647046,2.86
+1,True,4/11F,1.3636363636363638,CompletedRace,930460,85,Warwick,11/03/2026 12:18:00,5864671,Un Sens A La Vie FR,0.5724262,1.01
+1,True,11/10F,2.1,CompletedRace,930463,85,Warwick,11/03/2026 14:38:00,5848872,Court In A Storm IRE,0.34624544,0.76
+1,True,8/11F,1.7272727272727273,CompletedRace,930465,85,Warwick,11/03/2026 15:13:00,4235351,I Love You Sivola FR,0.4693614,5
+4,False,16/1,17,CompletedRace,930707,513,Wolverhampton (AW),11/03/2026 19:00:00,9295570,Foxy Night IRE,0.2752495,3.37
 6,False,11/2,6.5,CompletedRace,931175,1083,Chelmsford (AW),11/02/2026 19:15:00,6143215,Handle With Care,0.25118887,3.65
 6,False,11/4,3.75,CompletedRace,930438,44,Plumpton,11/02/2026 15:30:00,4175283,Birthday Angel IRE,0.2835126,5
 5,False,2/1F,3,CompletedRace,930698,513,Wolverhampton (AW),11/02/2026 17:00:00,9249229,Two Commanders,0.2689486,0
