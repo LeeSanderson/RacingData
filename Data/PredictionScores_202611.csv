@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,13/8F,2.625,CompletedRace,931183,1083,Chelmsford (AW),11/05/2026 15:40:00,3525167,Charging Thunder,0.37086675,0
+1,True,8/11F,1.7272727272727273,CompletedRace,932378,177,Clonmel,11/05/2026 14:35:00,7312292,A Snow White Park,0.42845988,0
+0,False,11/8F,2.375,Fell,930491,37,Newcastle,11/05/2026 14:07:00,8313788,Thorneylands IRE,0.2912291,0
+2,False,2/1J,3,CompletedRace,932298,44,Plumpton,11/05/2026 13:08:00,5700160,Klic Boum FR,0.2864632,0
 0,False,7/4J,2.75,UnseatedRider,930467,12,Chepstow,11/04/2026 14:30:00,5376172,Rula Bula IRE,0.37950718,0
 1,True,11/4F,3.75,CompletedRace,932383,182,Fairyhouse,11/03/2026 12:35:00,4042161,Ceroc,0.24095678,1.09
 2,False,9/4,3.25,CompletedRace,930456,57,Sedgefield,11/03/2026 12:44:00,4578066,Luminaries IRE,0.34234196,0
