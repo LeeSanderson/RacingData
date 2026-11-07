@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,4/1,5,CompletedRace,932273,32,Aintree,11/06/2026 14:25:00,6679868,Intosomethinggood,0.53584343,5
+7,False,11/8F,2.375,CompletedRace,932494,1138,Dundalk (AW),11/06/2026 19:45:00,6042410,Daler,0.32748023,1.78
+1,True,5/4F,2.25,CompletedRace,930504,20,Fontwell,11/06/2026 14:00:00,4235351,I Love You Sivola FR,0.47386113,0
+5,False,11/8F,2.375,CompletedRace,930725,1353,Newcastle (AW),11/06/2026 16:30:00,9382617,Northern Viola,0.26624694,0
 2,False,13/8F,2.625,CompletedRace,931183,1083,Chelmsford (AW),11/05/2026 15:40:00,3525167,Charging Thunder,0.37086675,0
 1,True,8/11F,1.7272727272727273,CompletedRace,932378,177,Clonmel,11/05/2026 14:35:00,7312292,A Snow White Park,0.42845988,0
 0,False,11/8F,2.375,Fell,930491,37,Newcastle,11/05/2026 14:07:00,8313788,Thorneylands IRE,0.2912291,0
