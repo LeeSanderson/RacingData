@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,11/10,2.1,CompletedRace,930518,32,Aintree,11/07/2026 12:40:00,8236220,Black Eddy,0.64124185,5
+2,False,23/10F,3.3,CompletedRace,933004,297,Flemington,11/07/2026 06:10:00,5465281,Cosmic Crusader NZ,0.30084637,0
+5,False,6/1,7,CompletedRace,932564,184,Gowran Park,11/07/2026 12:45:00,7347748,Glenary Prince,0.27552408,3.27
+5,False,11/4F,3.75,CompletedRace,932568,184,Gowran Park,11/07/2026 14:55:00,8455156,Cocofred,0.25696468,1.3
+3,False,4/5F,1.8,CompletedRace,930525,27,Kelso,11/07/2026 14:35:00,5385931,Rule Me In IRE,0.37207797,0
 3,False,4/1,5,CompletedRace,932273,32,Aintree,11/06/2026 14:25:00,6679868,Intosomethinggood,0.53584343,5
 7,False,11/8F,2.375,CompletedRace,932494,1138,Dundalk (AW),11/06/2026 19:45:00,6042410,Daler,0.32748023,1.78
 1,True,5/4F,2.25,CompletedRace,930504,20,Fontwell,11/06/2026 14:00:00,4235351,I Love You Sivola FR,0.47386113,0
