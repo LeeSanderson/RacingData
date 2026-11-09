@@ -1,4 +1,5 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,1/2F,1.5,CompletedRace,932579,192,Naas,11/08/2026 13:00:00,8313758,Love Me Tender GER,0.34286708,0
 2,False,11/10,2.1,CompletedRace,930518,32,Aintree,11/07/2026 12:40:00,8236220,Black Eddy,0.64124185,5
 2,False,23/10F,3.3,CompletedRace,933004,297,Flemington,11/07/2026 06:10:00,5465281,Cosmic Crusader NZ,0.30084637,0
 5,False,6/1,7,CompletedRace,932564,184,Gowran Park,11/07/2026 12:45:00,7347748,Glenary Prince,0.27552408,3.27
