@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,5/4,2.25,CompletedRace,930548,8,Carlisle,11/09/2026 12:50:00,3232216,Hello Judge,0.39790246,3.02
+1,True,11/8F,2.375,CompletedRace,933018,195,Punchestown,11/09/2026 13:30:00,8418722,Coexist,0.3054078,0
 1,True,1/2F,1.5,CompletedRace,932579,192,Naas,11/08/2026 13:00:00,8313758,Love Me Tender GER,0.34286708,0
 2,False,11/10,2.1,CompletedRace,930518,32,Aintree,11/07/2026 12:40:00,8236220,Black Eddy,0.64124185,5
 2,False,23/10F,3.3,CompletedRace,933004,297,Flemington,11/07/2026 06:10:00,5465281,Cosmic Crusader NZ,0.30084637,0
