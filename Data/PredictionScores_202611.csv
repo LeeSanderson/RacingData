@@ -1,4 +1,9 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,11/8F,2.375,CompletedRace,933078,182,Fairyhouse,11/10/2026 14:30:00,8423293,Urbs Intacta Manet,0.27422735,0
+2,False,9/2,5.5,CompletedRace,930565,26,Huntingdon,11/10/2026 13:40:00,3473062,Ocean Heights,0.24006745,0
+6,False,EvensF,2,CompletedRace,930564,26,Huntingdon,11/10/2026 14:40:00,6719011,Cap Ricochet,0.31578115,0
+1,True,10/11F,1.9090909090909092,CompletedRace,933114,31,Lingfield,11/10/2026 14:20:00,7499337,Kamille Au Kanada FR,0.3794153,0
+6,False,7/2,4.5,CompletedRace,930572,31,Lingfield,11/10/2026 14:50:00,6635685,Diamond Days IRE,0.25217777,3.53
 1,True,5/4,2.25,CompletedRace,930548,8,Carlisle,11/09/2026 12:50:00,3232216,Hello Judge,0.39790246,3.02
 1,True,11/8F,2.375,CompletedRace,933018,195,Punchestown,11/09/2026 13:30:00,8418722,Coexist,0.3054078,0
 1,True,1/2F,1.5,CompletedRace,932579,192,Naas,11/08/2026 13:00:00,8313758,Love Me Tender GER,0.34286708,0
