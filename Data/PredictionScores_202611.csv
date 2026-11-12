@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,15/8F,2.875,CompletedRace,930586,85,Warwick,11/11/2026 14:21:00,7227179,Broadway Honey IRE,0.3754372,0
+2,False,11/4,3.75,CompletedRace,930589,85,Warwick,11/11/2026 14:51:00,4303291,Paddy De Pole IRE,0.2612103,0
+0,False,8/1,9,PulledUp,930591,85,Warwick,11/11/2026 15:22:00,7395221,Alba Crus IRE,0.31925026,4.27
 2,False,11/8F,2.375,CompletedRace,933078,182,Fairyhouse,11/10/2026 14:30:00,8423293,Urbs Intacta Manet,0.27422735,0
 2,False,9/2,5.5,CompletedRace,930565,26,Huntingdon,11/10/2026 13:40:00,3473062,Ocean Heights,0.24006745,0
 6,False,EvensF,2,CompletedRace,930564,26,Huntingdon,11/10/2026 14:40:00,6719011,Cap Ricochet,0.31578115,0
