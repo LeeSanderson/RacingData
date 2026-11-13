@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,8/13F,1.6153846153846154,CompletedRace,930598,24,Hereford,11/12/2026 14:50:00,4888710,Seraphic IRE,0.5335584,0
+0,False,12/1,13,PulledUp,930603,35,Market Rasen,11/12/2026 13:51:00,5544228,Bongo Man,0.24378724,2.46
 3,False,15/8F,2.875,CompletedRace,930586,85,Warwick,11/11/2026 14:21:00,7227179,Broadway Honey IRE,0.3754372,0
 2,False,11/4,3.75,CompletedRace,930589,85,Warwick,11/11/2026 14:51:00,4303291,Paddy De Pole IRE,0.2612103,0
 0,False,8/1,9,PulledUp,930591,85,Warwick,11/11/2026 15:22:00,7395221,Alba Crus IRE,0.31925026,4.27
