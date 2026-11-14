@@ -1,4 +1,12 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+0,False,SP,,NonRunner,930628,11,Cheltenham,11/13/2026 13:45:00,6802994,King's Bucks FR,0.3354404,0
+3,False,100/30F,4.333333333333334,CompletedRace,930627,11,Cheltenham,11/13/2026 15:30:00,8779474,Ferocimo IRE,0.2778706,0
+3,False,6/4F,2.5,CompletedRace,930615,57,Sedgefield,11/13/2026 12:45:00,4963752,Walk In The Valley IRE,0.3753324,0
+2,False,7/4,2.75,CompletedRace,930613,57,Sedgefield,11/13/2026 13:20:00,4175302,In The Trenches,0.37244353,0
+1,True,EvensF,2,CompletedRace,930614,57,Sedgefield,11/13/2026 14:30:00,8039746,Military Cross IRE,0.27964678,0
+0,False,13/8F,2.625,Fell,930618,57,Sedgefield,11/13/2026 15:05:00,6550765,Soldier In Mayo IRE,0.29265383,0
+1,True,7/4F,2.75,CompletedRace,930621,61,Southwell,11/13/2026 12:55:00,4231705,Gata Ban IRE,0.2640109,0
+2,False,5/2F,3.5,CompletedRace,930622,61,Southwell,11/13/2026 15:50:00,6032327,Keep On Cobbling,0.27672997,0
 1,True,8/13F,1.6153846153846154,CompletedRace,930598,24,Hereford,11/12/2026 14:50:00,4888710,Seraphic IRE,0.5335584,0
 0,False,12/1,13,PulledUp,930603,35,Market Rasen,11/12/2026 13:51:00,5544228,Bongo Man,0.24378724,2.46
 3,False,15/8F,2.875,CompletedRace,930586,85,Warwick,11/11/2026 14:21:00,7227179,Broadway Honey IRE,0.3754372,0
