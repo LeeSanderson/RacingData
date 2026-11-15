@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+3,False,11/1,12,CompletedRace,930634,11,Cheltenham,11/14/2026 13:10:00,9138738,Don Dandy IRE,0.29635304,4.08
+3,False,4/1,5,CompletedRace,930633,11,Cheltenham,11/14/2026 13:45:00,7355987,Folie Golith FR,0.3990823,5
+1,True,15/8,2.875,CompletedRace,930653,87,Wetherby,11/14/2026 12:13:00,6175441,Combs IRE,0.29154214,5
+3,False,5/4J,2.25,CompletedRace,930657,87,Wetherby,11/14/2026 15:05:00,5431085,Filibustering,0.40115052,3.93
 0,False,SP,,NonRunner,930628,11,Cheltenham,11/13/2026 13:45:00,6802994,King's Bucks FR,0.3354404,0
 3,False,100/30F,4.333333333333334,CompletedRace,930627,11,Cheltenham,11/13/2026 15:30:00,8779474,Ferocimo IRE,0.2778706,0
 3,False,6/4F,2.5,CompletedRace,930615,57,Sedgefield,11/13/2026 12:45:00,4963752,Walk In The Valley IRE,0.3753324,0
