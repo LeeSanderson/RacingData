@@ -1,4 +1,5 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,15/8F,2.875,CompletedRace,931536,44,Plumpton,11/16/2026 14:45:00,7426984,Golly Gosh IRE,0.43318194,0
 1,True,9/10F,1.9,CompletedRace,933433,205,Auteuil,11/15/2026 13:33:00,9129841,Huron Bleu,0.25339344,0
 3,False,11/1,12,CompletedRace,930634,11,Cheltenham,11/14/2026 13:10:00,9138738,Don Dandy IRE,0.29635304,4.08
 3,False,4/1,5,CompletedRace,930633,11,Cheltenham,11/14/2026 13:45:00,7355987,Folie Golith FR,0.3990823,5
