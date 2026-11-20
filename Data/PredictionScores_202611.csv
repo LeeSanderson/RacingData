@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+4,False,15/8F,2.875,CompletedRace,931775,393,Lingfield (AW),11/19/2026 11:48:00,9263899,Rogue Imperial,0.23233135,0
+1,True,7/4F,2.75,CompletedRace,933393,198,Thurles,11/19/2026 13:15:00,5884318,Minella Emperor,0.2913474,0
 0,False,80/1,81,PulledUp,931559,25,Hexham,11/18/2026 14:38:00,4201341,Clodders Dream,0.24819425,5
 2,False,15/8F,2.875,CompletedRace,931536,44,Plumpton,11/16/2026 14:45:00,7426984,Golly Gosh IRE,0.43318194,0
 1,True,9/10F,1.9,CompletedRace,933433,205,Auteuil,11/15/2026 13:33:00,9129841,Huron Bleu,0.25339344,0
