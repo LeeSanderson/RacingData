@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+1,True,11/8,2.375,CompletedRace,931599,2,Ascot,11/21/2026 13:30:00,4121695,Kateira,0.29680064,0
+6,False,12/1,13,CompletedRace,931604,23,Haydock,11/21/2026 13:15:00,8551798,Wilde's Legacy IRE,0.30720785,0
+1,True,2/1F,3,CompletedRace,933606,195,Punchestown,11/21/2026 13:03:00,5668405,Kiss Will FR,0.31062365,0
+1,True,1/6F,1.1666666666666667,CompletedRace,932401,195,Punchestown,11/21/2026 14:10:00,4241553,Lossiemouth FR,0.43424314,0
 2,False,9/2,5.5,CompletedRace,931593,2,Ascot,11/20/2026 13:20:00,6564382,Without Burlington,0.36490914,4.9
 5,False,17/2,9.5,CompletedRace,931592,2,Ascot,11/20/2026 14:30:00,4001888,Intellotto IRE,0.2157752,1.86
 2,False,7/4,2.75,CompletedRace,931579,10,Catterick,11/20/2026 12:00:00,7978766,Magical Merlot,0.3333904,0
