@@ -1,4 +1,8 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+4,False,2/1F,3,CompletedRace,931616,14,Exeter,11/22/2026 14:07:00,6487592,Treasure Planet IRE,0.3550272,0.71
+7,False,5/2,3.5,CompletedRace,931812,393,Lingfield (AW),11/22/2026 13:25:00,8001137,Merci Monsieur GER,0.2540612,0
+2,False,13/8F,2.625,CompletedRace,931813,393,Lingfield (AW),11/22/2026 13:55:00,7020225,Maria Da Silva IRE,0.26959515,0
+1,True,17/10F,2.7,CompletedRace,934019,416,Sha Tin,11/22/2026 08:40:00,5947043,My Wish AUS,0.22296636,0
 1,True,11/8,2.375,CompletedRace,931599,2,Ascot,11/21/2026 13:30:00,4121695,Kateira,0.29680064,0
 6,False,12/1,13,CompletedRace,931604,23,Haydock,11/21/2026 13:15:00,8551798,Wilde's Legacy IRE,0.30720785,0
 1,True,2/1F,3,CompletedRace,933606,195,Punchestown,11/21/2026 13:03:00,5668405,Kiss Will FR,0.31062365,0
