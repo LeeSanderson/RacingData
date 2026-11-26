@@ -1,4 +1,7 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+4,False,11/8F,2.375,CompletedRace,931652,24,Hereford,11/25/2026 13:31:00,5973453,Onehundredneighty IRE,0.26748115,0
+2,False,11/8F,2.375,CompletedRace,931651,24,Hereford,11/25/2026 14:37:00,4117825,Law Of Supply IRE,0.22629575,0
+2,False,7/2,4.5,CompletedRace,931863,1353,Newcastle (AW),11/25/2026 17:00:00,9290865,Yimmna FR,0.2513848,0
 3,False,7/1,8,CompletedRace,931844,393,Lingfield (AW),11/24/2026 11:38:00,7686986,Division Day,0.25690654,1.12
 1,True,13/8,2.625,CompletedRace,931839,513,Wolverhampton (AW),11/24/2026 18:30:00,9322118,National Pride IRE,0.45472586,0
 4,False,11/1,12,CompletedRace,931837,513,Wolverhampton (AW),11/24/2026 20:00:00,5237875,Wonder,0.22365113,1.79
