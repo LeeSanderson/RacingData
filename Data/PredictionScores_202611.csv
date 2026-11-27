@@ -1,4 +1,6 @@
 FinishingPosition,Won,FractionalOdds,DecimalOdds,ResultStatus,RaceId,CourseId,CourseName,Off,HorseId,HorseName,WinProbability,Stake
+2,False,EvensF,2,CompletedRace,931676,73,Taunton,11/26/2026 12:20:00,7529869,Fortis Et Liber,0.22982104,0
+2,False,11/10F,2.1,CompletedRace,934011,73,Taunton,11/26/2026 14:40:00,6692987,Calvino IRE,0.3278741,1.28
 4,False,11/8F,2.375,CompletedRace,931652,24,Hereford,11/25/2026 13:31:00,5973453,Onehundredneighty IRE,0.26748115,0
 2,False,11/8F,2.375,CompletedRace,931651,24,Hereford,11/25/2026 14:37:00,4117825,Law Of Supply IRE,0.22629575,0
 2,False,7/2,4.5,CompletedRace,931863,1353,Newcastle (AW),11/25/2026 17:00:00,9290865,Yimmna FR,0.2513848,0
